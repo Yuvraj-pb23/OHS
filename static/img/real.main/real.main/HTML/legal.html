@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Legal Compliance | OHS</title>
+  <link rel="stylesheet" href="../CSS/navbar.css" />
+  <link rel="stylesheet" href="../CSS/footer.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      line-height: 1.7;
+    }
+    header {
+      background: linear-gradient(to right, #1e1e2f, #383855);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+     
+    }
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: auto;
+      height: 200px;
+    }
+    .section {
+      padding: 60px 30px;
+      max-width: 1100px;
+      margin: auto;
+      background-color: white;
+      margin-bottom: 30px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .section h2 {
+      color: #343a40;
+      font-size: 2rem;
+      margin-bottom: 20px;
+      border-left: 5px solid #ff9800;
+      padding-left: 15px;
+    }
+    .section ul {
+      padding-left: 20px;
+    }
+    .section ul li {
+      margin-bottom: 10px;
+    }
+    .highlight {
+      background-color: #fff3cd;
+      padding: 15px;
+      border-left: 5px solid #ffc107;
+      margin-top: 20px;
+    }
+    
+    .cta-section {
+   background-color: #5b728a;
+      padding: 50px 20px;
+      text-align: center;
+      color: #fff;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+   <div id="chatbot-container"></div>
+<div id="navbar-placeholder"></div>
+
+  <!-- Hero Section -->
+  <header data-aos="fade-down" style="background-image: '../img/legal compliance.jpg';">
+    <h1>Legal Compliance</h1>
+    <p>Ensure your organization aligns with essential legal standards, minimizing risk and fostering a compliant workplace culture.</p>
+  </header>
+
+  <!-- Section 1: What is Legal Compliance -->
+  <section class="section" data-aos="fade-up">
+    <h2>What is Legal Compliance?</h2>
+    <p>Legal compliance refers to the process of adhering to laws, regulations, guidelines, and specifications relevant to business operations. It helps protect your company from legal issues, fines, or reputational harm.</p>
+    <div class="highlight">
+      <strong>Example:</strong> Ensuring your company follows POSH (Prevention of Sexual Harassment) Act is a part of legal compliance in India.
+    </div>
+  </section>
+
+  <!-- Section 2: Importance of Legal Compliance -->
+  <section class="section" data-aos="fade-up">
+    <h2>Why is Legal Compliance Important?</h2>
+    <ul>
+      <li>Reduces the risk of legal penalties and lawsuits.</li>
+      <li>Builds trust with customers, partners, and employees.</li>
+      <li>Promotes a safe and ethical working environment.</li>
+      <li>Helps in achieving long-term business sustainability.</li>
+    </ul>
+  </section>
+
+  <!-- Section 3: Key Areas of Compliance -->
+  <section class="section" data-aos="fade-up">
+    <h2>Key Areas of Legal Compliance</h2>
+    <ul>
+      <li>POSH Compliance (Sexual Harassment Policies)</li>
+      <li>Labor Laws and Employee Rights</li>
+      <li>Workplace Health & Safety Regulations</li>
+      <li>Environmental Regulations</li>
+      <li>Taxation Laws</li>
+      <li>Corporate Governance</li>
+    </ul>
+  </section>
+
+  <!-- Section 4: Common Challenges -->
+  <section class="section" data-aos="fade-up">
+    <h2>Common Challenges in Compliance</h2>
+    <ul>
+      <li>Frequent changes in regulations and laws</li>
+      <li>Lack of internal compliance training</li>
+      <li>Inadequate documentation and audits</li>
+      <li>Overlapping responsibilities across departments</li>
+    </ul>
+  </section>
+
+  <!-- Section 5: Our Compliance Support Services -->
+  <section class="section" data-aos="fade-up">
+    <h2>How OHS Supports Legal Compliance</h2>
+    <ul>
+      <li>POSH Audit and Documentation</li>
+      <li>Internal Committee (IC) Setup and Training</li>
+      <li>Policy Drafting and Review</li>
+      <li>On-site & Virtual Compliance Workshops</li>
+      <li>Employee Awareness Campaigns</li>
+    </ul>
+    <div class="highlight">
+      <strong>Need Help?</strong> <br />
+      Contact our experts today to schedule a compliance consultation customized to your organization.
+    </div>
+  </section>
+
+
+  <section class="cta-section" data-aos="fade-in">
+    <div class="container">
+      <h2>Ready to Create an Ethical Workplace?</h2>
+      <p>Get in touch to conduct an ethics workshop tailored to your organization.</p>
+      <a href="../HTML/blog.html" class="btn btn-light btn-lg mt-3">Schedule a Session</a>
+    </div>
+  </section>
+  <!-- Footer -->
+  <div id="footer-placeholder"></div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script>
+ fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+
+  AOS.init();
+
+ 
+    fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+  fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("footer-placeholder").innerHTML = data;
+    });
+</script>
+ <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+
+
+</body>
+</html>

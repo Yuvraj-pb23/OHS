@@ -1,0 +1,1523 @@
+[
+    {
+        "question": "What does POSH stand for?",
+        "answer": "POSH stands for Prevention of Sexual Harassment at the workplace."
+    },
+    {
+        "question": "Why was the POSH Act introduced in India?",
+        "answer": "To provide a safe working environment and protect employees from sexual harassment."
+    },
+    {
+        "question": "Who is protected under the POSH Act?",
+        "answer": "All women employees, including permanent, temporary, interns, and consultants."
+    },
+    {
+        "question": "What is considered sexual harassment at the workplace?",
+        "answer": "Any unwelcome behavior of a sexual nature like physical contact, inappropriate remarks, showing pornography, or demanding sexual favors."
+    },
+    {
+        "question": "Can men also file complaints under POSH?",
+        "answer": "No. The POSH Act protects women, but men can raise concerns through other company policies."
+    },
+    {
+        "question": "What is the difference between quid pro quo and hostile work environment harassment?",
+        "answer": "Quid pro quo = sexual favor in exchange for job benefits. Hostile environment = unwelcome behavior that creates an uncomfortable workplace."
+    },
+    {
+        "question": "Who can be a respondent (accused) under POSH?",
+        "answer": "Any person at the workplace including employees, clients, vendors, or third parties."
+    },
+    {
+        "question": "What is the definition of “workplace” under the POSH Act?",
+        "answer": "Workplace includes office premises, transportation, remote work, and off-site events like meetings or parties."
+    },
+    {
+        "question": "Is POSH training mandatory for all employees?",
+        "answer": "Yes. Employers must organize awareness sessions regularly."
+    },
+    {
+        "question": "What are the penalties for not complying with POSH?",
+        "answer": "Fine up to ₹50,000 for first offence, and higher penalties for repeated non-compliance."
+    },
+    {
+        "question": "What is an Internal Committee (IC)?",
+        "answer": "A body formed by the employer to handle sexual harassment complaints."
+    },
+    {
+        "question": "How many members should the Internal Committee have?",
+        "answer": "At least 4 members (Presiding Officer, 2 employees, 1 external member)."
+    },
+    {
+        "question": "Who can be the Presiding Officer of an Internal Committee?",
+        "answer": "A senior woman employee at the workplace."
+    },
+    {
+        "question": "Can an external member be part of the IC?",
+        "answer": "Yes, it is mandatory to have an external member from an NGO or association familiar with POSH."
+    },
+    {
+        "question": "What is the tenure of the Internal Committee members?",
+        "answer": "3 years."
+    },
+    {
+        "question": "What is the role of the HR department in POSH compliance?",
+        "answer": "HR supports awareness, ensures policies are followed, and assists the IC."
+    },
+    {
+        "question": "How often should POSH awareness sessions be conducted?",
+        "answer": "At least once a year."
+    },
+    {
+        "question": "What are the employer’s responsibilities under the POSH Act?",
+        "answer": "Create awareness, form IC, display POSH policy, and ensure a safe workplace."
+    },
+    {
+        "question": "How should organizations display POSH policy in the workplace?",
+        "answer": "By placing posters/notices at visible places in the office."
+    },
+    {
+        "question": "What is the difference between an Internal Committee (IC) and a Local Committee (LC)?",
+        "answer": "IC = set up in organizations with 10+ employees. LC = set up by District Officer for smaller workplaces or where IC is not available."
+    },
+    {
+        "question": "What is the time limit for filing a complaint under the POSH Act?",
+        "answer": "Within 3 months of the incident (extendable to 6 months)."
+    },
+    {
+        "question": "Can the Internal Committee extend the time limit for filing a complaint?",
+        "answer": "Yes, if there were valid reasons for delay."
+    },
+    {
+        "question": "What powers does the Internal Committee have during an inquiry?",
+        "answer": "Similar powers as a civil court (summoning people, examining evidence)."
+    },
+    {
+        "question": "What happens if a complaint is found to be false or malicious?",
+        "answer": "Action may be taken against the complainant, but not for lack of proof."
+    },
+    {
+        "question": "Can the complainant withdraw the complaint after filing?",
+        "answer": "Yes, especially during conciliation, but only if no monetary settlement is involved."
+    },
+    {
+        "question": "What is the process of conciliation under the POSH Act?",
+        "answer": "IC can help both parties settle the matter amicably before inquiry begins."
+    },
+    {
+        "question": "How is confidentiality maintained during a POSH inquiry?",
+        "answer": "Names and details of the case cannot be shared publicly."
+    },
+    {
+        "question": "What is the penalty if an employer does not constitute an Internal Committee?",
+        "answer": "Fine up to ₹50,000."
+    },
+    {
+        "question": "Can an organization be fined for non-compliance with POSH?",
+        "answer": "Yes, repeated non-compliance can lead to license cancellation."
+    },
+    {
+        "question": "What is the maximum penalty for repeated non-compliance?",
+        "answer": "Higher fines and cancellation of business license."
+    },
+    {
+        "question": "Which landmark Supreme Court case led to the formation of the POSH Act?",
+        "answer": "Vishaka vs State of Rajasthan (1997)."
+    },
+    {
+        "question": "What is the role of the District Officer under POSH?",
+        "answer": "To appoint Local Committees and oversee implementation."
+    },
+    {
+        "question": "Can POSH complaints be filed against third-party vendors or clients?",
+        "answer": "Yes, if harassment occurs at the workplace."
+    },
+    {
+        "question": "What is the employer’s duty if a complaint involves the CEO or senior management?",
+        "answer": "The IC must handle it impartially and may involve external agencies if required."
+    },
+    {
+        "question": "How should POSH cases be reported in the organization’s annual report?",
+        "answer": "By including details of complaints received and action taken."
+    },
+    {
+        "question": "What are some examples of indirect sexual harassment?",
+        "answer": "Passing lewd jokes, displaying offensive material, spreading rumors."
+    },
+    {
+        "question": "How are witnesses protected during a POSH inquiry?",
+        "answer": "IC ensures no retaliation or victimization against witnesses."
+    },
+    {
+        "question": "Can the IC recommend transfer of either the complainant or respondent?",
+        "answer": "Yes, as interim relief."
+    },
+    {
+        "question": "What kind of interim relief can be given to the complainant?",
+        "answer": "Transfer, leave up to 3 months, or change in reporting manager."
+    },
+    {
+        "question": "Can criminal action also be taken alongside POSH proceedings?",
+        "answer": "Yes, IC can recommend filing a police complaint if the act is criminal."
+    },
+    {
+        "question": "If an employee complains against their reporting manager, how should the IC handle bias concerns?",
+        "answer": "By ensuring neutrality and including the external member actively."
+    },
+    {
+        "question": "What happens if the accused is from another branch office?",
+        "answer": "IC of the complainant’s office will still handle the case."
+    },
+    {
+        "question": "How should POSH compliance be ensured in remote working setups?",
+        "answer": "By extending the workplace definition to virtual platforms and monitoring online conduct."
+    },
+    {
+        "question": "What if the complainant resigns during the inquiry process?",
+        "answer": "IC should still complete the inquiry if the complainant wishes."
+    },
+    {
+        "question": "How should an IC handle anonymous complaints?",
+        "answer": "Anonymous complaints can be considered if sufficient details are provided."
+    },
+    {
+        "question": "What is the difference between POSH inquiry and disciplinary inquiry?",
+        "answer": "POSH inquiry = legal compliance, follows POSH Act. Disciplinary inquiry = internal HR matter."
+    },
+    {
+        "question": "How can an organization ensure fair treatment to both complainant and respondent?",
+        "answer": "By following natural justice principles, giving equal chance to both sides."
+    },
+    {
+        "question": "Can IC’s decision be challenged? If yes, where?",
+        "answer": "Yes, in a court or tribunal as per service laws."
+    },
+    {
+        "question": "What is the role of POSH in protecting interns, consultants, and freelancers?",
+        "answer": "POSH Act covers all women working in any capacity."
+    },
+    {
+        "question": "How should IC maintain proper documentation during the inquiry process?",
+        "answer": "By keeping written records of complaints, evidence, proceedings, and final recommendations."
+    },
+    {
+        "question": "What is OpenHand Solutions (OHS)?",
+        "answer": "OpenHand Solutions is a consultancy that helps organizations comply with the POSH Act through training, policy drafting, audits, and external committee support."
+    },
+    {
+        "question": "Why is POSH compliance important for companies?",
+        "answer": "It is legally required under the POSH Act, 2013, to ensure safe workplaces and avoid penalties."
+    },
+    {
+        "question": "Does OHS provide awareness training on POSH?",
+        "answer": "Yes, OHS conducts awareness sessions for employees at all levels."
+    },
+    {
+        "question": "Does OHS help in setting up an Internal Committee (IC)?",
+        "answer": "Yes, OHS guides organizations in forming and training Internal Committees."
+    },
+    {
+        "question": "Does OHS provide external members for IC?",
+        "answer": "Yes, OHS provides qualified professionals who act as external IC members."
+    },
+    {
+        "question": "Does OHS provide both online and offline POSH training?",
+        "answer": "Yes, training can be delivered virtually or in-person, depending on the organization’s needs."
+    },
+    {
+        "question": "Who can attend OHS POSH training programs?",
+        "answer": "Employees, managers, HR teams, and Internal Committee members."
+    },
+    {
+        "question": "What industries does OHS work with?",
+        "answer": "OHS works with IT, manufacturing, education, healthcare, corporate offices, and more."
+    },
+    {
+        "question": "Can small businesses also take OHS services?",
+        "answer": "Yes, OHS provides cost-effective POSH compliance services for SMEs and startups."
+    },
+    {
+        "question": "Does OHS provide multilingual training?",
+        "answer": "Yes, sessions can be conducted in multiple languages for diverse workforces."
+    },
+    {
+        "question": "Does OHS draft POSH policies for organizations?",
+        "answer": "Yes, OHS creates customized POSH policies that comply with the law."
+    },
+    {
+        "question": "Does OHS conduct compliance audits?",
+        "answer": "Yes, OHS audits policies, practices, and documents to ensure legal compliance."
+    },
+    {
+        "question": "How often should organizations review their POSH policy?",
+        "answer": "At least once a year or whenever legal changes occur."
+    },
+    {
+        "question": "Does OHS provide training for Internal Committee members?",
+        "answer": "Yes, OHS provides in-depth workshops on complaint handling and inquiry procedures."
+    },
+    {
+        "question": "Does OHS provide case study-based training?",
+        "answer": "Yes, OHS uses real-life scenarios to make training engaging and practical."
+    },
+    {
+        "question": "How long are OHS training programs?",
+        "answer": "They range from short awareness sessions to full-day workshops."
+    },
+    {
+        "question": "Does OHS provide refresher training?",
+        "answer": "Yes, refresher sessions are recommended annually."
+    },
+    {
+        "question": "Can OHS provide training for senior leadership?",
+        "answer": "Yes, OHS offers sessions for leaders and managers on safe workplace culture."
+    },
+    {
+        "question": "Does OHS help in filing annual POSH reports?",
+        "answer": "Yes, OHS supports organizations in preparing and submitting annual compliance reports."
+    },
+    {
+        "question": "Does OHS provide awareness materials like posters, handbooks, and e-learning?",
+        "answer": "Yes, OHS offers customized awareness resources."
+    },
+    {
+        "question": "Does OHS help investigate POSH complaints?",
+        "answer": "Yes, OHS guides IC members in handling complaints fairly and legally."
+    },
+    {
+        "question": "Can OHS act as an external IC member during inquiries?",
+        "answer": "Yes, OHS experts can serve as external members to ensure impartiality."
+    },
+    {
+        "question": "Does OHS provide legal guidance for POSH cases?",
+        "answer": "Yes, OHS offers expert advice and works with legal professionals when needed."
+    },
+    {
+        "question": "How does OHS help in remote work or virtual workplace harassment cases?",
+        "answer": "OHS provides updated policies and training covering online platforms and communication."
+    },
+    {
+        "question": "Can OHS support contract workers, interns, and consultants under POSH compliance?",
+        "answer": "Yes, OHS ensures that all categories of women workers are covered."
+    },
+    {
+        "question": "Does OHS assist companies during labor inspections?",
+        "answer": "Yes, OHS helps prepare documentation and guides during inspections."
+    },
+    {
+        "question": "Can OHS help organizations document IC proceedings?",
+        "answer": "Yes, OHS provides templates and training for proper records."
+    },
+    {
+        "question": "Does OHS update clients on POSH law changes?",
+        "answer": "Yes, OHS continuously informs clients about legal updates and judgments."
+    },
+    {
+        "question": "Can OHS provide POSH compliance certification?",
+        "answer": "Yes, after audits and training, OHS issues compliance certificates."
+    },
+    {
+        "question": "What happens if a company fails to comply with POSH law?",
+        "answer": "They may face penalties up to ₹50,000 and cancellation of license for repeated offences."
+    },
+    {
+        "question": "How does OHS handle cases where the CEO or senior leader is accused?",
+        "answer": "OHS ensures impartial inquiry with external experts and legal compliance."
+    },
+    {
+        "question": "How does OHS protect confidentiality during POSH inquiries?",
+        "answer": "All details are kept confidential, and only IC members are involved in proceedings."
+    },
+    {
+        "question": "How does OHS ensure fairness to both complainant and respondent?",
+        "answer": "By following natural justice principles and giving equal opportunity to both parties."
+    },
+    {
+        "question": "Can OHS help in cross-location complaints across multiple offices?",
+        "answer": "Yes, OHS ensures IC and management handle such cases properly."
+    },
+    {
+        "question": "Does OHS provide 24/7 consultation for urgent POSH matters?",
+        "answer": "Yes, OHS provides on-demand consultation support."
+    },
+    {
+        "question": "Can IC’s decisions be challenged?",
+        "answer": "Yes, they can be appealed in court or labor tribunal."
+    },
+    {
+        "question": "How does OHS support organizations in preventing false or malicious complaints?",
+        "answer": "Through awareness training, policy clarity, and fair inquiry practices."
+    },
+    {
+        "question": "Does OHS provide support for workplace culture building beyond POSH?",
+        "answer": "Yes, OHS also focuses on diversity, inclusion, and respectful workplace culture."
+    },
+    {
+        "question": "How does OHS handle training for remote or hybrid teams?",
+        "answer": "OHS provides virtual workshops and e-learning modules for distributed teams."
+    },
+    {
+        "question": "Does OHS provide long-term partnership programs?",
+        "answer": "Yes, OHS works with companies as long-term compliance partners for audits, training, and external IC support."
+    },
+    {
+        "question": "Does OHS provide POSH training certificates to participants?",
+        "answer": "Yes, participants receive completion certificates."
+    },
+    {
+        "question": "Can OHS conduct surprise compliance checks?",
+        "answer": "Yes, OHS can do unannounced audits to assess real compliance."
+    },
+    {
+        "question": "Does OHS provide digital learning modules for employees?",
+        "answer": "Yes, OHS offers e-learning modules accessible anytime."
+    },
+    {
+        "question": "How does OHS customize training for different levels of employees?",
+        "answer": "Separate programs are designed for staff, managers, and IC members."
+    },
+    {
+        "question": "Can OHS integrate POSH training with onboarding programs?",
+        "answer": "Yes, POSH awareness is included in employee induction programs."
+    },
+    {
+        "question": "Does OHS provide data privacy and IT security awareness along with POSH?",
+        "answer": "Yes, OHS combines POSH with digital safety modules if required."
+    },
+    {
+        "question": "How does OHS ensure inclusivity in POSH compliance?",
+        "answer": "By covering issues related to gender sensitivity, LGBTQ+, and workplace respect."
+    },
+    {
+        "question": "Can OHS provide case study reports for management review?",
+        "answer": "Yes, OHS provides anonymized reports for learning purposes."
+    },
+    {
+        "question": "Does OHS provide international POSH compliance guidance?",
+        "answer": "Yes, OHS helps global organizations align POSH with international HR policies."
+    },
+    {
+        "question": "Why should companies choose OHS for POSH compliance?",
+        "answer": "Because OHS provides end-to-end solutions including training, audits, policy drafting, external IC members, and legal updates."
+    },
+    {
+        "question": "Why should we choose OHS for POSH compliance?",
+        "answer": "OHS provides end-to-end POSH compliance support including training, policy drafting, audits, and external IC members, making it a one-stop solution."
+    },
+    {
+        "question": "What makes OHS different from other POSH consultants?",
+        "answer": "OHS combines legal expertise, practical case-handling experience, and engaging training methods to ensure both compliance and cultural change."
+    },
+    {
+        "question": "Does OHS have experienced trainers and external members?",
+        "answer": "Yes, OHS experts have years of experience in POSH law, HR, and workplace training."
+    },
+    {
+        "question": "How does OHS ensure quality training?",
+        "answer": "By using case studies, interactive activities, real-world examples, and customized content for each organization."
+    },
+    {
+        "question": "Does OHS provide ongoing support after training?",
+        "answer": "Yes, OHS provides continuous updates, refresher training, and consultation support for organizations."
+    },
+    {
+        "question": "Is OHS suitable for startups and SMEs too?",
+        "answer": "Yes, OHS offers cost-effective packages tailored for small and medium enterprises."
+    },
+    {
+        "question": "Can OHS provide services across India?",
+        "answer": "Yes, OHS serves organizations nationwide through both online and offline modes."
+    },
+    {
+        "question": "Does OHS help during government or labor inspections?",
+        "answer": "Yes, OHS assists organizations in preparing documents and guides them during inspections."
+    },
+    {
+        "question": "How does OHS ensure legal accuracy?",
+        "answer": "OHS stays updated with the latest POSH Act amendments and court judgments, and incorporates them into policies and training."
+    },
+    {
+        "question": "Can OHS be a long-term compliance partner?",
+        "answer": "Yes, OHS offers annual partnership models with regular audits, training, and external IC support."
+    },
+    {
+        "question": "What is workplace ethics?",
+        "answer": "Workplace ethics refers to the moral principles and professional standards that guide behavior at work."
+    },
+    {
+        "question": "Why is workplace ethics important?",
+        "answer": "It builds trust, promotes fairness, ensures compliance, and creates a positive work environment."
+    },
+    {
+        "question": "Can you give an example of workplace ethics?",
+        "answer": "Examples include honesty in reporting work hours, respecting colleagues, and avoiding misuse of company resources."
+    },
+    {
+        "question": "How does workplace ethics impact teamwork?",
+        "answer": "Ethical behavior fosters trust, respect, and collaboration, which improves team productivity and harmony."
+    },
+    {
+        "question": "What are the consequences of unethical behavior at work?",
+        "answer": "It can lead to disciplinary action, legal consequences, loss of reputation, and decreased employee morale."
+    },
+    {
+        "question": "How do organizations promote workplace ethics?",
+        "answer": "Through clear policies, regular training, leadership role modeling, and a strong whistleblower mechanism."
+    },
+    {
+        "question": "What role does leadership play in workplace ethics?",
+        "answer": "Leaders set the tone by modeling ethical behavior and holding everyone accountable."
+    },
+    {
+        "question": "How does workplace ethics relate to compliance laws?",
+        "answer": "Ethics ensures that employees follow laws and regulations like POSH, anti-bribery, and labor laws."
+    },
+    {
+        "question": "Can workplace ethics differ across cultures?",
+        "answer": "Yes, cultural values influence perceptions of ethics, but honesty, respect, and fairness are universal standards."
+    },
+    {
+        "question": "What services does OHS provide?",
+        "answer": "OHS offers services like POSH Awareness Training, Policy Formulation, Workplace Audits, ICC Member Training, Legal Assistance, and Consulting Services to promote safer workplaces."
+    },
+    {
+        "question": "What is POSH Awareness Training?",
+        "answer": "POSH Awareness Training educates employees and managers about POSH guidelines, workplace respect, and legal compliance to prevent sexual harassment at work."
+    },
+    {
+        "question": "How does OHS help with policy formulation?",
+        "answer": "OHS drafts customized anti-sexual harassment policies that are tailored to suit your organization's culture and compliance needs."
+    },
+    {
+        "question": "What are workplace audits?",
+        "answer": "Workplace audits by OHS ensure compliance with POSH regulations, assess workplace safety, and identify areas that need improvement."
+    },
+    {
+        "question": "What is ICC Member Training?",
+        "answer": "ICC Member Training equips Internal Complaints Committee members with the knowledge and skills to handle sexual harassment cases effectively and fairly."
+    },
+    {
+        "question": "Does OHS provide legal assistance?",
+        "answer": "Yes, OHS offers legal advice and support in handling workplace harassment cases, ensuring organizations follow due process."
+    },
+    {
+        "question": "What kind of consulting services does OHS offer?",
+        "answer": "OHS provides consulting services to help organizations create safe, inclusive, and legally compliant workplace environments."
+    },
+    {
+        "question": "Why should I choose OHS over others?",
+        "answer": "OHS provides certified experts, over a decade of experience, trusted partnerships with top brands, fast and reliable services, 100% confidentiality, interactive training, and client-centric solutions."
+    },
+    {
+        "question": "Does OHS have certified experts?",
+        "answer": "Yes, OHS has a team of certified POSH professionals with years of industry experience."
+    },
+    {
+        "question": "How much experience does OHS have?",
+        "answer": "OHS has more than 10 years of experience working with top MNCs and large organizations."
+    },
+    {
+        "question": "Are you trusted by well-known companies?",
+        "answer": "Yes, OHS is the compliance partner of choice for many leading brands and companies across India."
+    },
+    {
+        "question": "Is OHS reliable and fast?",
+        "answer": "Absolutely. OHS is known for prompt delivery, proactive support, and reliable consulting services."
+    },
+    {
+        "question": "Does OHS maintain confidentiality?",
+        "answer": "Yes, OHS ensures strict confidentiality and legal compliance in every case we handle."
+    },
+    {
+        "question": "What makes your training unique?",
+        "answer": "Our training sessions are interactive, practical, and include real case examples to ensure better learning outcomes."
+    },
+    {
+        "question": "How does OHS focus on clients?",
+        "answer": "OHS designs every strategy to match the unique workplace culture and needs of each client, ensuring personalized solutions."
+    },
+    {
+        "question": "Who does the POSH Act apply to?",
+        "answer": "The POSH Act applies to all workplaces in India, including private companies, government offices, NGOs, and the unorganized sector. It covers all employees, interns, and visitors, regardless of gender."
+    },
+    {
+        "question": "What are the key provisions of the POSH Act?",
+        "answer": "The key provisions include: defining sexual harassment, forming an Internal Complaints Committee (ICC), laying down procedures for complaints, ensuring confidentiality, and providing protection against retaliation."
+    },
+    {
+        "question": "What are the government rules under POSH?",
+        "answer": "The government rules outline how organizations must constitute Internal Complaints Committees (ICC), report cases annually, ensure awareness training, and submit compliance reports to the District Officer."
+    },
+    {
+        "question": "Are organizations required to file annual compliance reports under POSH?",
+        "answer": "Yes, every employer must file an annual report with details of sexual harassment complaints received, resolved, and pending, along with training measures conducted."
+    },
+    {
+        "question": "What penalties exist for non-compliance with POSH Act?",
+        "answer": "Organizations failing to comply with POSH requirements may face penalties up to ₹50,000. Repeat violations can lead to higher fines, cancellation of licenses, or deregistration."
+    },
+    {
+        "question": "Can you give examples of legal judgments under POSH?",
+        "answer": "Yes. One key case is Vishaka vs State of Rajasthan (1997), which laid the foundation for workplace sexual harassment guidelines. Another is Medha Kotwal Lele vs Union of India (2012), which reinforced compliance with POSH-related measures."
+    },
+    {
+        "question": "How do legal case studies help organizations?",
+        "answer": "Case studies highlight real-life judgments where companies failed or succeeded in compliance. They guide organizations in preventing mistakes and implementing stronger workplace policies."
+    },
+    {
+        "question": "What are implementation guidelines for POSH?",
+        "answer": "Implementation guidelines include: drafting a workplace policy, forming an Internal Complaints Committee (ICC), conducting awareness training, displaying posters on POSH rights, and ensuring proper complaint redressal."
+    },
+    {
+        "question": "How should an Internal Complaints Committee (ICC) be formed?",
+        "answer": "An ICC must consist of at least four members, including a Presiding Officer (a senior woman employee), at least two employees committed to women’s rights, and one external member from an NGO or legal background."
+    },
+    {
+        "question": "What steps should an organization take to implement POSH effectively?",
+        "answer": "Key steps include: 1) Creating an anti-sexual harassment policy, 2) Setting up the ICC, 3) Conducting regular training, 4) Providing safe complaint mechanisms, and 5) Submitting annual compliance reports."
+    },
+    {
+        "question": "How can employees be made aware of POSH rights?",
+        "answer": "Employers should conduct training sessions, display posters in common areas, provide policy copies to employees, and hold workshops on workplace ethics and respectful behavior."
+    },
+    {
+        "question": "What role does the District Officer play in POSH compliance?",
+        "answer": "The District Officer ensures compliance by local committees, receives annual reports from organizations, and assists in redressal of sexual harassment cases at the district level."
+    },
+    {
+        "question": "What protections does the POSH Act provide for complainants?",
+        "answer": "The Act ensures confidentiality, protection from retaliation, and fair inquiry procedures. Interim relief such as transfer of the accused or paid leave for the complainant may also be provided."
+    },
+    {
+        "question": "What services do you offer?",
+        "answer": "We offer POSH awareness training, policy formulation, workplace audits, ICC member training, legal assistance, and consulting services."
+    },
+    {
+        "question": "What is POSH Awareness Training?",
+        "answer": "POSH Awareness Training educates employees and managers about workplace respect, prevention of sexual harassment, and legal compliance under the POSH Act."
+    },
+    {
+        "question": "Do you help in drafting workplace policies?",
+        "answer": "Yes, we provide Policy Formulation services, drafting customized anti-sexual harassment policies tailored to your organization's needs."
+    },
+    {
+        "question": "What are Workplace Audits?",
+        "answer": "Workplace Audits involve assessing your organization to ensure compliance with the POSH Act and identifying areas for improvement in workplace safety."
+    },
+    {
+        "question": "Do you provide training for ICC members?",
+        "answer": "Yes, we conduct specialized ICC Member Training sessions to equip Internal Complaints Committee members with the right knowledge and skills."
+    },
+    {
+        "question": "Can you provide legal assistance for harassment cases?",
+        "answer": "Absolutely. Our Legal Assistance services provide advice and support in handling workplace harassment cases in line with the POSH Act."
+    },
+    {
+        "question": "Do you offer consulting services?",
+        "answer": "Yes, we offer Consulting Services to help organizations create safer and more inclusive workplace environments."
+    },
+    {
+        "question": "What is POSH Awareness Training?",
+        "answer": "It is a program that educates employees and managers about the Prevention of Sexual Harassment (POSH) Act, workplace respect, and creating a safe work culture."
+    },
+    {
+        "question": "Why is POSH Awareness Training important?",
+        "answer": "It helps prevent workplace harassment, ensures legal compliance, and builds a culture of respect and inclusivity."
+    },
+    {
+        "question": "Who should attend POSH Awareness Training?",
+        "answer": "All employees, including managers, HR staff, and leadership teams should participate."
+    },
+    {
+        "question": "How often should organizations conduct POSH training?",
+        "answer": "At least once a year or whenever there are new hires, as per compliance guidelines."
+    },
+    {
+        "question": "What topics are covered in POSH Awareness Training?",
+        "answer": "Topics include recognizing harassment, reporting procedures, roles of ICC, rights of employees, and creating a respectful workplace."
+    },
+    {
+        "question": "Do you help in drafting POSH policies?",
+        "answer": "Yes, we draft customized anti-sexual harassment policies tailored to your organization’s needs."
+    },
+    {
+        "question": "Why does my organization need a POSH policy?",
+        "answer": "It ensures legal compliance, sets clear workplace expectations, and provides a structured complaint mechanism."
+    },
+    {
+        "question": "What should a POSH policy include?",
+        "answer": "It should include definitions of harassment, complaint procedures, ICC structure, timelines, and employee rights."
+    },
+    {
+        "question": "Can you customize the policy for my company?",
+        "answer": "Yes, we adapt policies to fit your industry, company size, and work culture."
+    },
+    {
+        "question": "How do we ensure our POSH policy is legally compliant?",
+        "answer": "Our experts ensure your policy follows the POSH Act, 2013, and aligns with the latest legal updates."
+    },
+    {
+        "question": "What is a workplace POSH audit?",
+        "answer": "It is a review process to check whether your organization complies with POSH laws and best practices."
+    },
+    {
+        "question": "Why are workplace audits necessary?",
+        "answer": "They help identify gaps, ensure compliance, and protect the organization from legal risks."
+    },
+    {
+        "question": "How often should an organization conduct audits?",
+        "answer": "At least once a year or whenever there are structural or policy changes."
+    },
+    {
+        "question": "What areas do you check during an audit?",
+        "answer": "Policies, awareness levels, ICC functioning, record-keeping, and complaint mechanisms."
+    },
+    {
+        "question": "Do you provide reports after the audit?",
+        "answer": "Yes, we provide a detailed compliance report with recommendations for improvement."
+    },
+    {
+        "question": "What is ICC Member Training?",
+        "answer": "It is specialized training for Internal Complaints Committee members to handle POSH cases effectively."
+    },
+    {
+        "question": "Why should ICC members undergo training?",
+        "answer": "To ensure they understand the law, follow proper procedures, and maintain fairness in handling complaints."
+    },
+    {
+        "question": "What responsibilities do ICC members have?",
+        "answer": "Receiving complaints, conducting inquiries, maintaining confidentiality, and giving recommendations."
+    },
+    {
+        "question": "How long does ICC training take?",
+        "answer": "Training sessions can range from half a day to 2 days, depending on depth and organizational needs."
+    },
+    {
+        "question": "Do you provide certification for ICC training?",
+        "answer": "Yes, certified training is provided to validate ICC competence and compliance."
+    },
+    {
+        "question": "Do you provide legal advice for POSH cases?",
+        "answer": "Yes, we provide expert legal guidance for handling harassment cases as per the law."
+    },
+    {
+        "question": "Can you help us if a case goes to court?",
+        "answer": "Yes, we assist organizations with legal representation and support during proceedings."
+    },
+    {
+        "question": "What type of legal support do you provide?",
+        "answer": "Drafting responses, advising ICC, case documentation, and representation in front of authorities."
+    },
+    {
+        "question": "Do you help organizations with compliance notices?",
+        "answer": "Yes, we assist in responding to compliance audits and legal notices from authorities."
+    },
+    {
+        "question": "How do you ensure confidentiality in legal cases?",
+        "answer": "We strictly follow confidentiality protocols as mandated under the POSH Act."
+    },
+    {
+        "question": "Do you provide POSH consulting services?",
+        "answer": "Yes, we help organizations build safer workplaces with tailored compliance solutions."
+    },
+    {
+        "question": "What does POSH consulting include?",
+        "answer": "It includes policy drafting, training, audits, ICC setup, and long-term compliance strategy."
+    },
+    {
+        "question": "How can consulting improve workplace safety?",
+        "answer": "It ensures structured systems, better awareness, reduced risks, and improved employee trust."
+    },
+    {
+        "question": "Do you help with long-term compliance strategy?",
+        "answer": "Yes, we provide ongoing support for monitoring, evaluation, and updates to stay compliant."
+    },
+    {
+        "question": "Can you guide HR teams on POSH best practices?",
+        "answer": "Absolutely, we train and guide HR teams to handle complaints and maintain compliance effectively."
+    },
+    {
+        "question": "What are communication skills?",
+        "answer": "Communication skills are the abilities that help you share ideas, thoughts, and feelings effectively using verbal, non-verbal, and written methods."
+    },
+    {
+        "question": "Why are communication skills important?",
+        "answer": "Communication skills are important because they build stronger relationships, improve teamwork, enhance leadership, and help express ideas clearly and confidently."
+    },
+    {
+        "question": "Who is Anita in the communication section?",
+        "answer": "Anita is a professional communication coach featured in our program. She specializes in helping individuals improve verbal, non-verbal, and interpersonal communication."
+    },
+    {
+        "question": "What is verbal communication?",
+        "answer": "Verbal communication involves using words to share information. It focuses on tone, clarity, confidence, and choosing the right words to deliver a message effectively."
+    },
+    {
+        "question": "How can I improve verbal communication?",
+        "answer": "You can improve verbal communication by using clear language, avoiding filler words, speaking at a steady pace, and matching your tone with the message. Example: Instead of saying 'We might consider this,' say 'I recommend this because…'"
+    },
+    {
+        "question": "What is non-verbal communication?",
+        "answer": "Non-verbal communication is the use of gestures, facial expressions, posture, and body movements to reinforce spoken words and emotions."
+    },
+    {
+        "question": "How can I improve non-verbal communication?",
+        "answer": "Improve non-verbal communication by maintaining eye contact, smiling when appropriate, and mirroring positive body language to connect better with others."
+    },
+    {
+        "question": "What is body language in communication?",
+        "answer": "Body language refers to physical behaviors such as posture, gestures, and facial expressions that convey confidence, openness, and respect."
+    },
+    {
+        "question": "How can I use body language effectively?",
+        "answer": "Stand or sit up straight to show confidence, avoid crossing arms, and use open gestures to invite dialogue. Remember: people trust body language more than words when they conflict."
+    },
+    {
+        "question": "What are listening skills?",
+        "answer": "Listening skills involve actively paying attention to what others are saying, understanding their message, and responding thoughtfully without distractions."
+    },
+    {
+        "question": "How can I practice active listening?",
+        "answer": "To practice active listening: don’t interrupt, nod to show engagement, ask follow-up questions for clarity, and avoid distractions like your phone. People feel valued when they’re truly heard."
+    },
+    {
+        "question": "What is empathic reasoning?",
+        "answer": "Empathic reasoning is the ability to understand others’ feelings and perspectives, which helps build trust and stronger connections."
+    },
+    {
+        "question": "How can I develop empathic reasoning?",
+        "answer": "Develop empathic reasoning by putting yourself in the other person’s shoes, acknowledging their feelings, and using supportive phrases like 'I understand how that could be frustrating.' Remember, empathy doesn’t always mean agreement."
+    },
+    {
+        "question": "What are the key types of communication skills?",
+        "answer": "The key communication skills are: Verbal Communication, Non-Verbal Communication, Body Language, Listening Skills, and Empathic Reasoning."
+    },
+    {
+        "question": "How can communication skills help in leadership?",
+        "answer": "Strong communication skills help leaders inspire teams, resolve conflicts, give clear instructions, and build trust with colleagues."
+    },
+    {
+        "question": "What is POSH training?",
+        "answer": "POSH training refers to the Prevention of Sexual Harassment training designed to create awareness among employees about workplace harassment and how to prevent it."
+    },
+    {
+        "question": "Why is POSH training important in the workplace?",
+        "answer": "It ensures a safe and respectful workplace, makes employees aware of their rights, educates them on reporting procedures, and helps organizations comply with legal requirements."
+    },
+    {
+        "question": "What topics are usually covered in POSH training?",
+        "answer": "POSH training covers topics such as understanding sexual harassment, reporting mechanisms, responsibilities of employees, and the role of the Internal Complaints Committee (ICC)."
+    },
+    {
+        "question": "What are workplace ethics?",
+        "answer": "Workplace ethics are a set of moral principles and professional standards that guide behavior at work, such as honesty, respect, fairness, and responsibility."
+    },
+    {
+        "question": "Why are workplace ethics important?",
+        "answer": "They promote a positive culture, improve teamwork, build trust, prevent conflicts, and ensure fair treatment of all employees."
+    },
+    {
+        "question": "Can you give examples of good workplace ethics?",
+        "answer": "Examples include integrity in decision-making, respecting colleagues, accountability for actions, punctuality, and maintaining confidentiality."
+    },
+    {
+        "question": "What is legal compliance in the workplace?",
+        "answer": "Legal compliance means following laws and regulations that apply to the organization, such as labor laws, safety standards, and anti-harassment policies."
+    },
+    {
+        "question": "Why is legal compliance important for organizations?",
+        "answer": "It prevents legal risks, builds trust with employees and clients, ensures fair treatment, and protects the organization from penalties or lawsuits."
+    },
+    {
+        "question": "What are some key areas of legal compliance for workplaces?",
+        "answer": "Key areas include POSH Act compliance, workplace safety laws, labor rights, equal opportunity laws, and data privacy regulations."
+    },
+    {
+        "question": "What are communication skills?",
+        "answer": "Communication skills are the ability to convey and receive messages effectively using verbal, non-verbal, and written forms of communication."
+    },
+    {
+        "question": "Why are communication skills important in the workplace?",
+        "answer": "Strong communication skills improve teamwork, reduce conflicts, enhance leadership, and ensure clarity in work tasks."
+    },
+    {
+        "question": "What are different types of communication skills?",
+        "answer": "The main types are verbal communication, non-verbal communication, listening skills, body language, and empathic reasoning."
+    },
+    {
+        "question": "How can I improve my communication skills?",
+        "answer": "You can improve by practicing active listening, maintaining eye contact, speaking clearly, using confident body language, and showing empathy when responding."
+    },
+    {
+        "question": "How are communication skills linked to workplace ethics?",
+        "answer": "Good communication promotes respect, prevents misunderstandings, and helps resolve conflicts, which are essential for maintaining strong workplace ethics."
+    },
+    {
+        "question": "How do POSH training, workplace ethics, and legal compliance work together?",
+        "answer": "Together, they ensure a respectful, safe, and legally compliant workplace where employees feel secure, valued, and motivated to perform their best."
+    },
+    {
+        "question": "What is a harassment-free workplace?",
+        "answer": "A harassment-free workplace is an environment where employees feel safe, respected, and protected from any form of harassment, discrimination, or bullying."
+    },
+    {
+        "question": "Why is a harassment-free workplace important?",
+        "answer": "It ensures employee well-being, improves productivity, builds trust, and creates a positive organizational culture."
+    },
+    {
+        "question": "What types of behavior are considered workplace harassment?",
+        "answer": "Workplace harassment includes verbal abuse, inappropriate jokes, sexual harassment, bullying, intimidation, discrimination, and repeated offensive behavior."
+    },
+    {
+        "question": "What role does leadership play in preventing harassment?",
+        "answer": "Leaders set the tone by modeling respectful behavior, enforcing policies, providing training, and ensuring that complaints are addressed fairly and quickly."
+    },
+    {
+        "question": "How can employees contribute to a harassment-free workplace?",
+        "answer": "Employees can contribute by respecting boundaries, reporting incidents, supporting colleagues, and being aware of acceptable workplace behavior."
+    },
+    {
+        "question": "What policies should a company implement to prevent harassment?",
+        "answer": "Companies should implement clear anti-harassment policies, complaint mechanisms, POSH compliance, and regular awareness training."
+    },
+    {
+        "question": "How can training help in building a harassment-free workplace?",
+        "answer": "Training helps employees recognize inappropriate behavior, understand their rights, learn reporting procedures, and create a culture of mutual respect."
+    },
+    {
+        "question": "What should an employee do if they experience harassment?",
+        "answer": "The employee should document the incident, report it to HR or the Internal Complaints Committee (ICC), and seek support from trusted colleagues or counselors."
+    },
+    {
+        "question": "How can confidentiality be maintained in harassment cases?",
+        "answer": "By ensuring that complaints are handled discreetly, only relevant authorities are informed, and sensitive information is not disclosed to others."
+    },
+    {
+        "question": "What are the consequences of workplace harassment for organizations?",
+        "answer": "Consequences include legal penalties, loss of reputation, low employee morale, reduced productivity, and high attrition rates."
+    },
+    {
+        "question": "How can organizations monitor and enforce a harassment-free workplace?",
+        "answer": "By conducting regular surveys, audits, anonymous feedback collection, and ensuring strict action against violators."
+    },
+    {
+        "question": "What is the connection between diversity, inclusion, and a harassment-free workplace?",
+        "answer": "Diversity and inclusion promote respect for differences, reduce biases, and foster equality, which are essential for a harassment-free workplace."
+    },
+    {
+        "question": "Can workplace harassment be non-verbal?",
+        "answer": "Yes. Non-verbal harassment includes inappropriate gestures, sharing offensive content, staring, or displaying demeaning posters or materials."
+    },
+    {
+        "question": "How does a harassment-free workplace impact employee performance?",
+        "answer": "It enhances focus, creativity, and productivity, as employees feel secure and valued, without the fear of discrimination or harassment."
+    },
+    {
+        "question": "What steps can management take if a senior employee is accused of harassment?",
+        "answer": "Management should ensure an unbiased investigation through the ICC, protect the complainant, suspend the accused if necessary, and enforce strict disciplinary action if found guilty."
+    },
+    {
+        "question": "What is the POSH Act?",
+        "answer": "The POSH Act refers to the Sexual Harassment of Women at Workplace (Prevention, Prohibition, and Redressal) Act, 2013, enacted to protect women against sexual harassment at workplaces in India."
+    },
+    {
+        "question": "Why was the POSH Act introduced?",
+        "answer": "The POSH Act was introduced to provide a safe and secure workplace for women, ensure gender equality, and create a strong redressal mechanism for complaints of sexual harassment."
+    },
+    {
+        "question": "Who is covered under the POSH Act?",
+        "answer": "The Act covers all women, whether employed directly, indirectly, as interns, consultants, or visitors, in both organized and unorganized workplaces."
+    },
+    {
+        "question": "What is considered sexual harassment under the POSH Act?",
+        "answer": "Sexual harassment includes unwelcome physical contact, sexually colored remarks, showing pornography, demands for sexual favors, or any conduct that creates a hostile work environment."
+    },
+    {
+        "question": "What is an Internal Complaints Committee (ICC)?",
+        "answer": "The ICC is a committee mandated by the POSH Act in organizations with 10 or more employees to handle complaints of sexual harassment and conduct inquiries."
+    },
+    {
+        "question": "What are the responsibilities of the Internal Complaints Committee?",
+        "answer": "The ICC is responsible for receiving complaints, conducting inquiries, maintaining confidentiality, recommending actions, and submitting annual reports to the employer or government authority."
+    },
+    {
+        "question": "What should an organization's POSH policy include?",
+        "answer": "A POSH policy should include definitions of sexual harassment, complaint mechanisms, roles of the ICC, timelines for resolution, confidentiality measures, and disciplinary actions."
+    },
+    {
+        "question": "Is POSH training mandatory?",
+        "answer": "Yes. The POSH Act makes it mandatory for organizations to conduct regular awareness and sensitization training for employees and special training for ICC members."
+    },
+    {
+        "question": "What is the timeline for filing a complaint under the POSH Act?",
+        "answer": "A complaint must be filed within 3 months of the incident. The ICC may extend it to 6 months if the circumstances justify the delay."
+    },
+    {
+        "question": "How does the POSH Act ensure confidentiality?",
+        "answer": "The Act mandates that the identity of the complainant, respondent, and witnesses should not be disclosed, and proceedings must remain confidential."
+    },
+    {
+        "question": "What are the penalties for non-compliance with the POSH Act?",
+        "answer": "Penalties include monetary fines up to ₹50,000, cancellation of business license, and higher penalties for repeated violations."
+    },
+    {
+        "question": "Does the POSH Act apply to men?",
+        "answer": "The Act specifically protects women. However, organizations are encouraged to adopt gender-neutral policies for a safer workplace for all employees."
+    },
+    {
+        "question": "How should an organization implement its POSH policy effectively?",
+        "answer": "By constituting an ICC, conducting training, spreading awareness through posters and workshops, ensuring complaint mechanisms, and enforcing zero tolerance for harassment."
+    },
+    {
+        "question": "Can false complaints be penalized under the POSH Act?",
+        "answer": "Yes. If a complaint is proven to be malicious or false with intent to harm, the ICC may recommend action against the complainant. However, inability to prove harassment does not mean the complaint is false."
+    },
+    {
+        "question": "How does the POSH Act contribute to workplace culture?",
+        "answer": "The POSH Act promotes dignity, respect, gender equality, and a safe environment, encouraging more women to participate in the workforce confidently."
+    },
+    {
+        "question": "How many years of excellence does OHS have in POSH training and compliance?",
+        "answer": "OHS has over 10 years of excellence in delivering POSH training and compliance services."
+    },
+    {
+        "question": "How many cases has OHS handled so far?",
+        "answer": "We have successfully handled more than 180 workplace harassment and compliance-related cases with legal precision."
+    },
+    {
+        "question": "How many candidates have been trained by OHS?",
+        "answer": "OHS has trained over 10,000 candidates across various industries and regions."
+    },
+    {
+        "question": "Does OHS work with international teams?",
+        "answer": "Yes, we have global collaborations and experience working with international organizations."
+    },
+    {
+        "question": "What kind of implementation support does OHS provide?",
+        "answer": "We provide complete POSH implementation support including legal assistance and compliance audits."
+    },
+    {
+        "question": "Does OHS have expertise across multiple industries?",
+        "answer": "Yes, we specialize in multi-sector expertise covering manufacturing, education, IT/ITES, and more."
+    },
+    {
+        "question": "Has OHS received any awards for workplace safety?",
+        "answer": "Yes, we received the Best Workplace Safety Initiative award."
+    },
+    {
+        "question": "Has OHS been recognized for POSH compliance?",
+        "answer": "Absolutely, OHS won the award for POSH Compliance Excellence."
+    },
+    {
+        "question": "Has OHS been acknowledged as a leader in training?",
+        "answer": "Yes, OHS has been recognized as a National Training Leader for its impactful training initiatives."
+    },
+    {
+        "question": "How can I contact OHS for inquiries?",
+        "answer": "You can reach us through the contact form on our website, by email, or by phone. Visit our Contact Us page for full details."
+    },
+    {
+        "question": "What is the email address for OHS?",
+        "answer": "You can email us at info@openhandsolutions.com"
+    },
+    {
+        "question": "What is the phone number of OHS?",
+        "answer": "You can call us at +91 95923 39555"
+    },
+    {
+        "question": "Where is OHS located?",
+        "answer": "Our office is located at Sector-13,Chandigarh OHS, India."
+    },
+    {
+        "question": "What are OHS office hours?",
+        "answer": "Our office hours are Monday to Friday, 9:00 AM – 6:00 PM (IST)."
+    },
+    {
+        "question": "Can I book a consultation online?",
+        "answer": "Yes, you can request a consultation through our Contact Us page by filling in the inquiry form."
+    },
+    {
+        "question": "How quickly will I get a response after contacting OHS?",
+        "answer": "We usually respond within 24–48 business hours."
+    },
+    {
+        "question": "Is there a WhatsApp number to contact OHS?",
+        "answer": "Yes, you can also connect with us via WhatsApp at +91 95923 39555"
+    },
+    {
+        "question": "Can I visit the office directly without an appointment?",
+        "answer": "We recommend booking an appointment in advance to ensure availability, though walk-ins are welcome during office hours."
+    },
+    {
+        "question": "Does OHS provide virtual meetings for inquiries?",
+        "answer": "Yes, we offer virtual meetings via Zoom or Google Meet upon request."
+    },
+
+
+  {
+    "question": "hey",
+    "answer": "Hey! Welcome to OHS. How can I assist you today?"
+  },
+  {
+    "question": "hey there",
+    "answer": "Hey there! I’m your OHS assistant. How may I help you?"
+  },
+  {
+    "question": "OHS full form ",
+    "answer": "OpenHand Solutions"
+  },
+  {
+    "question": "OHS stand for ",
+    "answer": "OpenHand Solutions"
+  },
+  {
+    "question": "greetings",
+    "answer": "Greetings! Welcome to OHS, your trusted partner for POSH training and compliance."
+  },
+  {
+    "question": "what's up",
+    "answer": "I’m here to help you with OHS-related queries. How can I support you today?"
+  },
+  {
+    "question": "good day",
+    "answer": "Good day! How can I assist you with OHS services today?"
+  },
+  {
+    "question": "how are you doing",
+    "answer": "I’m doing great and ready to help! How are you doing today?"
+  },
+  {
+    "question": "who am I talking to",
+    "answer": "You’re chatting with the OHS Virtual Assistant, here to guide you on POSH training, policies, and workplace compliance."
+  },
+  {
+    "question": "can you help me",
+    "answer": "Of course! I’m here to help you with POSH training, workplace ethics, compliance, and more. What would you like to know?"
+  },
+  {
+    "question": "are you real",
+    "answer": "I’m a virtual assistant powered by OHS to provide instant guidance. If you need human support, I can connect you too."
+  },
+  {
+    "question": "introduce yourself",
+    "answer": "I’m the OHS chatbot, designed to assist you with POSH awareness, harassment-free workplace guidance, legal compliance, and training details."
+  },
+  {
+    "question": "nice to see you",
+    "answer": "Nice to see you too! I’m glad to assist with your queries regarding OHS services."
+  },
+  {
+    "question": "do you work 24/7",
+    "answer": "Yes! I’m available 24/7 to help with your OHS-related questions."
+  },
+  {
+    "question": "thank you for being here",
+    "answer": "It’s my pleasure! I’m always here to make your experience with OHS smooth and informative."
+  },
+  {
+    "question": "can I ask you something",
+    "answer": "Absolutely! Please go ahead, I’m here to answer your OHS-related questions."
+  },
+   {
+            "question": "What is OpenHand Solutions (OHS)?",
+            "answer": "OpenHand Solutions is a consultancy that helps organizations comply with the POSH Act through training, policy drafting, audits, and external committee support."
+        },
+        {
+            "question": "Why is POSH compliance important for companies?",
+            "answer": "It is legally required under the POSH Act, 2013, to ensure safe workplaces and avoid penalties."
+        },
+        {
+            "question": "Does OHS provide awareness training on POSH?",
+            "answer": "Yes, OHS conducts awareness sessions for employees at all levels."
+        },
+        {
+            "question": "Does OHS help in setting up an Internal Committee (IC)?",
+            "answer": "Yes, OHS guides organizations in forming and training Internal Committees."
+        },
+        {
+            "question": "Does OHS provide external members for IC?",
+            "answer": "Yes, OHS provides qualified professionals who act as external IC members."
+        },
+        {
+            "question": "Does OHS provide both online and offline POSH training?",
+            "answer": "Yes, training can be delivered virtually or in-person, depending on the organization’s needs."
+        },
+        {
+            "question": "Who can attend OHS POSH training programs?",
+            "answer": "Employees, managers, HR teams, and Internal Committee members."
+        },
+        {
+            "question": "What industries does OHS work with?",
+            "answer": "OHS works with IT, manufacturing, education, healthcare, corporate offices, and more."
+        },
+        {
+            "question": "Can small businesses also take OHS services?",
+            "answer": "Yes, OHS provides cost-effective POSH compliance services for SMEs and startups."
+        },
+        {
+            "question": "Does OHS provide multilingual training?",
+            "answer": "Yes, sessions can be conducted in multiple languages for diverse workforces."
+        },
+        {
+            "question": "Does OHS draft POSH policies for organizations?",
+            "answer": "Yes, OHS creates customized POSH policies that comply with the law."
+        },
+        {
+            "question": "Does OHS conduct compliance audits?",
+            "answer": "Yes, OHS audits policies, practices, and documents to ensure legal compliance."
+        },
+        {
+            "question": "How often should organizations review their POSH policy?",
+            "answer": "At least once a year or whenever legal changes occur."
+        },
+        {
+            "question": "Does OHS provide training for Internal Committee members?",
+            "answer": "Yes, OHS provides in-depth workshops on complaint handling and inquiry procedures."
+        },
+        {
+            "question": "Does OHS provide case study-based training?",
+            "answer": "Yes, OHS uses real-life scenarios to make training engaging and practical."
+        },
+        {
+            "question": "How long are OHS training programs?",
+            "answer": "They range from short awareness sessions to full-day workshops."
+        },
+        {
+            "question": "Does OHS provide refresher training?",
+            "answer": "Yes, refresher sessions are recommended annually."
+        },
+        {
+            "question": "Can OHS provide training for senior leadership?",
+            "answer": "Yes, OHS offers sessions for leaders and managers on safe workplace culture."
+        },
+        {
+            "question": "Does OHS help in filing annual POSH reports?",
+            "answer": "Yes, OHS supports organizations in preparing and submitting annual compliance reports."
+        },
+        {
+            "question": "Does OHS provide awareness materials like posters, handbooks, and e-learning?",
+            "answer": "Yes, OHS offers customized awareness resources."
+        },
+        {
+            "question": "Does OHS help investigate POSH complaints?",
+            "answer": "Yes, OHS guides IC members in handling complaints fairly and legally."
+        },
+        {
+            "question": "Can OHS act as an external IC member during inquiries?",
+            "answer": "Yes, OHS experts can serve as external members to ensure impartiality."
+        },
+        {
+            "question": "Does OHS provide legal guidance for POSH cases?",
+            "answer": "Yes, OHS offers expert advice and works with legal professionals when needed."
+        },
+        {
+            "question": "How does OHS help in remote work or virtual workplace harassment cases?",
+            "answer": "OHS provides updated policies and training covering online platforms and communication."
+        },
+        {
+            "question": "Can OHS support contract workers, interns, and consultants under POSH compliance?",
+            "answer": "Yes, OHS ensures that all categories of women workers are covered."
+        },
+        {
+            "question": "Does OHS assist companies during labor inspections?",
+            "answer": "Yes, OHS helps prepare documentation and guides during inspections."
+        },
+        {
+            "question": "Can OHS help organizations document IC proceedings?",
+            "answer": "Yes, OHS provides templates and training for proper records."
+        },
+        {
+            "question": "Does OHS update clients on POSH law changes?",
+            "answer": "Yes, OHS continuously informs clients about legal updates and judgments."
+        },
+        {
+            "question": "Can OHS provide POSH compliance certification?",
+            "answer": "Yes, after audits and training, OHS issues compliance certificates."
+        },
+        {
+            "question": "What happens if a company fails to comply with POSH law?",
+            "answer": "They may face penalties up to ₹50,000 and cancellation of license for repeated offences."
+        },
+        {
+            "question": "How does OHS handle cases where the CEO or senior leader is accused?",
+            "answer": "OHS ensures impartial inquiry with external experts and legal compliance."
+        },
+        {
+            "question": "How does OHS protect confidentiality during POSH inquiries?",
+            "answer": "All details are kept confidential, and only IC members are involved in proceedings."
+        },
+        {
+            "question": "How does OHS ensure fairness to both complainant and respondent?",
+            "answer": "By following natural justice principles and giving equal opportunity to both parties."
+        },
+        {
+            "question": "Can OHS help in cross-location complaints across multiple offices?",
+            "answer": "Yes, OHS ensures IC and management handle such cases properly."
+        },
+        {
+            "question": "Does OHS provide 24/7 consultation for urgent POSH matters?",
+            "answer": "Yes, OHS provides on-demand consultation support."
+        },
+        {
+            "question": "Can IC’s decisions be challenged?",
+            "answer": "Yes, they can be appealed in court or labor tribunal."
+        },
+        {
+            "question": "How does OHS support organizations in preventing false or malicious complaints?",
+            "answer": "Through awareness training, policy clarity, and fair inquiry practices."
+        },
+        {
+            "question": "Does OHS provide support for workplace culture building beyond POSH?",
+            "answer": "Yes, OHS also focuses on diversity, inclusion, and respectful workplace culture."
+        },
+        {
+            "question": "How does OHS handle training for remote or hybrid teams?",
+            "answer": "OHS provides virtual workshops and e-learning modules for distributed teams."
+        },
+        {
+            "question": "Does OHS provide long-term partnership programs?",
+            "answer": "Yes, OHS works with companies as long-term compliance partners for audits, training, and external IC support."
+        },
+        {
+            "question": "Does OHS provide POSH training certificates to participants?",
+            "answer": "Yes, participants receive completion certificates."
+        },
+        {
+            "question": "Can OHS conduct surprise compliance checks?",
+            "answer": "Yes, OHS can do unannounced audits to assess real compliance."
+        },
+        {
+            "question": "Does OHS provide digital learning modules for employees?",
+            "answer": "Yes, OHS offers e-learning modules accessible anytime."
+        },
+        {
+            "question": "How does OHS customize training for different levels of employees?",
+            "answer": "Separate programs are designed for staff, managers, and IC members."
+        },
+        {
+            "question": "Can OHS integrate POSH training with onboarding programs?",
+            "answer": "Yes, POSH awareness is included in employee induction programs."
+        },
+        {
+            "question": "Does OHS provide data privacy and IT security awareness along with POSH?",
+            "answer": "Yes, OHS combines POSH with digital safety modules if required."
+        },
+        {
+            "question": "How does OHS ensure inclusivity in POSH compliance?",
+            "answer": "By covering issues related to gender sensitivity, LGBTQ+, and workplace respect."
+        },
+        {
+            "question": "Can OHS provide case study reports for management review?",
+            "answer": "Yes, OHS provides anonymized reports for learning purposes."
+        },
+        {
+            "question": "Does OHS provide international POSH compliance guidance?",
+            "answer": "Yes, OHS helps global organizations align POSH with international HR policies."
+        },
+        {
+            "question": "Why should companies choose OHS for POSH compliance?",
+            "answer": "Because OHS provides end-to-end solutions including training, audits, policy drafting, external IC members, and legal updates."
+        },
+         {
+            "question": "What is OpenHand Solutions (OHS)?",
+            "answer": "OpenHand Solutions is a consultancy that helps organizations comply with the POSH Act through training, policy drafting, audits, and external committee support."
+        },
+        {
+            "question": "Why is POSH compliance important for companies?",
+            "answer": "It is legally required under the POSH Act, 2013, to ensure safe workplaces and avoid penalties."
+        },
+        {
+            "question": "Does OHS provide awareness training on POSH?",
+            "answer": "Yes, OHS conducts awareness sessions for employees at all levels."
+        },
+        {
+            "question": "Does OHS help in setting up an Internal Committee (IC)?",
+            "answer": "Yes, OHS guides organizations in forming and training Internal Committees."
+        },
+        {
+            "question": "Does OHS provide external members for IC?",
+            "answer": "Yes, OHS provides qualified professionals who act as external IC members."
+        },
+        {
+            "question": "Does OHS provide both online and offline POSH training?",
+            "answer": "Yes, training can be delivered virtually or in-person, depending on the organization’s needs."
+        },
+        {
+            "question": "Who can attend OHS POSH training programs?",
+            "answer": "Employees, managers, HR teams, and Internal Committee members."
+        },
+        {
+            "question": "What industries does OHS work with?",
+            "answer": "OHS works with IT, manufacturing, education, healthcare, corporate offices, and more."
+        },
+        {
+            "question": "Can small businesses also take OHS services?",
+            "answer": "Yes, OHS provides cost-effective POSH compliance services for SMEs and startups."
+        },
+        {
+            "question": "Does OHS provide multilingual training?",
+            "answer": "Yes, sessions can be conducted in multiple languages for diverse workforces."
+        },
+        {
+            "question": "Does OHS draft POSH policies for organizations?",
+            "answer": "Yes, OHS creates customized POSH policies that comply with the law."
+        },
+        {
+            "question": "Does OHS conduct compliance audits?",
+            "answer": "Yes, OHS audits policies, practices, and documents to ensure legal compliance."
+        },
+        {
+            "question": "How often should organizations review their POSH policy?",
+            "answer": "At least once a year or whenever legal changes occur."
+        },
+        {
+            "question": "Does OHS provide training for Internal Committee members?",
+            "answer": "Yes, OHS provides in-depth workshops on complaint handling and inquiry procedures."
+        },
+        {
+            "question": "Does OHS provide case study-based training?",
+            "answer": "Yes, OHS uses real-life scenarios to make training engaging and practical."
+        },
+        {
+            "question": "How long are OHS training programs?",
+            "answer": "They range from short awareness sessions to full-day workshops."
+        },
+        {
+            "question": "Does OHS provide refresher training?",
+            "answer": "Yes, refresher sessions are recommended annually."
+        },
+        {
+            "question": "Can OHS provide training for senior leadership?",
+            "answer": "Yes, OHS offers sessions for leaders and managers on safe workplace culture."
+        },
+        {
+            "question": "Does OHS help in filing annual POSH reports?",
+            "answer": "Yes, OHS supports organizations in preparing and submitting annual compliance reports."
+        },
+        {
+            "question": "Does OHS provide awareness materials like posters, handbooks, and e-learning?",
+            "answer": "Yes, OHS offers customized awareness resources."
+        },
+        {
+            "question": "Does OHS help investigate POSH complaints?",
+            "answer": "Yes, OHS guides IC members in handling complaints fairly and legally."
+        },
+        {
+            "question": "Can OHS act as an external IC member during inquiries?",
+            "answer": "Yes, OHS experts can serve as external members to ensure impartiality."
+        },
+        {
+            "question": "Does OHS provide legal guidance for POSH cases?",
+            "answer": "Yes, OHS offers expert advice and works with legal professionals when needed."
+        },
+        {
+            "question": "How does OHS help in remote work or virtual workplace harassment cases?",
+            "answer": "OHS provides updated policies and training covering online platforms and communication."
+        },
+        {
+            "question": "Can OHS support contract workers, interns, and consultants under POSH compliance?",
+            "answer": "Yes, OHS ensures that all categories of women workers are covered."
+        },
+        {
+            "question": "Does OHS assist companies during labor inspections?",
+            "answer": "Yes, OHS helps prepare documentation and guides during inspections."
+        },
+        {
+            "question": "Can OHS help organizations document IC proceedings?",
+            "answer": "Yes, OHS provides templates and training for proper records."
+        },
+        {
+            "question": "Does OHS update clients on POSH law changes?",
+            "answer": "Yes, OHS continuously informs clients about legal updates and judgments."
+        },
+        {
+            "question": "Can OHS provide POSH compliance certification?",
+            "answer": "Yes, after audits and training, OHS issues compliance certificates."
+        },
+        {
+            "question": "What happens if a company fails to comply with POSH law?",
+            "answer": "They may face penalties up to ₹50,000 and cancellation of license for repeated offences."
+        },
+        {
+            "question": "How does OHS handle cases where the CEO or senior leader is accused?",
+            "answer": "OHS ensures impartial inquiry with external experts and legal compliance."
+        },
+        {
+            "question": "How does OHS protect confidentiality during POSH inquiries?",
+            "answer": "All details are kept confidential, and only IC members are involved in proceedings."
+        },
+        {
+            "question": "How does OHS ensure fairness to both complainant and respondent?",
+            "answer": "By following natural justice principles and giving equal opportunity to both parties."
+        },
+        {
+            "question": "Can OHS help in cross-location complaints across multiple offices?",
+            "answer": "Yes, OHS ensures IC and management handle such cases properly."
+        },
+        {
+            "question": "Does OHS provide 24/7 consultation for urgent POSH matters?",
+            "answer": "Yes, OHS provides on-demand consultation support."
+        },
+        {
+            "question": "Can IC’s decisions be challenged?",
+            "answer": "Yes, they can be appealed in court or labor tribunal."
+        },
+        {
+            "question": "How does OHS support organizations in preventing false or malicious complaints?",
+            "answer": "Through awareness training, policy clarity, and fair inquiry practices."
+        },
+        {
+            "question": "Does OHS provide support for workplace culture building beyond POSH?",
+            "answer": "Yes, OHS also focuses on diversity, inclusion, and respectful workplace culture."
+        },
+        {
+            "question": "How does OHS handle training for remote or hybrid teams?",
+            "answer": "OHS provides virtual workshops and e-learning modules for distributed teams."
+        },
+        {
+            "question": "Does OHS provide long-term partnership programs?",
+            "answer": "Yes, OHS works with companies as long-term compliance partners for audits, training, and external IC support."
+        },
+        {
+            "question": "Does OHS provide POSH training certificates to participants?",
+            "answer": "Yes, participants receive completion certificates."
+        },
+        {
+            "question": "Can OHS conduct surprise compliance checks?",
+            "answer": "Yes, OHS can do unannounced audits to assess real compliance."
+        },
+        {
+            "question": "Does OHS provide digital learning modules for employees?",
+            "answer": "Yes, OHS offers e-learning modules accessible anytime."
+        },
+        {
+            "question": "How does OHS customize training for different levels of employees?",
+            "answer": "Separate programs are designed for staff, managers, and IC members."
+        },
+        {
+            "question": "Can OHS integrate POSH training with onboarding programs?",
+            "answer": "Yes, POSH awareness is included in employee induction programs."
+        },
+        {
+            "question": "Does OHS provide data privacy and IT security awareness along with POSH?",
+            "answer": "Yes, OHS combines POSH with digital safety modules if required."
+        },
+        {
+            "question": "How does OHS ensure inclusivity in POSH compliance?",
+            "answer": "By covering issues related to gender sensitivity, LGBTQ+, and workplace respect."
+        },
+        {
+            "question": "Can OHS provide case study reports for management review?",
+            "answer": "Yes, OHS provides anonymized reports for learning purposes."
+        },
+        {
+            "question": "Does OHS provide international POSH compliance guidance?",
+            "answer": "Yes, OHS helps global organizations align POSH with international HR policies."
+        },
+        {
+            "question": "Why should companies choose OHS for POSH compliance?",
+            "answer": "Because OHS provides end-to-end solutions including training, audits, policy drafting, external IC members, and legal updates."
+        }
+
+
+
+]

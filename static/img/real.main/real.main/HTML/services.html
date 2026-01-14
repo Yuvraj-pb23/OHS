@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog Post | OHS</title>
+  <link rel="stylesheet" href="../CSS/new.css">
+  <!-- <link rel="stylesheet" href="../CSS/services.css"> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+  <style>
+
+    html, body {
+  overflow-x: hidden;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Hero Section */
+.services-hero {
+  position: relative;
+  background: url('../img/ser.jpeg') center/cover no-repeat;
+  background-attachment: fixed;
+  height: 500px;
+  color: #ffffff;
+  padding: 120px 20px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.services-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="50" cy="10" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="10" cy="60" r="1" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+  opacity: 0.4;
+}
+
+.services-hero .container {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+}
+
+.services-hero h1 {
+  font-size: 3.5rem;
+  font-weight: 700;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  margin-bottom: 20px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.services-hero p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 15px auto 30px;
+  opacity: 0.9;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.services-hero .btn {
+  padding: 16px 40px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  background: #f59e0b;
+  border: none;
+  color: #ffffff;
+  box-shadow: 0 4px 20px rgba(245, 158, 11, 0.3);
+  transition: all 0.3s ease;
+  letter-spacing: 0.025em;
+}
+
+.services-hero .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+  background: #d97706;
+}
+
+/* Blog Overview Section */
+.blog-overview-section {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  text-align: center;
+  position: relative;
+}
+
+.blog-overview-section .container {
+  max-width: 1200px;
+  margin: auto;
+  position: relative;
+}
+
+.overview-title {
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #1e293b;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.overview-subtitle {
+  font-size: 1.2rem;
+  color: #64748b;
+  max-width: 700px;
+  margin: 0 auto 50px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Services List Section */
+#services-list {
+  background: #ffffff;
+  padding: 100px 0;
+  position: relative;
+}
+
+#services-list .container {
+  position: relative;
+  max-width: 1200px;
+}
+
+#services-list h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 15px;
+  letter-spacing: -0.02em;
+}
+
+#services-list .text-muted {
+  color: #64748b !important;
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+/* Service Cards */
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px !important;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  border-color: #f59e0b;
+}
+
+.card .fa-3x {
+  color: #3b82f6;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.card:hover .fa-3x {
+  color: #f59e0b;
+  transform: scale(1.1);
+}
+
+.card h5 {
+  color: #1e293b;
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+}
+
+.card .text-muted {
+  color: #64748b !important;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+/* Communication Section */
+.communication-section {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  text-align: center;
+  position: relative;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  color: #1e293b;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+  max-width: 700px;
+  margin: 0 auto 50px auto;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Person Card */
+.person-card {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  max-width: 400px;
+  margin: 0 auto 80px auto;
+  transition: 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.person-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+}
+
+.profile-pic img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid #e2e8f0;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.person-card:hover .profile-pic img {
+  border-color: #3b82f6;
+}
+
+.person-card h3 {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.person-card p {
+  color: #64748b;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+.social-links a {
+  margin: 0 8px;
+  font-size: 1.2rem;
+  color: #64748b;
+  transition: 0.3s;
+}
+
+.social-links a:hover {
+  color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+/* Skills Grid */
+.skills-list h3 {
+  font-size: 2rem;
+  margin-bottom: 40px;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: center;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.skill-card {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  text-align: left;
+  transition: 0.3s ease;
+  border: 1px solid #e2e8f0;
+  position: relative;
+}
+
+.skill-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  border-color: #3b82f6;
+}
+
+.skill-icon {
+  font-size: 2rem;
+  color: #3b82f6;
+  margin-bottom: 15px;
+}
+
+.skill-card h4 {
+  margin: 0 0 15px 0;
+  color: #1e293b;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.skill-card p {
+  font-size: 0.95rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.more-content {
+  display: none;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.more-content ul {
+  padding-left: 20px;
+  margin-bottom: 15px;
+}
+
+.more-content li {
+  color: #64748b;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.read-more-btn {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.read-more-btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Main Content Area */
+.container.py-5 {
+  background: #ffffff;
+  border-radius: 16px;
+  margin: 40px auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 60px 40px !important;
+  position: relative;
+  border: 1px solid #e2e8f0;
+}
+
+/* Blog Hero */
+.blog-hero {
+  background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+  color: #fff;
+  padding: 50px 40px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-shadow: 0 8px 30px rgba(30, 58, 138, 0.2);
+  position: relative;
+}
+
+.blog-hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Article Content */
+.article-content p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  color: #374151;
+  font-weight: 400;
+}
+
+/* Sidebar */
+aside .bg-white {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+aside .bg-white:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+aside h5 {
+  color: #1e293b;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+aside ul li a {
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+
+aside ul li a:hover {
+  color: #3b82f6;
+}
+
+/* CTA Section */
+.cta-section {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(245, 158, 11, 0.2);
+  position: relative;
+}
+
+.cta-section h4 {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+}
+
+.cta-section p {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+.cta-section .btn {
+  background: #ffffff;
+  color: #d97706;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cta-section .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  background: #f8fafc;
+}
+
+/* Related Posts */
+.related-posts .border {
+  border: 1px solid #e2e8f0 !important;
+  transition: all 0.3s ease;
+}
+
+.related-posts .border:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  border-color: #3b82f6 !important;
+}
+
+.related-posts a {
+  color: #1e293b;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.related-posts a:hover {
+  color: #3b82f6;
+}
+
+/* Social Share */
+.social-share .btn {
+  margin-right: 8px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.social-share .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto 40px;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 16px 60px 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  color: #1e293b;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.search-bar button {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: #3b82f6;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.search-bar button:hover {
+  background: #2563eb;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Category Filter */
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.filter-tag {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.filter-tag:hover,
+.filter-tag.active {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+/* Popup Styles */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.popup-content {
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: popupFade 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.popup-content h4 {
+  color: #059669;
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
+
+.popup-content p {
+  color: #64748b;
+  margin-bottom: 25px;
+  font-size: 1rem;
+}
+
+#closePopup {
+  background: #3b82f6;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  color: #ffffff;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+#closePopup:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* Animation */
+@keyframes popupFade {
+  from { 
+    transform: scale(0.9) translateY(-20px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1) translateY(0); 
+    opacity: 1; 
+  }
+}
+
+/* Form Styles */
+.form-control {
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+  outline: none;
+}
+
+/* Button Styles */
+.btn-warning {
+  background: #f59e0b;
+  border-color: #f59e0b;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.btn-warning:hover {
+  background: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.btn-dark {
+  background: #1e293b;
+  border-color: #1e293b;
+  font-weight: 500;
+}
+
+.btn-dark:hover {
+  background: #0f172a;
+  border-color: #0f172a;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .services-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .overview-title {
+    font-size: 2.2rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+  }
+  
+  .container.py-5 {
+    margin: 20px;
+    padding: 30px 20px !important;
+    border-radius: 12px;
+  }
+  
+  .person-card {
+    margin: 0 auto 60px auto;
+    padding: 30px 20px;
+  }
+  
+  .profile-pic img {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .skills-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .blog-hero {
+    padding: 30px 20px;
+  }
+  
+  .blog-hero h1 {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .services-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .services-hero p {
+    font-size: 1rem;
+  }
+  
+  .overview-title {
+    font-size: 1.8rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .search-bar input {
+    padding: 14px 50px 14px 16px;
+  }
+  
+  .filter-tag {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    .blog-hero {
+      /* background: linear-gradient(135deg, #ffd700, #ffa500); */
+      color: #fff;
+      padding: 60px 30px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+    }
+
+    .blog-hero h1 {
+      font-size: 2.5rem;
+      font-weight: bold;
+    }
+
+    .meta-info {
+      font-size: 0.9rem;
+      color: #f0f0f0;
+    }
+
+    .article-content p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .author-box {
+      background-color: #fff3cd;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 40px;
+    }
+
+    .related-posts h5,
+    .comments-section h5,
+    .cta-section h4 {
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .related-posts a {
+      text-decoration: none;
+      color: #333;
+    }
+
+    .cta-section {
+      background-color: #ffeeba;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .cta-section a {
+      text-decoration: none;
+    }
+
+    .social-share a {
+      margin-right: 10px;
+    }
+
+    .comment-box {
+      background: #fff;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-control:focus {
+      box-shadow: none;
+      border-color: #ffc107;
+    }
+    .communication-section {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #f9f9f9, #eef5ff);
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  color: #222;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 750px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
+}
+
+/* Person Card (centered) */
+.person-card {
+  background: #fff;
+  padding: 30px 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  max-width: 450px;
+  margin: 0 auto 60px auto;
+  transition: 0.4s ease;
+}
+.person-card:hover {
+  transform: translateY(-10px) scale(1.03);
+}
+.profile-pic img {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #0073e6;
+  margin-bottom: 15px;
+}
+.person-card h3 {
+  margin-bottom: 5px;
+  color: #111;
+  font-size: 1.4rem;
+}
+.person-card p {
+  color: #666;
+  font-size: 0.95rem;
+}
+.social-links {
+  margin-top: 15px;
+}
+.social-links a {
+  margin: 0 8px;
+  font-size: 1.3rem;
+  color: #555;
+  transition: 0.3s;
+}
+.social-links a:hover {
+  color: #0073e6;
+  transform: scale(1.2);
+}
+
+/* Skills List */
+.skills-list {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.skills-list h3 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #0073e6;
+  text-align: center;
+}
+
+/* Skills Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.skill-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  text-align: left;
+  transition: 0.3s;
+}
+.skill-card:hover {
+  transform: translateY(-6px);
+  background: #f0f8ff;
+}
+.skill-card h4 {
+  margin: 10px 0;
+  color: #222;
+  font-size: 1.2rem;
+}
+.skill-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+.skill-icon {
+  font-size: 2rem;
+  color: #0073e6;
+}
+.more-content {
+  display: none;
+  margin-top: 10px;
+}
+.read-more-btn {
+  margin-top: 10px;
+  background: #0077cc;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.read-more-btn:hover {
+  background: #005fa3;
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+   <div id="chatbot-container"></div>
+    <div id="navbar-placeholder"></div>
+  <header>
+ 
+
+  <section class="services-hero" data-aos="fade-up" data-aos-delay="100">
+    <div class="container">
+       <h1 data-aos="fade-up" data-aos-delay="200">Our Professional Services</h1>
+      <p data-aos="fade-up" data-aos-delay="300">
+        We offer comprehensive POSH compliance training, workplace audits, policy formulation, and more to help organizations build safe and inclusive work environments.
+      </p> 
+      <a href="#service1" class="btn btn-warning" data-aos="zoom-in" data-aos-delay="400">Explore Services</a>
+    </div>
+  </section>
+
+
+  </header>
+<section class="blog-overview-section" id="service1">
+  <div class="container" id="all">
+    
+    <!-- Header -->
+    <div class="overview-header" data-aos="fade-up">
+      <h1 class="overview-title">Discover Insights & Inspiration</h1>
+      <p class="overview-subtitle">
+        Welcome to our Blog — your hub for expert advice, industry trends, and powerful stories. Search and explore topics that matter to you.
+      </p>
+    </div>
+</section>
+
+
+<!-- Services Section -->
+<section id="services-list" class="py-5" style="background-color: #f8f9fa;">
+  <div class="container">
+    <!-- Section Title -->
+    <div class="text-center mb-5" data-aos="fade-up">
+      <h2 class="fw-bold">What We Offer</h2>
+      <p class="text-muted">
+        Our comprehensive range of POSH compliance and workplace safety services.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Service Card 1 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-chalkboard-teacher fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">POSH Awareness Training</h5>
+          <p class="text-muted">
+            Educating employees and managers on POSH guidelines, workplace respect, and legal compliance.
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Card 2 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-file-contract fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">Policy Formulation</h5>
+          <p class="text-muted">
+            Drafting customized anti-sexual harassment policies tailored to your organization's needs.
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Card 3 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-balance-scale fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">Workplace Audits</h5>
+          <p class="text-muted">
+            Conducting workplace audits to ensure compliance and identify improvement areas.
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Card 4 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="400">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-users fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">ICC Member Training</h5>
+          <p class="text-muted">
+            Specialized sessions to equip Internal Complaints Committee members with the right knowledge.
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Card 5 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="500">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-gavel fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">Legal Assistance</h5>
+          <p class="text-muted">
+            Providing legal advice and support in handling workplace harassment cases.
+          </p>
+        </div>
+      </div>
+
+      <!-- Service Card 6 -->
+      <div class="col-md-4" data-aos="fade-up" data-aos-delay="600">
+        <div class="card border-0 shadow-sm h-100 text-center p-4">
+          <div class="mb-3">
+            <i class="fas fa-handshake fa-3x text-warning"></i>
+          </div>
+          <h5 class="fw-bold">Consulting Services</h5>
+          <p class="text-muted">
+            Helping organizations create safer and more inclusive workplace environments.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="communication-section" id="communication">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-up">Communication Skills</h2>
+    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+      Effective communication is the foundation of leadership, teamwork, and personal growth. 
+      Learn from our expert and master the skills that shape confident interactions.
+    </p>
+
+    <!-- Person Profile -->
+    <div class="person-card" data-aos="zoom-in">
+      <div class="profile-pic">
+        <img src="../img/comm.jpg" alt="Communication Expert">
+      </div>
+      <h3>Anita</h3>
+      <p>Professional Communication Coach</p>
+      <div class="social-links">
+        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+
+    <!-- Communication Skills Grid -->
+    <div class="skills-list" id="skills">
+      <h3 data-aos="fade-up">Key Communication Skills</h3>
+      <div class="skills-grid">
+
+        <!-- Skill 1 -->
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
+          <i class="fas fa-comment skill-icon"></i>
+          <h4>Verbal Communication</h4>
+          <p>Clear expression through words, focusing on tone, clarity, and confidence.</p>
+          <div class="more-content">
+            <ul>
+              <li>Use clear, simple language.</li>
+              <li>Avoid filler words like “um” or “you know.”</li>
+              <li>Speak at a moderate pace—neither too fast nor too slow.</li>
+              <li>Match your tone to the message you’re delivering.</li>
+            </ul>
+            <p><strong>Example:</strong> Instead of saying, “We might want to consider this,” say, “I recommend we do this because…”</p>
+          </div>
+          <button class="read-more-btn">Read More</button>
+        </div>
+
+        <!-- Skill 2 -->
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
+          <i class="fas fa-hand-paper skill-icon"></i>
+          <h4>Non-Verbal Communication</h4>
+          <p>Gestures, posture, and expressions that reinforce spoken words.</p>
+          <div class="more-content">
+            <ul>
+              <li>Maintain eye contact to show attentiveness.</li>
+              <li>Smile when appropriate to create warmth.</li>
+              <li>Mirror body language for better connection.</li>
+            </ul>
+            <p><strong>Pro Tip:</strong> Be aware of your resting expression—it sends signals even when you’re not speaking.</p>
+          </div>
+          <button class="read-more-btn">Read More</button>
+        </div>
+
+        <!-- Skill 3 -->
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
+          <i class="fas fa-user skill-icon"></i>
+          <h4>Body Language</h4>
+          <p>Posture, eye contact, and movements that reflect openness and respect.</p>
+          <div class="more-content">
+            <ul>
+              <li>Stand or sit up straight to show confidence.</li>
+              <li>Avoid closed-off positions like crossed arms.</li>
+              <li>Use open gestures to invite dialogue.</li>
+            </ul>
+            <p><strong>Reminder:</strong> People often trust body language more than words when they conflict.</p>
+          </div>
+          <button class="read-more-btn">Read More</button>
+        </div>
+
+        <!-- Skill 4 -->
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
+          <i class="fas fa-headphones skill-icon"></i>
+          <h4>Listening Skills</h4>
+          <p>Active listening to understand and respond thoughtfully.</p>
+          <div class="more-content">
+            <ul>
+              <li>Don’t interrupt the speaker.</li>
+              <li>Show engagement with nods or affirmations.</li>
+              <li>Ask follow-up questions for clarity.</li>
+              <li>Avoid distractions—especially your phone.</li>
+            </ul>
+            <p><strong>Key:</strong> People feel valued when they’re heard.</p>
+          </div>
+          <button class="read-more-btn">Read More</button>
+        </div>
+
+        <!-- Skill 5 -->
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="500">
+          <i class="fas fa-heart skill-icon"></i>
+          <h4>Empathic Reasoning</h4>
+          <p>Understanding others’ emotions and perspectives to build trust.</p>
+          <div class="more-content">
+            <ul>
+              <li>Put yourself in the other person’s shoes.</li>
+              <li>Acknowledge feelings without judgment.</li>
+              <li>Use phrases like “I understand how that could be frustrating.”</li>
+            </ul>
+            <p><strong>Pro Tip:</strong> Empathy doesn’t mean agreement—you can understand without necessarily agreeing.</p>
+          </div>
+          <button class="read-more-btn">Read More</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Page Content -->
+<div class="container py-5" id="service">
+  <div class="row">
+    <!-- Main Content -->
+    <div class="col-lg-8" data-aos="fade-right">
+      <!-- Blog Hero Section -->
+      <section class="blog-hero shadow-sm p-4 bg-white rounded">
+        <h1>Creating Safe Workspaces: The Importance of POSH Training</h1>
+        <div class="meta-info mt-3">
+          <!-- <span>By <strong>Jane Doe</strong> | Aug 7, 2025</span> ·
+          <span>5 min read</span> -->
+        </div>
+      </section>
+
+      <!-- Article Content -->
+      <div class="article-content my-4">
+        <p>
+          A positive and inclusive work culture is essential in today’s corporate landscape. Implementing POSH
+          (Prevention of Sexual Harassment) training not only ensures legal compliance but also fosters employee trust.
+        </p>
+        <p>
+          Effective training, leadership commitment, and regular sensitization are the core pillars of a POSH
+          environment.
+        </p>
+        <p>
+          Here’s how your organization can benefit from regular workshops and awareness programs...
+        </p>
+      </div>
+
+      <!-- Social Sharing -->
+      <div class="social-share mb-4">
+        <h6>Share this article:</h6>
+        <a href="https://www.facebook.com/" class="btn btn-sm btn-outline-primary">Facebook</a>
+        <a href="https://x.com/?lang=en-in" class="btn btn-sm btn-outline-info">Twitter</a>
+        <a href="https://in.linkedin.com/" class="btn btn-sm btn-outline-dark">LinkedIn</a>
+      </div>
+
+      <!-- Author Box -->
+      <!-- <div class="author-box d-flex align-items-center shadow-sm p-3 bg-white rounded">
+        <img src="../images/author.jpg" alt="Author" class="rounded-circle me-3" width="70" height="70">
+        <div>
+          <h6 class="mb-0">Jane Doe</h6>
+          <small>Training Consultant, OHS</small>
+          <p class="mt-2 mb-0">Jane has over 10 years of experience helping organizations stay compliant and
+            culture-positive through innovative training programs.</p>
+        </div>
+      </div> -->
+
+      <!-- Related Posts -->
+      <div class="related-posts mt-5">
+        <h5>Related Posts</h5>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white shadow-sm">
+              <a href="#">How to Handle Workplace Grievances Effectively</a>
+              <p class="text-muted small mt-2">Strategies for HR managers to address complaints efficiently.</p>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded bg-white shadow-sm">
+              <a href="#">5 Signs Your POSH Policy Needs an Update</a>
+              <p class="text-muted small mt-2">Keep your workplace aligned with current laws and employee needs.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- CTA Section -->
+      <div class="cta-section mt-5 shadow-sm p-4 bg-white rounded">
+        <h4>Need Help with POSH Compliance?</h4>
+        <p>We offer training programs, audits, and expert legal advice tailored to your organization’s needs.</p>
+        <a href="#service1" class="btn btn-dark mt-2">Explore Our Services</a>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="col-lg-4" data-aos="fade-left">
+      <div class="bg-white shadow-sm p-4 mb-4 rounded newsletter">
+        <h5 class="mb-3">Subscribe to Our Newsletter</h5>
+        <form id="newsletterForm">
+          <input type="email" class="form-control mb-2" placeholder="Enter your email" required>
+          <button type="submit" class="btn btn-warning w-100">Subscribe</button>
+        </form>
+      </div>
+      <div class="bg-white shadow-sm p-4 rounded">
+        <h5 class="mb-3">Popular Topics</h5>
+        <ul class="list-unstyled">
+          <li><a href="./posh_T.html">POSH Training</a></li>
+          <li><a href="./workplace.html">Workplace Ethics</a></li>
+          <li><a href="./legal.html">Legal Compliance</a></li>
+        </ul>
+      </div>
+    </aside>
+    <!-- Success Popup -->
+<div id="subscribePopup" class="popup-overlay">
+  <div class="popup-content">
+    <h4>✅ Subscription Successful</h4>
+    <p>Thank you for subscribing to our newsletter!</p>
+    <button id="closePopup" class="btn btn-warning mt-3">Close</button>
+  </div>
+</div>
+
+  </div>
+</div>
+
+
+
+
+
+<div id="footer-container"></div>
+
+<!-- Popup -->
+<div id="popupMessage" class="popup-overlay">
+  <div class="popup-content">
+    <p id="popupText"></p>
+    <button id="closePopup">Close</button>
+  </div>
+</div>
+
+
+
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+     fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+
+    document.querySelectorAll('.read-more-btn').forEach(button => {
+  button.addEventListener('click', () => {
+    const moreContent = button.previousElementSibling;
+    moreContent.style.display = moreContent.style.display === 'block' ? 'none' : 'block';
+    button.textContent = button.textContent === 'Read More' ? 'Read Less' : 'Read More';
+  });
+});
+
+document.getElementById("newsletterForm").addEventListener("submit", function(e) {
+  e.preventDefault(); // Prevent actual form submission
+  
+  // Show popup
+  document.getElementById("subscribePopup").style.display = "flex";
+  
+  // Auto-close after 3 seconds
+  setTimeout(() => {
+    document.getElementById("subscribePopup").style.display = "none";
+  }, 3000);
+});
+
+// Close button
+document.getElementById("closePopup").addEventListener("click", function() {
+  document.getElementById("subscribePopup").style.display = "none";
+});
+
+
+
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+    AOS.init();
+
+
+    fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+     AOS.init();
+
+  // Toggle active category (basic visual behavior)
+
+  document.querySelectorAll('.filter-tag').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+
+
+  const filterButtons = document.querySelectorAll('.filter-tag');
+  const blogCards = document.querySelectorAll('.blog-card');
+
+  filterButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      // Remove active class from all
+      filterButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      const category = button.innerText.toLowerCase();
+
+      blogCards.forEach(card => {
+        const cardCategory = card.getAttribute('data-category');
+        if (category === 'all' || cardCategory === category) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+
+  const searchInput = document.querySelector('.search-bar input');
+  const blogCards1 = document.querySelectorAll('.blog-card');
+
+  searchInput.addEventListener('input', function () {
+    const query = this.value.toLowerCase();
+
+    blogCards1.forEach(card => {
+      const title = card.querySelector('span').innerText.toLowerCase();
+      if (title.includes(query)) {
+        card.style.display = 'block';
+        card.classList.add('fade-in');
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('fade-in');
+      }
+    });
+  });
+
+
+
+
+
+
+const newsletterForm = document.querySelector(".newsletter form");
+const popup = document.getElementById("popupMessage");
+const popupText = document.getElementById("popupText");
+const closePopup = document.getElementById("closePopup");
+
+if (newsletterForm) {
+  newsletterForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const emailInput = newsletterForm.querySelector("input[type='email']");
+    const email = emailInput.value.trim();
+
+    if (email !== "") {
+      popupText.textContent = "Subscribed Successfully!";
+      popup.classList.add("show");
+      newsletterForm.reset();
+    } else {
+      popupText.textContent = "Please enter a valid email!";
+      popup.classList.add("show");
+    }
+  });
+}
+
+if (closePopup) {
+  closePopup.addEventListener("click", function () {
+    popup.classList.remove("show");
+  });
+}
+
+
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POSH Training | OHS</title>
+  <link rel="stylesheet" href="../CSS/navbar.css" />
+  <link rel="stylesheet" href="../CSS/posh-training.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      line-height: 1.7;
+    }
+
+    .hero-section {
+      background: url('../img/posh_tra.webp') center/cover no-repeat;
+      color: white;
+      padding: 100px 20px;
+      text-align: center;
+      height: 500px;
+      background-size: cover;
+    }
+
+    .section-padding {
+      padding: 60px 20px;
+    }
+
+    .bg-light-blue {
+      background-color: #f1f8ff;
+    }
+
+    .cta-section {
+      background-color: #2a3e68;
+      padding: 50px 20px;
+      text-align: center;
+      color: #000;
+    }
+
+    footer {
+      background: #222;
+      color: #fff;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    h2, h3 {
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      background-color: #ff5722;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Banner -->
+   <div id="chatbot-container"></div>
+<div id="navbar-placeholder"></div>
+  <section class="hero-section" data-aos="fade-down">
+    <div class="container">
+      <!-- <h1>POSH Training for a Safe Workplace</h1>
+      <p class="lead">Empowering organizations to prevent sexual harassment and ensure a respectful environment</p> -->
+    </div>
+  </section>
+  <!-- Introduction -->
+  <section class="section-padding" data-aos="fade-up">
+    <div class="container">
+      <h2>What is POSH?</h2>
+      <p>The Prevention of Sexual Harassment (POSH) Act, 2013, mandates organizations to provide a safe working environment, especially for women. It ensures that any instance of sexual harassment is addressed promptly and appropriately, fostering a secure workplace culture.</p>
+    </div>
+  </section>
+
+  <!-- Legal Framework -->
+  <section class="section-padding bg-light-blue" data-aos="fade-up">
+    <div class="container">
+      <h2>Legal Framework</h2>
+      <ul>
+        <li>The Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013</li>
+        <li>Definition of sexual harassment under the law</li>
+        <li>Duties of the employer</li>
+        <li>Internal Committee (IC) formation and responsibilities</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Training Modules -->
+  <section class="section-padding" data-aos="fade-right">
+    <div class="container">
+      <h2>Training Modules</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <h3>For Employees</h3>
+          <ul>
+            <li>Understanding sexual harassment</li>
+            <li>Rights and responsibilities</li>
+            <li>Reporting mechanism</li>
+            <li>Workplace sensitivity</li>
+          </ul>
+        </div>
+        <div class="col-md-6">
+          <h3>For IC Members</h3>
+          <ul>
+            <li>Roles & responsibilities</li>
+            <li>Case handling procedures</li>
+            <li>Documentation & reporting</li>
+            <li>Mock inquiry sessions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Delivery Modes -->
+  <section class="section-padding bg-light-blue" data-aos="fade-left">
+    <div class="container">
+      <h2>Delivery Modes</h2>
+      <p>We offer flexible delivery formats to suit your organization’s needs:</p>
+      <ul>
+        <li>Online live webinars</li>
+        <li>Onsite classroom training</li>
+        <li>E-learning modules</li>
+        <li>Train-the-trainer workshops</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Benefits -->
+  <section class="section-padding" data-aos="zoom-in">
+    <div class="container">
+      <h2>Why Choose Our POSH Training?</h2>
+      <ul>
+        <li>Certified and experienced trainers</li>
+        <li>Interactive sessions with real-life case studies</li>
+        <li>Customized content for your industry</li>
+        <li>Ongoing compliance support and advisory</li>
+      </ul>
+    </div>
+  </section>
+
+
+  <section class="cta-section" data-aos="fade-up">
+    <div class="container">
+      <h2>Start Building a Safe Workplace Today</h2>
+      <p>Book your POSH training now and ensure legal compliance and a respectful culture.</p>
+      <a href="../HTML/book.html" class="btn btn-primary btn-lg mt-3">Book a Session</a>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="section-padding" data-aos="fade-up">
+    <div class="container">
+      <h2>Contact Us</h2>
+      <p>Email: support@ohs.com | Phone: +91-9876543210</p>
+      <p>Address: 123 Corporate Street, Business City, India</p>
+    </div>
+  </section>
+
+    <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+  <script>
+    
+     fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+    AOS.init({ once: true });
+fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+    AOS.init();
+
+
+    fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>

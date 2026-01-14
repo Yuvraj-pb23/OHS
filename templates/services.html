@@ -1,0 +1,421 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Services & Training | OHS</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            --primary-dark: #0f172a;
+            --primary: #1e40af;
+            --accent: #3b82f6;
+            
+            /* -- NEW: Clearly Visible Card Backgrounds -- */
+            --service-card-bg: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%); /* Pale Blue */
+            --service-card-border: #bfdbfe;
+            
+            --text-dark: #1e293b;
+            --text-muted: #475569;
+        }
+
+        html, body {
+            overflow-x: hidden;
+            background-color: #f8fafc; /* Page background */
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            color: var(--text-dark);
+        }
+
+        /* --- Hero Section --- */
+        .services-hero {
+            position: relative;
+            background: url('/static/img/servies1.jpg') center/cover no-repeat fixed;
+            min-height: 60vh;
+            color: white;
+            padding: 120px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .services-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            /* Stronger Blue Overlay */
+            background: linear-gradient(135deg, rgba(10, 25, 47, 0.95) 0%, rgba(30, 64, 175, 0.85) 100%);
+            z-index: 1;
+        }
+
+        .services-hero .container { position: relative; z-index: 2; }
+
+        .services-hero h1 {
+            font-size: clamp(2.5rem, 5vw, 3.8rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .services-hero p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            max-width: 800px;
+            margin: 0 auto;
+            color: #cbd5e1;
+        }
+
+        /* --- Core Services Section --- */
+        #core-services {
+            padding: 90px 0;
+            background: #ffffff;
+        }
+
+        .section-title { margin-bottom: 3rem; }
+        .section-title h2 {
+            font-weight: 800;
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+        }
+
+        /* --- SERVICE CARDS (With Visible Blue BG) --- */
+        .service-card {
+            background: var(--service-card-bg); /* Visible Pale Blue Gradient */
+            border: 1px solid var(--service-card-border);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            /* Dark Blue Hover Effect for Contrast */
+            background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%);
+            border-color: #1e3a8a;
+            box-shadow: 0 20px 40px rgba(30, 58, 138, 0.25);
+        }
+
+        /* Icon Styling */
+        .service-card .icon-wrapper {
+            width: 70px; height: 70px;
+            background: white;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Text Color Changes on Hover */
+        .service-card h5 {
+            font-weight: 700;
+            color: var(--primary-dark);
+            transition: color 0.3s;
+        }
+        .service-card p {
+            color: var(--text-muted);
+            transition: color 0.3s;
+        }
+
+        /* Hover State Text Colors (Invert to White) */
+        .service-card:hover h5 { color: #ffffff; }
+        .service-card:hover p { color: #cbd5e1; }
+        .service-card:hover .icon-wrapper {
+            background: rgba(255,255,255,0.2);
+            color: #ffffff;
+        }
+
+        /* --- Training Section --- */
+        .training-section {
+            padding: 90px 0;
+            background: #f8fafc;
+        }
+
+        .training-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 2.5rem;
+            margin-top: 3.5rem;
+        }
+
+        /* --- TRAINING CARDS (With Tints) --- */
+        .training-card {
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            /* Default white incase */
+            background: white; 
+        }
+
+        /* Specific Colored Tints for each Card Type */
+        .training-card.posh {
+            background: linear-gradient(145deg, #fff1f2 0%, #ffe4e6 100%); /* Light Red Tint */
+            border-top: 5px solid #f43f5e;
+        }
+        .training-card.pocso {
+            background: linear-gradient(145deg, #fff7ed 0%, #ffedd5 100%); /* Light Orange Tint */
+            border-top: 5px solid #f97316;
+        }
+        .training-card.ethics {
+            background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%); /* Light Green Tint */
+            border-top: 5px solid #22c55e;
+        }
+        .training-card.compliance {
+            background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%); /* Light Blue Tint */
+            border-top: 5px solid #3b82f6;
+        }
+        .training-card.communication {
+            background: linear-gradient(145deg, #f5f3ff 0%, #ede9fe 100%); /* Light Purple Tint */
+            border-top: 5px solid #8b5cf6;
+        }
+
+        .training-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -5px rgba(0,0,0,0.1);
+        }
+
+        .training-card h3 {
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Overview Box */
+        .training-overview {
+            background: rgba(255,255,255,0.6); /* Semi-transparent */
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Module Accordion */
+        .module {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-top: 0.8rem;
+            overflow: hidden;
+        }
+
+        .module-header {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            background: white;
+            transition: background 0.2s;
+        }
+
+        .module.active .module-header {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .module-toggle {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .module.active .module-toggle { transform: rotate(180deg); }
+
+        .module-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .module-body { padding: 1.5rem; border-top: 1px solid #e2e8f0; }
+
+        .key-points { list-style: none; padding: 0; margin: 0; }
+        .key-points li {
+            position: relative; padding-left: 25px; margin-bottom: 8px; color: var(--text-muted);
+        }
+        .key-points li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute; left: 0; top: 3px;
+            color: #10b981;
+        }
+
+        @media (max-width: 768px) {
+            .training-grid { grid-template-columns: 1fr; }
+            .services-hero h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero -->
+    <header class="services-hero" data-aos="fade-in">
+        <div class="container">
+            <h1 data-aos="zoom-in" data-aos-duration="1000">Our Professional Services</h1>
+            <p data-aos="fade-up" data-aos-delay="200">
+                Comprehensive training and consulting to help you build a safe, respectful, and legally compliant environment.
+            </p>
+        </div>
+    </header>
+
+    <!-- Core Services -->
+    <section id="core-services">
+        <div class="container">
+            <div class="text-center section-title" data-aos="fade-up">
+                <h2>Our Core Services</h2>
+                <p class="text-muted">Specialized solutions designed for your organization.</p>
+            </div>
+            <div class="row g-4 ">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-chalkboard-teacher fa-2x"></i></div>
+                        <h5>POSH Training Programs</h5>
+                        <p>Educating employees on POSH guidelines, workplace respect, and legal compliance.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-file-shield fa-2x"></i></div>
+                        <h5>End-to-End POSH Compliance</h5>
+                        <p>Comprehensive solutions for policy creation, training, and reporting.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-file-contract fa-2x"></i></div>
+                        <h5>POSH Policy Formulation</h5>
+                        <p>Drafting customized anti-sexual harassment policies for your organization.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-desktop fa-2x"></i></div>
+                        <h5>She-Box Registration</h5>
+                        <p>Assistance with the government's online complaint management system.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-headset fa-2x"></i></div>
+                        <h5>Legal Support & Query Desk</h5>
+                        <p>Expert legal advice and support for all your POSH-related queries.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="350">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-users fa-2x"></i></div>
+                        <h5>External Member Support</h5>
+                        <p>Providing impartial external members for your Internal Committee.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="service-card text-center">
+                        <div class="icon-wrapper"><i class="fas fa-child-reaching fa-2x"></i></div>
+                        <h5>POCSO Compliance</h5>
+                        <p>Legal guidance and safety frameworks for schools and child-care institutions.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Training Programs -->
+    <section id="training" class="training-section">
+        <div class="container">
+            <div class="text-center section-title" data-aos="fade-up">
+                <h2>Our In-Depth Training Programs</h2>
+                <p class="text-muted">Interactive courses designed to enhance capabilities.</p>
+            </div>
+
+            <div class="training-grid">
+                <!-- POSH (Red Tint) -->
+                <div class="training-card posh" data-aos="fade-up" data-aos-delay="100">
+                    <h3>POSH Training</h3>
+                    <div class="training-overview">
+                        <p><strong>Prevention of Sexual Harassment at Workplace</strong><br>Comprehensive training on creating safe, respectful work environments.</p>
+                    </div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Understanding POSH Act 2013</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Legal framework and provisions</li><li>Definition of sexual harassment</li><li>Complaint mechanisms</li><li>Role of Internal Committee (IC)</li></ul></div></div></div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Creating a Safe Work Environment</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Building awareness</li><li>Preventive measures</li><li>Bystander intervention</li><li>Inclusive culture</li></ul></div></div></div>
+                </div>
+
+                <!-- POCSO (Orange Tint) -->
+                <div class="training-card pocso" data-aos="fade-up" data-aos-delay="150">
+                    <h3>POCSO Compliance</h3>
+                    <div class="training-overview">
+                        <p><strong>Protection of Children from Sexual Offences</strong><br>Specialized training for schools and institutions to ensure child safety.</p>
+                    </div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>POCSO Act 2012 Overview</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Key legal provisions</li><li>Mandatory reporting obligations</li><li>Child rights and protection</li><li>Role of Special Courts</li></ul></div></div></div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Institutional Safety Protocols</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Child Protection Committees</li><li>Safe recruitment</li><li>Reporting channels</li><li>Staff code of conduct</li></ul></div></div></div>
+                </div>
+
+                <!-- Ethics (Green Tint) -->
+                <div class="training-card ethics" data-aos="fade-up" data-aos-delay="200">
+                    <h3>Workplace Ethics</h3>
+                    <div class="training-overview">
+                        <p><strong>Building Ethical Professional Standards</strong><br>Develop strong ethical foundations for decision-making and integrity.</p>
+                    </div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Foundations of Business Ethics</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Core ethical principles</li><li>Moral reasoning</li><li>Stakeholder responsibilities</li><li>Organizational values</li></ul></div></div></div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Professional Integrity</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Professional boundaries</li><li>Conflict of interest</li><li>Data privacy</li><li>Whistleblowing</li></ul></div></div></div>
+                </div>
+
+                <!-- Compliance (Blue Tint) -->
+                <div class="training-card compliance" data-aos="fade-up" data-aos-delay="250">
+                    <h3>Legal Compliance</h3>
+                    <div class="training-overview">
+                        <p><strong>Regulatory Framework & Compliance</strong><br>Master the landscape of business regulations and risk management.</p>
+                    </div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Regulatory Landscape</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Regulatory bodies</li><li>Industry compliance</li><li>Tracking changes</li><li>Impact assessment</li></ul></div></div></div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Compliance Programs</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Designing programs</li><li>Risk assessment</li><li>Policy documentation</li><li>Monitoring & auditing</li></ul></div></div></div>
+                </div>
+
+                <!-- Communication (Purple Tint) -->
+                <div class="training-card communication" data-aos="fade-up" data-aos-delay="300">
+                    <h3>Communication Skills</h3>
+                    <div class="training-overview">
+                        <p><strong>Mastering Professional Communication</strong><br>Enhance your effectiveness in presentations and collaboration.</p>
+                    </div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Verbal & Non-Verbal Cues</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Clear language</li><li>Body language</li><li>Eye contact</li><li>Tone matching</li></ul></div></div></div>
+                    <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Active Listening</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Engaging with speakers</li><li>Acknowledging feelings</li><li>Clarifying questions</li><li>Building trust</li></ul></div></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 800, once: true, offset: 100 });
+
+        function toggleModule(element) {
+            const module = element.closest('.module');
+            const content = module.querySelector('.module-content');
+            const parentCard = element.closest('.training-card');
+            
+            parentCard.querySelectorAll('.module').forEach(m => {
+                if (m !== module && m.classList.contains('active')) {
+                    m.classList.remove('active');
+                    m.querySelector('.module-content').style.maxHeight = null;
+                }
+            });
+
+            module.classList.toggle('active');
+            content.style.maxHeight = content.style.maxHeight ? null : content.scrollHeight + "px";
+        }
+    </script>
+</body>
+</html>
+{% endblock body %}

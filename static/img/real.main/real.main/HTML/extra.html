@@ -1,0 +1,774 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>POSH Blog — Awareness, Training & Compliance</title>
+  <link rel="stylesheet" href="posh-blog.css" />
+
+
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+</head>
+
+
+
+<style>
+  :root {
+    --bg: #f8fafc;
+    --text: #1e293b;
+    --muted: #64748b;
+    --accent: #0ea5e9;
+    --accent-light: #e0f2fe;
+    --chip: #dbeafe;
+    --border: #e2e8f0;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Progress Bar */
+  #progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent), #0284c7);
+    z-index: 1000;
+    transition: width 0.1s ease;
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+  }
+
+  /* Hero Section */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    background: linear-gradient(135deg, #7881b5 0%, #f0f9ff 50%, #60a0cb 100%);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    color: #0369a1;
+    margin: 0 0 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .tagline {
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 700px;
+    margin: 0 auto 24px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .actions input[type="search"] {
+    flex: 1 1 300px;
+    max-width: 400px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--text);
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .actions input[type="search"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #0284c7);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px rgba(14, 165, 233, 0.3);
+  }
+
+  /* Table of Contents */
+  .toc {
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+    z-index: 999;
+    background: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .toc-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .toc strong {
+    white-space: nowrap;
+    font-size: 14px;
+    color: var(--text);
+    min-width: max-content;
+  }
+
+  .toc ul {
+    display: flex;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .toc a:hover {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  /* Content Cards */
+  .content {
+    padding: 40px 0 80px;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin: 24px 0;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+  }
+
+  .card h2 {
+    margin-top: 0;
+    font-size: clamp(22px, 3vw, 28px);
+    color: #0369a1;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card h3 {
+    color: #0f766e;
+    margin: 16px 0 10px;
+    font-weight: 600;
+  }
+
+  .card h4 {
+    color: #334155;
+    margin: 12px 0 8px;
+  }
+
+  .card p {
+    margin: 10px 0;
+    color: var(--text);
+  }
+
+  .card ul,
+  .card ol {
+    margin: 14px 0 4px 18px;
+    padding-left: 10px;
+  }
+
+  .card li {
+    margin: 6px 0;
+    color: var(--text);
+  }
+
+  blockquote {
+    margin: 20px 0;
+    padding: 16px 20px;
+    border-left: 5px solid var(--accent);
+    background: var(--accent-light);
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: #0369a1;
+    position: relative;
+  }
+/* 
+  blockquote::before {
+    content: """;
+    font-size: 60px;
+    color: rgba(14, 165, 233, 0.2);
+    position: absolute;
+    top: 8px;
+    left: 10px;
+    line-height: 1;
+  } */
+
+  /* Chips (SEO Keywords) */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    margin: 16px 0 0;
+    padding: 0;
+  }
+
+  .chips li {
+    background: var(--chip);
+    color: #0369a1;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: transform 0.2s;
+  }
+
+  .chips li:hover {
+    transform: scale(1.05);
+    background: #bfdbfe;
+  }
+
+  /* Back to Top Button */
+  #backToTop {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    transform: translateY(30px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--accent), #0284c7);
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #backToTop.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  #backToTop:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3);
+  }
+
+  #backToTop:active {
+    transform: translateY(0);
+  }
+
+  /* Details & Summary Styling */
+  details {
+    margin: 16px 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  summary {
+    padding: 14px 18px;
+    background: #f1f5f9;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: background 0.2s;
+  }
+
+  summary:hover {
+    background: #e2e8f0;
+  }
+
+  details[open] summary {
+    background: #0ea5e9;
+    color: white;
+  }
+
+  details p {
+    padding: 16px 18px;
+    margin: 0;
+    background: #f8fafc;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .toc-inner {
+      align-items: flex-start;
+    }
+    .toc strong {
+      display: none;
+    }
+    .hero h1 {
+      font-size: 32px;
+    }
+    .actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .actions input[type="search"] {
+      max-width: none;
+    }
+  }
+</style>
+
+<body>
+  <div id="progress"></div>
+
+  <header class="hero">
+    <div class="container">
+      <h1 data-aos="fade-down">POSH Awareness & Training Blog</h1>
+      <p class="tagline" data-aos="fade-down" data-aos-delay="100">
+        Understand the POSH Act, build respectful workplaces, and stay compliant.
+      </p>
+
+  </header>
+
+
+  <!-- <nav id="toc" class="toc" aria-label="Table of contents">
+    <div class="toc-inner container" data-aos="fade-up">
+      <strong>Contents</strong>
+      <ul>
+        <li><a href="#what-is-posh">🔍 What is POSH & Why Sensitization Matters</a></li>
+        <li><a href="#program-highlights">📝 POSH Awareness Program — Highlights</a></li>
+        <li><a href="#scenarios">📌 Real-Life Scenarios & Interactive Learning</a></li>
+        <li><a href="#takeaways">🧠 Key Takeaways from Training</a></li>
+        <li><a href="#commitment">🚀 Our Commitment to a Harassment-Free Workplace</a></li>
+        <li><a href="#why-invest">💡 Why Invest in POSH Training</a></li>
+        <li><a href="#team-building">🤝 Team Building: Collaboration & Performance</a></li>
+        <li><a href="#posh-training">🎓 What is POSH Training? (+ Who Should Attend)</a></li>
+        <li><a href="#training-objectives">🎯 Objectives of POSH Training</a></li>
+        <li><a href="#training-benefits">🏢 Benefits of POSH Training for Organizations</a></li>
+        <li><a href="#training-types">🛠 Types of POSH Training</a></li>
+        <li><a href="#posh-act-guide">📘 POSH Act & POSH Policy Explained (Complete Guide)</a></li>
+        <li><a href="#ensure-compliance">🧩 Ensuring POSH Compliance (Checklist)</a></li>
+        <li><a href="#myths">❓ Common Myths vs Reality</a></li>
+        <li><a href="#final-thoughts">✅ Final Thoughts</a></li>
+        <li><a href="#seo-keywords">🔎 SEO Keywords</a></li>
+      </ul>
+    </div>
+  </nav> -->
+
+  <main class="container content">
+
+
+    <section id="what-is-posh" class="card" data-aos="fade-up" >
+      <h2>🔍 What is POSH and Why is Sensitization Important?</h2>
+      <p>
+        The POSH Act was enacted in India in 2013 to prevent and address sexual harassment at
+        the workplace, ensuring that every individual, regardless of gender, can work in a safe,
+        supportive, and dignified environment.
+      </p>
+      <p>
+        Despite legal frameworks, many employees remain unaware of what constitutes harassment
+        or how to report it. This is where POSH sensitization training plays a crucial role.
+      </p>
+      <h3>Key Objectives of POSH Sensitization</h3>
+      <ul>
+        <li>Educate employees about types of sexual harassment.</li>
+        <li>Clarify the role and procedures of the Internal Committee (IC).</li>
+        <li>Encourage gender sensitivity and respectful behavior.</li>
+        <li>Promote a zero-tolerance culture toward workplace misconduct.</li>
+        <li>Empower victims and bystanders to report without fear.</li>
+      </ul>
+    </section>
+
+ 
+    <section id="program-highlights" class="card" data-aos="fade-up">
+      <h2>📝 Highlights from Our POSH Awareness Program</h2>
+      <p>
+        Our sensitization session was conducted by a certified POSH trainer and legal consultant
+        with deep expertise in workplace law and behavioral ethics.
+      </p>
+      <h3>Topics Covered</h3>
+      <ul>
+        <li>Understanding what constitutes sexual harassment (verbal, physical, visual, and online).</li>
+        <li>Detailed overview of the POSH Act, 2013 and its implications.</li>
+        <li>Role, rights, and responsibilities of the Internal Committee (IC).</li>
+        <li>Reporting mechanisms, redressal process, and confidentiality clauses.</li>
+        <li>Scenario-based learning and interactive Q&amp;A sessions.</li>
+      </ul>
+    </section>
+
+
+    <section id="scenarios" class="card" data-aos="fade-up">
+      <h2>📌 Real-Life Scenarios and Interactive Learning</h2>
+      <p>
+        Unlike conventional compliance training, this session used real-life case studies, role-plays,
+        and group discussions to make the content practical and relatable. Employees shared
+        personal insights, asked thought-provoking questions, and engaged in meaningful dialogue
+        about gender respect and professional boundaries.
+      </p>
+      <blockquote>
+        “Creating awareness is the first step to preventing harassment. When people know better,
+        they do better.” — POSH Trainer
+      </blockquote>
+    </section>
+
+   
+    <section id="takeaways" class="card" data-aos="fade-up">
+      <h2>🧠 Key Takeaways from the POSH Training</h2>
+      <ul>
+        <li>The legal definitions and boundaries of workplace behavior.</li>
+        <li>The steps to take if they witness or face harassment.</li>
+        <li>The importance of empathy, trust, and communication in building safe workspaces.</li>
+        <li>Their individual role in upholding organizational integrity.</li>
+      </ul>
+    </section>
+
+
+    <section id="commitment" class="card" data-aos="fade-up" >
+      <h2  id="harassment">🚀 Our Continued Commitment to a Harassment-Free Workplace</h2>
+      <p>
+        This POSH sensitization session is part of our larger mission to create a diverse, inclusive,
+        and safe workplace for all. We believe in consistent training, open dialogue, and strict
+        enforcement of anti-harassment policies.
+      </p>
+      <h3>What We’re Doing Next</h3>
+      <ul>
+        <li>Regular POSH refresher courses for employees and management.</li>
+        <li>Dedicated POSH policy handbook access for all team members.</li>
+        <li>Strengthening the Internal Committee with trained members.</li>
+        <li>Open-door policy for reporting grievances confidentially.</li>
+      </ul>
+    </section>
+
+    <section id="why-invest" class="card" data-aos="fade-up">
+      <h2>💡 Why Every Organization Should Invest in POSH Training</h2>
+      <ul>
+        <li>Boost employee trust and morale.</li>
+        <li>Reduce legal risks and liabilities.</li>
+        <li>Attract and retain top talent.</li>
+        <li>Foster a culture of diversity, inclusion, and equality.</li>
+      </ul>
+    </section>
+
+  
+    <section id="team-building" class="card" data-aos="fade-up">
+      <h2>🤝 Team Building: Strengthening Collaboration, Trust &amp; Performance at Work</h2>
+      <p>
+        In today’s fast-paced and competitive workplace, success is no longer just about individual
+        talent — it's about how well people work together. Team building plays a vital role in shaping
+        a collaborative and motivated workforce that drives innovation, boosts productivity, and fosters a
+        positive company culture.
+      </p>
+      <p>
+        Whether you’re managing a small startup or a large enterprise, investing in regular team
+        building activities can lead to long-term growth and improved employee engagement.
+      </p>
+
+      <h3>💡 What is Team Building?</h3>
+      <p>
+        Team building refers to a variety of activities, exercises, and strategies designed to enhance
+        relationships, communication, and cooperation among team members. It helps break down
+        barriers, build trust, and align everyone toward shared goals. From fun games to strategic
+        problem-solving tasks, team building nurtures a sense of unity and mutual respect within the
+        organization.
+      </p>
+
+      <h3>🚀 Benefits of Team Building Activities in the Workplace</h3>
+      <ul>
+        <li><strong>1. Enhances Communication</strong> — Encourages open dialogue and active listening.</li>
+        <li><strong>2. Boosts Employee Morale</strong> — Builds belonging and improves job satisfaction.</li>
+        <li><strong>3. Strengthens Problem-Solving Skills</strong> — Sharpens group problem-solving.</li>
+        <li><strong>4. Improves Productivity</strong> — Trust leads to smoother projects and timely delivery.</li>
+        <li><strong>5. Encourages Innovation</strong> — Diverse perspectives in a low-pressure setting.</li>
+        <li><strong>6. Reduces Workplace Conflicts</strong> — Stronger relationships, fewer misunderstandings.</li>
+      </ul>
+    </section>
+
+    <section id="posh-training" class="card" data-aos="fade-up">
+      <h2>🎓 What is POSH Training?</h2>
+      <p>
+        POSH training is a structured learning session aimed at educating employees, managers,
+        and Internal Committee members about the Prevention of Sexual Harassment (POSH) Act.
+        It focuses on understanding sexual harassment, recognizing unacceptable behavior, and
+        learning how to report and handle complaints with sensitivity and fairness.
+      </p>
+
+      <h3>Who Should Attend?</h3>
+      <ul>
+        <li>All employees (full-time, part-time, interns, contractors).</li>
+        <li>HR professionals and people managers.</li>
+        <li>Members of the Internal Committee (IC).</li>
+        <li>Senior leadership.</li>
+      </ul>
+    </section>
+
+    <section id="training-objectives" class="card" data-aos="fade-up">
+      <h2>🎯 Objectives of POSH Training</h2>
+      <p>A good POSH awareness training goes beyond compliance. It helps build a workplace culture
+        rooted in respect, equality, and accountability. Effective POSH training covers:</p>
+      <ul>
+        <li>Understanding what constitutes sexual harassment (verbal, physical, visual, online).</li>
+        <li>Overview of the POSH Act, 2013 and employee rights.</li>
+        <li>Responsibilities of the Internal Committee (IC).</li>
+        <li>Legal consequences of non-compliance.</li>
+        <li>Steps to report, investigate, and resolve complaints.</li>
+        <li>Confidentiality, timelines, and redressal mechanisms.</li>
+        <li>Promoting safe and inclusive workplace behavior.</li>
+      </ul>
+    </section>
+
+    <section id="training-benefits" class="card" data-aos="fade-up">
+      <h2>🏢 Benefits of POSH Training for Organizations</h2>
+      <h3>🛡 Legal Compliance</h3>
+      <p>Ensures adherence to the mandatory requirements of the POSH Act, helping avoid legal penalties and reputational damage.</p>
+      <h3>👥 Employee Empowerment</h3>
+      <p>Awareness of rights and responsibilities increases willingness to speak up, report incidents, and support colleagues in distress.</p>
+      <h3>🧠 Increased Awareness</h3>
+      <p>Clarity around workplace boundaries, acceptable behavior, and navigating complex interpersonal situations.</p>
+      <h3>🏢 Stronger Workplace Culture</h3>
+      <p>A harassment-free workplace improves morale, collaboration, and retention.</p>
+    </section>
+
+    <section id="training-types" class="card" data-aos="fade-up">
+      <h2>🛠 Types of POSH Training</h2>
+      <ul>
+        <li><strong>POSH Awareness Sessions for Employees</strong> — General overview of sexual harassment and safe norms.</li>
+        <li><strong>Specialized POSH Training for IC Members</strong> — Investigation procedures, timelines, and report writing.</li>
+        <li><strong>POSH e-Learning Modules</strong> — Digital, self-paced courses with scenarios and assessments.</li>
+        <li><strong>In-Person or Virtual Workshops</strong> — Interactive sessions with certified trainers, ideal for Q&amp;A.</li>
+      </ul>
+    </section>
+
+    <section id="posh-act-guide" class="card" data-aos="fade-up" >
+      <h2 id="posh-act-guide1">📘 POSH Act &amp; POSH Policy Explained: A Complete Guide for Indian Workplaces</h2>
+
+      <h3>What is the POSH Act?</h3>
+      <p>
+        Officially the <em>Sexual Harassment of Women at Workplace (Prevention, Prohibition and
+        Redressal) Act, 2013</em>, it aims to prevent sexual harassment at the workplace and protect
+        the rights of women employees. Introduced after the Supreme Court’s 1997 Vishaka
+        Guidelines following <em>Vishaka vs. State of Rajasthan</em>.
+      </p>
+
+      <h3>Key Objectives of the POSH Act</h3>
+      <ul>
+        <li>Prevent sexual harassment at work.</li>
+        <li>Protect women in the workplace.</li>
+        <li>Provide a formal redressal mechanism.</li>
+      </ul>
+
+      <h3>What is Sexual Harassment at the Workplace?</h3>
+      <ul>
+        <li>Unwelcome physical contact or advances.</li>
+        <li>Sexually colored remarks.</li>
+        <li>Showing pornography.</li>
+        <li>Demands for sexual favors.</li>
+        <li>Verbal, written, physical, or non-verbal acts of a sexual nature.</li>
+      </ul>
+      <p>This applies whether the harassment is from colleagues, clients, vendors, or superiors.</p>
+
+      <h3>Who is Covered Under the POSH Act?</h3>
+      <ul>
+        <li>All women employees: full-time, part-time, interns, consultants, temporary staff.</li>
+        <li>All workplaces: corporate offices, factories, schools, colleges, hospitals, startups, unorganized sector.</li>
+        <li>All sectors: public and private organizations.</li>
+      </ul>
+      <p><strong>Note:</strong> Even work-from-home or remote work scenarios are covered under POSH compliance.</p>
+
+      <h3>What is a POSH Policy?</h3>
+      <p>
+        A formal internal document that outlines the company’s stance, procedures, and practices
+        related to preventing and responding to sexual harassment at the workplace.
+      </p>
+
+      <h3>Elements of a Good POSH Policy</h3>
+      <ol>
+        <li>Definition and examples of sexual harassment.</li>
+        <li>Scope of application (employees, interns, clients, etc.).</li>
+        <li>Step-by-step complaint process.</li>
+        <li>Time-bound redressal procedure.</li>
+        <li>Confidentiality assurance.</li>
+        <li>Penalties for misconduct or false complaints.</li>
+        <li>Regular POSH awareness and training programs.</li>
+      </ol>
+
+      <h3>Internal Committee (IC): The Backbone of Compliance</h3>
+      <p>Every organization with 10 or more employees must form an Internal Committee (IC) to handle POSH-related complaints.</p>
+      <h4>Composition of the IC</h4>
+      <ul>
+        <li>Presiding Officer (senior female employee).</li>
+        <li>Two internal members familiar with legal/social issues.</li>
+        <li>One external member from an NGO/legal background.</li>
+        <li>Minimum 50% of the IC must be women.</li>
+      </ul>
+      <h4>Responsibilities of the IC</h4>
+      <ul>
+        <li>Receive and investigate complaints.</li>
+        <li>Complete the inquiry within 90 days.</li>
+        <li>Submit findings and recommend action.</li>
+      </ul>
+    </section>
+
+    <section id="ensure-compliance" class="card" data-aos="fade-up">
+      <h2>🧩 How to Ensure POSH Compliance at Your Workplace</h2>
+      <ol>
+        <li>Draft and circulate a clear POSH policy.</li>
+        <li>Form the Internal Committee (IC) as per guidelines.</li>
+        <li>Conduct POSH awareness training for all employees.</li>
+        <li>Train IC members on investigation procedures.</li>
+        <li>Promote a culture of safety and respect.</li>
+        <li>Display POSH posters at the workplace.</li>
+      </ol>
+    </section>
+
+
+    <section id="myths" class="card" data-aos="fade-up">
+      <h2>❓ Common Myths About the POSH Act</h2>
+      <details open>
+        <summary><strong>Myth:</strong> POSH is only for women in offices.</summary>
+        <p><strong>Reality:</strong> It applies to all workplaces and sectors.</p>
+      </details>
+      <details>
+        <summary><strong>Myth:</strong> Small companies don’t need a POSH policy.</summary>
+        <p><strong>Reality:</strong> All companies with 10+ employees must comply.</p>
+      </details>
+      <details>
+        <summary><strong>Myth:</strong> Only physical acts are harassment.</summary>
+        <p><strong>Reality:</strong> Verbal, visual, and written forms are also covered.</p>
+      </details>
+      <details>
+        <summary><strong>Myth:</strong> Only female employees can file complaints.</summary>
+        <p><strong>Reality:</strong> Male and transgender employees can report under company policy, though POSH law protects only women.</p>
+      </details>
+    </section>
+
+    <section id="final-thoughts" class="card" data-aos="fade-up">
+      <h2>✅ Final Thoughts</h2>
+      <p>
+        Workplace safety is everyone’s responsibility. Through continuous POSH sensitization, we aim
+        to build an environment where every individual feels protected, heard, and respected.
+        Let’s stand together against harassment—because a safe workplace is a strong workplace.
+      </p>
+    </section>
+
+<!-- 
+    <section id="seo-keywords" class="card" data-aos="fade-up">
+      <h2>🔎 Keywords Optimized for SEO</h2>
+      <ul class="chips">
+        <li>POSH sensitization session</li><li>Prevention of Sexual Harassment Act</li>
+        <li>POSH awareness training</li><li>workplace harassment prevention</li>
+        <li>Internal Committee POSH</li><li>POSH compliance India</li>
+        <li>sexual harassment at workplace law</li>
+      </ul>
+    </section> -->
+
+  </main>
+
+  <button id="backToTop" aria-label="Back to top">↑</button>
+
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+ 
+  AOS.init({
+    once: true,
+    duration: 800,
+    easing: 'ease-out-cubic'
+  });
+
+    AOS.init({ once: true });
+
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      progress.style.width = scrolled + '%';
+    });
+
+
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('show', window.scrollY > 600);
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+
+    const search = document.getElementById('search');
+    const sections = [...document.querySelectorAll('.content .card')];
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.toLowerCase();
+      sections.forEach(sec => {
+        const hit = sec.innerText.toLowerCase().includes(q);
+        sec.style.display = hit ? '' : 'none';
+      });
+    });
+
+
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+    
+  </script>
+</body>
+</html>
+
+
+
+ 

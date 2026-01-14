@@ -1,0 +1,171 @@
+<!-- company_subscription.html -->
+{% extends 'base.html' %}
+{% block body %}
+{% load static %}
+
+<style>
+    /* Reuse global background from tutorial page */
+    .form-background {
+        background: linear-gradient(135deg, #eef2ff, #e0f7fa);
+        padding: 60px 20px;
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .form-card {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        width: 100%;
+        max-width: 600px;
+        animation: slideUp 0.8s ease;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .form-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+.form-header h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #5e35b1, #00897b);
+
+    background-clip: text;              /* Standard */
+    -webkit-background-clip: text;      /* Chrome, Safari */
+    color: transparent;                 /* Fallback */
+    -webkit-text-fill-color: transparent;
+
+    margin-bottom: 10px;
+}
+
+    .form-header p {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    /* Form Fields Styling */
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-sizing: border-box; /* Ensures padding doesn't break width */
+    }
+
+    .form-input:focus {
+        border-color: #7e57c2;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(126, 87, 194, 0.1);
+    }
+
+    /* Submit Button */
+    .btn-submit {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #5e35b1, #26a69a);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+        margin-top: 10px;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 20px rgba(94, 53, 177, 0.3);
+    }
+    
+    .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        color: #777;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .back-link:hover {
+        color: #5e35b1;
+    }
+</style>
+
+<div class="form-background">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Company Registration</h2>
+            <p>Empower your workforce with compliance training.</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Company Name</label>
+                {{ form.company_name }}
+            </div>
+
+            <div class="form-group">
+
+                <label class="form-label">Contact Person</label>
+                {{ form.representative_name }}
+            </div>
+
+            <div style="display: flex; gap: 15px;">
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Email</label>
+                    {{ form.official_email }}
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label class="form-label">Phone</label>
+                    {{ form.phone_number }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Number of Employees</label>
+                {{ form.number_of_employees }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Interested Course</label>
+                {{ form.course_interested }}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Additional Message (Optional)</label>
+                {{ form.message }}
+            </div>
+
+            <button type="submit" class="btn-submit">Request Subscription</button>
+            <a href="{% url 'tutorial_page' %}" class="back-link">← Back to Courses</a>
+        </form>
+    </div>
+</div>
+
+{% endblock body %}

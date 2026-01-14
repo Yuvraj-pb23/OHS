@@ -1,0 +1,687 @@
+{% extends 'base.html' %}
+{% block body %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POSH Blog & Resources</title>
+  
+  <!-- Libraries -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- 1. Global Variables & Reset --- */
+    :root {
+      /* Palette */
+      --primary-dark: #0f172a;       /* Dark Navy */
+      --primary: #1e40af;            /* Royal Blue */
+      --primary-light: #3b82f6;      /* Bright Blue */
+      --accent: #f97316;             /* Vibrant Orange */
+      --accent-glow: rgba(249, 115, 22, 0.4);
+      
+      /* Backgrounds */
+      --bg-body: #f8fafc;
+      
+      /* Text */
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+    }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, .card-title {
+      font-family: 'Montserrat', sans-serif;
+    }
+
+    /* --- 2. Hero Section (Animated) --- */
+    .hero {
+      position: relative;
+      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364); /* Deep Sea Gradient */
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      padding: 100px 20px;
+      overflow: hidden;
+    }
+
+    /* Abstract Background Shapes */
+    .hero::before, .hero::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+    }
+    .hero::before {
+      background: rgba(59, 130, 246, 0.2);
+      width: 400px; height: 400px;
+      top: -100px; left: -100px;
+    }
+    .hero::after {
+      background: rgba(249, 115, 22, 0.15);
+      width: 500px; height: 500px;
+      bottom: -100px; right: -100px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 50px;
+      flex-wrap: wrap;
+    }
+
+    .text-content { flex: 1; min-width: 300px; }
+    
+    .text-content h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
+      background: linear-gradient(to right, #fff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .text-content p {
+      font-size: 1.2rem;
+      color: #cbd5e1;
+      margin-bottom: 2rem;
+      border-left: 4px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    .image-content {
+      flex: 1;
+      min-width: 300px;
+      display: flex;
+      justify-content: center;
+      perspective: 1000px;
+    }
+
+    /* Floating Animation for Hero Image */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0px); }
+    }
+
+    .image-content img {
+      width: 100%;
+      max-width: 550px;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      animation: float 6s ease-in-out infinite;
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    /* --- 3. Topics Grid (Blog) --- */
+    .topics-grid {
+      padding: 100px 5%;
+      background: var(--bg-body);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-top: -80px; /* Overlap effect */
+      position: relative;
+      z-index: 5;
+    }
+
+    .topic-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .topic-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 20px 40px -10px rgba(0,0,0,0.2);
+    }
+
+    /* Image Visibility Fix */
+    .topic-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain; 
+      background-color: #ffffff; 
+      padding: 10px; 
+      transition: transform 0.6s ease;
+      position: relative;
+      z-index: 1; 
+    }
+    .topic-card:hover img { transform: scale(1.02); }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      padding: 20px 20px 10px;
+      text-align: center;
+      background: white;
+      position: relative;
+      z-index: 1; /* Lower than overlay */
+    }
+
+    .card-desc {
+      padding: 0 20px 25px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      text-align: center;
+      flex: 1;
+      background: white;
+      z-index: 1; /* Lower than overlay */
+    }
+
+    /* --- EDITED: Overlay Covers WHOLE Card --- */
+    .overlay {
+      position: absolute;
+      /* Using inset:0 makes it cover top, bottom, left, right of the card */
+      inset: 0; 
+      height: 100%; 
+      width: 100%;
+      background: rgba(15, 23, 42, 0.7); /* Slightly darker to obscure text behind it */
+      backdrop-filter: blur(5px); /* Stronger blur for glass effect over text */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: 10; /* Sits on top of everything */
+      border-radius: 16px;
+    }
+
+    .topic-card:hover .overlay {
+      opacity: 1;
+    }
+
+    .read-more {
+      background: linear-gradient(135deg, var(--accent), #ff9f43);
+      color: white;
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 1rem;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 10px 20px rgba(249, 115, 22, 0.4);
+      border: 2px solid white;
+      transform: translateY(30px) scale(0.9);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .topic-card:hover .read-more {
+      transform: translateY(0) scale(1);
+    }
+
+    .read-more:hover {
+      background: linear-gradient(135deg, #ff9f43, var(--accent));
+      color: white;
+      transform: translateY(-5px) scale(1.05) !important;
+      box-shadow: 0 15px 30px rgba(249, 115, 22, 0.6);
+    }
+    
+    .read-more i {
+      transition: transform 0.3s ease;
+    }
+    .read-more:hover i {
+      transform: translateX(5px);
+    }
+
+    /* --- 4. Categories Section --- */
+    .blog-categories {
+      padding: 100px 20px;
+      background: white;
+      position: relative;
+    }
+
+    .blog-categories h2 {
+      text-align: center;
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 60px;
+    }
+    
+    .blog-categories h2::after, .section-title::after, .faq-title::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      margin: 15px auto 0;
+      border-radius: 10px;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .category-card {
+      padding: 40px 30px;
+      border-radius: 20px;
+      background: var(--bg-body);
+      text-align: center;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
+      border-top: 5px solid transparent;
+    }
+
+    .category-card:hover {
+      background: white;
+      box-shadow: 0 20px 40px rgba(30, 58, 138, 0.1);
+      border-top-color: var(--accent);
+      transform: translateY(-8px);
+    }
+
+    .category-card .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transition: transform 0.3s;
+    }
+
+    .category-card:hover .card-icon { transform: scale(1.2) rotate(5deg); }
+
+    .category-card h3 { font-size: 1.4rem; font-weight: 700; color: var(--text-main); margin-bottom: 15px; }
+    .category-card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+    
+    /* --- 5. Downloads Section --- */
+    .downloads-section {
+      padding: 100px 20px;
+   background: url('../static/img/footer-logo.png') center / contain no-repeat fixed;
+
+      /* background: url('https://img.freepik.com/free-vector/gradient-blue-digital-grid-background_53876-116239.jpg') center/cover fixed; */
+      position: relative;
+    }
+    
+    .downloads-section::before {
+      content: ''; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.85);
+    }
+
+    .section-title { color: white; position: relative; z-index: 2; margin-bottom: 20px; text-align: center; font-size: 2.8rem; font-weight: 800;}
+    .section-subtitle { color: #cbd5e1; position: relative; z-index: 2; text-align: center; margin-bottom: 60px; max-width: 700px; margin-left: auto; margin-right: auto;}
+
+    .download-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      padding: 30px;
+      height: 100%;
+      color: white;
+      transition: 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
+      background: white;
+      transition: height 0.4s ease;
+      z-index: -1;
+    }
+
+    .download-card:hover {
+      transform: translateY(-5px);
+      color: var(--primary-dark);
+    }
+    
+    .download-card:hover::after { height: 100%; }
+
+    .download-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent); /* Orange title */
+      margin-bottom: 15px;
+    }
+    
+    .download-card:hover h3 { color: var(--primary); }
+    .download-card li { margin-bottom: 8px; font-size: 0.95rem; }
+
+    /* --- 6. FAQ Section --- */
+    .faq-section {
+      padding: 100px 20px;
+      background: linear-gradient(135deg, #fff 0%, #f0f9ff 100%);
+    }
+
+    .faq-title { text-align: center; font-size: 2.8rem; font-weight: 800; color: var(--primary-dark); }
+    
+    .faq-container {
+      max-width: 800px;
+      margin: 50px auto 0;
+    }
+
+    .accordion-item {
+      border: none;
+      margin-bottom: 15px;
+      border-radius: 12px !important;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      background: white;
+    }
+
+    .accordion-button {
+      font-weight: 700;
+      color: var(--primary-dark);
+      padding: 20px 25px;
+      font-size: 1.1rem;
+      background: white;
+      box-shadow: none;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      color: white;
+      box-shadow: none;
+    }
+    
+    .accordion-button::after {
+      filter: grayscale(100%);
+      transition: 0.3s;
+    }
+    .accordion-button:not(.collapsed)::after {
+      filter: invert(100%);
+    }
+
+    .accordion-body {
+      padding: 25px;
+      line-height: 1.8;
+      color: var(--text-muted);
+      background: #f8fafc;
+    }
+
+    .accordion-body strong { color: var(--primary); }
+
+    /* --- Responsive --- */
+    @media (max-width: 768px) {
+      .hero { text-align: center; padding-top: 120px; }
+      .hero-content { justify-content: center; }
+      .text-content p { border-left: none; border-top: 4px solid var(--accent); padding-top: 15px; padding-left: 0; }
+      .section-title, .faq-title, .blog-categories h2 { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="text-content" data-aos="fade-right" data-aos-duration="1000">
+        <h1>Your Knowledge Hub &<br>Resource Center</h1>
+        <p>Explore curated articles, compliance guides, and expert resources to help you build a safer, more respectful workplace environment.</p>
+        <div class="d-flex gap-3 flex-wrap justify-content-md-start justify-content-center">
+         
+        </div>
+      </div>
+      <div class="image-content" data-aos="fade-left" data-aos-duration="1000">
+        <img src="{% static 'img/resorce1.png' %}" alt="Resources Illustration">
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Topics Grid (Updated with fixed Read More) -->
+  <section class="topics-grid">
+    <!-- Card 1 -->
+    <div class="topic-card" data-aos="fade-up">
+      <!-- Image -->
+      <img src="{% static '/img/blog_p.jpg' %}" alt="POSH Awareness">
+      
+      <!-- Overlay (Now covers whole card via inset:0) -->
+      <div class="overlay">
+        <a href="/blogdata" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      
+      <div class="card-title">POSH Awareness</div>
+      <p class="card-desc">
+        Learn the fundamentals of the POSH Act, its importance in the workplace,
+        and how awareness can help create a respectful and safe environment for all.
+      </p>
+    </div>
+    
+    <!-- Card 2 -->
+    <div class="topic-card" data-aos="fade-up" data-aos-delay="100">
+      <img src="{% static '/img/blog_h.jpg' %}" alt="Harassment-Free Workplace">
+      <div class="overlay">
+        <a href="/blogdata#commitment" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="card-title">Harassment-Free Workplace</div>
+      <p class="card-desc">
+        Explore strategies to maintain a harassment-free workplace where
+        diversity, inclusion, and mutual respect are at the heart of every interaction.
+      </p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="topic-card" data-aos="fade-up" data-aos-delay="200">
+      <img src="{% static '/img/blog_t.jpg' %}" alt="POSH Training">
+      <div class="overlay">
+        <a href="/blogdata#posh-training" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="card-title">POSH Training</div>
+      <p class="card-desc">
+        Understand the objectives, benefits, and methods of POSH training
+        to ensure compliance and promote a positive workplace culture.
+      </p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="topic-card" data-aos="fade-up" data-aos-delay="300">
+      <img src="{% static '/img/blog_co2.jpg' %}" alt="Communication Training">
+      <div class="overlay">
+        <a href="/blogdata#communication-training" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="card-title">Communication Training</div>
+      <p class="card-desc">
+        Learn how effective communication builds trust, prevents conflicts, and fosters a respectful, 
+        inclusive workplace — essential for team collaboration and POSH compliance.
+      </p>
+    </div>
+  </section>
+
+  <!-- 3. Blog Categories -->
+  <!-- <section class="blog-categories">
+    <div class="container">
+      <h2 data-aos="zoom-in">Explore Our Blog Categories</h2>
+      <div class="categories-grid">
+       
+        <div class="category-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-icon"><i class="fas fa-clipboard-check"></i></div>
+          <h3>POSH Compliance Updates</h3>
+          <p>Stay informed with the latest changes in POSH regulations and compliance requirements to maintain a safe and legally compliant workplace.</p>
+        </div>
+ 
+        <div class="category-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-icon"><i class="fas fa-shield-halved"></i></div>
+          <h3>Workplace Safety Tips</h3>
+          <p>Practical safety tips and preventive measures to ensure a healthy work environment, from ergonomic practices to emergency preparedness.</p>
+        </div>
+       
+        <div class="category-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="card-icon"><i class="fas fa-landmark"></i></div>
+          <h3>Legal Updates & Case Studies</h3>
+          <p>Real-world examples and expert commentary on workplace harassment cases. Learn from landmark judgments and their impact.</p>
+        </div>
+    
+        <div class="category-card" data-aos="fade-up" data-aos-delay="100">
+          <div class="card-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+          <h3>Training & Development</h3>
+          <p>Enhance your organization’s culture with targeted training programs. We share methodologies, tools, and success stories.</p>
+        </div>
+       
+        <div class="category-card" data-aos="fade-up" data-aos-delay="200">
+          <div class="card-icon"><i class="fas fa-award"></i></div>
+          <h3>Industry Best Practices</h3>
+          <p>Benchmark your policies against industry leaders. This section covers tried-and-tested practices for fostering respect and inclusion.</p>
+        </div>
+    
+        <div class="category-card" data-aos="fade-up" data-aos-delay="300">
+          <div class="card-icon"><i class="fas fa-rocket"></i></div>
+          <h3>Success Stories</h3>
+          <p>Inspiring journeys of organizations that have successfully transformed their workplace culture. Read about their challenges and strategies.</p>
+        </div>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- 4. Downloads Section -->
+  <section class="downloads-section" id="resources">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-down">Educational Materials</h2>
+      <p class="section-subtitle" data-aos="fade-up">Explore legal documents, rules, case studies, and implementation guides related to POSH compliance.</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6" data-aos="fade-right" data-aos-delay="100">
+          <div class="download-card">
+            <h3>POSH Act Documentation</h3>
+            <p><strong>Title:</strong> The Sexual Harassment of Women at Workplace Act, 2013</p>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-info me-2"></i> Definitions and Scope</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> ICC Constitution</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Employer Duties & Inquiry Process</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-left" data-aos-delay="200">
+          <div class="download-card">
+            <h3>Govt. Rules & Regulations</h3>
+            <p><strong>Title:</strong> POSH Rules – Central Govt. Notification</p>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-info me-2"></i> Filing Timeline & ICC Composition</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Reporting to District Officer</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Role of NGOs</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-right" data-aos-delay="300">
+          <div class="download-card">
+            <h3>Legal Judgments & Case Studies</h3>
+            <p><strong>Title:</strong> Landmark Rulings under POSH Law</p>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-info me-2"></i> Vishaka Guidelines & Medha Kotwal Case</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> A.K. Chopra Judgment</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Recent High Court Decisions</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6" data-aos="fade-left" data-aos-delay="400">
+          <div class="download-card">
+            <h3>Implementation Guidelines</h3>
+            <p><strong>Title:</strong> Step-by-Step POSH Guide for Companies</p>
+            <ul class="list-unstyled">
+              <li><i class="fas fa-check-circle text-info me-2"></i> ICC Setup & Training Plans</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Reporting Formats</li>
+              <li><i class="fas fa-check-circle text-info me-2"></i> Employer Checklist</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. FAQ Section -->
+  <section class="faq-section">
+    <div class="container">
+      <h2 class="faq-title" data-aos="fade-up">Frequently Asked Questions</h2>
+      <p class="text-center text-muted mb-5" data-aos="fade-up">Find answers based on who you are — organization, trainer, or individual.</p>
+      
+      <div class="faq-container" data-aos="zoom-in-up">
+        <div class="accordion" id="faqAccordion">
+          <!-- Org FAQ -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingOrg">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOrg">
+                <i class="fas fa-building me-3"></i> For Organizations
+              </button>
+            </h2>
+            <div id="collapseOrg" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                <strong>What is the role of the ICC in a company?</strong> The Internal Complaints Committee (ICC) handles POSH complaints and ensures a fair inquiry process.<br><br>
+                <strong>Is POSH training mandatory for all employees?</strong> Yes, all employees must undergo awareness training annually as per legal guidelines.<br><br>
+                <strong>What are the penalties for non-compliance?</strong> Organizations may face fines up to ₹50,000, cancellation of licenses, and reputational damage.
+              </div>
+            </div>
+          </div>
+          <!-- Trainer FAQ -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTrainer">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTrainer">
+                <i class="fas fa-chalkboard-user me-3"></i> For Trainers
+              </button>
+            </h2>
+            <div id="collapseTrainer" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                <strong>How can I become a certified POSH trainer?</strong> You must attend certified POSH training programs and register with appropriate bodies.<br><br>
+                <strong>What content should a training program include?</strong> Legal background, case studies, role plays, reporting procedures, and ICC responsibilities.
+              </div>
+            </div>
+          </div>
+          <!-- Individual FAQ -->
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingIndividual">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIndividual">
+                <i class="fas fa-user-shield me-3"></i> For Individuals
+              </button>
+            </h2>
+            <div id="collapseIndividual" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+              <div class="accordion-body">
+                <strong>What counts as sexual harassment under the POSH Act?</strong> Unwelcome behavior including physical contact, comments, gestures, or requests for favors.<br><br>
+                <strong>How do I file a complaint?</strong> Submit a written complaint to your organization's ICC within 3 months of the incident.<br><br>
+                <strong>Can complaints be filed anonymously?</strong> No. The law requires the complainant to identify themselves, though confidentiality is maintained.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      easing: 'ease-out-cubic',
+      once: true,
+      offset: 120
+    });
+  </script>
+
+</body>
+</html>
+{% endblock body %}

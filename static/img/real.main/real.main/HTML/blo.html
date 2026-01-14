@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="../CSS/blog.css">
+</head>
+<body>
+ <div id="navbar-placeholder"></div>
+  <header>
+<!--   
+     <section class="blog-hero-section">
+  <div class="hero-content" data-aos="fade-up" data-aos-delay="100">
+    <h1 data-aos="fade-down" data-aos-delay="300">Welcome to Our Blog</h1>
+    <p data-aos="zoom-in" data-aos-delay="500">Stay informed with our latest updates, stories, and expert tips.</p>
+    <a href="#all" class="btn-explore" data-aos="fade-up" data-aos-delay="700">Explore Articles</a>
+  </div>
+</section>
+  </header>
+
+   <div class="search-bar" data-aos="fade-up" data-aos-delay="200">
+      <input type="text" placeholder="Search blog posts..." />
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </div>
+
+    <div class="category-filter" data-aos="fade-up" data-aos-delay="400">
+      <button class="filter-tag active">All</button>
+      <button class="filter-tag">Guides</button>
+      <button class="filter-tag">POSH Laws</button>
+      <button class="filter-tag">Success Stories</button>
+      <button class="filter-tag">Updates</button>
+    </div>
+
+  </div>
+</section>
+
+
+<section class="blog-posts-section py-5">
+  <div class="container">
+    <div class="blog-grid">
+
+      <div class="blog-card" data-category="guides">
+        <img src="../img/guide.webp" alt="Guides">
+        <div class="card-body">
+          <span class="badge">Guides</span>
+          <h4>How to Create a POSH Policy in 2025</h4>
+          <p>A step-by-step guide for building a compliant and inclusive policy framework.</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="guides">
+        <img src="../img/guide1.jpg" alt="Guides">
+        <div class="card-body">
+          <span class="badge">Guides</span>
+          <h4>How to Create a POSH Policy in 2025</h4>
+          <p>A step-by-step guide for building a compliant and inclusive policy framework.</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="posh laws">
+        <img src="../img/posh.jpg" alt="POSH Laws">
+        <div class="card-body">
+          <span class="badge">POSH Laws</span>
+          <h4>Understanding POSH Act Amendments</h4>
+          <p>A breakdown of key legal updates that every HR professional should know.</p>
+          <a href="#">Read More →</a>
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="posh laws">
+        <img src="../img/posh1.jpg" alt="POSH Laws">
+        <div class="card-body">
+          <span class="badge">POSH Laws</span>
+          <h4>Landmark Rulings That Defined POSH Law</h4>
+          <p>Explore real court cases that helped shape the framework of POSH law enforcement in India.</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="success stories">
+        <img src="../img/succes.jpeg" alt="Success Stories">
+        <div class="card-body">
+          <span class="badge">Success Stories</span>
+          <h4>Company X Reduced Complaints by 80%</h4>
+          <p>Discover how training transformed their workplace into a safe space.</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="success stories">
+        <img src="../img/success1.webp" alt="Success Stories">
+        <div class="card-body">
+          <span class="badge">Success Stories</span>
+          <h4>XYZ Corp Achieves 100% POSH Compliance</h4>
+          <p>Learn how XYZ implemented strong policies and awareness to build a safe and inclusive workplace.</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="updates">
+        <img src="../img/update.jpg" alt="Updates">
+        <div class="card-body">
+          <span class="badge">Updates</span>
+          <h4>New Training Mandates for 2025</h4>
+          <p>All companies must now conduct quarterly POSH workshops. Are you ready?</p>
+          
+        </div>
+      </div>
+
+      <div class="blog-card" data-category="guides">
+        <img src="../img/guide1.jpg" alt="Guides">
+        <div class="card-body">
+          <span class="badge">Guides</span>
+          <h4>Checklist: Conducting an Internal Inquiry</h4>
+          <p>Ensure every step of your investigation is fair and legally sound.</p>
+          
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+ -->
+
+
+
+
+<div id="footer-container"></div> 
+
+
+
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+
+     fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+
+
+      fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+
+  document.querySelectorAll('.filter-tag').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+
+
+
+
+
+
+
+  AOS.init({
+    duration: 800,
+    once: true,
+  });
+
+      fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("footer-container").innerHTML = data;
+    });
+ 
+  </script>
+</body>
+</html>
+

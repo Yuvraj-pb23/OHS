@@ -1,0 +1,337 @@
+{% block body %}
+{% load static %}
+
+<!-- Added Chart.js for the Progress Feature -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --pocso-primary: #00897b;
+        --glass-bg: rgba(255, 255, 255, 0.12);
+        --glass-border: rgba(255, 255, 255, 0.25);
+        --text-color: #ffffff;
+        --sidebar-w: 280px;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text-color);
+        /* Background Image remains as requested */
+        background: linear-gradient(rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), 
+                    url('https://img.freepik.com/free-vector/hand-drawn-international-children-s-day-background_23-2149110410.jpg?t=st=1715424000');
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        overflow-x: hidden;
+    }
+
+    /* --- Glassmorphism Utility --- */
+    .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    /* --- Layout Structure --- */
+    .course-dashboard {
+        display: grid;
+        grid-template-columns: var(--sidebar-w) 1fr;
+        min-height: 100vh;
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 25px;
+        gap: 25px;
+        box-sizing: border-box;
+    }
+
+    /* --- Sidebar --- */
+    .sidebar {
+        padding: 30px 20px;
+        height: calc(100vh - 50px);
+        position: sticky;
+        top: 25px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand-header h2 { font-size: 1.5rem; color: #fff; margin: 0; font-weight: 700; letter-spacing: 0.5px; }
+    .brand-header p { font-size: 0.85rem; color: #ddd; margin-top: 5px; }
+
+    .nav-menu { list-style: none; padding: 0; margin-top: 40px; }
+    .nav-item { margin-bottom: 10px; list-style: none; }
+    
+    .nav-link { 
+        display: block; 
+        padding: 14px 18px; 
+        border-radius: 12px; 
+        text-decoration: none; 
+        color: rgba(255,255,255,0.8); 
+        font-weight: 500; 
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    .nav-link:hover, .nav-link.active { 
+        background: rgba(255, 255, 255, 0.2); 
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.4);
+        transform: translateX(8px);
+    }
+
+    /* --- Main Content --- */
+    .main-content { padding: 0 10px; }
+
+    .page-title { margin-bottom: 35px; }
+    .page-title h1 { font-size: 2.2rem; margin: 0; text-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .page-title p { color: #ccc; margin-top: 5px; font-weight: 300; }
+
+    /* Stats Section */
+    .stats-row {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    .card { padding: 25px; }
+
+    .graph-wrapper { position: relative; height: 220px; width: 100%; }
+    
+    .circle-wrap { display: flex; align-items: center; justify-content: center; height: 100%; flex-direction: column; }
+    .progress-ring-alt {
+        width: 140px; height: 140px; border-radius: 50%;
+        background: conic-gradient(#00e5ff 0% 66%, rgba(255,255,255,0.1) 66% 100%);
+        display: flex; align-items: center; justify-content: center; margin-bottom: 15px;
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+    }
+    .progress-inner-alt {
+        width: 110px; height: 110px; background: rgba(10, 10, 10, 0.4); border-radius: 50%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    .progress-inner-alt h3 { margin: 0; font-size: 1.6rem; color: #00e5ff; }
+
+    /* Video Cards */
+    .video-list { display: flex; flex-direction: column; gap: 30px; }
+    .video-card { 
+        display: grid; 
+        grid-template-columns: 360px 1fr; 
+        gap: 30px; 
+        padding: 22px;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .video-card:hover { 
+        transform: translateY(-5px) scale(1.01); 
+        background: rgba(255,255,255,0.22); 
+    }
+
+    .video-frame { 
+        width: 100%; height: 200px; 
+        background: #000; border-radius: 14px; 
+        overflow: hidden; 
+        box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+    }
+    .video-frame video { width: 100%; height: 100%; object-fit: cover; }
+
+    .video-info h3 { margin: 0 0 12px 0; color: #fff; font-size: 1.4rem; font-weight: 600; }
+    .video-info p { color: #ddd; font-size: 0.95rem; line-height: 1.7; }
+
+    .tag { 
+        background: rgba(255,255,255,0.15); 
+        color: #fff; padding: 6px 14px; 
+        border-radius: 20px; font-size: 0.75rem; 
+        font-weight: 500;
+        margin-right: 8px;
+        border: 1px solid rgba(255,255,255,0.25);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Assessment Section */
+    .assessment-section {
+        margin-top: 60px;
+        padding: 45px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(0, 137, 123, 0.2));
+    }
+
+    .btn-take-quiz {
+        background: #ffffff; color: #004d40;
+        padding: 14px 35px; border-radius: 50px;
+        text-decoration: none; font-weight: 700;
+        transition: 0.3s; display: inline-flex; align-items: center; gap: 12px;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+    }
+    .btn-take-quiz:hover { background: #00e5ff; color: #fff; transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0, 229, 255, 0.4); }
+
+    @media (max-width: 1024px) {
+        .course-dashboard { grid-template-columns: 1fr; padding: 15px; }
+        .sidebar { display: none; }
+        .video-card { grid-template-columns: 1fr; }
+        .stats-row { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="course-dashboard">
+    <!-- Sidebar Section -->
+    <aside class="sidebar glass-panel">
+        <div class="brand-header">
+            <h2>POCSO Course</h2>
+            <p>Training Modules</p>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="#vid1" class="nav-link active">1. Introduction</a></li>
+            <li class="nav-item"><a href="#vid2" class="nav-link">2. Reporting Laws</a></li>
+            <li class="nav-item"><a href="#vid3" class="nav-link">3. Penalties</a></li>
+            <li class="nav-item"><a href="#assessment" class="nav-link">🏆 Final Test</a></li>
+        </ul>
+        <div style="margin-top: auto;">
+             <a href="{% url 'tutorial' %}" style="text-decoration: none; color: #bbb; font-size: 0.9rem; transition: 0.3s;">← Back to Dashboard</a>
+        </div>
+    </aside>
+
+    <!-- Main Content Section -->
+    <main class="main-content">
+        <div class="page-title">
+            <h1>My Learning Activity</h1>
+            <p>Track your daily progress and continue watching.</p>
+        </div>
+
+        <!-- Progress Stats Section -->
+        <div class="stats-row">
+            <div class="card glass-panel">
+                <h3 style="margin-top:0; font-size:1rem; color:#fff; font-weight: 400; opacity: 0.9;">Daily Watch Time (Minutes)</h3>
+                <div class="graph-wrapper">
+                    <canvas id="dailyChartPocso"></canvas>
+                </div>
+            </div>
+            <div class="card glass-panel">
+                <div class="circle-wrap">
+                    <div class="progress-ring-alt">
+                        <div class="progress-inner-alt">
+                            <h3>66%</h3>
+                            <span style="font-size: 0.7rem; letter-spacing: 1px; color: #ccc;">DONE</span>
+                        </div>
+                    </div>
+                    <p style="margin:0; font-size:0.9rem; color:#eee;">2 of 3 Modules Completed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video List Section -->
+        <div class="video-list">
+            <div class="video-card glass-panel" id="vid1">
+                <div class="video-frame">
+                    <video controls>
+                        <source src="{% static 'video/Demo Video OHS.mp4' %}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div style="margin-bottom: 12px;">
+                        <span class="tag">Module 1</span>
+                        <span class="tag" style="background:rgba(46, 125, 50, 0.4);">✓ Completed</span>
+                    </div>
+                    <h3>Introduction & Scope</h3>
+                    <p>Understanding the basics of the Protection of Children from Sexual Offences Act, 2012. This module covers essential definitions and legal frameworks.</p>
+                </div>
+            </div>
+
+            <div class="video-card glass-panel" id="vid2">
+                <div class="video-frame">
+                    <video controls>
+                        <source src="{% static 'videos/pocso_reporting.mp4' %}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div style="margin-bottom: 12px;">
+                        <span class="tag">Module 2</span>
+                        <span class="tag" style="background:rgba(239, 108, 0, 0.4);">⌛ In Progress</span>
+                    </div>
+                    <h3>Mandatory Reporting</h3>
+                    <p>Who is responsible for reporting abuse? This section explains Section 19 of the Act and the protocols for institutional reporting.</p>
+                </div>
+            </div>
+
+            <div class="video-card glass-panel" id="vid3">
+                <div class="video-frame">
+                    <video controls>
+                        <source src="{% static 'videos/pocso_penalties.mp4' %}" type="video/mp4">
+                    </video>
+                </div>
+                <div class="video-info">
+                    <div style="margin-bottom: 12px;">
+                        <span class="tag">Module 3</span>
+                        <span class="tag" style="background:rgba(198, 40, 40, 0.4);">🔒 Locked</span>
+                    </div>
+                    <h3>Penalties & Punishments</h3>
+                    <p>An overview of the stringent punishments prescribed under the Act for various offences against children.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Final Assessment Section -->
+        <div class="assessment-section glass-panel" id="assessment">
+            <div style="display: flex; align-items: center; gap: 30px;">
+                <div class="progress-ring-alt" style="width: 80px; height: 80px; margin: 0; box-shadow: none;">
+                    <div class="progress-inner-alt" style="width: 65px; height: 65px;">
+                        <span style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">80%</span>
+                    </div>
+                </div>
+                <div>
+                    <h2 style="margin: 0; font-size: 1.6rem;">Ready for the Quiz?</h2>
+                    <p style="margin: 5px 0 0 0; opacity: 0.8; font-weight: 300;">Complete the final module to unlock your certification assessment.</p>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'pocso_assessment' %}" class="btn-take-quiz">
+                    <span>🏆 Final Assessment</span>
+                </a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Graph Script -->
+<script>
+    const ctx = document.getElementById('dailyChartPocso').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Minutes',
+                data: [12, 40, 15, 50, 20, 0, 10],
+                backgroundColor: 'rgba(0, 229, 255, 0.5)',
+                borderColor: 'rgba(0, 229, 255, 1)',
+                borderWidth: 1.5,
+                borderRadius: 6,
+                hoverBackgroundColor: 'rgba(0, 229, 255, 0.8)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: 'rgba(255,255,255,0.08)' },
+                    ticks: { color: 'rgba(255,255,255,0.7)', font: { family: 'Poppins' } }
+                },
+                x: { 
+                    grid: { display: false },
+                    ticks: { color: 'rgba(255,255,255,0.7)', font: { family: 'Poppins' } }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock body %}

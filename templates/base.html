@@ -1,0 +1,795 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}OHS{% endblock %}</title>
+
+    <!-- Static CSS -->
+    <link rel="stylesheet" href="{% static 'CSS/new.css' %}" />
+    <link rel="stylesheet" href="{% static 'CSS/footer.css' %}" />
+    
+    <!-- Link to the custom static base CSS file -->
+    <link rel="stylesheet" href="{% static 'CSS/base.css' %}" />
+
+    <!-- External CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- INTERNAL STYLES FOR LOGIN/LOGOUT BUTTONS AND GLASSY NAVBAR -->
+    <style>
+        /* Transparent Glassy Navbar with Sky Blue Tint */
+        .navbar {
+            background: rgba(135, 206, 250, 0.2) !important; /* Sky Blue with low opacity */
+            backdrop-filter: blur(12px) saturate(180%); /* Glass blur effect */
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            transition: background 0.3s ease;
+        }
+
+        /* Ensure nav links look good on the glassy background */
+        .nav-link {
+            color: #333 !important; /* Darker text for readability */
+            font-weight: 500;
+        }
+        .nav-link.active {
+            color: #6200ea !important;
+            font-weight: 700;
+        }
+
+        /* Login Button Style - Purple Pill Shape */
+        .btn-auth-login {
+            background-color: #6200ea; /* Purple theme */
+            color: white !important;
+            padding: 8px 20px !important;
+            border-radius: 20px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+            display: inline-block;
+        }
+        .btn-auth-login:hover {
+            background-color: #4a00b0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(98, 0, 234, 0.3);
+            color: white !important;
+        }
+
+        /* Logout Button Style - Clean Link */
+        .btn-auth-logout {
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            color: inherit; /* Inherits nav-link color */
+            font-weight: 500;
+        }
+        .btn-auth-logout:hover {
+            color: #d32f2f !important; /* Red on hover */
+            text-decoration: underline;
+        }
+
+        /* User Greeting Style */
+        .user-greeting {
+            color: #6200ea;
+            font-weight: 700;
+            margin-right: 5px;
+            cursor: default;
+        }
+    </style>
+  </head>
+
+  <body>
+    <!-- CSRF Token for security -->
+    {% csrf_token %}
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="logo">
+        <a href="/#hero" class="nav-link">
+          <img src="{% static 'img/logo.jpg' %}" alt="OHS Logo" />
+        </a>
+      </div>
+
+      <!-- UPDATED NAV LINKS WITH LOGIN LOGIC -->
+      <div class="nav-links" id="navLinks">
+        <!-- Home: Exact match check -->
+        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+        
+        <!-- Other pages: Contains check (handles sub-pages) -->
+        <div class="dropdown">
+          <a href="/about" class="nav-link {% if '/about' in request.path %}active{% endif %}">Our Team</a>
+        </div>
+        <!-- <div class="dropdown">
+          <a href="/services" class="nav-link {% if '/services' in request.path %}active{% endif %}">Services</a>
+        </div> -->
+        <div class="dropdown">
+          <a href="/blog" class="nav-link {% if '/blog' in request.path %}active{% endif %}">Resources</a>
+        </div>
+        
+        <a href="/tutorial" class="nav-link {% if '/tutorial' in request.path %}active{% endif %}">Training</a>
+        
+        <!-- ========================================== -->
+        <!--        AUTHENTICATION LOGIC START          -->
+        <!-- ========================================== -->
+        {% if user.is_authenticated %}
+            <!-- If Logged In: Show Name & Logout -->
+            <span class="nav-link user-greeting">
+                Hi, {{ user.first_name|default:user.username }}
+            </span>
+            
+            <form action="{% url 'logout' %}" method="post" style="display:inline-flex; align-items:center;">
+                {% csrf_token %}
+                <button type="submit" class="nav-link btn-auth-logout">Logout</button>
+            </form>
+        {% else %}
+            <!-- If Logged Out: Show Login Button -->
+            <a href="{% url 'login' %}" class="btn-auth-login">Login</a>
+        {% endif %}
+        <!-- ========================================== -->
+        <!--         AUTHENTICATION LOGIC END           -->
+        <!-- ========================================== -->
+
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>{% block body %}{% endblock %}</main>
+
+    <!-- CHATBOT -->
+    <div id="chat-wrapper">
+      <div id="chat-bubble">Hi! I'm OHS chatbot</div>
+      <div id="chat-icon">
+        <img src="{% static 'img/logo.jpg' %}" alt="logo" class="chat-avatar" />
+      </div>
+    </div>
+
+    <div id="chatbot">
+      <div class="chat-header">
+        <div class="header-content">
+          <img src="{% static 'img/logo.jpg' %}" alt="logo" class="chat-avatar" />
+          <div class="header-text">
+            <div class="chat-title">OHS Assistant</div>
+            <div class="chat-subtitle">Your AI assistant</div>
+          </div>
+        </div>
+        <div class="header-controls">
+          <button class="header-control-btn" id="resize-chat-btn" title="Toggle size">
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="header-control-btn close-btn" id="close-chat" title="Close chat">×</button>
+        </div>
+      </div>
+
+      <div class="chat-body" id="chat-body"></div>
+      
+      <div class="quick-replies">
+        <button class="quick-reply-btn">What is POSH?</button>
+        <button class="quick-reply-btn">OHS Services</button>
+        <button class="quick-reply-btn">Contact Info</button>
+        <button class="quick-reply-btn">POSH Training</button>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Type and press Enter" />
+        <button class="input-action-btn" id="send-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-light pt-5 pb-4">
+      <div class="container px-4">
+        <div class="row g-4">
+          <div class="col-md-3 col-sm-6">
+            <h5 class="text-uppercase text-warning mb-3">OHS</h5>
+            <p>
+              Empowering organizations with expert POSH training, compliance
+              support, and committee setup to ensure safe and lawful workplaces.
+            </p>
+          </div>
+
+          <div class="col-md-2 col-sm-6">
+            <h5 class="text-uppercase text-warning mb-3">Quick Links</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="/" class="footer-link"><i class="fas fa-angle-right me-2"></i>Home</a></li>
+              <li class="mb-2"><a href="/about" class="footer-link"><i class="fas fa-angle-right me-2"></i>Our Team</a></li>
+              <!-- <li class="mb-2"><a href="/services" class="footer-link"><i class="fas fa-angle-right me-2"></i>Services</a></li> -->
+              <li class="mb-2"><a href="/blog" class="footer-link"><i class="fas fa-angle-right me-2"></i>Resources</a></li>
+               <li class="mb-2"><a href="/tutorial" class="footer-link"><i class="fas fa-angle-right me-2"></i>Training</a></li>
+            </ul>
+          </div>
+
+       <div class="col-md-4 col-sm-6">
+  <h5 class="text-uppercase text-warning mb-3">Contact</h5>
+
+  <p>
+    <i class="fas fa-map-marker-alt me-2 text-warning"></i>
+    <a 
+      href="https://www.google.com/maps/search/?api=1&query=Sector+13+Chandigarh+OHS"
+      target="_blank"
+      class="footer-link"
+    >
+      Sector-13, Chandigarh OHS
+    </a>
+  </p>
+
+  <p>
+    <i class="fas fa-map-marker-alt me-2 text-warning"></i>
+    <a 
+      href="https://www.google.com/maps/search/?api=1&query=Sector+79+Mohali"
+      target="_blank"
+      class="footer-link"
+    >
+      Sector-79, Mohali
+    </a>
+  </p>
+
+  <p class="mb-1">
+    <i class="fas fa-phone me-2 text-warning"></i>
+    <a href="tel:+919988997555" class="footer-link">+91 99889 97555</a>
+  </p>
+
+  <p>
+    <i class="fas fa-phone me-2 text-warning"></i>
+    <a href="tel:+919142437456" class="footer-link">+91 91424 37456</a>
+  </p>
+</div>
+
+
+          <div class="col-md-3 col-sm-6">
+            <h5 class="text-uppercase text-warning mb-3">Follow Us</h5>
+            <div class="d-flex gap-3">
+              <a href="https://www.facebook.com/openhandsolutions/about/" class="social-icon" target="_blank" aria-label="Facebook">
+                <i class="fab fa-facebook-f"></i>
+              </a>
+              <a href="https://in.linkedin.com/company/open-hand-solutions" class="social-icon" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+              <a href="https://www.instagram.com/open_hand_solutions/" class="social-icon" target="_blank" aria-label="Instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+            </div>
+          </div>
+
+          <hr class="border-light mt-4" />
+          <div class="row">
+            <div class="col text-center">
+              <p class="mb-0">&copy; 2025 <strong>OHS</strong>. All Rights Reserved.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      // Mobile Menu Toggle
+      const hamburger = document.getElementById("hamburger");
+      const navLinks = document.getElementById("navLinks");
+
+      if (hamburger && navLinks) {
+        hamburger.addEventListener("click", () => {
+          navLinks.classList.toggle("show");
+          hamburger.classList.toggle("active");
+        });
+      }
+
+      // Floating Services Menu
+      const fab = document.getElementById("servicesFab");
+      const dropdown = document.getElementById("servicesDropdown");
+
+      if (fab && dropdown) {
+        fab.addEventListener("click", (e) => {
+          e.stopPropagation();
+          dropdown.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+          if (!fab.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove("show");
+          }
+        });
+
+        dropdown.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+      }
+
+
+      // --- CHATBOT JavaScript ---
+
+      const chatIcon = document.getElementById("chat-icon");
+      const chatBubble = document.getElementById("chat-bubble");
+      const chatbot = document.getElementById("chatbot");
+      const closeChat = document.getElementById("close-chat");
+      const sendBtn = document.getElementById("send-btn");
+      const userInput = document.getElementById("user-input");
+      const chatBody = document.getElementById("chat-body");
+      const chatHeader = document.querySelector(".chat-header");
+      const resizeBtn = document.getElementById("resize-chat-btn");
+
+      let isChatOpen = false;
+      let isFirstTime = true;
+
+      const ITEMS_PER_PAGE = 5;
+
+      const botAvatarHTML = `
+        <div class="message-avatar">
+          <img src="{% static 'img/logo.jpg' %}" alt="Bot Logo">
+        </div>
+      `;
+
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+
+      function getCSRFToken() {
+        const metaToken = document.querySelector('meta[name="csrf-token"]');
+        if (metaToken) return metaToken.getAttribute("content");
+        const inputToken = document.querySelector("[name=csrfmiddlewaretoken]");
+        if (inputToken) return inputToken.value;
+        return getCookie("csrftoken");
+      }
+
+      function createInitialMessage() {
+          if (chatBody.children.length === 0) {
+              const dateSeparator = document.createElement("div");
+              dateSeparator.className = "date-separator";
+              dateSeparator.textContent = "Today";
+              chatBody.appendChild(dateSeparator);
+          }
+          const botMsgDiv = document.createElement("div");
+          botMsgDiv.className = "bot-message";
+          botMsgDiv.innerHTML = `${botAvatarHTML}<div class="message-bubble">Hi there! <br> How can I help you today?</div>`;
+          chatBody.appendChild(botMsgDiv);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function sendMessage() {
+          const message = userInput.value.trim();
+          if (message === "" || sendBtn.disabled) return;
+          sendBtn.disabled = true;
+          appendUserMessage(message);
+          userInput.value = "";
+          hideSuggestionButtons();
+          showTypingIndicator();
+          fetchBotResponse(message);
+      }
+
+      function sendSelectionMessage(selectionText) {
+          appendUserMessage(selectionText);
+          hideSuggestionButtons();
+          showTypingIndicator();
+          fetchBotResponse(selectionText);
+      }
+
+      function fetchBotResponse(message) {
+          const csrfToken = getCSRFToken();
+          fetch("/chat/", {
+              method: "POST",
+              headers: {
+                  'Content-Type': 'application/json',
+                  'X-CSRFToken': csrfToken,
+              },
+              body: JSON.stringify({ message: message })
+          })
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              hideTypingIndicator();
+              handleBotResponse(data);
+          })
+          .catch((error) => {
+              console.error("Fetch Error:", error);
+              hideTypingIndicator();
+              showErrorMessage();
+          });
+      }
+
+      function appendUserMessage(message) {
+          const userMsgDiv = document.createElement("div");
+          userMsgDiv.className = "user-message";
+          userMsgDiv.textContent = message;
+          chatBody.appendChild(userMsgDiv);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function handleBotResponse(data) {
+          const response = data.response;
+          const shouldReset = data.reset || false;
+
+          if (shouldReset) {
+              const botMsgDiv = document.createElement("div");
+              botMsgDiv.className = "bot-message";
+              botMsgDiv.innerHTML = `${botAvatarHTML}<div class="message-bubble">${response}</div>`;
+              chatBody.appendChild(botMsgDiv);
+              setTimeout(() => {
+                  chatBody.innerHTML = '';
+                  createInitialMessage();
+              }, 2000);
+              sendBtn.disabled = false;
+              return;
+          }
+
+          const botMsgDiv = document.createElement("div");
+          botMsgDiv.className = "bot-message";
+          botMsgDiv.innerHTML = botAvatarHTML;
+          chatBody.appendChild(botMsgDiv);
+
+          const bubble = document.createElement('div');
+          bubble.className = 'message-bubble';
+          botMsgDiv.appendChild(bubble);
+
+          if (typeof response === 'object' && response !== null) {
+              if (response.display_type) {
+                  switch (response.display_type) {
+                      case 'button_selection':
+                          createButtonSelectionMessage(bubble, response);
+                          break;
+                      case 'text_block':
+                          createTextBlockMessage(bubble, response);
+                          break;
+                      case 'detailed_breakdown':
+                          createDetailedBreakdownMessage(bubble, response);
+                          break;
+                      default:
+                          createFallbackMessage(bubble, response);
+                  }
+              } else {
+                  createFallbackMessage(bubble, response);
+              }
+          } else {
+              const responseText = String(response);
+              if (!parseAndCreateSuggestions(bubble, responseText)) {
+                  typeContent(bubble, responseText);
+              }
+          }
+
+          chatBody.scrollTop = chatBody.scrollHeight;
+          sendBtn.disabled = false;
+      }
+
+      function typeContent(element, content, speed = 25) {
+          let visibleText = '';
+          let inTag = false;
+          for (const char of content) {
+              if (char === '<') inTag = true;
+              if (!inTag) visibleText += char;
+              if (char === '>') inTag = false;
+          }
+          
+          let visibleIndex = 0;
+          let contentIndex = 0;
+          
+          element.classList.add("typing-cursor");
+
+          const interval = setInterval(() => {
+              if (visibleIndex < visibleText.length) {
+                  let nextChar = content[contentIndex];
+                  if (nextChar === '<') {
+                      let tagEndIndex = content.indexOf('>', contentIndex);
+                      element.innerHTML += content.substring(contentIndex, tagEndIndex + 1);
+                      contentIndex = tagEndIndex;
+                  } else {
+                      element.innerHTML += nextChar;
+                      visibleIndex++;
+                  }
+                  contentIndex++;
+                  chatBody.scrollTop = chatBody.scrollHeight;
+              } else {
+                  element.innerHTML = content;
+                  clearInterval(interval);
+                  element.classList.remove("typing-cursor");
+              }
+          }, speed);
+      }
+
+      function createPaginationControls(container, currentPage, totalPages, onPageChange) {
+          const paginationDiv = document.createElement('div');
+          paginationDiv.className = 'pagination-controls';
+          paginationDiv.style.cssText = `display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 12px; padding: 8px; background: #f8fafc; border-radius: 6px; border-top: 1px solid #e5e7eb;`;
+          const prevBtn = document.createElement('button');
+          prevBtn.innerHTML = '‹';
+          prevBtn.disabled = currentPage === 1;
+          prevBtn.style.cssText = `width: 28px; height: 28px; border: 1px solid ${currentPage === 1 ? '#d1d5db' : '#2563eb'}; border-radius: 4px; background: ${currentPage === 1 ? '#f9fafb' : 'white'}; color: ${currentPage === 1 ? '#9ca3af' : '#2563eb'}; cursor: ${currentPage === 1 ? 'not-allowed' : 'pointer'}; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;`;
+          if (currentPage > 1) {
+              prevBtn.addEventListener('click', () => onPageChange(currentPage - 1));
+              prevBtn.addEventListener('mouseenter', () => { prevBtn.style.background = '#2563eb'; prevBtn.style.color = 'white'; });
+              prevBtn.addEventListener('mouseleave', () => { prevBtn.style.background = 'white'; prevBtn.style.color = '#2563eb'; });
+          }
+          const pageInfo = document.createElement('span');
+          pageInfo.textContent = `${currentPage} / ${totalPages}`;
+          pageInfo.style.cssText = `font-size: 12px; color: #6b7280; font-weight: 500; min-width: 40px; text-align: center;`;
+          const nextBtn = document.createElement('button');
+          nextBtn.innerHTML = '›';
+          nextBtn.disabled = currentPage === totalPages;
+          nextBtn.style.cssText = `width: 28px; height: 28px; border: 1px solid ${currentPage === totalPages ? '#d1d5db' : '#2563eb'}; border-radius: 4px; background: ${currentPage === totalPages ? '#f9fafb' : 'white'}; color: ${currentPage === totalPages ? '#9ca3af' : '#2563eb'}; cursor: ${currentPage === totalPages ? 'not-allowed' : 'pointer'}; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center;`;
+          if (currentPage < totalPages) {
+              nextBtn.addEventListener('click', () => onPageChange(currentPage + 1));
+              nextBtn.addEventListener('mouseenter', () => { nextBtn.style.background = '#2563eb'; nextBtn.style.color = 'white'; });
+              nextBtn.addEventListener('mouseleave', () => { nextBtn.style.background = 'white'; nextBtn.style.color = '#2563eb'; });
+          }
+          paginationDiv.appendChild(prevBtn);
+          paginationDiv.appendChild(pageInfo);
+          paginationDiv.appendChild(nextBtn);
+          container.appendChild(paginationDiv);
+      }
+
+      function parseAndCreateSuggestions(bubbleElement, responseText) {
+          const hasDidYouMean = responseText.includes("Did you mean one of these?") || responseText.includes("choose 1, 2");
+          if (!hasDidYouMean) return false;
+
+          let suggestionPattern = /(\d+)\.\s*(.+?)(?=\n\d+\.|\nPlease|\n$|$)/gs;
+          let matches = [...responseText.matchAll(suggestionPattern)];
+
+          if (matches.length < 2) return false;
+
+          const firstMatchIndex = responseText.indexOf(matches[0][0]);
+          let mainMessage = responseText.substring(0, firstMatchIndex).trim();
+          
+          const messageTextWrapper = document.createElement('div');
+          messageTextWrapper.style.marginBottom = '15px';
+          bubbleElement.appendChild(messageTextWrapper);
+          typeContent(messageTextWrapper, mainMessage);
+
+          setTimeout(() => {
+              const totalPages = Math.ceil(matches.length / ITEMS_PER_PAGE);
+              const contentContainer = document.createElement('div');
+              const renderSuggestionsPage = (page) => {
+                  contentContainer.innerHTML = '';
+                  const suggestionsContainer = document.createElement('div');
+                  suggestionsContainer.className = 'suggestions-list';
+                  
+                  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+                  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, matches.length);
+                  const pageMatches = matches.slice(startIndex, endIndex);
+
+                  pageMatches.forEach(match => {
+                      const suggestionText = match[2].trim();
+                      const button = document.createElement("div");
+                      button.className = "suggestion-item";
+                      button.innerHTML = `
+                          <div class="suggestion-icon">${match[1]}</div>
+                          <div class="suggestion-text">${suggestionText}</div>
+                          <div class="suggestion-arrow">›</div>
+                      `;
+                      button.addEventListener("click", () => sendSelectionMessage(suggestionText));
+                      suggestionsContainer.appendChild(button);
+                  });
+                  contentContainer.appendChild(suggestionsContainer);
+
+                  if (totalPages > 1) {
+                      createPaginationControls(contentContainer, page, totalPages, renderSuggestionsPage);
+                  }
+                  chatBody.scrollTop = chatBody.scrollHeight;
+              };
+              bubbleElement.appendChild(contentContainer);
+              renderSuggestionsPage(1);
+          }, mainMessage.length * 25);
+
+          return true;
+      }
+
+      function hideSuggestionButtons() {
+        document.querySelectorAll('.suggestions-list').forEach(container => container.remove());
+      }
+
+      function createTextBlockMessage(bubble, responseData) {
+          let htmlString = '';
+          if (responseData.title) {
+              htmlString += `<h3 style="margin: 0 0 10px 0; color: #2563eb; font-size: 16px;">${responseData.title}</h3>`;
+          }
+          if (responseData.lines && Array.isArray(responseData.lines)) {
+              responseData.lines.forEach(line => {
+                  const content = line.trim() === '' ? '<br>' : line;
+                  htmlString += `<div style="margin-bottom: 4px; line-height: 1.4;">${content}</div>`;
+              });
+          }
+          typeContent(bubble, htmlString);
+      }
+
+      function createDetailedBreakdownMessage(bubble, responseData) {
+          let htmlString = '';
+          if (responseData.title) {
+              htmlString += `<h3 style="margin: 0 0 15px 0; color: #2563eb; font-size: 16px;">${responseData.title}</h3>`;
+          }
+          if (responseData.total_count) {
+              htmlString += `<div style="background: #f8fafc; padding: 10px; border-radius: 6px; margin-bottom: 15px; border-left: 3px solid #2563eb;">`;
+              htmlString += `<div>Total Sections: ${responseData.total_count}</div>`;
+              htmlString += `<div>Total Length: ${(responseData.total_length_m / 1000).toFixed(2)} km</div>`;
+              htmlString += `<div>Total Signs: ${responseData.total_signs}</div>`;
+              htmlString += `</div>`;
+          }
+          if (responseData.sections && Array.isArray(responseData.sections)) {
+              htmlString += `<h4 style="margin: 15px 0 10px 0; color: #374151;">Section Details:</h4>`;
+              responseData.sections.forEach(section => {
+                  htmlString += `<div style="border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; margin-bottom: 8px; background: white;">`;
+                  htmlString += `<div style="font-weight: bold; color: #1f2937; margin-bottom: 5px;">${section.name}</div>`;
+                  htmlString += `<div style="font-size: 12px; color: #6b7280;">Length: ${(section.length_m / 1000).toFixed(2)} km | Chainage: ${section.chainage}</div>`;
+                  if (section.signs && Object.keys(section.signs).length > 0) {
+                      const signsList = Object.entries(section.signs).map(([type, count]) => `${type}: ${count}`).join(', ');
+                      htmlString += `<div style="margin-top: 8px; font-size: 12px;"><strong>Signs:</strong> ${signsList}</div>`;
+                  }
+                  htmlString += `</div>`;
+              });
+          }
+          typeContent(bubble, htmlString);
+      }
+
+      function createButtonSelectionMessage(bubble, responseData) {
+          const messageText = document.createElement('div');
+          messageText.textContent = responseData.message;
+          messageText.style.cssText = 'margin-bottom: 12px;';
+          bubble.appendChild(messageText);
+          if (responseData.options && responseData.options.length > 0) {
+              const totalPages = Math.ceil(responseData.options.length / ITEMS_PER_PAGE);
+              const contentContainer = document.createElement('div');
+              const renderPage = (page) => {
+                  contentContainer.innerHTML = '';
+                  const buttonsContainer = document.createElement('div');
+                  buttonsContainer.className = 'ro-buttons-container';
+                  buttonsContainer.style.cssText = 'display: flex; flex-direction: column; gap: 6px;';
+                  const startIndex = (page - 1) * ITEMS_PER_PAGE;
+                  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, responseData.options.length);
+                  const pageOptions = responseData.options.slice(startIndex, endIndex);
+                  pageOptions.forEach(option => {
+                      const button = document.createElement("div");
+                      button.className = "ro-button";
+                      button.style.cssText = `display: flex; align-items: flex-start; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; background: white; cursor: pointer; transition: all 0.2s; font-size: 13px; min-height: 44px; word-break: break-word;`;
+                      button.setAttribute('data-option', option);
+                      button.innerHTML = `<div class="ro-icon" style="width: 24px; height: 24px; border-radius: 50%; background: #2563eb; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 8px; font-size: 10px; flex-shrink: 0;">${option.substring(0, 1).toUpperCase()}</div><div class="ro-content" style="flex: 1; min-width: 0; overflow: hidden;"><div class="ro-title" style="font-weight: 500; color: #1f2937; font-size: 13px; line-height: 1.4; word-wrap: break-word; white-space: normal; overflow-wrap: break-word; display: block;">${option.trim()}</div></div><div class="ro-arrow" style="color: #6b7280; font-size: 14px; flex-shrink: 0; margin-left: 4px;">›</div>`;
+                      button.addEventListener("mouseenter", () => { button.style.backgroundColor = '#f9fafb'; button.style.borderColor = '#2563eb'; });
+                      button.addEventListener("mouseleave", () => { button.style.backgroundColor = 'white'; button.style.borderColor = '#d1d5db'; });
+                      button.addEventListener("click", () => {
+                          button.style.backgroundColor = '#2563eb';
+                          const titleElement = button.querySelector('.ro-title');
+                          const arrowElement = button.querySelector('.ro-arrow');
+                          if (titleElement) titleElement.style.color = 'white';
+                          if (arrowElement) arrowElement.style.color = 'white';
+                          setTimeout(() => sendSelectionMessage(option.trim()), 150);
+                      });
+                      buttonsContainer.appendChild(button);
+                  });
+                  contentContainer.appendChild(buttonsContainer);
+                  if (totalPages > 1) {
+                      createPaginationControls(contentContainer, page, totalPages, renderPage);
+                  }
+                  chatBody.scrollTop = chatBody.scrollHeight;
+              };
+              bubble.appendChild(contentContainer);
+              renderPage(1);
+          }
+      }
+
+      function createFallbackMessage(bubble, response) {
+          let displayText;
+          if (typeof response === 'object') {
+              displayText = JSON.stringify(response, null, 2);
+          } else {
+              displayText = String(response);
+          }
+          bubble.innerHTML = `<pre style="white-space: pre-wrap; font-family: inherit;">${displayText}</pre>`;
+      }
+
+
+      function showTypingIndicator() {
+          if (document.getElementById("typing-indicator")) return;
+          const typingDiv = document.createElement("div");
+          typingDiv.id = "typing-indicator";
+          typingDiv.className = "bot-message";
+          typingDiv.innerHTML = `${botAvatarHTML}<div id="typing-text" class="message-bubble">OHS Assistant is typing...</div>`;
+          chatBody.appendChild(typingDiv);
+          chatBody.scrollTop = chatBody.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+          document.getElementById("typing-indicator")?.remove();
+      }
+
+      function showErrorMessage() {
+          const errorDiv = document.createElement("div");
+          errorDiv.className = "bot-message";
+          errorDiv.innerHTML = `${botAvatarHTML}<div class="message-bubble">Sorry, something went wrong. Please try again.</div>`;
+          chatBody.appendChild(errorDiv);
+          chatBody.scrollTop = chatBody.scrollHeight;
+          sendBtn.disabled = false;
+      }
+
+      function openChatbot() {
+          isChatOpen = true;
+          chatbot.style.display = "flex";
+          chatBubble.style.display = "none";
+          userInput.focus();
+          if (isFirstTime) {
+              createInitialMessage();
+              isFirstTime = false;
+          }
+      }
+
+      function closeChatbot() {
+          isChatOpen = false;
+          chatbot.style.display = "none";
+          chatBubble.style.display = "block";
+          chatbot.classList.remove('chatbot-enlarged');
+          const icon = resizeBtn.querySelector('i');
+          icon.classList.remove('fa-compress');
+          icon.classList.add('fa-expand');
+      }
+
+      // --- Event Listeners and Initializers ---
+      sendBtn.addEventListener("click", sendMessage);
+      userInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage();
+          }
+      });
+      chatIcon.addEventListener("click", () => isChatOpen ? closeChatbot() : openChatbot());
+      closeChat.addEventListener("click", closeChatbot);
+      
+      resizeBtn.addEventListener('click', () => {
+        chatbot.classList.toggle('chatbot-enlarged');
+        const icon = resizeBtn.querySelector('i');
+        if (chatbot.classList.contains('chatbot-enlarged')) {
+          icon.classList.remove('fa-expand');
+          icon.classList.add('fa-compress');
+        } else {
+          icon.classList.remove('fa-compress');
+          icon.classList.add('fa-expand');
+        }
+      });
+      
+      document.querySelectorAll('.quick-reply-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const buttonText = button.textContent;
+          sendSelectionMessage(buttonText);
+        });
+      });
+
+      window.addEventListener('load', () => {
+          chatbot.style.display = "none";
+          chatBubble.style.display = "block";
+      });
+
+    </script>
+  </body>
+</html>

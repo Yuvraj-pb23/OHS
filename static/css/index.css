@@ -1,0 +1,841 @@
+/* --- START OF FILE index.css --- */
+
+:root {
+  --primary: #1a3a6c;
+  --primary-dark: #0d2547;
+  --secondary: #0066cc;
+  --secondary-light: #0077ee;
+  --accent: #ff6b35;
+  --accent-alt: #5a8ee0;
+  --light: #f8f9fa;
+  --white: #ffffff;
+  --gray: #6c757d;
+  --dark: #212529;
+  --blue-gradient-start: #1a3a6c;
+  --blue-gradient-end: #0066cc;
+}
+
+body {
+  font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+  background-attachment: fixed;
+  color: #333;
+  line-height: 1.7;
+  margin: 0;
+  padding: 0;
+}
+/* --- Why Choose OHS? Section Styling (Glass Effect) --- */
+.why-choose-us-section {
+  padding: 100px 0;
+  position: relative;
+  /* Background image is handled inline in HTML for Django */
+  z-index: 1;
+}
+
+/* 1. Dark Overlay (Crucial for Glass Effect contrast) */
+.why-choose-us-section::before {
+  content: '';
+  position: absolute;
+  inset: 0; /* Covers top, bottom, left, right */
+  background: rgba(15, 23, 42, 0.85); /* Dark Navy Overlay */
+  z-index: -1; /* Puts it behind the content but in front of image */
+}
+
+/* 2. Update Section Headers to White */
+.why-choose-us-section .section-header h2 {
+  font-size: 3rem;
+  color: #ffffff; /* White text */
+  margin-bottom: 20px;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.why-choose-us-section .section-header p {
+  font-size: 1.15rem;
+  color: #cbd5e1; /* Light gray text */
+  max-width: 800px;
+  margin: 40px auto 50px;
+  line-height: 1.7;
+}
+
+/* 3. The Glass Card Styling */
+.feature-card {
+  /* Semi-transparent white background */
+  background: rgba(255, 255, 255, 0.1); 
+  
+  /* The Blur Effect */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* Border and Shadow for depth */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  
+  border-radius: 20px;
+  padding: 40px 30px;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover Effect: Card lifts up and gets slightly brighter */
+.feature-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Adjusted gradient to pop on dark background */
+  background: linear-gradient(135deg, var(--secondary), var(--accent));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 2.2rem;
+  transition: transform 0.4s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* Update Text inside Card to White */
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff; /* White Title */
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #e2e8f0; /* Light Gray Body Text */
+}
+
+/* Read More Button Adjustments */
+.feature-card .read-more-btn {
+  opacity: 0;
+  visibility: hidden;
+  margin-top: 15px;
+  display: inline-block;
+  padding: 10px 22px;
+  background: white; /* White button */
+  color: var(--primary); /* Blue text */
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  transform: translateY(10px);
+}
+
+.feature-card:hover .read-more-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* --- Hero Section --- */
+.hero-section {
+  min-height: 60vh;
+  background: linear-gradient(to right, #709ee3ff, #ffffff);
+  padding: 120px 0 80px;
+}
+
+.hero-section h1 {
+  color: #0a2540;
+  line-height: 1.2;
+}
+
+.hero-section p {
+  color: #333;
+  font-size: 1.15rem;
+}
+
+.hero-section .btn {
+  padding: 12px 28px;
+  font-weight: 500;
+}
+
+/* --- Carousel Styling --- */
+.carousel-inner {
+  height: 60vh;
+  min-height: 400px;
+  max-height: 600px;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-inner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.carousel-item {
+  height: 100%;
+}
+
+.carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.9;
+  position: relative;
+  z-index: 0;
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+  width: 5%;
+  border-radius: 0;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+  transform: scale(1.1);
+}
+
+.carousel-control-prev-icon::after {
+  content: "‹";
+}
+
+.carousel-control-next-icon::after {
+  content: "›";
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  background-image: none;
+  font-size: 24px;
+  opacity: 0.9;
+}
+
+@media (max-width: 992px) {
+  .carousel-inner {
+    height: 50vh;
+    min-height: 350px;
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel-inner {
+    height: 45vh;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .carousel-inner {
+    height: 40vh;
+    min-height: 280px;
+  }
+}
+
+/* --- About Section --- */
+.container.my-5 {
+  padding-top: 80px;
+  padding-bottom: 80px;
+}
+
+.rounded {
+  border-radius: 16px !important;
+}
+
+.shadow-sm {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+}
+
+h6.text-primary {
+  color: var(--secondary) !important;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+h2.fw-bold {
+  color: var(--primary);
+  font-size: 3rem;
+  margin-bottom: 15px;
+  position: relative;
+}
+
+h4.text-secondary {
+  color: var(--gray) !important;
+  font-weight: 500;
+  margin-bottom: 25px;
+}
+
+.text-muted {
+  color: #555 !important;
+}
+
+/* --- Custom Button --- */
+.custom-button {
+  display: inline-block;
+  padding: 16px 36px;
+  font-size: 17px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+  border: none;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 8px 25px rgba(0, 102, 204, 0.4);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.custom-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: 0.5s;
+  z-index: -1;
+}
+
+.custom-button:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(0, 102, 204, 0.5);
+  background: linear-gradient(135deg, var(--secondary-light), #0055aa);
+}
+
+.custom-button:hover::before {
+  left: 100%;
+}
+
+/* Default: hide mobile carousels on desktop */
+.mobile-carousel {
+  display: none;
+}
+
+/* Milestones + Services: manual carousel on mobile */
+@media (max-width: 768px) {
+  /* Hide auto-scroll versions */
+  .milestone-slider,
+  .services-scroll-wrapper {
+    display: none !important;
+  }
+
+  /* Show manual carousels */
+  #milestoneCarousel,
+  #servicesCarousel {
+    display: block !important;
+  }
+
+  #milestoneCarousel h2,
+  #milestoneCarousel h3 {
+    font-size: 18px;
+  }
+
+  #servicesCarousel h6 {
+    font-size: 15px;
+  }
+}
+
+/* Clients: always auto-scroll, but smaller on mobile */
+@media (max-width: 768px) {
+  .achievements-slider img {
+    height: 60px; /* reduce logo size */
+    object-fit: contain;
+  }
+
+  .achievements-slider {
+    padding: 10px 0;
+  }
+
+  /* Hide Bootstrap clients carousel (keep auto-scroll only) */
+  #clientsCarousel {
+    display: none !important;
+  }
+}
+
+/* --- Milestones/Impact Section Styling (ANIMATED) --- */
+/* --- Milestones/Impact Section Styling (ANIMATED) --- */
+/* --- REPLACE YOUR EXISTING .impact-card CSS WITH THIS --- */
+
+.impact-card {
+  width: 100%;
+  min-height: 320px;
+  border-radius: 20px;
+  padding: 40px 30px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 1;
+
+  /* === GLASS EFFECT SETTINGS === */
+  background: rgba(255, 255, 255, 0.1) !important; /* 10% opaque white */
+  backdrop-filter: blur(15px);           /* Blurs the background image */
+  -webkit-backdrop-filter: blur(15px);   /* For Safari */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Thin white border */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* !!! CRITICAL STEP: HIDE THE OLD BLUE LAYERS !!! */
+.impact-card::before,
+.impact-card::after {
+  display: none !important;
+}
+
+/* Hover Effect: Lighter glass and lift */
+.impact-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.2) !important; 
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Force all text to be White */
+.impact-card h2, 
+.impact-card p, 
+.impact-card span,
+.impact-card .counter {
+  color: #ffffff !important;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3); /* Adds contrast against glass */
+}
+
+/* Make the Icon Circles Glassy too */
+.impact-card .icon-wrapper {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.impact-card:hover .icon-wrapper {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Remove the Card Info white background if it exists */
+.card-info {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Hover Effects */
+.impact-card:hover {
+  transform: translateY(-10px);
+  /* Make it slightly more opaque on hover */
+  background: rgba(255, 255, 255, 0.15); 
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Icon Styling inside Card Info */
+.impact-card .icon-wrapper {
+  margin: 0 auto 25px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: #fff;
+  transition: all 0.3s ease;
+  
+  /* Glassy Icon Background */
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.impact-card:hover .icon-wrapper {
+  transform: scale(1.1) rotate(10deg);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Text Styling - Updated to White for Glass on Dark */
+.impact-card h2 {
+  color: #ffffff; /* White */
+  margin-bottom: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+.impact-card p {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff; /* White */
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.impact-card span {
+  font-size: 0.95rem;
+  color: #e2e8f0; /* Light Gray/White */
+  font-weight: 300;
+}
+
+/* Mobile Carousel Arrow Styling */
+@media (max-width: 768px) {
+  #milestoneCarousel .carousel-control-prev,
+  #milestoneCarousel .carousel-control-next,
+  #servicesCarousel .carousel-control-prev,
+  #servicesCarousel .carousel-control-next {
+    background-color: #ffffff !important;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.9;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+
+  #milestoneCarousel .carousel-control-prev-icon,
+  #milestoneCarousel .carousel-control-next-icon,
+  #servicesCarousel .carousel-control-prev-icon,
+  #servicesCarousel .carousel-control-next-icon {
+    background-image: none !important;
+    color: #000000 !important;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+  }
+
+  #milestoneCarousel .carousel-control-prev-icon::after,
+  #servicesCarousel .carousel-control-prev-icon::after {
+    content: "‹";
+  }
+
+  #milestoneCarousel .carousel-control-next-icon::after,
+  #servicesCarousel .carousel-control-next-icon::after {
+    content: "›";
+  }
+}
+
+/* --- Why Choose OHS? Section Styling --- */
+.why-choose-us-section {
+  padding: 100px 0;
+  background: linear-gradient(135deg, #f0f6ff 0%, #e1efff 100%);
+  text-align: center;
+}
+
+.why-choose-us-section .section-header h2 {
+  font-size: 3rem;
+  color: var(--primary);
+  margin-bottom: 20px;
+  font-weight: 700;
+  position: relative;
+  display: inline-block;
+}
+
+.why-choose-us-section .section-header h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent-alt));
+  border-radius: 3px;
+}
+
+.why-choose-us-section .section-header p {
+  font-size: 1.15rem;
+  color: #555;
+  max-width: 800px;
+  margin: 40px auto 50px;
+  line-height: 1.7;
+}
+
+.feature-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 30px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  height: 100%;
+  border: 1px solid #e7eaf3;
+  text-align: center;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--secondary), var(--accent-alt));
+  box-shadow: 0 8px 20px rgba(0, 102, 204, 0.3);
+  color: #fff;
+  font-size: 2.2rem;
+  transition: transform 0.4s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: rotate(15deg) scale(1.1);
+}
+
+.feature-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 15px;
+}
+
+.feature-card p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #6c757d;
+}
+
+/* Read More Button - Hidden by default */
+.feature-card .read-more-btn,
+.service-card .read-more-btn {
+  opacity: 0;
+  visibility: hidden;
+  margin-top: 15px;
+  display: inline-block;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--secondary), var(--accent-alt));
+  color: #fff;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  transform: translateY(10px);
+}
+
+/* Show button on hover */
+.feature-card:hover .read-more-btn,
+.service-card:hover .read-more-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* --- Services Section --- */
+#services {
+  padding: 100px 0;
+  background: white;
+}
+
+#services h2 {
+  font-size: 3.2rem;
+  color: var(--primary);
+  margin-bottom: 60px;
+  position: relative;
+  display: inline-block;
+}
+
+#services h2::after {
+  content: "";
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 6px;
+  background: linear-gradient(90deg, var(--secondary), var(--accent-alt));
+  border-radius: 3px;
+}
+
+.services-scroll-wrapper {
+  overflow: hidden;
+  padding: 25px 0;
+}
+
+.services-scroll {
+  display: flex;
+  gap: 25px;
+  animation: scrollCards 20s linear infinite;
+  padding: 15px 0;
+}
+
+/* Style for the second, reversed scroller */
+.services-scroll.reverse {
+  animation: scrollCardsReverse 20s linear infinite;
+}
+
+.service-card {
+  flex: 0 0 280px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 30px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.service-card i {
+  color: var(--secondary);
+  transition: transform 0.3s ease;
+}
+
+.service-card h6 {
+  font-size: 1.3rem;
+  margin: 20px 0 15px;
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.7;
+}
+
+.service-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.18);
+}
+
+.service-card:hover i {
+  transform: scale(1.15);
+  color: var(--accent-alt);
+}
+
+@keyframes scrollCards {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollCardsReverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.services-scroll-wrapper:hover .services-scroll {
+  animation-play-state: paused;
+}
+
+/* --- Achievements/Clients Section --- */
+/* =========================================================
+       4. CLIENTS SECTION (FULL GLASS EFFECT)
+       ========================================================= */
+    .achievements {
+      width: 100%;
+      background-image: url("../static/img/photo-1486406146926-c627a92ad1ab\ \(1\).avif");
+      background-attachment: fixed;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      padding: 100px 0;
+      position: relative;
+      margin: 0;
+      z-index: 1;
+    }
+
+    .achievements::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6); 
+      z-index: -1;
+    }
+
+    .client-logo-grid {
+      display: grid;
+      /* CHANGE 1: Increased min-width from 140px to 220px */
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      /* CHANGE 2: Increased gap to prevent crowding */
+      gap: 40px; 
+      padding: 50px;
+      align-items: center;
+      justify-items: center;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+      border-radius: 20px;
+    }
+
+    .client-logo-grid img {
+      /* CHANGE 3: Increased max-width from 120px to 200px */
+      max-width: 200px;
+      width: 100%; /* Ensures it fills the allowed space */
+      height: auto;
+      /* CHANGE 4: Increased max-height from 70px to 120px */
+      max-height: 120px;
+      object-fit: contain;
+      transition: all 0.4s ease;
+      background: rgba(255, 255, 255, 0.9); 
+      /* CHANGE 5: Slightly larger padding for better aesthetics */
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .client-logo-grid img:hover {
+      transform: translateY(-5px) scale(1.15); /* Slightly stronger zoom on hover */
+      background: #ffffff;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+
+    @media (max-width: 768px) {
+      .client-logo-grid {
+        /* On mobile, allow 2 columns but keep them reasonably sized */
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        padding: 30px 15px;
+      }
+      
+      .client-logo-grid img {
+        /* Slightly smaller on mobile to fit the screen */
+        max-width: 150px;
+        max-height: 90px;
+
+
+        
+        padding: 10px;
+      }
+    }
+
+
+
+    

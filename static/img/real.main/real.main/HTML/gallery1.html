@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../CSS/gallery.css">
+</head>
+<body>
+  <div id="navbar-container"></div>
+  <header>
+    <!-- Include your navbar here -->
+     <section class="blog-hero-section">
+  <div class="hero-content" data-aos="fade-up" data-aos-delay="100">
+    <h1 data-aos="fade-down" data-aos-delay="300">Welcome to Our Gallery </h1>
+    <p data-aos="zoom-in" data-aos-delay="500"></p>
+    <a href="#gallery" class="btn-explore" data-aos="fade-up" data-aos-delay="700">Explore Gallery</a>
+  </div>
+</section>
+  </header>
+
+
+
+
+<section class="ohs-gallery py-5">
+ <div class="container" id="gallery">
+  <!-- Section Title -->
+  <div class="text-center mb-5 section-title" data-aos="fade-up">
+    <h2>Our Work in Action</h2>
+    <p>Snapshots from our POSH trainings, workshops, and workplace initiatives.</p>
+  </div>
+</div>
+
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid">
+      <img src="../img/ab3.jpeg" alt="Gallery Image 1" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/ab4.jpeg" alt="Gallery Image 2" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/ab5.jpeg" alt="Gallery Image 3" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/g1.jpeg" alt="Gallery Image 4" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/g12.jpeg" alt="Gallery Image 5" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/g2.jpeg" alt="Gallery Image 6" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/g22.jpeg" alt="Gallery Image 7" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/g3.jpeg" alt="Gallery Image 8" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/g32.jpeg" alt="Gallery Image 9" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/gallery1.jpg" alt="Gallery Image 10" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/gallery2.jpg" alt="Gallery Image 11" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/gallery3.jpg" alt="Gallery Image 12" data-aos="zoom-in" data-aos-delay="300">
+    </div>
+  </div>
+</section>
+
+  <div id="footer-container"></div>
+
+  <script>
+  fetch('navbar.html')
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById('navbar-container').innerHTML = data;
+
+      // Highlight active link based on current URL
+      const currentPage = window.location.pathname.split('/').pop(); // e.g., about.html
+      const navLinks = document.querySelectorAll('#navbar-container a');
+
+      navLinks.forEach(link => {
+        if (link.getAttribute('href') === './' + currentPage) {
+          link.classList.add('active');
+        }
+      });
+    });
+fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+
+    
+  </script>
+</body>
+</html>

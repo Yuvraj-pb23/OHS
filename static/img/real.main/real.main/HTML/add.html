@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Open Hand Solutions - Professional HR Consulting</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+    }
+    
+    html, body {
+      overflow-x: hidden;
+    }
+    
+    .custom-button {
+      display: inline-block;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      color: white;
+      background: linear-gradient(135deg, #007BFF, #00C6FF);
+      border: none;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .custom-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.5);
+      background: linear-gradient(135deg, #0056b3, #0099cc);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #3a7bd5, #00d2ff) !important;
+      border: none;
+      padding: 12px 30px;
+      font-weight: 600;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(58, 123, 213, 0.4);
+    }
+    
+    .navbar {
+      background: rgba(255, 255, 255, 0.98) !important;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #007bff !important;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      position: relative;
+      padding: 0.5rem 1rem !important;
+    }
+    
+    .nav-link:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      background-color: #007bff;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-link:hover:after {
+      width: 70%;
+      left: 15%;
+    }
+    
+    .carousel-inner {
+      background-color: #000; 
+      text-align: center;
+      height: 70vh;
+      min-height: 500px;
+    }
+    
+    .carousel-item {
+      height: 100%;
+    }
+    
+    .carousel-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .carousel-caption {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .section-title {
+      font-size: 2.8rem;
+      color: #1a1a2e;
+      margin-bottom: 15px;
+      font-weight: 700;
+      position: relative;
+      display: inline-block;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, #007bff, #00c6ff);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .section-subtitle {
+      font-size: 1.2rem;
+      color: #555;
+      margin-bottom: 50px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* About Section */
+    .about-content {
+      padding: 50px 0;
+    }
+    
+    .highlight {
+      color: #007bff;
+      font-weight: 600;
+    }
+    
+    /* OHS Highlight Section */
+    .ohs-highlight {
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .ohs-highlight:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="rgba(0,123,255,0.05)"/></svg>');
+      background-size: cover;
+      z-index: 0;
+    }
+    
+    .ohs-highlight .container {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .ohs-highlight h2 {
+      font-size: 2.8rem;
+      color: #1e1e2f;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+    
+    .ohs-highlight p {
+      font-size: 1.1rem;
+      color: #555;
+      max-width: 700px;
+      margin: 0 auto 40px;
+    }
+    
+    .highlight-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 25px;
+      margin-top: 40px;
+    }
+    
+    .highlight-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      width: 320px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0,123,255,0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .highlight-card:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      background: linear-gradient(to bottom, #007bff, #00c6ff);
+      transition: all 0.4s ease;
+      opacity: 0;
+    }
+    
+    .highlight-card:hover:before {
+      opacity: 1;
+    }
+    
+    .highlight-card i {
+      font-size: 2.5rem;
+      color: #007bff;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .highlight-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    
+    .highlight-card p {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+    }
+    
+    .highlight-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    /* Blog Section */
+    .blog-section {
+      padding: 100px 20px;
+      background: #f9f9f9;
+    }
+    
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 40px;
+      margin-top: 50px;
+    }
+    
+    .blog-card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0,123,255,0.1);
+    }
+    
+    .blog-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+    
+    .blog-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .blog-card:hover .blog-image {
+      transform: scale(1.05);
+    }
+    
+    .blog-content {
+      padding: 30px;
+    }
+    
+    .blog-title {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    
+    .blog-excerpt {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    
+    .read-more {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      color: #007bff;
+      transition: all 0.3s ease;
+      font-size: 1rem;
+    }
+    
+    .read-more:hover {
+      color: #0056b3;
+      gap: 12px;
+    }
+    
+    .read-more i {
+      transition: transform 0.3s ease;
+    }
+    
+    .read-more:hover i {
+      transform: translateX(5px);
+    }
+    
+    /* Services Section */
+    #services {
+      padding: 100px 0;
+      background: white;
+    }
+    
+    .services-scroll-wrapper {
+      overflow: hidden;
+      padding: 30px 0;
+      margin: 50px 0;
+    }
+    
+    .services-scroll {
+      display: flex;
+      gap: 25px;
+      animation: scrollCards 30s linear infinite;
+      padding: 10px 0;
+    }
+    
+    .service-card {
+      flex: 0 0 300px;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 25px;
+      text-align: center;
+      transition: all 0.4s ease;
+      border: 1px solid rgba(0,123,255,0.1);
+    }
+    
+    .service-card i {
+      font-size: 2.5rem;
+      color: #007bff;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .service-card h6 {
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+    
+    .service-card p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.6;
+    }
+    
+    .services-scroll-wrapper:hover .services-scroll {
+      animation-play-state: paused;
+    }
+    
+    @keyframes scrollCards {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    /* Clients Section */
+    .achievements {
+      padding: 100px 0;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    
+    .achievements-slider {
+      overflow: hidden;
+      position: relative;
+      width: 100%;
+      margin: 50px auto;
+    }
+    
+    .slider-track {
+      display: flex;
+      gap: 30px;
+      animation: scrollClients 25s linear infinite;
+      padding: 20px 0;
+    }
+    
+    .slider-track img {
+      height: 120px;
+      width: auto;
+      object-fit: cover;
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      border: 2px solid white;
+    }
+    
+    .slider-track img:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    }
+    
+    .achievements-slider:hover .slider-track {
+      animation-play-state: paused;
+    }
+    
+    @keyframes scrollClients {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .see-all-btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, #3a7bd5, #00d2ff);
+      color: #fff;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 6px 20px rgba(58, 123, 213, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .see-all-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(58, 123, 213, 0.4);
+    }
+    
+    /* Footer */
+    footer {
+      background: #1a1a2e;
+      color: #fff;
+      padding: 80px 0 30px;
+    }
+    
+    .footer-title {
+      color: #fff;
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .footer-links {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+    
+    .footer-links a {
+      color: #ccc;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: #00c6ff;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    .social-links a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      background: #007bff;
+      transform: translateY(-3px);
+    }
+    
+    .copyright {
+      text-align: center;
+      padding-top: 40px;
+      color: #aaa;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      margin-top: 60px;
+    }
+    
+    /* Back to top */
+    .back-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #007bff, #00c6ff);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+      transition: all 0.3s ease;
+      opacity: 0;
+      visibility: hidden;
+      z-index: 1000;
+    }
+    
+    .back-to-top.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .back-to-top:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 123, 255, 0.5);
+    }
+    
+    /* Responsive */
+    @media (max-width: 992px) {
+      .section-title {
+        font-size: 2.5rem;
+      }
+      
+      .ohs-highlight h2 {
+        font-size: 2.3rem;
+      }
+      
+      .highlight-card {
+        width: 100%;
+        max-width: 350px;
+      }
+      
+      .blog-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .carousel-inner {
+        height: 50vh;
+      }
+      
+      .section-title {
+        font-size: 2.2rem;
+      }
+      
+      .ohs-highlight h2 {
+        font-size: 2rem;
+      }
+      
+      .navbar-brand {
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .section-title {
+        font-size: 1.8rem;
+      }
+      
+      .section-title:after {
+        width: 40px;
+        bottom: -8px;
+      }
+      
+      .ohs-highlight h2 {
+        font-size: 1.8rem;
+      }
+      
+      .custom-button, .see-all-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Navigation
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="fas fa-hand-paper me-2"></i>Open Hand Solutions
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blog">Insights</a></li>
+          <li class="nav-item"><a class="nav-link" href="#clients">Clients</a></li>
+          <li class="nav-item"><a class="nav-link btn btn-primary text-white ms-3" href="#consultation">Free Consultation</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav> -->
+
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+  <div class="container">
+    <!-- Brand -->
+    <a class="navbar-brand" href="./home.html">
+      <i class="fas fa-hand-paper me-2"></i>Open Hand Solutions
+    </a>
+
+    <!-- Toggler -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Navbar Links -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+
+        <!-- Home -->
+        <li class="nav-item">
+          <a class="nav-link" href="./home.html">Home</a>
+        </li>
+
+        <!-- About Us Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="./about.html" id="aboutDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            About Us
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="aboutDropdown">
+            <li><a class="dropdown-item" href="./about.html#our-team">Our Team</a></li>
+            <li><a class="dropdown-item" href="./about.html#mission-award">Mission & Awards</a></li>
+            <li><a class="dropdown-item" href="./about.html#choose">Why Choose Us</a></li>
+          </ul>
+        </li>
+
+        <!-- Resources -->
+        <li class="nav-item">
+          <a class="nav-link" href="./resources.html">Resources</a>
+        </li>
+
+        <!-- Services Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="./services.html" id="servicesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Services
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
+            <li><a class="dropdown-item" href="./posh_T.html">POSH Training</a></li>
+            <li><a class="dropdown-item" href="./workplace.html">Workplace Ethics</a></li>
+            <li><a class="dropdown-item" href="./legal.html">Legal Compliance</a></li>
+            <li><a class="dropdown-item" href="./services.html#communication">Communication Skills</a></li>
+          </ul>
+        </li>
+
+        <!-- Blog -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="./blog.html" id="blogDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Blog
+          </a>
+          <!-- Optional: Add dropdown items later -->
+          <ul class="dropdown-menu" aria-labelledby="blogDropdown">
+            <li><a class="dropdown-item" href="./blog.html">All Posts</a></li>
+          </ul>
+        </li>
+
+        <!-- Gallery -->
+        <li class="nav-item">
+          <a class="nav-link" href="./gallery.html">Gallery</a>
+        </li>
+
+        <!-- Achievements -->
+        <li class="nav-item">
+          <a class="nav-link" href="./achievements.html">Achievements</a>
+        </li>
+
+        <!-- Contact -->
+        <li class="nav-item">
+          <a class="nav-link" href="./contact.html">Contact</a>
+        </li>
+
+        <!-- Free Consultation Button -->
+        <li class="nav-item">
+          <a class="nav-link btn btn-primary text-white ms-3" href="#consultation">Free Consultation</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  <!-- Hero Carousel -->
+  <div id="carouselExampleRide" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="../img/slider1.jpeg" class="d-block w-100 carousel-img" alt="Professional HR Solutions">
+        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
+          <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Empowering Workplace Excellence</h1>
+            <p class="lead mb-5">Comprehensive HR consulting for POSH compliance, workplace safety, and organizational development</p>
+            <!-- <a href="#services" class="custom-button">Explore Our Services</a> -->
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="../img/slider2.jpeg" class="d-block w-100 carousel-img" alt="Workplace Training">
+        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
+          <div class="container">
+            <h1 class="display-3 fw-bold mb-4">Building Inclusive Cultures</h1>
+            <p class="lead mb-5">Expert training programs that transform workplace environments and foster respect</p>
+            <!-- <a href="#consultation" class="custom-button">Book a Session</a> -->
+          </div>
+        </div>
+      </div>
+      <div class="carousel-item">
+        <img src="../img/slider3.jpeg" class="d-block w-100 carousel-img" alt="Compliance Solutions">
+        <div class="carousel-caption d-flex flex-column align-items-center justify-content-center h-100">
+          <div class="container">
+            <h1 class="display-3 fw-bold mb-4">POSH Compliance Experts</h1>
+            <p class="lead mb-5">Ensure legal compliance and create safe, respectful workplaces with our proven solutions</p>
+            <!-- <a href="#contact" class="custom-button">Get Compliant Today</a> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleRide" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button> -->
+  </div>
+
+  <!-- About Section -->
+  <section id="about" class="about-content">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6" data-aos="fade-right">
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="position-relative">
+                <img src="https://placehold.co/400x300/4a90e2/ffffff?text=Team+Training" class="img-fluid rounded shadow-lg" alt="Team Training">
+                <div class="position-absolute top-0 start-0 w-100 h-100 rounded" style="background: linear-gradient(45deg, rgba(0,123,255,0.1), transparent);"></div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="position-relative">
+                <img src="https://placehold.co/400x300/50c878/ffffff?text=Workshop" class="img-fluid rounded shadow-lg" alt="Workshop">
+                <div class="position-absolute top-0 start-0 w-100 h-100 rounded" style="background: linear-gradient(45deg, rgba(0,123,255,0.1), transparent);"></div>
+              </div>
+            </div>
+            <div class="col-12">
+              <div class="position-relative">
+                <img src="https://placehold.co/600x300/6c5ce7/ffffff?text=Corporate+Event" class="img-fluid rounded shadow-lg" alt="Corporate Event">
+                <div class="position-absolute top-0 start-0 w-100 h-100 rounded" style="background: linear-gradient(45deg, rgba(0,123,255,0.1), transparent);"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 ps-md-5 mt-4 mt-md-0" data-aos="fade-left">
+          <h6 class="text-primary text-uppercase fw-semibold mb-2"><i class="fas fa-star me-2"></i>Our Company</h6>
+          <h2 class="fw-bold mb-3">Open Hand Solutions</h2>
+          <h4 class="text-secondary mb-3"><i class="fas fa-hands-helping me-2"></i>It's all about people</h4>
+          <p class="text-muted mb-4" style="line-height: 1.8;">
+            Open Hand Solutions is a premier HR consulting firm dedicated to achieving business excellence through strategic people management. We specialize in creating cultures of performance, inclusivity, and customer-centric value systems through innovative HR processes.
+          </p>
+          <p class="text-muted mb-4" style="line-height: 1.8;">
+            Our expertise in talent transformation, leadership development, and comprehensive compliance solutions—including full implementation of POSH (Prevention of Sexual Harassment at Workplace) guidelines—helps organizations build engaged, motivated workforces that drive sustainable success.
+          </p>
+          <div class="d-flex gap-3">
+            <a href="#services" class="btn btn-primary">Our Services</a>
+            <a href="#consultation" class="btn btn-outline-primary">Free Consultation</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OHS Home Highlight Section -->
+  <section class="ohs-highlight" id="consultation" data-aos="fade-up">
+    <div class="container">
+      <h2 class="section-title">Why Choose OHS?</h2>
+      <p class="section-subtitle">
+        Empowering organizations to build respectful, safe, and inclusive workplaces through expert POSH compliance, engaging training programs, and professional consulting.
+      </p>
+      <div class="highlight-cards">
+        <div class="highlight-card" data-aos="zoom-in" data-aos-delay="200">
+          <i class="fas fa-shield-alt"></i>
+          <h3>POSH Compliance</h3>
+          <p>Stay compliant with workplace safety and harassment prevention laws through our comprehensive audit, policy development, and implementation services.</p>
+        </div>
+        <div class="highlight-card" data-aos="zoom-in" data-aos-delay="400">
+          <i class="fas fa-users"></i>
+          <h3>Inclusive Culture</h3>
+          <p>Foster an environment where everyone feels respected and valued with our culture transformation programs and diversity initiatives.</p>
+        </div>
+        <div class="highlight-card" data-aos="zoom-in" data-aos-delay="600">
+          <i class="fas fa-graduation-cap"></i>
+          <h3>Expert Training</h3>
+          <p>Engage your team with interactive and impactful learning programs led by industry experts with real-world experience.</p>
+        </div>
+      </div>
+      <a href="#contact" class="see-all-btn mt-5">
+        <i class="fas fa-calendar-check me-2"></i>Book a Free Consultation
+      </a>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section class="blog-section" id="blog">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">OHS Knowledge Hub</h2>
+      <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+        In-depth insights, workplace case studies, and POSH compliance updates to help organizations maintain a safe and respectful environment.
+      </p>
+
+      <div class="blog-grid">
+        <!-- Blog Post 1 -->
+        <div class="blog-card" data-aos="fade-up" data-aos-delay="200">
+          <img src="https://placehold.co/400x250/007bff/ffffff?text=POSH+Awareness" alt="POSH Awareness" class="blog-image">
+          <div class="blog-content">
+            <h3 class="blog-title">Understanding POSH Compliance</h3>
+            <p class="blog-excerpt">
+              The Prevention of Sexual Harassment (POSH) Act is a cornerstone legislation that protects employees against workplace harassment. It mandates the establishment of an Internal Committee (IC) in every organization with 10 or more employees.
+            </p>
+            <p class="blog-excerpt">
+              Beyond legal compliance, organizations must foster a culture of respect, equality, and safety. This involves regular training, awareness programs, and strong policy enforcement.
+            </p>
+            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Blog Post 2 -->
+        <div class="blog-card" data-aos="fade-up" data-aos-delay="300">
+          <img src="https://placehold.co/400x250/3a7bd5/ffffff?text=Workplace+Ethics" alt="Workplace Ethics" class="blog-image">
+          <div class="blog-content">
+            <h3 class="blog-title">Building Workplace Ethics</h3>
+            <p class="blog-excerpt">
+              Ethics are the foundation of trust in the workplace. When leaders and employees align with ethical principles, the organization benefits from enhanced collaboration and reduced conflicts.
+            </p>
+            <p class="blog-excerpt">
+              A robust ethics program includes clear codes of conduct, transparent reporting systems, and consistent action against violations. These measures help employees feel valued and respected.
+            </p>
+            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+
+        <!-- Blog Post 3 -->
+        <div class="blog-card" data-aos="fade-up" data-aos-delay="400">
+          <img src="https://placehold.co/400x250/00c6ff/ffffff?text=Leadership+Development" alt="Leadership Development" class="blog-image">
+          <div class="blog-content">
+            <h3 class="blog-title">Leadership Development Programs</h3>
+            <p class="blog-excerpt">
+              Effective leadership is crucial for organizational success. Our comprehensive development programs focus on emotional intelligence, strategic thinking, and inclusive leadership practices.
+            </p>
+            <p class="blog-excerpt">
+              Through a combination of workshops, coaching, and practical exercises, we help current and future leaders develop the skills needed to inspire teams and drive results.
+            </p>
+            <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-5">
+    <div class="container">
+      <h2 class="section-title text-center mb-5" data-aos="zoom-in">Our Services</h2>
+      <p class="section-subtitle text-center mb-5">Comprehensive solutions for modern workplace challenges</p>
+
+      <div class="services-scroll-wrapper" data-aos="fade-up">
+        <div class="services-scroll">
+          <!-- Card 1 -->
+          <div class="service-card">
+            <i class="fas fa-chalkboard-teacher fa-2x"></i>
+            <h6 class="fw-bold mt-3">POSH Awareness Training</h6>
+            <p>Comprehensive programs educating employees and managers on POSH guidelines, workplace respect, and legal compliance.</p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="service-card">
+            <i class="fas fa-file-contract fa-2x"></i>
+            <h6 class="fw-bold mt-3">Policy Formulation</h6>
+            <p>Customized anti-sexual harassment policies tailored to your organization's specific needs and industry requirements.</p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="service-card">
+            <i class="fas fa-balance-scale fa-2x"></i>
+            <h6 class="fw-bold mt-3">Workplace Audits</h6>
+            <p>Thorough assessments to ensure compliance and identify areas for improvement in your workplace culture and policies.</p>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="service-card">
+            <i class="fas fa-users fa-2x"></i>
+            <h6 class="fw-bold mt-3">ICC Member Training</h6>
+            <p>Specialized sessions to equip Internal Complaints Committee members with investigation skills and procedural knowledge.</p>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="service-card">
+            <i class="fas fa-gavel fa-2x"></i>
+            <h6 class="fw-bold mt-3">Legal Assistance</h6>
+            <p>Expert guidance and support in handling workplace harassment cases, ensuring due process and legal compliance.</p>
+          </div>
+
+          <!-- Card 6 -->
+          <div class="service-card">
+            <i class="fas fa-handshake fa-2x"></i>
+            <h6 class="fw-bold mt-3">Consulting Services</h6>
+            <p>Strategic advisory to help organizations create safer, more inclusive, and high-performing workplace environments.</p>
+          </div>
+
+          <!-- Card 7 -->
+          <div class="service-card">
+            <i class="fas fa-chart-line fa-2x"></i>
+            <h6 class="fw-bold mt-3">Leadership Development</h6>
+            <p>Programs to enhance leadership capabilities, emotional intelligence, and strategic decision-making skills.</p>
+          </div>
+
+          <!-- Card 8 -->
+          <div class="service-card">
+            <i class="fas fa-lightbulb fa-2x"></i>
+            <h6 class="fw-bold mt-3">Culture Transformation</h6>
+            <p>Initiatives to reshape organizational culture, promote diversity, and build high-trust work environments.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Clients Section -->
+  <section class="achievements" id="clients">
+    <div class="container">
+      <h2 class="section-title">Our Esteemed Clients</h2>
+      <p class="section-subtitle">Trusted by leading organizations across industries</p>
+
+      <div class="achievements-slider">
+        <div class="slider-track">
+          <img src="https://placehold.co/200x120/007bff/ffffff?text=Client+1" alt="Client 1">
+          <img src="https://placehold.co/200x120/3a7bd5/ffffff?text=Client+2" alt="Client 2">
+          <img src="https://placehold.co/200x120/00c6ff/ffffff?text=Client+3" alt="Client 3">
+          <img src="https://placehold.co/200x120/4a90e2/ffffff?text=Client+4" alt="Client 4">
+          <img src="https://placehold.co/200x120/50c878/ffffff?text=Client+5" alt="Client 5">
+          <img src="https://placehold.co/200x120/6c5ce7/ffffff?text=Client+6" alt="Client 6">
+          <img src="https://placehold.co/200x120/f39c12/ffffff?text=Client+7" alt="Client 7">
+          <img src="https://placehold.co/200x120/e74c3c/ffffff?text=Client+8" alt="Client 8">
+        </div>
+      </div>
+
+      <div class="achievements-btn">
+        <a href="#contact" class="see-all-btn">
+          <i class="fas fa-envelope me-2"></i>Get in Touch
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h3 class="footer-title"><i class="fas fa-hand-paper me-2"></i>Open Hand Solutions</h3>
+          <p class="text-muted">Your trusted partner for HR consulting, POSH compliance, and workplace development solutions.</p>
+          <div class="social-links mt-4">
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        
+        <div class="col-lg-2 col-md-4 mb-4 mb-lg-0">
+          <h5 class="footer-title">Services</h5>
+          <ul class="footer-links">
+            <li><a href="#">POSH Training</a></li>
+            <li><a href="#">Policy Development</a></li>
+            <li><a href="#">Workplace Audits</a></li>
+            <li><a href="#">ICC Training</a></li>
+            <li><a href="#">Legal Support</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-2 col-md-4 mb-4 mb-lg-0">
+          <h5 class="footer-title">Company</h5>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Our Team</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        
+        <div class="col-lg-4 col-md-12">
+          <h5 class="footer-title">Contact Info</h5>
+          <ul class="footer-links">
+            <li><i class="fas fa-map-marker-alt me-2"></i>123 Business Avenue, Mumbai, India</li>
+            <li><i class="fas fa-phone me-2"></i>+91 98765 43210</li>
+            <li><i class="fas fa-envelope me-2"></i>info@openhandsolutions.com</li>
+            <li><i class="fas fa-clock me-2"></i>Mon-Fri: 9:00 AM - 6:00 PM</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        &copy; 2024 Open Hand Solutions. All rights reserved. | Designed with <i class="fas fa-heart text-danger"></i> for professional excellence
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top Button -->
+  <div class="back-to-top" id="backToTop">
+    <i class="fas fa-arrow-up"></i>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    // Initialize AOS (Animate On Scroll)
+    AOS.init({
+      duration: 800,
+      easing: 'ease-in-out',
+      once: true
+    });
+
+    // Back to top button
+    const backToTopButton = document.getElementById('backToTop');
+    
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        backToTopButton.classList.add('visible');
+      } else {
+        backToTopButton.classList.remove('visible');
+      }
+    });
+    
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Duplicate content for infinite scrolling
+    document.addEventListener("DOMContentLoaded", () => {
+      const clientSlider = document.querySelector('.slider-track');
+      if (clientSlider) {
+        clientSlider.innerHTML += clientSlider.innerHTML;
+      }
+      
+      const serviceSlider = document.querySelector('.services-scroll');
+      if (serviceSlider) {
+        serviceSlider.innerHTML += serviceSlider.innerHTML;
+      }
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 100,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.querySelector('.navbar');
+      if (window.scrollY > 50) {
+        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+      } else {
+        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+      }
+    });
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>

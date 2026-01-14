@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POSH Blog</title>
+      <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa; 
+      
+    }
+ .blog-hero-section {
+  /* background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
+              url("../img/11.jpg") center/cover no-repeat; */
+           
+  color: #fff;
+  text-align: center;
+  padding: 100px 20px;
+  height: 400px;
+}
+
+.blog-categories {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+  margin-left: 0 !important;
+  /* padding-left: 0 !important; */
+}
+
+.categories-grid {
+  margin-bottom: 0 !important;
+  
+}
+
+.category-card:last-child {
+  margin-bottom: 0 !important;
+ 
+}
+
+
+.blog-hero-section .hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.blog-hero-section .hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+
+    .topics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 40px;
+    }
+
+    .topic-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+      background: white;
+      height: 400px;
+    }
+
+    .topic-card img {
+      width: 100%;
+      height: auto;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .topic-card:hover img {
+      transform: scale(1.1);
+    }
+
+    /* Static title under image */
+    .card-title {
+      padding: 12px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-align: center;
+      background: white;
+      color: #333;
+    }
+
+    /* Overlay style */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      
+      /* Start hidden */
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    /* Hover effect: slide up + fade in */
+    .topic-card:hover .overlay {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .read-more {
+      display: inline-block;
+      padding: 8px 14px;
+      background: #ffcc00;
+      color: black;
+      font-weight: bold;
+      border-radius: 6px;
+      text-decoration: none;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    /* Animate "Read More" separately */
+    .topic-card:hover .read-more {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .read-more:hover {
+      background: #ffaa00;
+    }
+    .blog-categories {
+  background: #f8f9fa;
+  padding: 60px 20px;
+}
+
+.blog-categories h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.category-card {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+}
+
+.category-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #222;
+}
+
+.category-card p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.category-card .read-more {
+  display: inline-block;
+  background: #ffcc00;
+  color: black;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.category-card .read-more:hover {
+  background: #ffaa00;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+}
+.blog-list {
+  max-width: 1100px;
+  margin: auto;
+  padding: 60px 20px;
+}
+
+.blog-list h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 50px;
+  color: #333;
+}
+
+.blog-post {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 40px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.blog-post:hover {
+  transform: translateY(-8px);
+}
+
+.blog-post img {
+  width: 300px;
+  object-fit: cover;
+}
+
+.blog-content {
+  padding: 20px;
+  flex: 1;
+}
+
+.blog-content h3 {
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.blog-content .meta {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 15px;
+}
+
+.blog-content p {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.tags {
+  margin-bottom: 15px;
+}
+
+.tag {
+  display: inline-block;
+  background: #ffcc00;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  margin-right: 5px;
+}
+
+.read-more {
+  display: inline-block;
+  background: #ffcc00;
+  color: black;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.read-more:hover {
+  background: #ffaa00;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.page-link {
+  display: inline-block;
+  padding: 10px 15px;
+  margin: 0 3px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.08);
+  color: #333;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.page-link.active,
+.page-link:hover {
+  background: #ffcc00;
+}
+.card-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-top: 10px;
+  color: #222;
+  text-align: center;
+}
+
+.card-desc {
+  font-size: 0.95rem;
+  color: #555;
+  text-align: center;
+  margin: 6px 10px 0;
+  line-height: 1.4;
+}
+
+  </style>
+</head>
+<body>
+  <div id="chatbot-container"></div>
+ <div id="navbar-placeholder"></div>
+     <section class="blog-hero-section">
+  <div class="hero-content" data-aos="fade-up" data-aos-delay="100">
+    <h1 data-aos="fade-down" data-aos-delay="300">Welcome to Our Blog</h1>
+    <p data-aos="zoom-in" data-aos-delay="500">Stay informed with our latest updates, stories, and expert tips.</p>
+    <!-- <a href="#all" class="btn-explore" data-aos="fade-up" data-aos-delay="700">Explore Articles</a> -->
+  </div>
+</section>
+
+<!-- <section class="topics-grid">
+  <div class="topic-card">
+    <img src="../img/blog_p.jpg" alt="POSH Awareness">
+    <div class="overlay">
+      <a href="nav.html#what-is-posh" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Awareness</div>
+  </div>
+
+  <div class="topic-card">
+    <img src="../img/blog_h.jpg" alt="Harassment-Free Workplace">
+    <div class="overlay">
+      <a href="nav.html#harassment" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">Harassment-Free Workplace</div>
+  </div>
+
+  <div class="topic-card">
+    <img src="../img/blog_t.jpg" alt="POSH Training">
+    <div class="overlay">
+      <a href="nav.html#posh-training" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Training</div>
+  </div>
+  
+
+  <div class="topic-card">
+    <img src="../img/blog_act.jpg" alt="POSH Act & Policy">
+    <div class="overlay">
+      <a href="./nav.html#posh-act-guide1" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Act & Policy</div>
+  </div>
+</section>
+ -->
+
+
+<section class="topics-grid">
+  <div class="topic-card">
+    <img src="../img/blog_p.jpg" alt="POSH Awareness">
+    <div class="overlay">
+      <a href="nav.html#what-is-posh" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Awareness</div>
+    <p class="card-desc">
+      Learn the fundamentals of the POSH Act, its importance in the workplace,
+      and how awareness can help create a respectful and safe environment for all.
+    </p>
+  </div>
+
+  <div class="topic-card">
+    <img src="../img/blog_h.jpg" alt="Harassment-Free Workplace">
+    <div class="overlay">
+      <a href="nav.html#harassment" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">Harassment-Free Workplace</div>
+    <p class="card-desc">
+      Explore strategies to maintain a harassment-free workplace where
+      diversity, inclusion, and mutual respect are at the heart of every interaction.
+    </p>
+  </div>
+
+  <div class="topic-card">
+    <img src="../img/blog_t.jpg" alt="POSH Training">
+    <div class="overlay">
+      <a href="nav.html#posh-training" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Training</div>
+    <p class="card-desc">
+      Understand the objectives, benefits, and methods of POSH training
+      to ensure compliance and promote a positive workplace culture.
+    </p>
+  </div>
+
+  <div class="topic-card">
+    <img src="../img/blog_act.jpg" alt="POSH Act & Policy">
+    <div class="overlay">
+      <a href="./nav.html#posh-act-guide1" class="read-more">Read More</a>
+    </div>
+    <div class="card-title">POSH Act & Policy</div>
+    <p class="card-desc">
+      A complete guide to understanding the POSH Act, its policies, and how
+      they safeguard employees while ensuring organizational compliance.
+    </p>
+  </div>
+</section>
+
+
+
+<section class="blog-categories">
+  <h2 data-aos="fade-up">Explore Our Blog Categories</h2>
+  <div class="categories-grid">
+
+    <div class="category-card" data-aos="fade-right">
+      <h3>POSH Compliance Updates</h3>
+      <p>
+        Stay informed with the latest changes in POSH regulations and compliance requirements.
+        We provide in-depth analysis of new laws, amendments, and court rulings to help you maintain a safe and legally compliant workplace.
+      </p>
+
+    </div>
+
+    <div class="category-card" data-aos="fade-up">
+      <h3>Workplace Safety Tips</h3>
+      <p>
+        Practical safety tips and preventive measures to ensure a healthy work environment.
+        From ergonomic practices to emergency preparedness, discover actionable insights to protect your team every day.
+      </p>
+
+    </div>
+
+    <div class="category-card" data-aos="fade-left">
+      <h3>Legal Updates & Case Studies</h3>
+      <p>
+        Real-world examples and expert commentary on workplace harassment cases.
+        Learn from landmark judgments and understand how they impact policy-making and complaint resolution mechanisms.
+      </p>
+      <a href="legal-updates.html" class="read-more">Read More</a>
+    </div>
+
+    <div class="category-card" data-aos="fade-right">
+      <h3>Training & Development</h3>
+      <p>
+        Enhance your organization’s culture with targeted training programs.
+        We share methodologies, tools, and success stories from our training sessions to inspire continuous improvement.
+      </p>
+     
+    </div>
+
+    <div class="category-card" data-aos="fade-up">
+      <h3>Industry Best Practices</h3>
+      <p>
+        Benchmark your policies against industry leaders.
+        This section covers tried-and-tested best practices for fostering respect, inclusion, and professionalism in the workplace.
+      </p>
+   
+    </div>
+
+    <div class="category-card" data-aos="fade-left">
+      <h3>Success Stories</h3>
+      <p>
+        Inspiring journeys of organizations that have successfully transformed their workplace culture.
+        Read about their challenges, strategies, and measurable results that you can apply too.
+      </p>
+
+    </div>
+
+  </div>
+</section>
+<!--<section class="blog-list">
+  <h2 data-aos="fade-up">Latest Blog Posts</h2>
+
+  <div class="blog-post" data-aos="fade-up">
+    <img src="https://source.unsplash.com/400x250/?law,justice" alt="POSH Compliance">
+    <div class="blog-content">
+      <h3>Understanding POSH Compliance in 2025</h3>
+      <div class="meta">
+      <span>📅 Jan 5, 2025</span> | <span>✍️ By Admin</span> 
+      </div>
+      <p>
+        The POSH (Prevention of Sexual Harassment) Act continues to evolve with workplace dynamics.
+        In this article, we explore the latest amendments and practical tips for ensuring compliance in modern organizations.
+        From policy structuring to complaint redressal mechanisms, learn how to safeguard your employees while meeting legal obligations.
+      </p>
+      <div class="tags">
+        <span class="tag">POSH Compliance Updates</span>
+        <span class="tag">Legal</span>
+      </div>
+      <a href="post1.html" class="read-more">Read More</a>
+    </div>
+  </div>
+
+  <div class="blog-post" data-aos="fade-up">
+    <img src="https://source.unsplash.com/400x250/?office,safety" alt="Workplace Safety">
+    <div class="blog-content">
+      <h3>Top 10 Workplace Safety Tips for 2025</h3>
+      <div class="meta">
+     
+      </div>
+      <p>
+        Workplace safety is not just a checklist; it’s a culture.
+        This article highlights 10 proven tips to ensure a safe and productive environment.
+        From ergonomic setups to clear reporting protocols, discover how small changes can prevent major risks and enhance employee satisfaction.
+      </p>
+      <div class="tags">
+        <span class="tag">Workplace Safety</span>
+        <span class="tag">Best Practices</span>
+      </div>
+      <a href="post2.html" class="read-more">Read More</a>
+    </div>
+  </div>
+
+  <div class="blog-post" data-aos="fade-up">
+    <img src="https://source.unsplash.com/400x250/?training,corporate" alt="Training">
+    <div class="blog-content">
+      <h3>Effective POSH Training: A Complete Guide</h3>
+      <div class="meta">
+       
+      </div>
+      <p>
+        Training is a key pillar of workplace safety and inclusion.
+        In this post, we outline a step-by-step approach to implementing effective POSH training programs.
+        Learn how to engage employees, measure effectiveness, and sustain long-term awareness across all levels of your organization.
+      </p>
+      <div class="tags">
+        <span class="tag">Training & Development</span>
+        <span class="tag">POSH</span>
+      </div>
+      <a href="post3.html" class="read-more">Read More</a>
+    </div>
+  </div> -->
+
+  <!-- Pagination -->
+  <!-- <div class="pagination" data-aos="fade-up">
+    <a href="#" class="page-link">« Prev</a>
+    <a href="#" class="page-link active">1</a>
+    <a href="#" class="page-link">2</a>
+    <a href="#" class="page-link">3</a>
+    <a href="#" class="page-link">Next »</a>
+  </div> -->
+<!-- </section> -->
+
+
+
+<div id="footer-container"></div> 
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  
+   fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+
+      fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+
+  document.querySelectorAll('.filter-tag').forEach(btn => {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+
+  AOS.init({
+    duration: 800,
+    once: true,
+  });
+
+      fetch("footer.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("footer-container").innerHTML = data;
+    });
+</script>
+ <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>
