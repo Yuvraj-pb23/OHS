@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OHS Gallery</title>
+  <link rel="stylesheet" href="../CSS/new.css">
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navbar -->
+   <div id="chatbot-container"></div>
+<div id="navbar-placeholder"></div>
+
+  <!-- Hero Section -->
+  <header>
+    <section class="blog-hero-section">
+      <div class="hero-content" data-aos="fade-up" data-aos-delay="100">
+        <h1 data-aos="fade-down" data-aos-delay="300">Welcome to Our Gallery</h1>
+        <p data-aos="fade-up" data-aos-delay="500">Capturing the moments that define our work.</p>
+        <a href="#gallery" class="btn-explore" data-aos="zoom-in" data-aos-delay="700">Explore Gallery</a>
+      </div>
+    </section>
+  </header>
+
+  <!-- Gallery Section -->
+  <section class="ohs-gallery py-5">
+    <div class="container" id="gallery">
+      <div class="text-center mb-5 section-title" data-aos="fade-up">
+        <h2 style="font-size: 30px;">Our Work in Action</h2>
+        <p style="font-size: 30px;">Snapshots from our POSH trainings, workshops, and workplace initiatives.</p>
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="gallery-grid" >
+      <img src="../img/12.jpeg" alt="Gallery Image 1" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/13.jpeg" alt="Gallery Image 2" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/14.jpeg" alt="Gallery Image 3" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/15.jpeg" alt="Gallery Image 4" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/16.jpeg" alt="Gallery Image 5" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/17.jpeg" alt="Gallery Image 6" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/18.jpeg" alt="Gallery Image 7" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/19.jpeg" alt="Gallery Image 8" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/2.jpeg" alt="Gallery Image 9" data-aos="zoom-in" data-aos-delay="300">
+
+      <img src="../img/20.jpg" alt="Gallery Image 10" data-aos="zoom-in" data-aos-delay="100">
+      <img src="../img/22.jpg" alt="Gallery Image 11" data-aos="zoom-in" data-aos-delay="200">
+      <img src="../img/21.jpg" alt="Gallery Image 12" data-aos="zoom-in" data-aos-delay="300">
+    </div>
+  </section>
+
+
+  <section class="ohs-gallery py-5" >
+    <div class="container" id="gallery">
+      <div class="text-center mb-5 section-title" data-aos="fade-up">
+        <h2 style="font-size: 50px;">Our Clients</h2>
+      
+      </div>
+    </div>
+
+    <!-- Gallery Grid -->
+   
+    <div class="gallery-grid"id="client" >
+      <img src="../img/2.jpg" alt="Gallery Image 1" data-aos="zoom-in" data-aos-delay="100" style="size: 200px; height: 200px; width: 300px;">
+      <img src="../img/3.jpg" alt="Gallery Image 2" data-aos="zoom-in" data-aos-delay="200"style="size: 200px; height: 200px; width: 300px">
+      <img src="../img/10.jpg" alt="Gallery Image 3" data-aos="zoom-in" data-aos-delay="300"style="size: 200px; height: 200px; width: 300px">
+
+      <img src="../img/5.jpg" alt="Gallery Image 4" data-aos="zoom-in" data-aos-delay="100"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/12.jpg" alt="Gallery Image 5" data-aos="zoom-in" data-aos-delay="200"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/13.jpg" alt="Gallery Image 6" data-aos="zoom-in" data-aos-delay="300"style="size: 200px; height: 200px;width: 300px">
+
+      <img src="../img/14.jpg" alt="Gallery Image 7" data-aos="zoom-in" data-aos-delay="100"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/15.jpg" alt="Gallery Image 8" data-aos="zoom-in" data-aos-delay="200"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/16.jpg" alt="Gallery Image 9" data-aos="zoom-in" data-aos-delay="300"style="size: 200px; height: 200px;width: 300px">
+
+      <img src="../img/17.jpg" alt="Gallery Image 10" data-aos="zoom-in" data-aos-delay="100"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/18.jpg" alt="Gallery Image 11" data-aos="zoom-in" data-aos-delay="200"style="size: 200px; height: 200px;width: 300px">
+      <img src="../img/6.jpg" alt="Gallery Image 12" data-aos="zoom-in" data-aos-delay="300"style="size: 200px; height: 200px;width: 300px">
+    </div>
+  </section>
+  
+
+
+
+  <!-- Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <script>
+  
+ fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+
+        fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+    // Load Footer
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+  </script>
+
+  <!-- AOS Animation Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>

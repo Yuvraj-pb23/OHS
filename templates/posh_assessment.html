@@ -1,0 +1,310 @@
+{% block body %}
+{% load static %}
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #6200ea;
+        --primary-light: #ede7f6; 
+        --primary-hover: #5a00d6;
+        --bg-body: #f8f9fa;
+        --surface: #ffffff;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --radius: 16px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); margin: 0; color: var(--text-main); }
+    .lms-container { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; max-width: 1600px; margin: 0 auto; }
+
+    /* Sidebar */
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border-color); padding: 25px; height: 100vh; position: sticky; top: 0; }
+    .nav-item { display: flex; align-items: center; padding: 14px 18px; border-radius: 12px; text-decoration: none; color: var(--text-main); font-weight: 500; margin-bottom: 8px; }
+    .nav-item.active { background-color: var(--primary); color: white; }
+
+    /* Main Content */
+    .main-content { padding: 40px; display: flex; flex-direction: column; align-items: center; }
+    .quiz-card { background: var(--surface); max-width: 850px; width: 100%; padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); position: relative; }
+
+    /* Timer Style */
+    .timer-badge {
+        position: absolute;
+        top: 25px;
+        right: 40px;
+        background: var(--bg-body);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid var(--border-color);
+        min-width: 80px;
+        justify-content: center;
+    }
+    .timer-low { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
+
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+
+    .progress-container { width: 100%; background-color: #e5e7eb; border-radius: 10px; height: 8px; margin-bottom: 30px; }
+    .progress-bar { height: 100%; background-color: var(--primary); border-radius: 10px; transition: width 0.3s ease; }
+
+    .options-grid { display: grid; gap: 12px; margin-top: 20px; }
+    .option-card { padding: 15px 20px; border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+    .option-card:hover { border-color: var(--primary); background-color: var(--primary-light); }
+    .option-card.selected { border-color: var(--primary); background-color: var(--primary); color: white; }
+
+    /* Review Styles */
+    .review-section { margin-top: 40px; width: 100%; display: none; }
+    .review-item { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; background: white; }
+    .review-item.correct-border { border-left: 6px solid var(--success); }
+    .review-item.wrong-border { border-left: 6px solid var(--danger); }
+    
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; }
+    .bg-success-light { background: #d1fae5; color: #065f46; }
+    .bg-danger-light { background: #fee2e2; color: #991b1b; }
+    .bg-warning-light { background: #fef3c7; color: #92400e; }
+
+    .btn { padding: 12px 30px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+
+    @media (max-width: 1024px) { .lms-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
+</style>
+
+<div class="lms-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand" style="margin-bottom: 40px;">
+            <h2 style="color:var(--primary); margin:0;">POSH Act</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Final Assessment</p>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active">📝 Final Test</a>
+            <a href="javascript:history.back()" class="nav-item">⬅ Exit</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- Quiz UI -->
+        <div class="quiz-card" id="quiz-ui">
+            <!-- Timer Badge -->
+            <div id="timer-box" class="timer-badge">
+                ⏱ <span id="timer-seconds">30</span>s
+            </div>
+
+            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+            <span id="q-counter" style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem;"></span>
+            <h2 id="question-text" style="margin-top:10px; padding-right: 100px;"></h2>
+            <div class="options-grid" id="options-container"></div>
+            <div style="margin-top:30px; display:flex; justify-content:flex-end;">
+                <button class="btn btn-primary" id="next-btn" disabled onclick="handleNext()">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Results UI -->
+        <div class="quiz-card" id="results-ui" style="display:none; text-align:center;">
+            <h1>Results</h1>
+            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/20</div>
+            <p id="result-message" style="font-size: 1.1rem; margin-bottom: 30px;"></p>
+            <div style="display:flex; gap:15px; justify-content:center;">
+                <button class="btn btn-primary" onclick="location.reload()">Retry Test</button>
+                <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+            </div>
+        </div>
+
+        <!-- Review UI -->
+        <div class="review-section" id="review-ui">
+            <h2 style="margin-bottom:20px;">Review Answers</h2>
+            <div id="review-container"></div>
+            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="location.reload()">Close Review</button>
+        </div>
+    </main>
+</div>
+
+<script>
+    const questionPool = [
+        /* ... (Keep your 40 questions here as per previous code) ... */
+        { q: "What is the full name of the POSH Act?", a: ["Sexual Harassment of Women at Workplace Act, 2013", "Prevention of Sexual Harassment Bill", "Women Safety Act, 2012", "Workplace Conduct Act"], c: 0 },
+        { q: "The POSH Act applies to any workplace with at least how many employees?", a: ["5", "10", "15", "20"], c: 1 },
+        { q: "Who can be an 'Aggrieved Woman' under the POSH Act?", a: ["Only full-time employees", "Only women working in offices", "Any woman of any age, employed or not", "Only interns"], c: 2 },
+        { q: "What does IC stand for in POSH?", a: ["Inquiry Committee", "Internal Committee", "Investigation Council", "Internal Commission"], c: 1 },
+        { q: "A complaint must be filed within how many months of the incident?", a: ["1 month", "2 months", "3 months", "6 months"], c: 2 },
+        { q: "Who must head the Internal Committee (IC)?", a: ["The CEO", "A senior-level woman employee", "A male HR manager", "An external lawyer"], c: 1 },
+        { q: "The IC must have at least one external member from:", a: ["The Police", "An NGO or association committed to women's causes", "The Labor Union", "A different company"], c: 1 },
+        { q: "The inquiry into a complaint must be completed within:", a: ["30 days", "60 days", "90 days", "180 days"], c: 2 },
+        { q: "Can the IC settle the matter through monetary compensation?", a: ["Yes", "No, monetary settlement is prohibited", "Only if HR agrees", "Only for small amounts"], c: 1 },
+        { q: "If the workplace has fewer than 10 employees, complaints go to:", a: ["Local Committee (LC)", "Police", "Labor Court", "HR"], c: 0 },
+        { q: "What is 'Quid Pro Quo' harassment?", a: ["Friendly joking", "Favors in exchange for work benefits", "Hostile environment", "Workplace bullying"], c: 1 },
+        { q: "What is 'Hostile Work Environment'?", a: ["Loud machinery", "Intimidating or offensive behavior", "Lack of AC", "Long working hours"], c: 1 },
+        { q: "The IC has the same powers as a:", a: ["Criminal Court", "Civil Court", "High Court", "Supreme Court"], c: 1 },
+        { q: "How many members must the IC have at minimum?", a: ["2", "3", "4", "5"], c: 2 },
+        { q: "At least half of the IC members must be women.", a: ["True", "False", "Only if the CEO is a woman", "Optional"], c: 0 },
+        { q: "Does POSH cover the 'extended workplace' (e.g. office parties, transport)?", a: ["No", "Yes", "Only during office hours", "Only on office premises"], c: 1 },
+        { q: "If a complaint is found to be malicious, the IC can recommend action against:", a: ["The Respondent", "The Complainant", "The CEO", "The NGO member"], c: 1 },
+        { q: "Can a legal practitioner represent either party during the inquiry?", a: ["Yes", "No, legal practitioners are not allowed", "Only for the victim", "Only if the IC allows"], c: 1 },
+        { q: "The employer must act on IC recommendations within:", a: ["10 days", "30 days", "60 days", "90 days"], c: 2 },
+        { q: "Is the employer required to conduct orientation for the IC?", a: ["No", "Yes, it is a legal duty", "Only if the IC asks", "Only once a year"], c: 1 },
+        { q: "The external member of the IC is paid an allowance.", a: ["True", "False", "Only if they find someone guilty", "Only in government jobs"], c: 0 },
+        { q: "A woman can file a complaint even if she is a visitor to the office.", a: ["Yes", "No", "Only if she is a client", "Only if she stays more than 1 hour"], c: 0 },
+        { q: "Conciliation is possible before starting the inquiry.", a: ["No", "Yes, at the request of the aggrieved woman", "Only if the man requests", "Only if HR orders"], c: 1 },
+        { q: "The IC must submit an Annual Report to:", a: ["The Police", "The Employer and District Officer", "The News Media", "The Labor Union"], c: 1 },
+        { q: "Can a colleague assist the woman in filing the complaint?", a: ["No", "Yes", "Only her Manager", "Only if she is illiterate"], c: 1 },
+        { q: "Sexual harassment includes showing pornography.", a: ["No", "Yes", "Only if physical", "Only if online"], c: 1 },
+        { q: "A complaint can be filed by a legal heir if the woman is deceased.", a: ["No", "Yes", "Only by her husband", "Only by her children"], c: 1 },
+        { q: "The District Officer is responsible for forming the Local Committee (LC).", a: ["True", "False", "Only in cities", "Only in villages"], c: 0 },
+        { q: "The IC can recommend transferring the woman during the inquiry.", a: ["No", "Yes, for her safety", "Only if she resigns", "Only if the Respondent agrees"], c: 1 },
+        { q: "Displaying the penal consequences of sexual harassment is mandatory.", a: ["No", "Yes, in a prominent place", "Only in the HR cabin", "Optional"], c: 1 },
+        { q: "An appeal against the IC decision must be made within:", a: ["30 days", "60 days", "90 days", "1 year"], c: 2 },
+        { q: "Confidentiality breach regarding the case carries a penalty.", a: ["No", "Yes, as per service rules", "Only for the victim", "Only for the accused"], c: 1 },
+        { q: "What happens if an employer fails to constitute an IC?", a: ["Fine up to 50k", "License cancellation on 2nd offense", "Both of the above", "No penalty"], c: 2 },
+        { q: "Can sexual harassment be non-verbal?", a: ["No", "Yes (e.g. staring, leering)", "Only if recorded", "Only if witnesses are present"], c: 1 },
+        { q: "The POSH Act is applicable to both formal and informal sectors.", a: ["True", "False", "Only corporate", "Only factories"], c: 0 },
+        { q: "Physical contact and advances are the only forms of harassment.", a: ["True", "False", "Only if repetitive", "Only if forced"], c: 1 },
+        { q: "Who is the external member usually?", a: ["Police", "Lawyer/NGO worker", "Celebrity", "Ex-employee"], c: 1 },
+        { q: "Does POSH protect men?", a: ["Yes", "No, it is for women (Workplace policies may differ)", "Only in Delhi", "Only in IT companies"], c: 1 },
+        { q: "Which case led to the Vishaka Guidelines?", a: ["Nirbhaya Case", "Vishaka vs State of Rajasthan", "Bhanwari Devi vs India", "Maneka Gandhi Case"], c: 1 },
+        { q: "Can the IC conduct the inquiry in any language?", a: ["Only English", "Only Hindi", "Any language the parties are comfortable with", "Only the state language"], c: 2 }
+    ];
+
+    let activeQuestions = [];
+    let currentIdx = 0;
+    let score = 0;
+    let userSelections = [];
+    let timer;
+    let timeLeft = 30;
+
+    function initQuiz() {
+        const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+        activeQuestions = shuffled.slice(0, 20);
+        loadQuestion();
+    }
+
+    function startTimer() {
+        timeLeft = 30;
+        document.getElementById('timer-seconds').innerText = timeLeft;
+        document.getElementById('timer-box').classList.remove('timer-low');
+        
+        clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-seconds').innerText = timeLeft;
+            
+            if (timeLeft <= 10) {
+                document.getElementById('timer-box').classList.add('timer-low');
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                if (userSelections[currentIdx] === undefined) {
+                    userSelections[currentIdx] = -1; // -1 indicates Timed Out
+                }
+                handleNext();
+            }
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        const qData = activeQuestions[currentIdx];
+        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of 20`;
+        document.getElementById('question-text').innerText = qData.q;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 20) * 100}%`;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option-card';
+            div.innerText = opt;
+            div.onclick = () => {
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                div.classList.add('selected');
+                userSelections[currentIdx] = i;
+                document.getElementById('next-btn').disabled = false;
+            };
+            container.appendChild(div);
+        });
+        
+        document.getElementById('next-btn').disabled = true;
+        startTimer();
+    }
+
+    function handleNext() {
+        clearInterval(timer);
+        
+        // If they click next without selecting, or it timed out
+        if (userSelections[currentIdx] === undefined) {
+            userSelections[currentIdx] = -1; 
+        }
+
+        if (userSelections[currentIdx] === activeQuestions[currentIdx].c) {
+            score++;
+        }
+
+        currentIdx++;
+        if (currentIdx < 20) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'block';
+        document.getElementById('score-display').innerText = `${score}/20`;
+        const msg = document.getElementById('result-message');
+        if(score >= 14) {
+            msg.innerText = "Congratulations! You passed.";
+            msg.style.color = "var(--success)";
+        } else {
+            msg.innerText = "You did not pass. 70% required.";
+            msg.style.color = "var(--danger)";
+        }
+    }
+
+    function generateReview() {
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('review-ui').style.display = 'block';
+        const container = document.getElementById('review-container');
+        container.innerHTML = '';
+        
+        activeQuestions.forEach((q, i) => {
+            const userPick = userSelections[i];
+            const isCorrect = userPick === q.c;
+            const isTimedOut = userPick === -1;
+            
+            const item = document.createElement('div');
+            item.className = `review-item ${isCorrect ? 'correct-border' : 'wrong-border'}`;
+            
+            let statusBadge = `<div class="status-badge bg-success-light">✓ Correct</div>`;
+            if (isTimedOut) {
+                statusBadge = `<div class="status-badge bg-warning-light">⌛ Timed Out</div>`;
+            } else if (!isCorrect) {
+                statusBadge = `<div class="status-badge bg-danger-light">✗ Incorrect</div>`;
+            }
+
+            item.innerHTML = `
+                ${statusBadge}
+                <h3 style="margin:0 0 10px 0;">${i+1}. ${q.q}</h3>
+                <p><strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}</p>
+                ${!isCorrect ? `<p style="color:var(--success)"><strong>Correct Answer:</strong> ${q.a[q.c]}</p>` : ''}
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    initQuiz();
+</script>
+{% endblock body %}

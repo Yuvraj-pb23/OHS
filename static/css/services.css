@@ -1,0 +1,259 @@
+:root {
+    --primary: #1a3a6c;        /* Deep navy */
+    --primary-light: #0055aa;  /* High-contrast blue */
+    --secondary: #0066cc;      /* Vibrant blue */
+    --light: #f8f9fa;
+    --white: #ffffff;
+    --gray: #64748b;
+    --dark: #1e293b;
+}
+
+html, body {
+    overflow-x: hidden;
+    background: #f8fafc;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    color: var(--dark);
+}
+
+/* --- Hero Section --- */
+.services-hero {
+    position: relative;
+    /* Note: In Django static files, absolute paths starting with /static/ usually work 
+       if your STATIC_URL is configured correctly. */
+    background: url('/static/img/servies1.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    min-height: 60vh;
+    color: var(--white);
+    padding: 120px 20px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.services-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(26, 58, 108, 0.75);
+}
+
+.services-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+.services-hero h1 {
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 700;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
+}
+
+.services-hero p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    max-width: 700px;
+    margin: 15px auto 0;
+    opacity: 0.9;
+}
+
+/* --- Core Services Section --- */
+#core-services {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: clamp(60px, 10vw, 100px) 0;
+}
+
+#core-services .section-title h2 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    color: var(--dark);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+#core-services .section-title p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--gray);
+}
+
+.service-card {
+    background: var(--white);
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(26, 58, 108, 0.12);
+    border-color: var(--primary-light);
+}
+
+.service-card .fa-3x {
+    color: var(--primary-light);
+}
+
+.service-card h5 {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+/* --- Training Programs Section --- */
+.training-section {
+    padding: clamp(60px, 10vw, 100px) 2rem;
+    background: var(--white);
+}
+.training-section .section-title h2 {
+    font-size: clamp(2.2rem, 4.5vw, 3rem);
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text; /* for Firefox  */
+    color: transparent;     /* fallback for non-WebKit browsers */
+    margin-bottom: 1.5rem;
+}
+
+
+.training-section .section-title p {
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: var(--gray);
+}
+
+.training-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 3rem;
+    margin-top: 3.5rem;
+}
+
+.training-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border-top: 4px solid;
+}
+
+.training-card.posh { border-color: #ff6b6b; }
+.training-card.ethics { border-color: #4ecdc4; }
+.training-card.compliance { border-color: #45b7d1; }
+.training-card.communication { border-color: #f093fb; }
+
+.training-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.training-card h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--dark);
+}
+
+.training-overview {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    border-left: 4px solid;
+}
+
+.training-card.posh .training-overview { border-left-color: #ff6b6b; }
+.training-card.ethics .training-overview { border-left-color: #4ecdc4; }
+.training-card.compliance .training-overview { border-left-color: #45b7d1; }
+.training-card.communication .training-overview { border-left-color: #f093fb; }
+
+.module {
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    margin-top: 1rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.module:hover {
+    border-color: var(--primary);
+}
+
+.module-header {
+    padding: 1rem 1.5rem;
+    background: #f8f9fa;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.module-header h4 {
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.module-toggle {
+    transition: transform 0.3s ease;
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
+.module.active .module-toggle {
+    transform: rotate(180deg);
+}
+
+.module-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-in-out;
+}
+
+.module-body { padding: 1.5rem; }
+
+.key-points {
+    list-style: none; padding: 0;
+}
+
+.key-points li {
+    padding: 0.5rem 0 0.5rem 2rem;
+    position: relative;
+    color: var(--gray);
+}
+
+.key-points li::before {
+    content: '✓'; 
+    position: absolute; 
+    left: 0; 
+    color: #28a745; 
+    font-weight: bold;
+}
+
+.enroll-btn {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1.5rem;
+    width: 100%;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.enroll-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(26, 58, 108, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .services-hero { background-attachment: scroll; }
+    .training-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .training-card { padding: 2rem; }
+}

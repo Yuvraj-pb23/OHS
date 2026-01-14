@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About OHS</title>
+    <link rel="stylesheet" href="../CSS/about.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+    <style>
+        .section {
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .section:hover {
+            transform: translateY(-5px);
+            opacity: 0.95;
+        }
+        .image-box, .award-card, .advantage-box {
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+        .image-box:hover, .award-card:hover, .advantage-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+        .hero-content {
+            animation: fadeSlideIn 1s ease forwards;
+        }
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+  <div id="chatbot-container"></div>
+<div id="navbar-placeholder"></div>
+
+  <section class="about-hero">
+    <div class="hero-overlay">
+      <div class="container">
+        <div class="hero-content" data-aos="fade-up">
+          <h1>About OHS</h1>
+          <p>Creating respectful, safe, and inclusive workplaces through POSH compliance, training, and expert consulting.</p>
+          <a href="#who-we-are" class="hero-btn">Learn More</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="company-section">
+    <div class="container">
+      <div class="section" data-aos="fade-up">
+        <h2 class="section-title " id="who-we-are">Who We Are</h2>
+        <p class="section-description">
+          At <strong>OHS</strong>, we are pioneers in promoting safe, inclusive, and legally compliant workplaces. Since our inception in 2015, we've empowered over 500 organizations to build environments that prioritize employee well-being and legal adherence through tailored POSH (Prevention of Sexual Harassment) training, compliance audits, and expert consultancy services.
+        </p>
+        <p class="section-description">
+          With a team of certified professionals, legal advisors, and training experts, we bring decades of combined experience in transforming organizational culture for the better. We're trusted by startups, corporates, and NGOs alike to deliver results that matter.
+        </p>
+      </div>
+
+      <section class="who-we-are-images" id="our-team">
+        <div class="container">
+          <h2 class="image-section-title" data-aos="fade-up">Our Team & Culture</h2>
+          <p class="image-section-subtitle" data-aos="fade-up" data-aos-delay="100">
+            Meet the passionate professionals behind OHS, dedicated to building safer workplaces.
+          </p>
+
+          <div class="image-grid">
+            <div class="image-box" data-aos="zoom-in">
+              <img src="../img/prerna-kalra.jpg" alt="Team Member 1" />
+              <!-- <div class="caption" style="font-size: 20px;">Prerna Kalra<br><span>C.E.O</span></div> -->
+            </div>
+            <div class="image-box" data-aos="zoom-in" data-aos-delay="100">
+              <img src="../img/pooja.jpg" alt="Team Member 2" />
+              <!-- <div class="caption" style="font-size: 20px;">Dr. Rahul Kalra<br><span>C.E.O</span></div> -->
+            </div>
+            <div class="image-box" data-aos="zoom-in" data-aos-delay="200">
+              <img src="../img/team3.jpg" alt="Team Member 3" />
+              <!-- <div class="caption">Sahil Verma<br><span>Training Specialist</span></div> -->
+            </div>
+            
+                  <div class="image-box" data-aos="zoom-in">
+              <img src="../img/team4.jpg" alt="Team Member 1" />
+              <!-- <div class="caption" style="font-size: 20px;">Prerna Kalra<br><span>C.E.O</span></div> -->
+            </div>
+            <div class="image-box" data-aos="zoom-in" data-aos-delay="100">
+              <img src="../img/comm.jpg" alt="Team Member 2" />
+              <!-- <div class="caption" style="font-size: 20px;">Dr. Rahul Kalra<br><span>C.E.O</span></div> -->
+            </div>
+            <!-- <div class="image-box" data-aos="zoom-in" data-aos-delay="200">
+              <img src="" alt="Team Member 3" />
+            <div class="caption">Sahil Verma<br><span>Training Specialist</span></div> 
+            </div> -->
+
+          </div>
+        </div>
+      </section>
+
+      <br><br>
+
+      <!-- <div class="section" data-aos="fade-up" data-aos-delay="200" id="mission-award">
+        <h2 class="section-title">Our Mission</h2>
+        <p class="section-description">
+          Our mission is to create safer, more respectful workplaces by educating and enabling businesses to stay compliant with workplace safety laws, especially POSH compliance. We believe that every employee has the right to work in an environment free from fear and discrimination.
+        </p>
+        <p class="section-description">
+          Through engaging workshops, policy drafting, and dedicated support, we help organizations not just meet compliance, but also foster a culture of integrity, accountability, and mutual respect.
+        </p>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- <section class="awards-section"id="award" >
+    <div class="container">
+      <h2 class="awards-title" data-aos="fade-up" >Our Recognitions & Awards</h2>
+      <p class="awards-subtitle" data-aos="fade-up" data-aos-delay="100">
+        We are proud to be recognized for our contributions to workplace safety, inclusivity, and POSH compliance excellence.
+      </p>
+
+      <div class="awards-grid">
+      
+
+
+    <div class="awards-grid">
+      <div class="award-card" data-aos="zoom-in">
+        <img src="../img/o1.jpg" alt="Award 1" />
+        <div class="award-caption">Best Compliance Partner 2023</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="100">
+        <img src="../img/o2.jpg" alt="Award 2" />
+        <div class="award-caption">Excellence in POSH Training 2022</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="200">
+        <img src="../img/o3.jpg" alt="Award 3" />
+        <div class="award-caption">Top Legal Advisor 2021</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="300">
+        <img src="../img/o5.jpg" alt="Award 4" />
+        <div class="award-caption">Women Safety Champion 2020</div>
+      </div>
+         <div class="award-card" data-aos="zoom-in" data-aos-delay="300">
+        <img src="../img/o4.jpg" alt="Award 4" />
+        <div class="award-caption">Women Safety Champion 2020</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in">
+        <img src="../img/o9.jpg" alt="Award 1" />
+        <div class="award-caption">Best Compliance Partner 2023</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="100">
+        <img src="../img/o6.jpg" alt="Award 2" />
+        <div class="award-caption">Excellence in POSH Training 2022</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="200">
+        <img src="../img/o7.jpg" alt="Award 3" />
+        <div class="award-caption">Top Legal Advisor 2021</div>
+      </div>
+      <div class="award-card" data-aos="zoom-in" data-aos-delay="300">
+        <img src="../img/o8.jpg" alt="Award 4" />
+        <div class="award-caption">Women Safety Champion 2020</div>
+        
+        
+      </div>
+    </div>
+  </div>
+</section> -->
+
+
+<section class="awards-section" id="award">
+  <div class="container">
+    <h2 class="awards-title" data-aos="fade-up">Our Recognitions & Awards</h2>
+    <p class="awards-subtitle" data-aos="fade-up" data-aos-delay="100">
+      We are proud to be recognized for our contributions to workplace safety, inclusivity, and POSH compliance excellence.
+    </p>
+
+    <div class="awards-slider">
+      <div class="awards-track">
+        
+        <!-- Repeat these award-card elements -->
+        <div class="award-card">
+          <img src="../img/o1.jpg" alt="Award 1" />
+          <div class="award-caption">Best Compliance Partner 2023</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o2.jpg" alt="Award 2" />
+          <div class="award-caption">Excellence in POSH Training 2022</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o3.jpg" alt="Award 3" />
+          <div class="award-caption">Top Legal Advisor 2021</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o5.jpg" alt="Award 4" />
+          <div class="award-caption">Women Safety Champion 2020</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o4.jpg" alt="Award 5" />
+          <div class="award-caption">Workplace Inclusivity Leader</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o9.jpg" alt="Award 6" />
+          <div class="award-caption">Best Compliance Partner 2023</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o6.jpg" alt="Award 7" />
+          <div class="award-caption">Excellence in POSH Training 2022</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o7.jpg" alt="Award 8" />
+          <div class="award-caption">Top Legal Advisor 2021</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o8.jpg" alt="Award 9" />
+          <div class="award-caption">Women Safety Champion 2020</div>
+        </div>
+
+        <!-- Duplicate for smooth infinite loop -->
+        <div class="award-card">
+          <img src="../img/o1.jpg" alt="Award 1" />
+          <div class="award-caption">Best Compliance Partner 2023</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o2.jpg" alt="Award 2" />
+          <div class="award-caption">Excellence in POSH Training 2022</div>
+        </div>
+        <div class="award-card">
+          <img src="../img/o3.jpg" alt="Award 3" />
+          <div class="award-caption">Top Legal Advisor 2021</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+      </div>
+    </div>
+  </section>
+
+  <section class="why-choose-us py-5" id="choose">
+    <div class="container text-center">
+      <h2 class="section-title mb-4">Why Choose Us</h2>
+      <p class="section-subtitle mb-5">Discover what sets us apart and why clients trust us.</p>
+
+      <div class="swiper whySwiper">
+        <div class="swiper-wrapper">
+          <!-- Slides already with animation -->
+
+
+
+
+        <!-- Slide 1 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-user-shield icon"></i>
+            <h5>Certified Experts</h5>
+            <p>Our team has certified POSH professionals with years of industry experience.</p>
+          </div>
+        </div>
+
+          <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-user-shield icon"></i>
+            <h5>Experience & Industry</h5>
+            <p>More Than 10 Years With Topmost MNC's And Large organizations</p>
+          </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-star icon"></i>
+            <h5>Trusted by Brands</h5>
+            <p>We are the compliance partner of choice for top companies across India.</p>
+          </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-bolt icon"></i>
+            <h5>Fast & Reliable</h5>
+            <p>Prompt delivery, proactive support, and reliable consulting every time.</p>
+          </div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-lock icon"></i>
+            <h5>100% Confidential</h5>
+            <p>We ensure strict confidentiality and legal compliance for every client.</p>
+          </div>
+        </div>
+
+        <!-- Slide 5 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-chalkboard-teacher icon"></i>
+            <h5>Interactive Training</h5>
+            <p>Our workshops are engaging, practical, and packed with real case examples.</p>
+          </div>
+        </div>
+
+        <!-- Slide 6 -->
+        <div class="swiper-slide">
+          <div class="advantage-box">
+            <i class="fas fa-thumbs-up icon"></i>
+            <h5>Client-Centric</h5>
+            <p>Every strategy is tailored to your unique workplace culture and needs.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+    </div>
+  </div>
+</section>
+
+
+  </section>
+
+  <div id="footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    var swiper = new Swiper(".whySwiper", {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+      },
+      breakpoints: {
+        768: { slidesPerView: 2 },
+        992: { slidesPerView: 3 }
+      }
+    });
+
+    AOS.init();
+
+
+      fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+    fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+
+ fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+      
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+</html>

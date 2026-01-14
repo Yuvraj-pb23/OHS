@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    /* ===== Communication Section ===== */
+.communication-section {
+  padding: 80px 20px;
+  background: linear-gradient(135deg, #f9f9f9, #eef5ff);
+  text-align: center;
+}
+
+.section-title {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  color: #222;
+  font-weight: 700;
+}
+
+.section-subtitle {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 750px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
+}
+
+/* Person Card (centered) */
+.person-card {
+  background: #fff;
+  padding: 30px 20px;
+  border-radius: 20px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  max-width: 350px;
+  margin: 0 auto 60px auto;
+  transition: 0.4s ease;
+}
+.person-card:hover {
+  transform: translateY(-10px) scale(1.03);
+}
+.profile-pic img {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 5px solid #0073e6;
+  margin-bottom: 15px;
+}
+.person-card h3 {
+  margin-bottom: 5px;
+  color: #111;
+  font-size: 1.4rem;
+}
+.person-card p {
+  color: #666;
+  font-size: 0.95rem;
+}
+.social-links {
+  margin-top: 15px;
+}
+.social-links a {
+  margin: 0 8px;
+  font-size: 1.3rem;
+  color: #555;
+  transition: 0.3s;
+}
+.social-links a:hover {
+  color: #0073e6;
+  transform: scale(1.2);
+}
+
+/* Skills List */
+.skills-list {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.skills-list h3 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #0073e6;
+  text-align: center;
+}
+
+/* Skills Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+}
+
+.skill-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  text-align: left;
+  transition: 0.3s;
+}
+.skill-card:hover {
+  transform: translateY(-6px);
+  background: #f0f8ff;
+}
+.skill-card h4 {
+  margin: 10px 0;
+  color: #222;
+  font-size: 1.2rem;
+}
+.skill-card p {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+.skill-icon {
+  font-size: 2rem;
+  color: #0073e6;
+}
+
+</style>
+<body>
+    <section class="communication-section" id="communication">
+  <div class="container">
+    <h2 class="section-title" data-aos="fade-up">Communication Skills</h2>
+    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+      Effective communication is the foundation of leadership, teamwork, and personal growth. 
+      Learn from our expert and master the skills that shape confident interactions.
+    </p>
+
+    <!-- Person Profile -->
+    <div class="person-card" data-aos="zoom-in">
+      <div class="profile-pic">
+        <img src="../img/team3.jpg" alt="Communication Expert">
+      </div>
+      <h3>John Doe</h3>
+      <p>Professional Communication Coach</p>
+      <div class="social-links">
+        <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+        <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+        <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+
+    <!-- Communication Skills Grid -->
+    <div class="skills-list">
+      <h3 data-aos="fade-up">Key Communication Skills</h3>
+      <div class="skills-grid">
+
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="100">
+          <i class="fas fa-comment skill-icon"></i>
+          <h4>Verbal Communication</h4>
+          <p>Clear expression through words, focusing on tone, clarity, and confidence to deliver messages effectively.</p>
+        </div>
+
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="200">
+          <i class="fas fa-hand-paper skill-icon"></i>
+          <h4>Non-Verbal Communication</h4>
+          <p>Gestures, posture, and expressions that reinforce spoken words and build trust in human interactions.</p>
+        </div>
+
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="300">
+          <i class="fas fa-user skill-icon"></i>
+          <h4>Body Language</h4>
+          <p>Confident posture, eye contact, and movements that reflect openness and respect in conversations.</p>
+        </div>
+
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="400">
+          <i class="fas fa-headphones skill-icon"></i>
+          <h4>Listening Skills</h4>
+          <p>Active listening to understand, avoid interruptions, and respond thoughtfully, strengthening trust.</p>
+        </div>
+
+        <div class="skill-card" data-aos="fade-up" data-aos-delay="500">
+          <i class="fas fa-heart skill-icon"></i>
+          <h4>Empathic Reasoning</h4>
+          <p>Understanding others’ emotions and perspectives to build deeper trust and resolve conflicts effectively.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+ <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+
+</body>
+</html>

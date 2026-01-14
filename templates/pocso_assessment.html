@@ -1,0 +1,310 @@
+{% block body %}
+{% load static %}
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #d32f2f;
+        --primary-light: #ffebee;
+        --bg-body: #f8f9fa;
+        --surface: #ffffff;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --radius: 16px;
+    }
+
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); margin: 0; color: var(--text-main); }
+    .lms-container { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; max-width: 1600px; margin: 0 auto; }
+
+    /* Sidebar */
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border-color); padding: 25px; height: 100vh; position: sticky; top: 0; }
+    .nav-item { display: flex; align-items: center; padding: 14px 18px; border-radius: 12px; text-decoration: none; color: var(--text-main); font-weight: 500; margin-bottom: 8px; }
+    .nav-item.active { background-color: var(--primary); color: white; }
+
+    /* Content Area */
+    .main-content { padding: 40px; display: flex; flex-direction: column; align-items: center; }
+    .quiz-card { background: var(--surface); max-width: 850px; width: 100%; padding: 40px; border-radius: var(--radius); box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border-color); position: relative; }
+
+    /* Timer Badge */
+    .timer-badge {
+        position: absolute;
+        top: 25px;
+        right: 40px;
+        background: var(--bg-body);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid var(--border-color);
+        min-width: 80px;
+        justify-content: center;
+    }
+    .timer-low { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+    /* Question UI */
+    .progress-bar { height: 8px; background: #eee; border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+    .option-card { padding: 15px 20px; border: 2px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+    .option-card:hover { border-color: var(--primary); background: var(--primary-light); }
+    .option-card.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* Review UI */
+    .review-item { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; }
+    .review-correct { border-left: 5px solid var(--success); background: #f0fdf4; }
+    .review-wrong { border-left: 5px solid var(--danger); background: #fef2f2; }
+    .review-timeout { border-left: 5px solid var(--warning); background: #fffbeb; }
+
+    .badge { padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; }
+    .badge-success { background: var(--success); color: white; }
+    .badge-danger { background: var(--danger); color: white; }
+    .badge-warning { background: var(--warning); color: white; }
+
+    .btn { padding: 12px 30px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
+
+    @media (max-width: 1024px) { .lms-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
+</style>
+
+<div class="lms-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand" style="margin-bottom:40px;">
+            <h2 style="color:var(--primary); margin:0;">POCSO 2012</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Adaptive Assessment</p>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active">📝 Final Test</a>
+            <a href="javascript:history.back()" class="nav-item">⬅ Exit</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- 1. Quiz Section -->
+        <div class="quiz-card" id="quiz-section">
+            <div id="timer-box" class="timer-badge">
+                ⏱ <span id="timer-seconds">30</span>s
+            </div>
+
+            <div class="progress-bar"><div class="progress-fill" id="pg-fill"></div></div>
+            <span id="q-counter" style="color:var(--primary); font-weight:bold; font-size:0.8rem; text-transform:uppercase;"></span>
+            <h2 id="q-text" style="margin-top:10px; padding-right: 100px;">Loading Question...</h2>
+            <div id="options-container" style="margin-top:25px;"></div>
+            <div style="margin-top:30px; display:flex; justify-content:flex-end;">
+                <button class="btn btn-primary" id="next-btn" disabled onclick="handleNext()">Next Question</button>
+            </div>
+        </div>
+
+        <!-- 2. Result Section -->
+        <div class="quiz-card" id="result-section" style="display:none; text-align:center;">
+            <h1>Quiz Results</h1>
+            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="final-score">0/20</div>
+            <p id="result-msg" style="margin-bottom:30px;"></p>
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button class="btn btn-primary" onclick="showReview()">Review Answers</button>
+                <button class="btn btn-outline" onclick="location.reload()">Try New Set</button>
+            </div>
+        </div>
+
+        <!-- 3. Review Section -->
+        <div class="quiz-card" id="review-section" style="display:none;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h2>Answer Review</h2>
+                <button class="btn btn-outline" onclick="location.reload()">Back to Home</button>
+            </div>
+            <div id="review-container"></div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const allQuestions = [
+        { q: "POCSO stands for Protection of Children from _______ Offences Act.", a: ["Social", "Sexual", "Systemic", "Serious"], c: 1 },
+        { q: "The POCSO Act was enacted in which year?", a: ["2010", "2012", "2015", "2018"], c: 1 },
+        { q: "According to POCSO, a 'child' is any person below the age of:", a: ["14", "16", "18", "21"], c: 2 },
+        { q: "Which of the following describes the POCSO Act?", a: ["Gender-specific", "Gender-neutral", "Only for girls", "Only for boys"], c: 1 },
+        { q: "Reporting an offence under Section 19 of POCSO is:", a: ["Optional", "Mandatory", "Only for police", "Only for doctors"], c: 1 },
+        { q: "Where should a child's statement preferably be recorded?", a: ["Police Station", "Child's residence", "High Court", "Public Park"], c: 1 },
+        { q: "A child's identity should not be disclosed in any media report.", a: ["True", "False", "Only with permission", "Only for minors"], c: 0 },
+        { q: "Special courts under POCSO should complete the trial within:", a: ["3 months", "6 months", "1 year", "2 years"], c: 2 },
+        { q: "Medical examination of a child victim should be done in the presence of:", a: ["Police only", "Parent or a trusted person", "The Accused", "Media"], c: 1 },
+        { q: "Section 3 of POCSO defines:", a: ["Sexual assault", "Penetrative sexual assault", "Harassment", "Pornography"], c: 1 },
+        { q: "What is the age of consent for sexual acts in India?", a: ["15", "16", "18", "21"], c: 2 },
+        { q: "Punishment for aggravated penetrative sexual assault starts from:", a: ["5 years", "10 years", "20 years to Life", "Fine only"], c: 2 },
+        { q: "SJPU stands for:", a: ["Special Joint Police Unit", "Special Juvenile Police Unit", "Social Justice Police Unit", "Sexual Junior Unit"], c: 1 },
+        { q: "The police officer recording the child's statement must not be in uniform.", a: ["True", "False", "Optional", "Only for women officers"], c: 0 },
+        { q: "Can a child be detained in a police station overnight?", a: ["Yes", "No", "Only for questioning", "If parents agree"], c: 1 },
+        { q: "If a person fails to report a POCSO offence, they can be jailed for up to:", a: ["3 months", "6 months", "1 year", "2 years"], c: 1 },
+        { q: "Is child pornography a punishable offence under POCSO?", a: ["Yes", "No", "Only if distributed", "Only if it features adults"], c: 0 },
+        { q: "Who monitors the implementation of POCSO?", a: ["NCPCR", "NITI Aayog", "Ministry of Finance", "RBI"], c: 0 },
+        { q: "Aggravated sexual assault is covered under which Section?", a: ["Section 5", "Section 10", "Section 15", "Section 20"], c: 0 },
+        { q: "The child must not be called to the police station for recording a statement.", a: ["True", "False", "Only for boys", "Only for girls"], c: 0 },
+        { q: "The CWC stands for:", a: ["Child Welfare Committee", "Child Works Council", "Common Welfare Center", "Central Women Cell"], c: 0 },
+        { q: "Who provides a child with legal aid during a POCSO trial?", a: ["Legal Services Authority", "The Accused", "The School", "The Police"], c: 0 },
+        { q: "Recording the child's evidence must be completed in how many days?", a: ["15 days", "30 days", "60 days", "90 days"], c: 1 },
+        { q: "Special Courts are designated by:", a: ["State Government", "Police Commissioner", "NGOs", "Private Schools"], c: 0 },
+        { q: "Mandatory reporting applies to any person having knowledge of an offence.", a: ["True", "False", "Only if they are witnesses", "Only for public officials"], c: 0 },
+        { q: "What is the penalty for false reporting with malicious intent?", a: ["No penalty", "Fine or Imprisonment", "Community service", "Public apology"], c: 1 },
+        { q: "Under POCSO, the burden of proof is on the:", a: ["Child", "Police", "Accused (to prove innocence)", "Judge"], c: 2 },
+        { q: "Can the court allow a child to use a support person during trial?", a: ["Yes", "No", "Only if child is under 5", "Only for girls"], c: 0 },
+        { q: "The POCSO Act was last majorly amended in which year?", a: ["2015", "2017", "2019", "2021"], c: 2 },
+        { q: "Section 11 defines:", a: ["Sexual Harassment", "Sexual Assault", "Pornography", "Rape"], c: 0 },
+        { q: "Digital evidence of abuse is admissible in a POCSO court.", a: ["True", "False", "Only if printed", "Only if original"], c: 0 },
+        { q: "If the victim is a boy, which act applies?", a: ["POSH", "POCSO", "Both", "None"], c: 1 },
+        { q: "Medical examination of a girl child must be done by a:", a: ["Male Doctor", "Female Doctor", "Nurse", "Police"], c: 1 },
+        { q: "Can a child identify an accused through a video link?", a: ["Yes", "No", "Only if accused is out of state", "Only for adults"], c: 0 },
+        { q: "Minimum punishment for sexual harassment under POCSO is:", a: ["Fine only", "1 year", "3 years", "7 years"], c: 2 },
+        { q: "Are POCSO cases bailable?", a: ["Yes", "No (Non-bailable)", "Only for first-time offenders", "Only if fine is paid"], c: 1 },
+        { q: "A child's statement can be recorded in their mother tongue.", a: ["True", "False", "Only in English/Hindi", "Only if translator is unavailable"], c: 0 },
+        { q: "Can the IC (from POSH) handle POCSO cases?", a: ["Yes", "No, they must go to Police/LC", "Only if employer says so", "Only if victim is an adult"], c: 1 },
+        { q: "Using a child for street performing (sexually) is covered under:", a: ["Sexual Assault", "Pornographic purposes", "Harassment", "Not covered"], c: 1 },
+        { q: "Child-friendly environment in court is mandatory.", a: ["True", "False", "Only in big cities", "Only for private cases"], c: 0 }
+    ];
+
+    let currentIdx = 0; let score = 0; let selected = null;
+    let selectedQuestions = [];
+    let userAnswers = []; 
+    let timer;
+    let timeLeft = 30;
+
+    function initQuiz() {
+        const shuffled = allQuestions.sort(() => 0.5 - Math.random());
+        selectedQuestions = shuffled.slice(0, 20);
+        currentIdx = 0; score = 0; userAnswers = [];
+        loadQuestion();
+    }
+
+    function startTimer() {
+        timeLeft = 30;
+        document.getElementById('timer-seconds').innerText = timeLeft;
+        document.getElementById('timer-box').classList.remove('timer-low');
+        
+        clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-seconds').innerText = timeLeft;
+            
+            if (timeLeft <= 10) {
+                document.getElementById('timer-box').classList.add('timer-low');
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                if (selected === null) {
+                    selected = -1; // -1 indicates Timed Out
+                }
+                handleNext();
+            }
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        selected = null;
+        document.getElementById('next-btn').disabled = true;
+        const qData = selectedQuestions[currentIdx];
+        
+        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of 20`;
+        document.getElementById('q-text').innerText = qData.q;
+        document.getElementById('pg-fill').style.width = `${((currentIdx + 1) / 20) * 100}%`;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option-card';
+            div.innerText = opt;
+            div.onclick = () => {
+                selected = i;
+                document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
+                div.classList.add('selected');
+                document.getElementById('next-btn').disabled = false;
+            };
+            container.appendChild(div);
+        });
+
+        startTimer();
+    }
+
+    function handleNext() {
+        clearInterval(timer);
+        userAnswers.push(selected);
+        
+        if (selected !== null && selected !== -1) {
+            if (selected === selectedQuestions[currentIdx].c) score++;
+        }
+        
+        currentIdx++;
+        if (currentIdx < 20) loadQuestion();
+        else showResult();
+    }
+
+    function showResult() {
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+        document.getElementById('final-score').innerText = `${score}/20`;
+        
+        const msg = document.getElementById('result-msg');
+        if (score >= 14) {
+            msg.innerText = "Congratulations! You have passed the POCSO Assessment.";
+            msg.style.color = "var(--success)";
+        } else {
+            msg.innerText = "You did not reach the passing score (70%). Please review and try again.";
+            msg.style.color = "var(--danger)";
+        }
+    }
+
+    function showReview() {
+        document.getElementById('result-section').style.display = 'none';
+        document.getElementById('review-section').style.display = 'block';
+        
+        const container = document.getElementById('review-container');
+        container.innerHTML = '';
+
+        selectedQuestions.forEach((q, i) => {
+            const userPick = userAnswers[i];
+            const isCorrect = userPick === q.c;
+            const isTimedOut = userPick === -1;
+
+            let reviewClass = 'review-wrong';
+            let badgeClass = 'badge-danger';
+            let badgeText = '✗ Incorrect';
+
+            if (isCorrect) {
+                reviewClass = 'review-correct';
+                badgeClass = 'badge-success';
+                badgeText = '✓ Correct';
+            } else if (isTimedOut) {
+                reviewClass = 'review-timeout';
+                badgeClass = 'badge-warning';
+                badgeText = '⌛ Timed Out';
+            }
+
+            const div = document.createElement('div');
+            div.className = `review-item ${reviewClass}`;
+            
+            div.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <strong style="display:block; margin-bottom:10px;">Q${i+1}: ${q.q}</strong>
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                </div>
+                <p style="margin:5px 0; font-size:0.9rem;">
+                    <strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}
+                </p>
+                ${!isCorrect ? `<p style="margin:5px 0; font-size:0.9rem; color:var(--success);">
+                    <strong>Correct Answer:</strong> ${q.a[q.c]}
+                </p>` : ''}
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    initQuiz();
+</script>
+{% endblock body %}

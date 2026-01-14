@@ -1,0 +1,556 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About OHS - Our Mission and Achievements</title>
+
+    <!-- External Libraries -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css" />
+
+    <style>
+        /* ============================
+           1. CORE SETTINGS
+           ============================ */
+        :root {
+            --primary: #003b73;
+            --secondary: #0096ff;
+            --accent: #00d2ff;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --text-dark: #2c3e50;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(120deg, #f4f9ff 0%, #e0f0ff 100%);
+            color: var(--text-dark);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-align: center;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 50px;
+        }
+
+        /* ============================
+           2. HERO SECTION
+           ============================ */
+        .about-hero {
+            position: relative;
+            height: 70vh;
+            background: url("{% static 'img/about_n.jpeg' %}") center/cover no-repeat fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 30, 70, 0.7); /* Darker overlay */
+        }
+
+        .hero-glass-card {
+            position: relative;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 50px 60px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            max-width: 800px;
+            animation: floatHero 5s ease-in-out infinite;
+        }
+
+        .hero-glass-card h1 {
+            color: #fff;
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-glass-card p {
+            color: #e0e0e0;
+            font-size: 1.25rem;
+            line-height: 1.6;
+        }
+
+        @keyframes floatHero {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-12px); }
+        }
+
+        /* ============================
+           3. WHO WE ARE (PREMIUM DESIGN)
+           ============================ */
+        .company-section {
+            padding: 100px 0;
+            position: relative;
+            margin-top: -80px; /* Strong overlap */
+            z-index: 10;
+        }
+
+        /* Animated Blobs */
+        .blob {
+            position: absolute;
+            filter: blur(70px);
+            z-index: -1;
+            opacity: 0.7;
+            animation: moveBlob 10s infinite alternate;
+        }
+        .blob-1 { top: 10%; left: 5%; width: 300px; height: 300px; background: rgba(0, 150, 255, 0.4); border-radius: 50%; }
+        .blob-2 { bottom: 10%; right: 5%; width: 350px; height: 350px; background: rgba(142, 68, 173, 0.3); border-radius: 50%; animation-delay: 2s; }
+
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
+        }
+
+        /* The Main Card */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 30px;
+            padding: 60px 50px;
+            box-shadow: 0 30px 80px rgba(0, 59, 115, 0.15);
+            border: 1px solid rgba(255, 255, 255, 1);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Rotating Border Effect */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent), var(--primary));
+            background-size: 300% 100%;
+            animation: borderRun 4s linear infinite;
+        }
+
+        @keyframes borderRun {
+            0% { background-position: 0% 0; }
+            100% { background-position: 100% 0; }
+        }
+
+        /* Background Decor Icons */
+        .bg-icon {
+            position: absolute;
+            color: rgba(0, 59, 115, 0.03);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-quote { font-size: 15rem; top: -20px; left: 20px; font-family: serif; }
+        .bg-shield { font-size: 20rem; bottom: -50px; right: -50px; transform: rotate(-15deg); }
+
+        /* Content Stacking */
+        .panel-content { position: relative; z-index: 2; }
+
+        .gradient-title {
+            background: linear-gradient(135deg, #003b73 0%, #00d2ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 30px;
+            display: inline-block;
+        }
+
+        .section-description {
+            font-size: 1.15rem;
+            line-height: 1.9;
+            color: #555;
+            max-width: 900px;
+            margin: 0 auto 40px;
+        }
+
+        .highlight {
+            background: linear-gradient(to top, rgba(0, 150, 255, 0.1) 50%, transparent 50%);
+            color: var(--primary);
+            font-weight: 700;
+            padding: 0 5px;
+        }
+
+        /* Crystal Stats Tiles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid rgba(220, 230, 255, 0.5);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 150, 255, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .stat-icon-circle {
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #eef6ff, #f9fbff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.5rem;
+            color: var(--secondary);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .stat-card p {
+            margin: 5px 0 0;
+            font-size: 0.95rem;
+            color: #777;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ============================
+           4. TEAM SECTION
+           ============================ */
+        .team-section { padding: 60px 0 100px; }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 80px 30px;
+            margin-top: 80px;
+        }
+
+        .team-card {
+            background: linear-gradient(145deg, #ffffff, #f4f8ff);
+            border-radius: 20px;
+            padding: 70px 20px 30px;
+            text-align: center;
+            position: relative;
+            border: 1px solid #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 150, 255, 0.2);
+            border: 1px solid var(--secondary);
+        }
+
+        .team-card-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            position: absolute;
+            top: -55px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 4px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease;
+            background: #fff;
+        }
+
+        .team-card:hover .team-card-img {
+            transform: translateX(-50%) scale(1.15) rotate(5deg);
+        }
+
+        .team-info h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .team-info p {
+            font-size: 0.9rem;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* ============================
+           5. SUCCESS STORIES
+           ============================ */
+        .success-stories { padding: 60px 0; }
+        .stories-container { max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
+
+        .story-card {
+            background: rgba(255,255,255,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border-left: 6px solid var(--secondary);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            transition: transform 0.3s;
+        }
+        .story-card:hover { transform: scale(1.02); background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+
+        /* ============================
+           6. ACHIEVEMENTS
+           ============================ */
+        .achievements { padding: 60px 0; background: #fff; overflow: hidden; }
+        .achievements-slider-container { margin-top: 30px; }
+        .swiper-slide {
+            width: 250px !important;
+            height: 250px;
+            background: #fff;
+            padding: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        .swiper-slide:hover { transform: scale(1.1); z-index: 10; }
+        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        
+        @media (max-width: 768px) {
+            .hero-glass-card h1 { font-size: 2.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .glass-panel { padding: 40px 25px; }
+        }
+    </style>
+</head>
+
+<body>
+
+  <!-- ======= HERO SECTION ======= -->
+  <section class="about-hero">
+    <div class="hero-glass-card" data-aos="zoom-in" data-aos-duration="1200">
+        <h1>About OHS</h1>
+        <p>Creating respectful, safe, and inclusive workplaces through POSH compliance, training, and expert consulting.</p>
+    </div>
+  </section>
+
+  <!-- ======= WHO WE ARE (New Attractive Design) ======= -->
+  <section class="company-section">
+    <!-- Moving Blobs -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="container">
+      <div class="glass-panel" data-aos="fade-up">
+        
+        <!-- Background Decor -->
+        <div class="bg-icon bg-quote"><i class="fas fa-quote-left"></i></div>
+        <div class="bg-icon bg-shield"><i class="fas fa-shield-alt"></i></div>
+
+        <div class="panel-content">
+            <h2 class="gradient-title">Who We Are</h2>
+            
+            <p class="section-description">
+              At <strong>OHS</strong>, we are pioneers in promoting <span class="highlight">safe, inclusive, and legally compliant</span> workplaces. Since our inception, we've empowered organizations to build environments that prioritize employee well-being and legal adherence.
+            </p>
+            
+            <p class="section-description">
+              Our certified professionals, legal advisors, and training experts bring decades of experience to transform workplace culture through tailored <span class="highlight">POSH training, audits, and consultancy</span>.
+            </p>
+
+            <!-- Crystal Stat Tiles -->
+            <!-- <div class="stats-grid">
+                
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="stat-icon-circle">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>2015</h3>
+                    <p>Established</p>
+                </div>
+
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="stat-icon-circle">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h3>500+</h3>
+                    <p>Organizations</p>
+                </div>
+
+                <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-icon-circle">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>10k+</h3>
+                    <p>Trained Pro's</p>
+                </div>
+
+            </div> -->
+        </div>
+
+      </div>
+    </div>
+  </section>
+  
+  <!-- ======= OUR TEAM SECTION ======= -->
+  <section class="team-section" id="our-team">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Our Team & Culture</h2>
+      <p class="section-subtitle" data-aos="fade-up">Meet the passionate professionals behind OHS.</p>
+
+      <div class="team-grid">
+        <div class="team-card" data-aos="fade-up" data-aos-delay="100">
+          <img src="{% static 'img/prerna-Kalra.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Prerna Kalra</h3>
+            <p>“Nationally recognized leader in Diversity & Inclusion, trained 10,000+ professionals.”</p>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos="fade-up" data-aos-delay="200">
+          <img src="{% static 'img/pooja_n.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Pooja Pande</h3>
+            <p>“Highly accomplished legal expert specializing in POSH cases.”</p>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos="fade-up" data-aos-delay="300">
+          <img src="{% static 'img/team3.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Vasundhra Kaul</h3>
+            <p>“Corporate HR professional with 15 years’ experience.”</p>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos="fade-up" data-aos-delay="400">
+          <img src="{% static 'img/team4.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Shradha Sinha</h3>
+            <p>“Retired Air Force Officer with 25+ years of HR training expertise.”</p>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos="fade-up" data-aos-delay="500">
+          <img src="{% static 'img/comm.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Anita</h3>
+            <p>“Certified POSH Trainer & DEI advocate.”</p>
+          </div>
+        </div>
+
+        <div class="team-card" data-aos="fade-up" data-aos-delay="600">
+          <img src="{% static 'img/maam.jpg' %}" class="team-card-img" />
+          <div class="team-info">
+            <h3>Capt Rajni Pathania Sareen</h3>
+            <p>“Ex Army Officer with 24 years of HR expertise.”</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= SUCCESS STORIES ======= -->
+  <section class="success-stories">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Success Stories</h2>
+      <div class="stories-container">
+        <div class="story-card" data-aos="fade-right">
+          <p>“OHS played a pivotal role in reshaping our workplace culture... As a result, employee confidence grew, communication became more transparent, and incidents of misunderstanding significantly decreased.”</p>
+        </div>
+        <div class="story-card" data-aos="fade-left">
+          <p>“The training sessions delivered by OHS were nothing short of transformational... teams began collaborating more effectively, leaders became more approachable, and we saw a measurable improvement in overall job satisfaction.”</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= ACHIEVEMENTS SLIDER ======= -->
+  <section class="achievements">
+    <div class="container">
+      <h2 class="section-title" data-aos="fade-up">Our Achievements</h2>
+      
+      <div class="achievements-slider-container">
+        <div class="swiper achievements-slider" id="slider1">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="{% static 'img/12.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/13.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/14.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/4.jpg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/5.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/6.jpeg' %}"></div>
+          </div>
+        </div>
+
+        <!-- <div class="swiper achievements-slider" id="slider2" style="margin-top: 20px;">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide"><img src="{% static 'img/4.jpg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/5.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/6.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/12.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/13.jpeg' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/14.jpeg' %}"></div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true });
+      const initSlider = (selector, reverse = false) => {
+        new Swiper(selector, {
+          loop: true, slidesPerView: 'auto', spaceBetween: 20, speed: 3000,
+          autoplay: { delay: 0, disableOnInteraction: false, reverseDirection: reverse },
+          allowTouchMove: false, freeMode: true,
+        });
+      };
+      initSlider("#slider1", false);
+      initSlider("#slider2", true);
+    });
+  </script>
+
+</body>
+</html>
+{% endblock body %}

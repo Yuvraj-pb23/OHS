@@ -1,0 +1,178 @@
+/* Base Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html, body {
+  overflow-x: hidden;
+  font-family: 'Segoe UI', sans-serif;
+  background: #f9f9f9;
+  line-height: 1.6;
+}
+
+/* Hero Section */
+.contact-hero {
+  min-height: 60vh;
+  /* Ensure this image exists in your static/img folder */
+  background: url('/static/img/contact.jpg') center/cover no-repeat;
+  color: white;
+  display: flex;
+  align-items: center;   /* keep vertical center */
+  justify-content: flex-start; /* push to left */
+  text-align: left;       /* align text left */
+  padding: 3rem 2rem;
+}
+
+.contact-hero .hero-title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+}
+.contact-hero .hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: #dcdde1dd;
+  max-width: 600px;
+  margin: 1rem auto;
+}
+.btn-hero {
+  background: #ff6f61;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  color: white;
+  transition: 0.3s ease;
+}
+.btn-hero:hover {
+  background: #3e61ff;
+  transform: translateY(-3px);
+}
+
+/* Contact Section */
+.contact-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 3rem 1rem;
+  max-width: 1200px;
+  margin: auto;
+}
+.contact-form, .contact-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+.contact-form h2, .contact-info h2 {
+  color: #1a237e;
+  margin-bottom: 1rem;
+}
+.contact-form label {
+  font-weight: 600;
+  margin-top: 1rem;
+  display: block;
+}
+.contact-form input,
+.contact-form textarea,
+.contact-form select,
+.contact-form button {
+  width: 100%;
+  padding: 0.9rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+.contact-form input:focus,
+.contact-form textarea:focus,
+.contact-form select:focus {
+  border-color: #3949ab;
+  outline: none;
+  box-shadow: 0 0 6px rgba(57,73,171,0.2);
+}
+.contact-form button {
+  background: #3949ab;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.contact-form button:hover {
+  background: #1a237e;
+}
+
+/* Guarantee Section */
+.contact-guarantee {
+  padding: 50px 1rem;
+  background: #eef1f7;
+  text-align: center;
+}
+.contact-guarantee h2 {
+  color: #3949ab;
+}
+.guarantee-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 25px;
+  margin-top: 2rem;
+}
+.guarantee-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+/* Popup */
+.popup-overlay {
+  position: fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.popup-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  text-align: center;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+  animation: popupFade 0.3s ease;
+}
+@keyframes popupFade {
+  from { transform: scale(0.85); opacity: 0;}
+  to { transform: scale(1); opacity: 1;}
+}
+
+/* RESPONSIVE BREAKPOINTS */
+@media (max-width: 1024px) {
+  .contact-section {
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem;
+  }
+}
+@media (max-width: 768px) {
+  .contact-hero {
+    padding: 2rem 1rem;
+    min-height: 50vh;
+  }
+  .contact-form, .contact-info {
+    padding: 1.5rem;
+  }
+}
+@media (max-width: 480px) {
+  .contact-hero {
+    min-height: 40vh;
+  }
+  .btn-hero {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+  .contact-form input, .contact-form textarea {
+    font-size: 0.9rem;
+  }
+}

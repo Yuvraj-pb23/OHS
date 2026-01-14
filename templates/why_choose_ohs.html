@@ -1,0 +1,1029 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Choose OHS - Comprehensive Solutions</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap CSS (Ensure this is loaded if not in base.html) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      /* --- CORE BRAND COLORS --- */
+      --primary-blue: #2563eb;      
+      --deep-purple: #7c3aed;       
+      --vibrant-teal: #0d9488;      
+      --warm-orange: #f97316;       
+      
+      /* --- NUDE BACKGROUND PALETTE --- */
+      --bg-nude-light: #fdfbf7; 
+      --bg-nude-medium: #f6f2eb; 
+      --bg-nude-warm: #eee8e1;
+
+      /* Gradients */
+      --gradient-nude-rich: linear-gradient(180deg, #f6f2eb 0%, #eee8e1 100%);
+      --gradient-nude-soft: linear-gradient(180deg, #fdfbf7 0%, #f6f2eb 100%);
+      
+      --hero-gradient: linear-gradient(135deg, #1e1b4b 0%, #4338ca 50%, #7c3aed 100%);
+      --accent-gradient: linear-gradient(90deg, #2563eb, #0d9488);
+      
+      --dark-text: #1e293b;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: var(--dark-text);
+      background-color: var(--bg-nude-light);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* 1. HERO SECTION */
+    .page-hero {
+      background: linear-gradient(to right, #709ee3ff, #ffffff);
+      color: rgb(20, 15, 15);
+      padding: 120px 0 100px;
+      position: relative;
+      overflow: hidden;
+      border-bottom-right-radius: 80px;
+    }
+    
+    .hero-shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    .shape-1 { width: 300px; height: 300px; top: -100px; right: -50px; }
+    .shape-2 { width: 150px; height: 150px; bottom: 20px; left: 10%; }
+
+    /* 2. TITLES */
+    .section-subtitle {
+      color: var(--vibrant-teal);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      font-size: 0.85rem;
+      margin-bottom: 10px;
+      display: block;
+    }
+    
+    .section-heading {
+      font-weight: 700;
+      color: #0f172a;
+      position: relative;
+      margin-bottom: 40px;
+    }
+    
+    .section-heading::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 4px;
+      background: var(--accent-gradient);
+      margin: 15px auto;
+      border-radius: 2px;
+    }
+    .text-start .section-heading::after { margin: 15px 0; }
+
+    /* 3. ANIMATED SERVICE CARDS */
+    .service-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 35px 30px;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .service-card:hover {
+      transform: translateY(-15px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+      z-index: 2;
+    }
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--primary-blue);
+      transition: height 0.3s ease;
+    }
+    .service-card:hover::before { height: 6px; }
+    .card-purple::before { background: var(--deep-purple); }
+    .card-teal::before { background: var(--vibrant-teal); }
+    .card-orange::before { background: var(--warm-orange); }
+
+    .icon-wrapper {
+      width: 55px;
+      height: 55px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+      transition: all 0.4s ease;
+    }
+    .bg-blue-light { background: #dbeafe; color: var(--primary-blue); }
+    .bg-purple-light { background: #f3e8ff; color: var(--deep-purple); }
+    .bg-teal-light { background: #ccfbf1; color: var(--vibrant-teal); }
+    .bg-orange-light { background: #ffedd5; color: var(--warm-orange); }
+
+    .service-card:hover .icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        border-radius: 50%;
+    }
+    .service-card:hover .icon-wrapper.bg-blue-light { background: var(--primary-blue); color: #fff; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
+    .service-card:hover .icon-wrapper.bg-purple-light { background: var(--deep-purple); color: #fff; box-shadow: 0 5px 15px rgba(124, 58, 237, 0.3); }
+    .service-card:hover .icon-wrapper.bg-teal-light { background: var(--vibrant-teal); color: #fff; box-shadow: 0 5px 15px rgba(13, 148, 136, 0.3); }
+    .service-card:hover .icon-wrapper.bg-orange-light { background: var(--warm-orange); color: #fff; box-shadow: 0 5px 15px rgba(249, 115, 22, 0.3); }
+
+    /* 4. ANIMATED ACCORDION */
+    .custom-accordion .accordion-item {
+      border: none;
+      margin-bottom: 15px;
+      border-radius: 15px !important;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+      transition: all 0.3s ease;
+    }
+    .custom-accordion .accordion-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    }
+    .custom-accordion .accordion-button {
+      background: #ffffff;
+      font-weight: 600;
+      color: #334155;
+      padding: 20px;
+      font-size: 1rem;
+      border: none;
+      box-shadow: none;
+    }
+    .custom-accordion .accordion-button:not(.collapsed) {
+      background: #eff6ff; 
+      color: var(--primary-blue);
+      border-left: 5px solid var(--primary-blue);
+    }
+    .acc-num {
+      background: var(--deep-purple);
+      color: white;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex; 
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-right: 20px;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+    .custom-accordion .accordion-button:not(.collapsed) .acc-num {
+        transform: rotate(360deg);
+        background: var(--primary-blue);
+    }
+    .custom-accordion .accordion-body {
+      font-size: 0.95rem;
+      color: #475569;
+      background: #ffffff;
+      padding: 20px 20px 20px 75px; 
+      line-height: 1.8;
+      text-align: justify;
+    }
+
+    /* 5. ANIMATED TRAINING LIST ITEMS */
+    .training-list-item {
+      display: flex;
+      align-items: flex-start; 
+      margin-bottom: 25px;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 15px;
+      border-left: 6px solid var(--primary-blue);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .border-purple { border-left-color: var(--deep-purple); }
+    .border-orange { border-left-color: var(--warm-orange); }
+    
+    .training-list-item:hover {
+        transform: translateY(-5px) scale(1.01);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    }
+    
+    .training-list-item i {
+        transition: transform 0.3s ease;
+        margin-top: 5px; 
+    }
+    .training-list-item:hover i {
+        animation: pulse-blue 1s infinite;
+    }
+
+    @keyframes pulse-blue {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); }
+    }
+    
+    .training-list-item h6 {
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+    }
+    .training-list-item p {
+      margin-bottom: 0;
+      font-size: 0.95rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* 6. METHODOLOGY & CTA */
+    .method-box {
+      text-align: center;
+      padding: 30px 20px;
+      background: #ffffff;
+      border-radius: 15px;
+      height: 100%;
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: 0.3s;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
+    }
+    .method-box:hover { transform: translateY(-5px); background: var(--primary-blue); color: white; border-color: transparent; }
+    .method-box:hover i { background: none; -webkit-text-fill-color: white; color: white; }
+    .method-box:hover p, .method-box:hover h5 { color: white !important; }
+
+    .colorful-cta {
+      background: linear-gradient(110deg, #7c3aed 0%, #2563eb 100%);
+      border-radius: 20px;
+      padding: 60px;
+      color: white;
+      box-shadow: 0 20px 40px -10px rgba(37, 99, 235, 0.4);
+    }
+    .btn-light-custom {
+      background: white;
+      color: var(--primary-blue);
+      font-weight: 700;
+      padding: 12px 30px;
+      border-radius: 50px;
+      transition: 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-light-custom:hover {
+      transform: scale(1.05);
+      background: #f8fafc;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      color: var(--primary-blue);
+    }
+
+    /* --- NEW SECTION STYLES: Case Management --- */
+    .cm-card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 16px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,0,0,0.04);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cm-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+      border-color: transparent;
+    }
+
+    /* Colored accent lines on the left of cards */
+    .cm-border-blue { border-left: 5px solid var(--primary-blue); }
+    .cm-border-purple { border-left: 5px solid var(--deep-purple); }
+    .cm-border-teal { border-left: 5px solid var(--vibrant-teal); }
+
+    .cm-icon-box {
+      width: 50px; 
+      height: 50px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+      transition: transform 0.4s ease;
+    }
+
+    .cm-card:hover .cm-icon-box {
+      transform: scale(1.1) rotate(10deg);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO SECTION -->
+  <section class="page-hero text-center">
+    <div class="hero-shape shape-1"></div>
+    <div class="hero-shape shape-2"></div>
+    <div class="container position-relative z-2">
+      <h1 class="display-4 fw-bold mb-3" data-aos="fade-down">Why Choose OHS?</h1>
+      <p class="lead fw-light w-75 mx-auto opacity-75" data-aos="fade-up" data-aos-delay="100">
+        Empowering organizations to build respectful, safe, and inclusive workplaces.
+      </p>
+    </div>
+  </section>
+
+  <!-- 1. END-TO-END COMPLIANCE -->
+  <section class="py-5" style="background: var(--gradient-nude-rich);" id="compliance">
+    <div class="container py-4">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="section-subtitle">A Holistic Approach</span>
+        <h2 class="section-heading">End-to-End POSH Compliance</h2>
+        <div class="mx-auto col-lg-10 text-muted">
+          <p>In today’s evolving workplace environment, compliance with the Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013 is not merely a statutory requirement—it is a commitment to dignity, safety, and trust at work. True compliance goes beyond having a policy in place; it requires a structured, sustained, and sensitive approach that addresses prevention, redressal, and accountability at every level.</p>
+          <p>Open Hand Solutions is a consulting company committed to providing end-to-end POSH compliance services, ensuring that organizations are fully aligned with both the letter and spirit of the law. Our approach is comprehensive, practical, and legally sound, enabling organizations to create workplaces that are not only compliant but genuinely safe and inclusive.</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="0">
+          <div class="service-card">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-blue-light me-3 mb-0"><i class="fas fa-users-cog"></i></div>
+               <h5 class="fw-bold mb-0">1. Internal Committee (IC) Setup & Constitution</h5>
+            </div>
+            <p class="text-muted small">We assist organizations in the proper constitution of the Internal Committee in accordance with the POSH Act, including guidance on composition, eligibility, tenure, roles, and responsibilities. This ensures the IC is legally valid, functional, and equipped to discharge its duties effectively.</p>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="100">
+          <div class="service-card card-purple">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-purple-light me-3 mb-0"><i class="fas fa-chalkboard-teacher"></i></div>
+               <h5 class="fw-bold mb-0">2. Training of Internal Committee Members</h5>
+            </div>
+            <p class="text-muted small">We conduct structured and in-depth training programs for IC members covering legal provisions, inquiry procedures, principles of natural justice, report writing, and case handling. Our trainings are designed to build confidence, neutrality, and procedural clarity among committee members.</p>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="200">
+          <div class="service-card card-teal">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-teal-light me-3 mb-0"><i class="fas fa-bullhorn"></i></div>
+               <h5 class="fw-bold mb-0">3. Employee Sensitisation & Awareness Programs</h5>
+            </div>
+            <p class="text-muted small">We deliver employee sensitisation sessions across all levels of the organization to foster awareness about acceptable workplace behavior, rights and responsibilities, reporting mechanisms, and the importance of a respectful work culture.</p>
+          </div>
+        </div>
+        <!-- Card 4 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="300">
+          <div class="service-card card-orange">
+             <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-orange-light me-3 mb-0"><i class="fas fa-image"></i></div>
+               <h5 class="fw-bold mb-0">4. Awareness Through Posters & IEC Material</h5>
+            </div>
+            <p class="text-muted small">Open Hand Solutions designs and provides POSH-compliant posters and Information, Education and Communication (IEC) materials to ensure continuous visibility and awareness within the workplace, as mandated under the Act.</p>
+          </div>
+        </div>
+        <!-- Card 5 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="400">
+          <div class="service-card card-teal">
+             <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-teal-light me-3 mb-0"><i class="fas fa-shield-alt"></i></div>
+               <h5 class="fw-bold mb-0">5. Safety & Workplace Compliance Support</h5>
+            </div>
+            <p class="text-muted small">We support organizations in aligning workplace practices with broader safety and dignity-related compliance requirements, reinforcing preventive measures and organizational accountability.</p>
+          </div>
+        </div>
+        <!-- Card 6 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="500">
+          <div class="service-card card-purple">
+             <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-purple-light me-3 mb-0"><i class="fas fa-gavel"></i></div>
+               <h5 class="fw-bold mb-0">6. Case Management & Legal Desk Support</h5>
+            </div>
+            <p class="text-muted small">Our dedicated case and legal desk provides handholding support during complaint handling, from receipt of complaints to inquiry management and documentation, ensuring due process and confidentiality at every stage.</p>
+          </div>
+        </div>
+        <!-- Card 7 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="600">
+          <div class="service-card">
+             <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-blue-light me-3 mb-0"><i class="fas fa-user-tie"></i></div>
+               <h5 class="fw-bold mb-0">7. External Member Support</h5>
+            </div>
+            <p class="text-muted small">We provide qualified and experienced External Members to Internal Committees, ensuring independence, legal insight, and credibility in the inquiry process, as required under the POSH Act.</p>
+          </div>
+        </div>
+        <!-- Card 8 -->
+        <div class="col-lg-6 col-md-6" data-aos="zoom-in-up" data-aos-delay="700">
+          <div class="service-card card-orange">
+             <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper bg-orange-light me-3 mb-0"><i class="fas fa-laptop-house"></i></div>
+               <h5 class="fw-bold mb-0">8. She-Box Registration & Compliance</h5>
+            </div>
+            <p class="text-muted small">We assist organizations with registration on the Government’s She-Box portal and ensure ongoing compliance with reporting and procedural requirements linked to the platform.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. EXPERTISE (Accordion with Full Text) -->
+  <!-- 2. EXPERTISE (Accordion with Full Text) -->
+<section class="py-5" style="background: var(--bg-nude-light);" id="expertise">
+    <div class="container py-4">
+      <div class="row">
+        <div class="col-lg-5 mb-4" data-aos="fade-right">
+          
+          <span class="section-subtitle">Legal & Non-Legal POSH Compliance</span>
+          <h2 class="section-heading text-start">Where Policy Meets Practice</h2>
+      
+          <p class="text-muted mb-3">
+          POSH compliance is more than knowing the law—it’s about applying it effectively in everyday workplace situations with sensitivity and consistency.
+          </p>
+          <p class="text-muted mb-4">
+           Open Hand Solutions blends legal expertise with practical execution, bridging the gap between statutory requirements and real workplace needs—so compliance isn’t just documented, but truly implemented.
+          </p>
+          <!-- <img src="{% static 'img/why_choose_ohs.jpg' %}" class="img-fluid rounded-4 shadow-lg border border-5 border-white" alt="Workplace Realities">  -->
+     <img src="{% static 'img/why_choose_ohs.jpg' %}"
+     class="img-fluid rounded-4 shadow-lg border border-5 border-white"
+     alt="Workplace Realities"
+     style="height: 400px; width: 100%; object-fit: cover; display: block;">
+
+
+        </div>
+
+        <div class="col-lg-7">
+          <div class="accordion custom-accordion" id="expAccordion">
+            
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="0">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c1">
+                  <span class="acc-num">1</span> 
+                  <span>Translating Law into Action</span>
+                </button>
+              </h2>
+              <div id="c1" class="accordion-collapse collapse show" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  We interpret legal provisions of the POSH Act and convert them into clear, implementable processes tailored to the organization’s structure, workforce, and culture. Our approach ensures that policies, procedures, and mechanisms are workable, accessible, and legally sound.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="100">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c2">
+                  <span class="acc-num">2</span> 
+                  <span>Operationalising Internal Committees</span>
+                </button>
+              </h2>
+              <div id="c2" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  Beyond IC constitution, we focus on making Internal Committees functional and effective. This includes defining workflows, standard operating procedures, timelines, documentation formats, and decision-making protocols—so the IC is prepared to act when required.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="200">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c3">
+                  <span class="acc-num">3</span> 
+                  <span>Hands-On Case Execution & Inquiry Support</span>
+                </button>
+              </h2>
+              <div id="c3" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  Open Hand Solutions provides active support during complaint handling and inquiry proceedings. From complaint receipt to inquiry coordination, evidence management, report drafting, and closure, we ensure each step adheres to legal standards while maintaining fairness, confidentiality, and sensitivity.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="300">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c4">
+                  <span class="acc-num">4</span> 
+                  <span>Legal Guidance Without Over-Legalisation</span>
+                </button>
+              </h2>
+              <div id="c4" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  While legal compliance is critical, excessive legalisation can discourage reporting and trust. We balance legal rigour with empathetic, survivor-centric processes, helping organizations manage cases responsibly without creating fear or procedural complexity.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="400">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c5">
+                  <span class="acc-num">5</span> 
+                  <span>Employee-Facing Non-Legal Implementation</span>
+                </button>
+              </h2>
+              <div id="c5" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  We execute awareness and sensitisation initiatives that resonate with employees—simplifying legal concepts, clarifying behavioural expectations, and reinforcing reporting confidence. Our programs focus on prevention through understanding, not fear of consequences alone.
+                </div>
+              </div>
+            </div>
+
+             <div class="accordion-item" data-aos="fade-left" data-aos-delay="500">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c6">
+                  <span class="acc-num">6</span> 
+                  <span>Documentation, Reporting & Compliance Discipline</span>
+                </button>
+              </h2>
+              <div id="c6" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                  We assist organizations in maintaining proper records, inquiry documentation, annual reports, and statutory disclosures, ensuring compliance stands up to scrutiny by authorities, auditors, and courts.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" data-aos="fade-left" data-aos-delay="600">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c7">
+                  <span class="acc-num">7</span> 
+                  <span>External Member & Advisory Execution Support</span>
+                </button>
+              </h2>
+              <div id="c7" class="accordion-collapse collapse" data-bs-parent="#expAccordion">
+                <div class="accordion-body">
+                   As External Members and advisors, we actively participate in inquiries and compliance processes, bringing neutrality, experience, and execution discipline to ensure outcomes are defensible, fair, and timely.
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. CUSTOMISED TRAINING (Full Text & Animation) -->
+  <!-- 3. CUSTOMISED TRAINING (Full Text & Animation) -->
+<section class="py-5" style="background: var(--gradient-nude-rich);" id="training">
+    <div class="container py-4">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="section-subtitle">Designed Around Your Workplace</span>
+        <h2 class="section-heading">Customised POSH Training Programs</h2>
+        <div class="mx-auto col-lg-10 text-muted">
+          <p>Effective POSH training cannot follow a one-size-fits-all approach. Every organization has a unique workforce, structure, culture, and risk profile. Recognising this, Open Hand Solutions specialises in fully customised POSH training programs, designed to align with an organization’s specific requirements while ensuring complete legal compliance.</p>
+          <p>Our training solutions are practical, inclusive, and execution-focused—ensuring that learning translates into awareness, confidence, and behavioural change at the workplace.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Left Column -->
+        <div class="col-lg-6">
+          
+          <div class="training-list-item" data-aos="fade-right" data-aos-delay="0">
+            <div class="me-3 text-primary"><i class="fas fa-sitemap fa-2x"></i></div>
+            <div>
+              <h6>1. Customisation Based on Organizational Requirements</h6>
+              <p>We design training modules based on your industry, workforce composition, hierarchy, location, and existing compliance maturity. Organizations may choose end-to-end training coverage or opt for specific services based on their needs—without being locked into rigid formats.</p>
+            </div>
+          </div>
+
+          <div class="training-list-item border-purple" data-aos="fade-right" data-aos-delay="100">
+            <div class="me-3" style="color: var(--deep-purple);"><i class="fas fa-list-ul fa-2x"></i></div>
+            <div>
+              <h6>2. Flexible Training Scope – Choose What You Need</h6>
+              <p>You may select: Employee sensitisation programs, Leadership and managerial training, Internal Committee (IC) member training, or Refresher sessions. Organizations can opt for all services or only select modules, ensuring relevance and cost-effectiveness.</p>
+            </div>
+          </div>
+
+          <div class="training-list-item border-orange" data-aos="fade-right" data-aos-delay="200">
+            <div class="me-3" style="color: var(--warm-orange);"><i class="fas fa-video fa-2x"></i></div>
+            <div>
+              <h6>3. Online, Offline & Hybrid Delivery Modes</h6>
+              <p>We offer training sessions in Online mode (live, interactive sessions), Offline / in-person workshops, and Hybrid formats, depending on workforce spread and operational needs. This flexibility ensures minimal disruption to business while maximizing participation.</p>
+            </div>
+          </div>
+
+           <div class="training-list-item" data-aos="fade-right" data-aos-delay="300">
+            <div class="me-3 text-primary"><i class="fas fa-users fa-2x"></i></div>
+            <div>
+              <h6>4. Suitable for Small & Large Groups</h6>
+              <p>Our programs are structured to effectively engage Small teams and focused groups as well as Large employee populations. We adapt session duration, content depth, and interaction methods accordingly.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-lg-6">
+
+          <div class="training-list-item border-purple" data-aos="fade-left" data-aos-delay="0">
+            <div class="me-3" style="color: var(--deep-purple);"><i class="fas fa-language fa-2x"></i></div>
+            <div>
+              <h6>5. Multilingual Training – English & Hindi</h6>
+              <p>Open Hand Solutions specialises in delivering training in both English and Hindi, making POSH education accessible and relatable across all employee levels—from frontline staff to senior leadership.</p>
+            </div>
+          </div>
+
+          <div class="training-list-item border-orange" data-aos="fade-left" data-aos-delay="100">
+            <div class="me-3" style="color: var(--warm-orange);"><i class="fas fa-layer-group fa-2x"></i></div>
+            <div>
+              <h6>6. Level-Specific Content for All Employees</h6>
+              <p>We customise training content for Shop-floor and frontline employees, Corporate and administrative staff, Managers and supervisors, and Senior leadership. Each session is tailored to the audience’s role, responsibilities, and influence within the organization.</p>
+            </div>
+          </div>
+
+           <div class="training-list-item" data-aos="fade-left" data-aos-delay="200">
+            <div class="me-3 text-primary"><i class="fas fa-theater-masks fa-2x"></i></div>
+            <div>
+              <h6>7. Practical, Interactive & Contextual Learning</h6>
+              <p>Our training incorporates real-life workplace scenarios, case discussions, role-based examples, and open dialogue—ensuring clarity on behaviour, reporting mechanisms, and responsibilities without legal jargon overload.</p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. METHODOLOGY -->
+  <!-- 4. METHODOLOGY -->
+<section class="py-5" style="background: var(--gradient-nude-soft);" id="methodology">
+    <div class="container py-4">
+      <div class="text-center mb-5">
+        <span class="section-subtitle">A Practical and Engaging Approach</span>
+        <h2 class="section-heading">Our Training Methodology</h2>
+        <div class="mx-auto col-lg-10 text-muted">
+          <p>POSH training is most effective when employees do more than just listen—they must understand, relate, and apply the learning in real workplace situations. At Open Hand Solutions, we follow a practical and engaging training approach that moves beyond conventional lectures to create meaningful learning experiences.</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in">
+          <div class="method-box">
+            <i class="fas fa-file-powerpoint"></i>
+            <h5 class="fw-bold">1. Structured PPTs</h5>
+            <p class="small text-muted">We use well-designed, easy-to-understand presentations that clearly explain key legal provisions, workplace expectations, reporting mechanisms, and roles and responsibilities. Content is adapted to suit the audience and avoids unnecessary legal jargon.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+          <div class="method-box">
+            <i class="fas fa-video"></i>
+            <h5 class="fw-bold">2. Impactful Videos</h5>
+            <p class="small text-muted">Short, impactful videos are used to demonstrate workplace scenarios, behavioural nuances, and real-life situations. Visual storytelling helps participants relate to concepts and understand the impact of actions and inactions.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+          <div class="method-box">
+            <i class="fas fa-question-circle"></i>
+            <h5 class="fw-bold">3. Interactive Quizzes</h5>
+            <p class="small text-muted">Quizzes are integrated throughout the sessions to reinforce learning, test understanding, and encourage participation. This also helps trainers assess comprehension in real time and clarify misconceptions immediately.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+           <div class="method-box"> 
+            <i class="fas fa-theater-masks"></i>
+            <h5 class="fw-bold">4. Role Plays</h5>
+            <p class="small text-muted">Role plays allow participants to step into real workplace situations—helping them understand perspectives, appropriate responses, and the importance of timely reporting and intervention.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="400">
+          <div class="method-box">
+            <i class="fas fa-dice"></i>
+            <h5 class="fw-bold">5. Group Games</h5>
+            <p class="small text-muted">Group activities and games promote open discussion, teamwork, and shared learning. They help break inhibitions, encourage participation, and make difficult topics easier to discuss in a safe and structured environment.</p>
+          </div>
+        </div>
+        
+        <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="500">
+          <div class="method-box">
+            <i class="fas fa-book-open"></i>
+            <h5 class="fw-bold">6. Case Discussions</h5>
+            <p class="small text-muted">We use practical case examples to help participants understand how POSH issues arise, how they are addressed, and what best practices look like. This ensures clarity on both prevention and redressal mechanisms.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CONFIDENTIALITY & SUPPORT -->
+<!-- 5. CONFIDENTIALITY & SUPPORT -->
+<section class="py-5" style="background: var(--bg-nude-light);" id="confidentiality">
+    <div class="container py-4">
+      <div class="row align-items-start mb-5">
+        <div class="col-lg-12 mb-4 text-center">
+            <h2 class="section-heading mb-4">Embedding Confidentiality and Sensitivity</h2>
+            <div class="mx-auto col-lg-10 text-muted">
+              <p>Confidentiality is the backbone of an effective POSH framework. Without it, trust erodes, reporting declines, and the integrity of the inquiry process is compromised. At Open Hand Solutions (OHS), confidentiality and sensitive handling are not assumed skills—they are actively taught, reinforced, and monitored at every stage of POSH compliance.</p>
+            </div>
+        </div>
+        
+        <div class="col-lg-6" data-aos="fade-right">
+           <div class="p-4 bg-white rounded-4 shadow-sm border-start border-4 border-primary h-100">
+             <h4 class="fw-bold mb-3" style="color: var(--primary-blue);">Training IC Members</h4>
+             
+             <h6 class="fw-bold mt-3">Confidentiality as a Core Training Module</h6>
+             <p class="text-muted small">OHS training programs for IC members place strong emphasis on:
+                <br>• Statutory confidentiality obligations under the POSH Act
+                <br>• Consequences of breach—legal, reputational, and ethical
+                <br>• Practical dos and don’ts in communication, documentation, and discussion
+                <br>This ensures IC members are clear that confidentiality is not optional—it is mandatory.
+             </p>
+             
+             <h6 class="fw-bold mt-3">Practical Scenarios and Risk Identification</h6>
+             <p class="text-muted small">Through case-based discussions and scenario exercises, IC members are trained to identify:
+                <br>• High-risk points where information leakage commonly occurs
+                <br>• Informal channels that must be avoided
+                <br>• Behavioural lapses such as casual discussions, unnecessary emails, or unsecured record sharing
+             </p>
+           </div>
+        </div>
+
+        <div class="col-lg-6 mt-4 mt-lg-0" data-aos="fade-left">
+           <div class="p-4 bg-white rounded-4 shadow-sm border-start border-4" style="border-color: var(--warm-orange);">
+             <h4 class="fw-bold mb-3" style="color: var(--warm-orange);">Ensuring Confidentiality</h4>
+             
+             <h6 class="fw-bold mt-3">Controlled Inquiry Execution</h6>
+             <p class="text-muted small">During active inquiries, OHS ensures that:
+                <br>• Information is shared strictly on a need-to-know basis
+                <br>• Interviews are conducted discreetly and respectfully
+                <br>• Statements, evidence, and inquiry notes are handled with controlled access
+             </p>
+             
+             <h6 class="fw-bold mt-3">External Member Support</h6>
+             <p class="text-muted small">As External Members, OHS professionals bring independence, neutrality, and strong ethical standards. Information accessed during inquiries is:
+                <br>• Used strictly for inquiry purposes
+                <br>• Never discussed outside the committee
+                <br>• Not shared internally or externally beyond statutory requirements
+             </p>
+           </div>
+        </div>
+      </div>
+      <!-- Closing previous section container to start new section -->
+    </div>
+  </section>
+
+  <!-- ======================================================= -->
+  <!-- NEW SEPARATE SECTION: CASE MANAGEMENT & LEGAL DESK      -->
+  <!-- ======================================================= -->
+  <!-- NEW SEPARATE SECTION: CASE MANAGEMENT & LEGAL DESK -->
+<section class="py-5" style="background: var(--bg-nude-medium); position: relative;" id="case-management">
+    <!-- Background Decoration -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none;">
+      <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: rgba(124, 58, 237, 0.03); border-radius: 50%;"></div>
+      <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: rgba(37, 99, 235, 0.03); border-radius: 50%;"></div>
+    </div>
+
+    <div class="container position-relative z-1">
+      <div class="row align-items-center">
+        
+        <!-- Left: Text Content -->
+        <div class="col-lg-6 mb-5 mb-lg-0" data-aos="fade-right">
+          <span class="section-subtitle">Real-Time Guidance</span>
+          <h2 class="section-heading text-start">Case Management & Legal Desk Support</h2>
+          
+          <p class="lead text-dark opacity-75 mb-4" style="font-size: 1.1rem;">
+            POSH inquiries often involve procedural uncertainties and time-sensitive decisions.
+          </p>
+          
+          <div class="text-muted">
+            <p>
+              Without expert handholding, organizations risk procedural lapses that can lead to legal complications. Open Hand Solutions (OHS) offers dedicated <strong>case management and legal desk support</strong> to guide organizations through every stage of complaint handling and inquiry execution.
+            </p>
+            <p>
+              From the moment a complaint is received to the submission of the final report, our team ensures that the Internal Committee (IC) proceeds with confidence, neutrality, and strict legal compliance.
+            </p>
+          </div>
+
+          <!-- Small 'Trust' Badge -->
+          <div class="d-inline-flex align-items-center mt-3 px-4 py-2 bg-white rounded-pill shadow-sm border">
+            <i class="fas fa-shield-alt text-success me-2"></i>
+            <span class="fw-bold text-dark small">100% Confidential Handling</span>
+          </div>
+        </div>
+
+        <!-- Right: Animated Feature Cards -->
+        <div class="col-lg-6 ps-lg-5">
+          
+          <!-- Card 1 -->
+          <!-- <div class="cm-card cm-border-blue" data-aos="fade-left" data-aos-delay="0">
+            <div class="d-flex align-items-start">
+              <div class="cm-icon-box bg-blue-light text-primary me-3 flex-shrink-0">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold mb-2">24-Hour Expert Response</h5>
+                <p class="text-muted small mb-0">Case-related emails are responded to within 24 hours. Real-time guidance is available via phone and email to resolve urgent queries immediately.</p>
+              </div>
+            </div>
+          </div> -->
+
+          <!-- Card 2 -->
+          <div class="cm-card cm-border-purple" data-aos="fade-left" data-aos-delay="150">
+            <div class="d-flex align-items-start">
+              <div class="cm-icon-box bg-purple-light me-3 flex-shrink-0" style="color: var(--deep-purple);">
+                <i class="fas fa-gavel"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold mb-2">Preventing Procedural Lapses</h5>
+                <p class="text-muted small mb-0">Ongoing access to expert support prevents errors, ensures strict legal compliance, and provides reassurance to IC members during critical inquiries.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="cm-card cm-border-teal" data-aos="fade-left" data-aos-delay="300">
+            <div class="d-flex align-items-start">
+              <div class="cm-icon-box bg-teal-light me-3 flex-shrink-0" style="color: var(--vibrant-teal);">
+                <i class="fas fa-user-lock"></i>
+              </div>
+              <div>
+                <h5 class="fw-bold mb-2">Safeguarding Dignity & Data</h5>
+                <p class="text-muted small mb-0">We ensure controlled access to information, discreet handling of evidence, and prevention of data leakage to preserve trust in the POSH mechanism.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= -->
+  <!-- NEW SECTION: POCSO COMPLIANCE & CHILD SAFETY            -->
+  <!-- ======================================================= -->
+  <section class="py-5" style="background: var(--bg-nude-warm);" id="pocso">
+    <div class="container py-4">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <span class="section-subtitle">Beyond the Workplace</span>
+        <h2 class="section-heading">POCSO Compliance & Child Safety</h2>
+        <div class="mx-auto col-lg-10 text-muted">
+          <p>Safety and dignity are fundamental rights that extend beyond corporate offices to educational institutions, NGOs, and child-care hubs. The Protection of Children from Sexual Offences (POCSO) Act, 2012, mandates strict safety protocols for any organization dealing with minors.</p>
+          <p>Open Hand Solutions provides specialized consulting to help schools, sports complexes, and social organizations implement robust child protection frameworks that are sensitive, legally compliant, and vigilant.</p>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="0">
+          <div class="service-card" style="border-top: 4px solid #ef4444;">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper me-3 mb-0" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-file-shield"></i></div>
+               <h5 class="fw-bold mb-0">1. Child Protection Policy (CPP)</h5>
+            </div>
+            <p class="text-muted small">We draft customized Child Protection Policies and Codes of Conduct for staff, ensuring they align with POCSO guidelines and institutional values. This includes protocols for physical contact, digital safety, and behavioral boundaries.</p>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-card" style="border-top: 4px solid #ef4444;">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper me-3 mb-0" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-users-rays"></i></div>
+               <h5 class="fw-bold mb-0">2. Staff & Caregiver Sensitization</h5>
+            </div>
+            <p class="text-muted small">Specialized training for teachers, administrative staff, support staff (drivers, guards), and volunteers on identifying signs of abuse, mandatory reporting obligations, and maintaining a high standard of professional ethics.</p>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-card" style="border-top: 4px solid #ef4444;">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper me-3 mb-0" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-hand-holding-heart"></i></div>
+               <h5 class="fw-bold mb-0">3. Child Protection Committee (CPC) Setup</h5>
+            </div>
+            <p class="text-muted small">We assist in the formation and training of Internal Child Protection Committees. We define their roles in grievance handling, monitoring safety standards, and ensuring that any concerns are addressed with immediate priority and sensitivity.</p>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-lg-6 col-md-6" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-card" style="border-top: 4px solid #ef4444;">
+            <div class="d-flex align-items-center mb-3">
+               <div class="icon-wrapper me-3 mb-0" style="background: #fee2e2; color: #ef4444;"><i class="fas fa-clipboard-check"></i></div>
+               <h5 class="fw-bold mb-0">4. Safety Audits & Compliance Mapping</h5>
+            </div>
+            <p class="text-muted small">Comprehensive audits of institutional premises, transport systems, and recruitment processes (background checks) to identify vulnerability points and ensure the environment is 100% safe for children.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trust Badge for POCSO -->
+      <div class="row mt-5">
+          <div class="col-12 text-center" data-aos="zoom-in">
+              <div class="d-inline-block p-4 rounded-4" style="background: rgba(239, 68, 68, 0.05); border: 1px dashed #ef4444;">
+                  <p class="mb-0 text-dark fw-semibold">
+                      <i class="fas fa-info-circle me-2" style="color: #ef4444;"></i> 
+                      OHS ensures that POCSO compliance is handled with zero-tolerance for lapses and absolute priority on child safety.
+                  </p>
+              </div>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================================================= -->
+  <!-- ONGOING SUPPORT CTA SECTION                             -->
+  <!-- ======================================================= -->
+ <!-- ONGOING SUPPORT CTA SECTION -->
+<section class="py-5" id="ongoing-support">
+  <div class="container">
+    <div class="colorful-cta p-5 rounded-4 shadow-lg"
+         style="background: linear-gradient(135deg, #1f2a37, #273444);"
+         data-aos="zoom-in">
+
+        <div class="row align-items-center">
+            <div class="col-lg-12 text-center mb-4">
+                 <h2 class="fw-bold">Ongoing Support & Troubleshooting</h2>
+                 <p class="opacity-75">Consistent Guidance When It Matters Most</p>
+            </div>
+            
+            <div class="col-lg-6">
+                <p class="small text-white opacity-90">
+                    POSH compliance is not a one-time activity—it is an ongoing responsibility that often presents practical, procedural, and legal challenges. Recognising this, Open Hand Solutions (OHS) provides continuous support and real-time troubleshooting to organizations, ensuring that issues are addressed promptly, confidently, and correctly.
+                </p>
+                <p class="small text-white opacity-90">
+                    At the core of this support is OHS’s dedicated legal desk, which remains accessible through both phone and email for all POSH-related queries and concerns. Whether the issue relates to an active complaint, procedural uncertainty, or compliance clarification, organizations have direct access to experienced professionals who understand both the legal framework and on-ground realities.
+                </p>
+            </div>
+             <div class="col-lg-6">
+                 <div class="bg-white text-dark rounded-3 p-4">
+                     <ul class="list-unstyled mb-0">
+                         <li class="d-flex mb-3">
+                             <i class="fas fa-clock text-warning fa-lg me-3 mt-1"></i>
+                             <div>
+                                 <strong>24-Hour Response</strong>
+                                 <p class="small text-muted mb-0">All case-related emails received by the legal desk are responded to within 24 hours, ensuring that Internal Committees are not left navigating sensitive situations without guidance.</p>
+                             </div>
+                         </li>
+                         <li class="d-flex mb-3">
+                             <i class="fas fa-handshake text-warning fa-lg me-3 mt-1"></i>
+                             <div>
+                                 <strong>Active Hands-on Approach</strong>
+                                 <p class="small text-muted mb-0">The External Member from OHS remains involved throughout the entire inquiry process, providing continuity, neutrality, and consistent guidance from initiation to closure.</p>
+                             </div>
+                         </li>
+                         <li class="d-flex mb-3">
+                             <i class="fas fa-tools text-warning fa-lg me-3 mt-1"></i>
+                             <div>
+                                 <strong>Broad Troubleshooting</strong>
+                                 <p class="small text-muted mb-0">Support for She-Box registration, interpretation of legal provisions, process clarifications, case discussions, and situational guidance on complex or sensitive matters.</p>
+                             </div>
+                         </li>
+                     </ul>
+                 </div>
+            </div>
+
+            
+            
+            <!-- <div class="col-12 text-center mt-5">
+                <a href="mailto:info@openhandsolutions.com" class="btn btn-light-custom">
+                  <i class="fas fa-envelope me-2"></i> info@openhandsolutions.com
+                </a>
+            </div> -->
+        </div>
+      </div>
+
+    </div>
+  </section>
+  
+  <!-- Add Bootstrap JS at the bottom to ensure dropdowns work -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      AOS.init({
+        duration: 800,
+        easing: "ease-in-out",
+        once: true,
+      });
+    });
+  </script>
+
+</body>
+</html>
+{% endblock body %}

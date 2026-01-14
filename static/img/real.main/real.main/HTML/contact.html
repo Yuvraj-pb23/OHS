@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../CSS/contact.css">
+      <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+</head>
+<body>
+    <div id="chatbot-container"></div>
+<div id="navbar-placeholder"></div>
+
+
+  <section class="contact-hero d-flex align-items-center" data-aos="fade-up" data-aos-duration="1000">
+  <div class="container text-center">
+    <h1 class="hero-title mb-3">We’d Love to Hear From You</h1>
+    <p class="hero-subtitle mb-4">
+      Whether you have questions, feedback, or just want to say hello, our team is here to help.
+    </p>
+    <a href="#contact" class="btn-hero">Send Us a Message</a>
+  </div>
+</section>
+
+
+
+
+
+
+
+
+<section class="contact-section">
+  <!-- Contact Form -->
+  <div class="contact-form" data-aos="fade-right" id="contact">
+    <h2>Send Us A Message</h2>
+    <form id="contactForm">
+      <label>Full Name <span style="color:red">*</span></label>
+      <input type="text" id="name" required placeholder="Your Name">
+
+      <label>Email Address <span style="color:red">*</span></label>
+      <input type="email" id="email" required placeholder="Your Email">
+
+      <label>Phone Number</label>
+      <input type="tel" id="phone" placeholder="Optional">
+
+   
+      <label>Message/Inquiry <span style="color:red">*</span></label>
+      <textarea id="message" rows="5" required placeholder="Your Message"></textarea>
+
+      <button type="button" id="submitBtn">Submit</button>
+
+      <!-- Popup Modal -->
+      <div id="popup" class="popup-overlay" style="display:none;">
+        <div class="popup-content" data-aos="zoom-in">
+          <h2>Thank You!</h2>
+          <p>Your message has been sent successfully. We’ll get back to you soon.</p>
+          <button id="closePopup">Close</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Direct Contact Info -->
+  <div class="contact-info" data-aos="fade-left">
+    <h2>Get in Touch</h2>
+    <p><i class="fas fa-envelope"></i> info@openhandsolutions.com</p>
+    <p><i class="fas fa-phone"></i> 95923 39555</p>
+    <p><i class="fas fa-clock"></i> Mon–Fri, 9:00 AM – 6:00 PM</p>
+    <p>We usually respond within 24 hours.</p>
+  </div>
+</section>
+
+
+
+
+
+<section class="contact-guarantee" style="background: #eef1f7; padding: 50px 0;">
+  <div class="container" style="max-width: 1100px; margin: auto; text-align: center;">
+    <h2 data-aos="fade-up" style="color: #3949ab;">We Respond. Always.</h2>
+    <p data-aos="fade-up" style="max-width: 700px; margin: 15px auto; color: #555;">
+      Your message is important to us. We guarantee a reply within 24 hours — usually much sooner.
+    </p>
+
+    <div class="guarantee-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 40px;">
+      
+      <div class="guarantee-card" data-aos="flip-left" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+        <h3>⏱ Avg. Response Time</h3>
+        <p style="font-size: 24px; font-weight: bold; color: #3949ab;">4 hours</p>
+        <small style="color: #777;">We monitor all messages during business hours.</small>
+      </div>
+
+      <div class="guarantee-card" data-aos="flip-up" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+        <h3>📞 Best Way to Reach Us</h3>
+        <p style="font-size: 18px; color: #3949ab;">Email & WhatsApp</p>
+        <small style="color: #777;">These channels get the fastest reply.</small>
+      </div>
+
+      <div class="guarantee-card" data-aos="flip-right" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);">
+        <h3>🤝 100% Response Rate</h3>
+        <p style="font-size: 18px; color: #3949ab;">Every message gets a reply.</p>
+        <small style="color: #777;">We value every inquiry, big or small.</small>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+
+  <div id="footer-container"></div>
+
+<script>
+
+   fetch("../HTML/chatbot.html")
+  .then(res => res.text())
+  .then(html => {
+    document.getElementById("chatbot-container").innerHTML = html;
+
+    // ✅ now chatbot HTML exists, safe to attach logic
+    const script = document.createElement("script");
+    script.src = "../js/chatbot.js";
+    document.body.appendChild(script);
+  });
+  
+  document.getElementById("submitBtn").addEventListener("click", function () {
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let message = document.getElementById("message").value.trim();
+
+    if (name === "" || email === "" || message === "") {
+      alert("❌ Please fill in all required fields.");
+    } else {
+      document.getElementById("popup").style.display = "flex";
+    }
+  });
+
+  document.getElementById("closePopup").addEventListener("click", function () {
+    document.getElementById("popup").style.display = "none";
+  });
+</script>
+
+
+
+
+
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+
+
+
+
+
+  AOS.init({
+    duration: 1000,
+    once: true
+  });
+        fetch("footer.html")
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById("footer-container").innerHTML = data;
+      });
+
+
+      fetch("../HTML/navbar.html")
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById("navbar-placeholder").innerHTML = data;
+      // Load navbar JS after inserting HTML
+      let script = document.createElement("script");
+      script.src = "../js/navbar.js";
+      document.body.appendChild(script);
+    });
+
+
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+<script src="chatbot.js"></script>
+</body>
+
+
+</html>

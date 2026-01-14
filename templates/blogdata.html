@@ -1,0 +1,650 @@
+{%extends 'base.html'%}
+{%block body %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSH Awareness</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <!-- Original Contact CSS -->
+    <link rel="stylesheet" href="../CSS/contact.css">
+    <link rel="stylesheet" href="{% static 'css/blogdata.css' %}">
+    
+    <!-- AOS Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --primary: #2563EB;      /* Bright Blue */
+            --primary-dark: #1E40AF; /* Deep Blue */
+            --accent: #10B981;       /* Success Green */
+            --text-main: #1F2937;
+            --text-light: #6B7280;
+            --bg-body: #F3F4F6;
+            --card-bg: #FFFFFF;
+            /* New Light Gradient for Hero to support Black text */
+            --gradient-hero-light: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.8;
+            overflow-x: hidden; 
+        }
+
+        /* --- SCROLL PROGRESS BAR --- */
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), #34D399);
+            width: 0%;
+            z-index: 10000;
+            box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);
+            transition: width 0.1s linear;
+        }
+
+        /* --- HERO SECTION (Updated for Black Text) --- */
+        .hero {
+            position: relative;
+           background: linear-gradient(to right, #709ee3ff, #ffffff); /* Light background */
+            height: 80vh; 
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #000000; /* Black Text Enforced */
+            overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
+            margin-bottom: 60px;
+        }
+
+        /* Animated Background Particles (Darker color to show on light bg) */
+        .circles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .circles li {
+            position: absolute;
+            display: block;
+            list-style: none;
+            width: 20px;
+            height: 20px;
+            background: rgba(37, 99, 235, 0.2); /* Blue tint */
+            animation: animate 25s linear infinite;
+            bottom: -150px;
+            border-radius: 5px;
+        }
+
+        .circles li:nth-child(1){ left: 25%; width: 80px; height: 80px; animation-delay: 0s; }
+        .circles li:nth-child(2){ left: 10%; width: 20px; height: 20px; animation-delay: 2s; animation-duration: 12s; }
+        .circles li:nth-child(3){ left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+        .circles li:nth-child(4){ left: 40%; width: 60px; height: 60px; animation-delay: 0s; animation-duration: 18s; }
+        .circles li:nth-child(5){ left: 65%; width: 20px; height: 20px; animation-delay: 0s; }
+        .circles li:nth-child(6){ left: 75%; width: 110px; height: 110px; animation-delay: 3s; }
+        .circles li:nth-child(7){ left: 35%; width: 150px; height: 150px; animation-delay: 7s; }
+        .circles li:nth-child(8){ left: 50%; width: 25px; height: 25px; animation-delay: 15s; animation-duration: 45s; }
+        .circles li:nth-child(9){ left: 20%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 35s; }
+        .circles li:nth-child(10){ left: 85%; width: 150px; height: 150px; animation-delay: 0s; animation-duration: 11s; }
+
+        @keyframes animate {
+            0%{ transform: translateY(0) rotate(0deg); opacity: 1; border-radius: 0; }
+            100%{ transform: translateY(-1000px) rotate(720deg); opacity: 0; border-radius: 50%; }
+        }
+
+        /* Hero Content */
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 0 20px;
+            max-width: 900px;
+        }
+
+        .hero h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            color: #000000; /* Black Text */
+            letter-spacing: -1px;
+        }
+
+        .hero .tagline {
+            font-size: 1.3rem;
+            font-weight: 500; /* Slightly bolder for readability */
+            color: #1F2937; /* Dark Gray/Black */
+            margin-bottom: 40px;
+        }
+
+        /* Scroll Down Indicator (Dark) */
+        .scroll-down {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            animation: bounce 2s infinite;
+        }
+        .scroll-down span {
+            display: block;
+            width: 30px;
+            height: 30px;
+            border-bottom: 3px solid #000; /* Black arrow */
+            border-right: 3px solid #000;
+            transform: rotate(45deg);
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+            40% {transform: translateX(-50%) translateY(-20px);}
+            60% {transform: translateX(-50%) translateY(-10px);}
+        }
+
+        /* --- CARDS & CONTAINER --- */
+        .container-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px 40px 20px; /* Padding bottom ensures space before footer */
+        }
+
+        .card {
+            background: linear-gradient(to right, #709ee3ff, #ffffff);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 60px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 5;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .card:hover {
+            transform: translateY(-12px) scale(1.01);
+            box-shadow: 0 25px 50px rgba(37, 99, 235, 0.15);
+        }
+
+        .card h2 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .card h2::before {
+            content: "";
+            position: absolute;
+            width: 0;
+            height: 4px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--accent);
+            transition: width 0.4s ease-out;
+            border-radius: 2px;
+        }
+        .card:hover h2::before {
+            width: 100%;
+        }
+
+        .card h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-main);
+            font-size: 1.5rem;
+            margin-top: 35px;
+            margin-bottom: 20px;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        /* --- ANIMATED LISTS (SCOPED TO .card TO FIX FOOTER) --- */
+        .card ul, .card ol {
+            margin-left: 0;
+            padding-left: 0;
+        }
+
+        .card ul li {
+            list-style: none;
+            background: #F9FAFB;
+            margin-bottom: 12px;
+            padding: 15px 20px 15px 50px;
+            border-radius: 10px;
+            position: relative;
+            transition: transform 0.3s ease, background 0.3s ease;
+            cursor: default;
+        }
+
+        .card ol li {
+            margin-left: 20px;
+            padding: 10px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .card ul li:hover {
+            transform: translateX(10px);
+            background: #EFF6FF;
+        }
+
+        .card ul li::before {
+            content: '✓';
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            background: var(--accent);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(16, 185, 129, 0.4);
+        }
+
+        /* --- BLOCKQUOTE --- */
+        blockquote {
+            border-left: none;
+            position: relative;
+            padding: 40px;
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            border-radius: 15px;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+            margin: 30px 0;
+        }
+        blockquote::after {
+            content: '”';
+            position: absolute;
+            bottom: -20px;
+            right: 20px;
+            font-size: 8rem;
+            color: rgba(37, 99, 235, 0.1);
+            font-family: serif;
+        }
+
+        /* --- BACK TO TOP BUTTON --- */
+        #backToTop {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 55px;
+            height: 55px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0);
+            z-index: 999;
+        }
+
+        #backToTop.show {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        #backToTop:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1) rotate(360deg);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .card { padding: 30px 20px; }
+            .circles li { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+    
+  <div id="progress"></div>
+
+  <!-- Hero Section with Light Background and Black Text -->
+  <header class="hero">
+    <!-- Animated Circles Background -->
+    <ul class="circles">
+        <li></li><li></li><li></li><li></li><li></li>
+        <li></li><li></li><li></li><li></li><li></li>
+    </ul>
+
+    <div class="hero-content">
+      <h1 data-aos="zoom-in" data-aos-duration="1200">POSH Awareness & Training Blog</h1>
+      <p class="tagline" data-aos="fade-up" data-aos-delay="300">
+        Understand the POSH Act, build respectful workplaces, and stay compliant.
+      </p>
+    </div>
+    
+    <!-- Scroll Down Animation -->
+    <div class="scroll-down">
+        <span></span>
+    </div>
+  </header>
+
+  <div class="container-content">
+
+    <section id="what-is-posh" class="card" data-aos="fade-up">
+      <h2> What is POSH and Why is Sensitization Important?</h2>
+      <p>
+        The POSH Act was enacted in India in 2013 to prevent and address sexual harassment at
+        the workplace, ensuring that every individual, regardless of gender, can work in a safe,
+        supportive, and dignified environment.
+      </p>
+      <p>
+        Despite legal frameworks, many employees remain unaware of what constitutes harassment
+        or how to report it. This is where POSH sensitization training plays a crucial role.
+      </p>
+      <h3>Key Objectives of POSH Sensitization</h3>
+      <ul>
+        <li>Educate employees about types of sexual harassment.</li>
+        <li>Clarify the role and procedures of the Internal Committee (IC).</li>
+        <li>Encourage gender sensitivity and respectful behavior.</li>
+        <li>Promote a zero-tolerance culture toward workplace misconduct.</li>
+        <li>Empower victims and bystanders to report without fear.</li>
+      </ul>
+    </section>
+
+ 
+    <section id="program-highlights" class="card" data-aos="fade-up">
+      <h2> Highlights from Our POSH Awareness Program</h2>
+      <p>
+        Our sensitization session was conducted by a certified POSH trainer and legal consultant
+        with deep expertise in workplace law and behavioral ethics.
+      </p>
+      <h3>Topics Covered</h3>
+      <ul>
+        <li>Understanding what constitutes sexual harassment (verbal, physical, visual, and online).</li>
+        <li>Detailed overview of the POSH Act, 2013 and its implications.</li>
+        <li>Role, rights, and responsibilities of the Internal Committee (IC).</li>
+        <li>Reporting mechanisms, redressal process, and confidentiality clauses.</li>
+        <li>Scenario-based learning and interactive Q&amp;A sessions.</li>
+      </ul>
+    </section>
+
+
+    <section id="scenarios" class="card" data-aos="fade-left">
+      <h2> Real-Life Scenarios and Interactive Learning</h2>
+      <p>
+        Unlike conventional compliance training, this session used real-life case studies, role-plays,
+        and group discussions to make the content practical and relatable. Employees shared
+        personal insights, asked thought-provoking questions, and engaged in meaningful dialogue
+        about gender respect and professional boundaries.
+      </p>
+      <blockquote>
+        “Creating awareness is the first step to preventing harassment. When people know better,
+        they do better.” — POSH Trainer
+      </blockquote>
+    </section>
+
+   
+    <section id="takeaways" class="card" data-aos="zoom-in-up">
+      <h2> Key Takeaways from the POSH Training</h2>
+      <ul>
+        <li>The legal definitions and boundaries of workplace behavior.</li>
+        <li>The steps to take if they witness or face harassment.</li>
+        <li>The importance of empathy, trust, and communication in building safe workspaces.</li>
+        <li>Their individual role in upholding organizational integrity.</li>
+      </ul>
+    </section>
+
+
+    <section id="commitment" class="card" data-aos="fade-up" >
+      <h2 id="harassment">🚀 Our Continued Commitment to a Harassment-Free Workplace</h2>
+      <p>
+        This POSH sensitization session is part of our larger mission to create a diverse, inclusive,
+        and safe workplace for all. We believe in consistent training, open dialogue, and strict
+        enforcement of anti-harassment policies.
+      </p>
+      <h3>What We’re Doing Next</h3>
+      <ul>
+        <li>Regular POSH refresher courses for employees and management.</li>
+        <li>Dedicated POSH policy handbook access for all team members.</li>
+        <li>Strengthening the Internal Committee with trained members.</li>
+        <li>Open-door policy for reporting grievances confidentially.</li>
+      </ul>
+    </section>
+
+    <section id="why-invest" class="card" data-aos="flip-up">
+      <h2> Why Every Organization Should Invest in POSH Training</h2>
+      <ul>
+        <li>Boost employee trust and morale.</li>
+        <li>Reduce legal risks and liabilities.</li>
+        <li>Attract and retain top talent.</li>
+        <li>Foster a culture of diversity, inclusion, and equality.</li>
+      </ul>
+    </section>
+
+  
+    <section id="team-building" class="card" data-aos="fade-up">
+      <h2> Team Building: Strengthening Collaboration, Trust &amp; Performance at Work</h2>
+      <p>
+        In today’s fast-paced and competitive workplace, success is no longer just about individual
+        talent — it's about how well people work together. Team building plays a vital role in shaping
+        a collaborative and motivated workforce that drives innovation, boosts productivity, and fosters a
+        positive company culture.
+      </p>
+      <p>
+        Whether you’re managing a small startup or a large enterprise, investing in regular team
+        building activities can lead to long-term growth and improved employee engagement.
+      </p>
+
+      <h3> What is Team Building?</h3>
+      <p>
+        Team building refers to a variety of activities, exercises, and strategies designed to enhance
+        relationships, communication, and cooperation among team members. It helps break down
+        barriers, build trust, and align everyone toward shared goals. From fun games to strategic
+        problem-solving tasks, team building nurtures a sense of unity and mutual respect within the
+        organization.
+      </p>
+
+      <h3> Benefits of Team Building Activities in the Workplace</h3>
+      <ul>
+        <li><strong>1. Enhances Communication</strong> — Encourages open dialogue and active listening.</li>
+        <li><strong>2. Boosts Employee Morale</strong> — Builds belonging and improves job satisfaction.</li>
+        <li><strong>3. Strengthens Problem-Solving Skills</strong> — Sharpens group problem-solving.</li>
+        <li><strong>4. Improves Productivity</strong> — Trust leads to smoother projects and timely delivery.</li>
+        <li><strong>5. Encourages Innovation</strong> — Diverse perspectives in a low-pressure setting.</li>
+        <li><strong>6. Reduces Workplace Conflicts</strong> — Stronger relationships, fewer misunderstandings.</li>
+      </ul>
+    </section>
+
+    <section id="posh-training" class="card" data-aos="fade-up">
+      <h2> What is POSH Training?</h2>
+      <p>
+        POSH training is a structured learning session aimed at educating employees, managers,
+        and Internal Committee members about the Prevention of Sexual Harassment (POSH) Act.
+        It focuses on understanding sexual harassment, recognizing unacceptable behavior, and
+        learning how to report and handle complaints with sensitivity and fairness.
+      </p>
+
+      <h3>Who Should Attend?</h3>
+      <ul>
+        <li>All employees (full-time, part-time, interns, contractors).</li>
+        <li>HR professionals and people managers.</li>
+        <li>Members of the Internal Committee (IC).</li>
+        <li>Senior leadership.</li>
+      </ul>
+    </section>
+
+    <section id="training-objectives" class="card" data-aos="fade-right">
+      <h2> Objectives of POSH Training</h2>
+      <p>A good POSH awareness training goes beyond compliance. It helps build a workplace culture
+        rooted in respect, equality, and accountability. Effective POSH training covers:</p>
+      <ul>
+        <li>Understanding what constitutes sexual harassment (verbal, physical, visual, online).</li>
+        <li>Overview of the POSH Act, 2013 and employee rights.</li>
+        <li>Responsibilities of the Internal Committee (IC).</li>
+        <li>Legal consequences of non-compliance.</li>
+        <li>Steps to report, investigate, and resolve complaints.</li>
+        <li>Confidentiality, timelines, and redressal mechanisms.</li>
+        <li>Promoting safe and inclusive workplace behavior.</li>
+      </ul>
+    </section>
+
+    <section id="training-benefits" class="card" data-aos="fade-left">
+      <h2> Benefits of POSH Training for Organizations</h2>
+      <h3> Legal Compliance</h3>
+      <p>Ensures adherence to the mandatory requirements of the POSH Act, helping avoid legal penalties and reputational damage.</p>
+      <h3> Employee Empowerment</h3>
+      <p>Awareness of rights and responsibilities increases willingness to speak up, report incidents, and support colleagues in distress.</p>
+      <h3> Increased Awareness</h3>
+      <p>Clarity around workplace boundaries, acceptable behavior, and navigating complex interpersonal situations.</p>
+      <h3> Stronger Workplace Culture</h3>
+      <p>A harassment-free workplace improves morale, collaboration, and retention.</p>
+    </section>
+
+    <section id="training-types" class="card" data-aos="zoom-in">
+      <h2> Types of POSH Training</h2>
+      <ul>
+        <li><strong>POSH Awareness Sessions for Employees</strong> — General overview of sexual harassment and safe norms.</li>
+        <li><strong>Specialized POSH Training for IC Members</strong> — Investigation procedures, timelines, and report writing.</li>
+        <li><strong>POSH e-Learning Modules</strong> — Digital, self-paced courses with scenarios and assessments.</li>
+        <li><strong>In-Person or Virtual Workshops</strong> — Interactive sessions with certified trainers, ideal for Q&amp;A.</li>
+      </ul>
+    </section>
+
+    <section id="communication-training" class="card" data-aos="fade-up">
+      <h2 id="communication-training-guide">Communication Training: Building Clarity, Trust & Collaboration at Work</h2>
+
+      <h3>What is Communication Training?</h3>
+      <p>
+        Communication training is a structured program designed to help employees express themselves clearly, listen actively, and interact professionally in diverse workplace settings. 
+        Whether it’s giving feedback, resolving conflicts, or collaborating across teams, strong communication skills are essential for a healthy, productive, and inclusive work culture.
+      </p>
+
+      <h3>Why is Communication Training Important?</h3>
+      <ul>
+        <li>Reduces misunderstandings and workplace conflicts.</li>
+        <li>Improves team collaboration and project outcomes.</li>
+        <li>Builds empathy and emotional intelligence.</li>
+        <li>Enhances leadership and management effectiveness.</li>
+        <li>Supports a respectful and inclusive environment.</li>
+      </ul>
+
+      <h3>Key Areas Covered in Communication Training</h3>
+      <ol>
+        <li><strong>Active Listening</strong> — How to listen without interrupting, ask clarifying questions, and show empathy.</li>
+        <li><strong>Constructive Feedback</strong> — Delivering and receiving feedback professionally and respectfully.</li>
+        <li><strong>Non-Verbal Communication</strong> — Understanding body language, tone, and facial expressions.</li>
+        <li><strong>Assertiveness vs. Aggressiveness</strong> — Expressing needs confidently without disrespecting others.</li>
+        <li><strong>Conflict Resolution</strong> — Navigating disagreements with emotional maturity and problem-solving focus.</li>
+        <li><strong>Inclusive Communication</strong> — Respecting gender, cultural, and neurodiverse differences in communication styles.</li>
+        <li><strong>Remote Communication</strong> — Best practices for emails, video calls, and messaging tools.</li>
+      </ol>
+
+      <h3>Who Should Attend Communication Training?</h3>
+      <ul>
+        <li>All employees at every level.</li>
+        <li>Team leads and managers.</li>
+        <li>HR professionals and Internal Committee (IC) members.</li>
+        <li>New hires during onboarding.</li>
+      </ul>
+
+      <h3>Benefits of Communication Training for Organizations</h3>
+      <ul>
+        <li><strong>Improved Team Dynamics:</strong> Clear communication reduces friction and builds trust.</li>
+        <li><strong>Higher Employee Engagement:</strong> People feel heard and valued.</li>
+        <li><strong>Stronger Leadership:</strong> Managers learn to guide, motivate, and support effectively.</li>
+        <li><strong>Reduced Misconduct Risks:</strong> Miscommunication often leads to conflict — training helps prevent escalation.</li>
+        <li><strong>Supports POSH & Inclusion Goals:</strong> Encourages respectful dialogue and bystander intervention.</li>
+      </ul>
+
+      <blockquote>
+        “The single biggest problem in communication is the illusion that it has taken place.” — George Bernard Shaw
+      </blockquote>
+
+      <p>
+        By investing in communication training, organizations create a foundation for psychological safety, accountability, and long-term success. 
+        It complements POSH sensitization by fostering an environment where employees feel comfortable speaking up, reporting concerns, and supporting one another.
+      </p>
+    </section>
+
+  </div>
+
+  <button id="backToTop" aria-label="Back to top">↑</button>
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    /* --- INIT ANIMATIONS --- */
+    AOS.init({
+        once: true,
+        duration: 900,
+        easing: 'ease-out-back',
+        offset: 120,
+    });
+
+    /* --- SCROLL PROGRESS --- */
+    const progress = document.getElementById('progress');
+    window.addEventListener('scroll', () => {
+      const h = document.documentElement;
+      const scrolled = (h.scrollTop) / (h.scrollHeight - h.clientHeight) * 100;
+      progress.style.width = scrolled + '%';
+    });
+
+    /* --- BACK TO TOP BUTTON --- */
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 600) {
+          backToTop.classList.add('show');
+      } else {
+          backToTop.classList.remove('show');
+      }
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({top: 0, behavior: 'smooth'}));
+
+    /* --- SMOOTH SCROLL FOR ANCHOR LINKS --- */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const id = a.getAttribute('href');
+        const el = document.querySelector(id);
+        if (el) {
+          e.preventDefault();
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+ 
+  </script>
+</body>
+</html>
+{%endblock body %}
