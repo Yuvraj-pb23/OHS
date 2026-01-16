@@ -1,5 +1,3 @@
---- START OF FILE Paste January 13, 2026 - 12:05PM ---
-
 {%extends 'base.html'%} {%block body %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -7,7 +5,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Open Hand Solutions</title>
+  <title>Open Hand Solutions - POSH & POCSO Experts</title>
 
   <!-- Link to the separated CSS file -->
   <link rel="stylesheet" href="{% static 'css/index.css' %}" />
@@ -17,665 +15,545 @@
   <!-- AOS CSS -->
   <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet" />
 
-  <!-- CSS FOR ANIMATED MODALS & NEW SERVICES GRID -->
   <style>
     /* =========================================
-       GLASS CARD & WAVE EFFECT (HERO & ABOUT)
+       0. CRISPY TYPOGRAPHY & HIGHLIGHTS
        ========================================= */
-    .hero-glass-card,
-    .about-glass-card {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 2.5rem;
-      border-radius: 25px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    .hero-big-title {
+      font-size: 3.5rem; font-weight: 800; line-height: 1.1;
+      color: #0f172a; letter-spacing: -1px; margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .hero-crisp-desc {
+      font-size: 1.35rem; font-weight: 500; color: #334155; line-height: 1.6;
+    }
+    .highlight-posh {
+      display: inline-block; position: relative; color: #0d6efd; z-index: 1;
+    }
+    .highlight-posh::after {
+      content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 15px;
+      background: rgba(13, 110, 253, 0.15); z-index: -1; transform: skewX(-10deg);
+    }
+    .highlight-pocso {
+      display: inline-block; position: relative; color: #dc3545; z-index: 1;
+    }
+    .highlight-pocso::after {
+      content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 15px;
+      background: rgba(220, 53, 69, 0.15); z-index: -1; transform: skewX(-10deg);
+    }
+    @media (max-width: 768px) {
+      .hero-big-title { font-size: 2.5rem; }
+      .hero-crisp-desc { font-size: 1.1rem; }
     }
 
-    .wave-text span {
-      display: inline-block;
-      animation: wave-animation 2.5s infinite ease-in-out;
-      margin-right: 8px;
+    /* GLASS CARDS */
+    .hero-glass-card, .about-glass-card {
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 2.5rem; border-radius: 25px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     }
 
-    .wave-text span:nth-child(1) { animation-delay: 0.0s; }
-    .wave-text span:nth-child(2) { animation-delay: 0.2s; }
-    .wave-text span:nth-child(3) { animation-delay: 0.4s; }
-    .wave-text span:nth-child(4) { animation-delay: 0.6s; }
-    .wave-text span:nth-child(5) { animation-delay: 0.8s; }
-    .wave-text span:nth-child(6) { animation-delay: 1.0s; }
-
-    @keyframes wave-animation {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); color: #0d6efd; }
-    }
-
-    /* =========================================
-       1. MODAL STYLING
-       ========================================= */
-    .modal-content {
-      border: none;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-      background-color: #f8f9fa;
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, #0d6efd, #0a58ca);
-      color: white;
-      padding: 1.5rem 2rem;
-      border-bottom: none;
-    }
-
-    .modal-title { font-weight: 700; letter-spacing: 0.5px; }
-    .modal-body { padding: 2rem; }
-
-    .info-section {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-      margin-bottom: 20px;
-      border-left: 5px solid #0d6efd;
-    }
-
-    .outcome-box {
-      background: #e8f5e9;
-      border: 1px solid #c8e6c9;
-      color: #2e7d32;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 20px;
-    }
-
-    /* Word-by-Word Animation */
-    .word-span {
-      opacity: 0;
-      display: inline-block;
-      transform: translateY(10px) scale(0.9);
-      filter: blur(4px);
-      transition: all 0.3s ease-out;
-      margin-right: 4px;
-      will-change: transform, opacity, filter;
-    }
-
-    .word-span.visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-    .animate-target { opacity: 0; }
-    .animate-target.ready { opacity: 1; }
-
-    .modal-list { list-style: none; padding-left: 0; }
-    .modal-list li { margin-bottom: 12px; position: relative; padding-left: 25px; }
-    .modal-list li::before {
-      content: "\f00c";
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      position: absolute;
-      left: 0; top: 2px;
-      color: #0d6efd;
-    }
-
-    .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
-
-    /* =========================================
-       2. SERVICES GRID CSS (DARK THEME)
-       ========================================= */
-
+    /* SERVICES SECTION */
     #services {
       background: radial-gradient(circle at 10% 20%, rgb(0, 0, 0) 0%, rgb(15, 23, 42) 90.2%);
       background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-      position: relative;
-      overflow: hidden;
-      padding-top: 100px;
-      padding-bottom: 100px;
+      position: relative; overflow: hidden; padding-top: 100px; padding-bottom: 100px;
       color: white;
     }
-
-    /* FIX: Added pointer-events: none to prevent bubbles from blocking clicks */
     #services::before {
-      content: '';
-      position: absolute;
-      top: -100px; left: -100px;
+      content: ''; position: absolute; top: -100px; left: -100px;
       width: 500px; height: 500px;
       background: radial-gradient(circle, rgba(13, 110, 253, 0.2) 0%, rgba(0,0,0,0) 70%);
-      border-radius: 50%;
-      z-index: 0;
-      pointer-events: none; /* Allows click through */
+      border-radius: 50%; z-index: 0; pointer-events: none;
       animation: float-bubble 10s infinite ease-in-out;
     }
-
-    /* FIX: Added pointer-events: none to prevent bubbles from blocking clicks */
     #services::after {
-      content: '';
-      position: absolute;
-      bottom: -100px; right: -100px;
+      content: ''; position: absolute; bottom: -100px; right: -100px;
       width: 600px; height: 600px;
       background: radial-gradient(circle, rgba(111, 66, 193, 0.2) 0%, rgba(0,0,0,0) 70%);
-      border-radius: 50%;
-      z-index: 0;
-      pointer-events: none; /* Allows click through */
+      border-radius: 50%; z-index: 0; pointer-events: none;
       animation: float-bubble 12s infinite ease-in-out reverse;
     }
-    
-    /* FIX: Ensure content sits above background bubbles */
-    #services .container {
-      position: relative;
-      z-index: 5;
-    }
-
+    #services .container { position: relative; z-index: 5; }
     @keyframes float-bubble {
       0%, 100% { transform: translate(0, 0); }
       50% { transform: translate(30px, 30px); }
     }
-
     .section-title-white {
-      color: #ffffff;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 3rem;
-      position: relative;
-      z-index: 1;
-      text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      color: #ffffff; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 3rem; position: relative;
+      z-index: 1; text-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-
     .section-title-white::after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 4px;
-      background: #0d6efd;
-      margin: 15px auto 0;
-      border-radius: 2px;
+      content: ''; display: block; width: 80px; height: 4px;
+      background: #0d6efd; margin: 15px auto 0; border-radius: 2px;
     }
-
     .service-card {
       background: linear-gradient(to right, #709ee3ff, #ffffff); 
-      border: none;
-      border-radius: 20px;
-      padding: 40px 30px;
-      height: 100%;
-      position: relative;
-      /* FIX: Explicit high z-index */
-      z-index: 10; 
+      border: none; border-radius: 20px; padding: 40px 30px; height: 100%;
+      position: relative; z-index: 10; 
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      overflow: hidden;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); overflow: hidden;
+      text-align: center; display: flex; flex-direction: column; align-items: center;
     }
-
-    .service-card:hover {
-      transform: translateY(-15px);
-      box-shadow: 0 20px 40px rgba(0, 191, 255, 0.2);
-    }
-
+    .service-card:hover { transform: translateY(-15px); box-shadow: 0 20px 40px rgba(0, 191, 255, 0.2); }
     .service-card::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0;
-      width: 0%; height: 5px;
+      content: ''; position: absolute; bottom: 0; left: 0; width: 0%; height: 5px;
       transition: width 0.4s ease;
     }
     .service-card:hover::after { width: 100%; }
-
     .icon-wrapper {
-      width: 80px; height: 80px;
-      border-radius: 50%;
+      width: 80px; height: 80px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      margin-bottom: 25px;
-      transition: all 0.5s ease;
-      position: relative; z-index: 2;
-      font-size: 2rem;
-      background: #f1f5f9; 
+      margin-bottom: 25px; transition: all 0.5s ease;
+      position: relative; z-index: 2; font-size: 2rem; background: #f1f5f9; 
     }
-
     .service-card:hover .icon-wrapper {
-      transform: rotateY(360deg);
-      color: white !important;
+      transform: rotateY(360deg); color: white !important;
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
-
     .card-compliance .icon-wrapper { color: #0d6efd; background: rgba(13, 110, 253, 0.1); }
     .card-compliance:hover .icon-wrapper { background: #0d6efd; }
     .card-compliance::after { background: #0d6efd; }
-
     .card-policy .icon-wrapper { color: #20c997; background: rgba(32, 201, 151, 0.1); }
     .card-policy:hover .icon-wrapper { background: #20c997; }
     .card-policy::after { background: #20c997; }
-
     .card-shebox .icon-wrapper { color: #dc3545; background: rgba(220, 53, 69, 0.1); }
     .card-shebox:hover .icon-wrapper { background: #dc3545; }
     .card-shebox::after { background: #dc3545; }
-
     .card-legal .icon-wrapper { color: #fd7e14; background: rgba(253, 126, 20, 0.1); }
     .card-legal:hover .icon-wrapper { background: #fd7e14; }
     .card-legal::after { background: #fd7e14; }
-
     .card-external .icon-wrapper { color: #6f42c1; background: rgba(111, 66, 193, 0.1); }
     .card-external:hover .icon-wrapper { background: #6f42c1; }
     .card-external::after { background: #6f42c1; }
-
     .card-pocso .icon-wrapper { color: #17a2b8; background: rgba(23, 162, 184, 0.1); }
     .card-pocso:hover .icon-wrapper { background: #17a2b8; }
     .card-pocso::after { background: #17a2b8; }
-
+    .card-mental .icon-wrapper { color: #d63384; background: rgba(214, 51, 132, 0.1); }
+    .card-mental:hover .icon-wrapper { background: #d63384; }
+    .card-mental::after { background: #d63384; }
     .service-title { font-weight: 700; margin-bottom: 15px; color: #1e293b; }
     .service-desc { color: #64748b; font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; }
-
     .read-more-pill {
-      display: inline-block;
-      padding: 8px 25px;
-      border-radius: 50px;
-      background-color: white;
-      color: #1e293b;
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      border: 1px solid #e2e8f0;
-      /* FIX: Position and z-index to force clickability */
-      position: relative;
-      z-index: 20;
-      cursor: pointer;
+      display: inline-block; padding: 8px 25px; border-radius: 50px;
+      background-color: white; color: #1e293b; font-weight: 600;
+      font-size: 0.85rem; text-decoration: none; transition: all 0.3s ease;
+      border: 1px solid #e2e8f0; position: relative; z-index: 20; cursor: pointer;
+    }
+    .service-card:hover .read-more-pill {
+      background-color: #1e293b; color: #fff; border-color: #1e293b;
+    }
+
+    /* WHY CHOOSE US - DESKTOP DEFAULT */
+    .why-choose-us-section {
+      width: 100%; min-height: 500px;
+      background-image: url("{% static 'img/pocso1.jpg' %}");
+      background-repeat: no-repeat; 
+      background-position: center; 
+      background-size: cover;
+      background-attachment: fixed; 
+      padding-top: 80px; padding-bottom: 80px; position: relative; z-index: 1;
     }
     
-    .service-card:hover .read-more-pill {
-      background-color: #1e293b;
-      color: #fff;
-      border-color: #1e293b;
+    /* === MOBILE BACKGROUND SWAP === */
+    @media (max-width: 992px) {
+        .why-choose-us-section {
+            /* 
+               Replaces the image with a Professional Dark Gradient on Mobile 
+               so the content is always readable and "posh/pocso" doesn't get cut off.
+            */
+            background-image: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
+            
+            /* Reset properties for mobile */
+            background-attachment: scroll !important; 
+            background-size: cover !important; 
+            background-position: center !important;
+        }
     }
-
-    /* =========================================================
-       3. WHY CHOOSE OHS SECTION (FULL WIDTH)
-       ========================================================= */
- .why-choose-us-section {
-  width: 100%;
-  min-height: 500px;
-  background-image: url("{% static 'img/pocso1.jpg' %}");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  padding-top: 80px;
-  padding-bottom: 80px;
-  position: relative;
-  z-index: 1;
-}
 
     .why-choose-us-section::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      z-index: -1;
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6); z-index: -1;
     }
-
-    .why-choose-us-section .section-header h2 {
-      color: #ffffff;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.3);
-      font-weight: 700;
-    }
-    
-    .why-choose-us-section .section-header p {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 1.1rem;
-    }
-
+    .why-choose-us-section .section-header h2 { color: #ffffff; text-shadow: 0 2px 5px rgba(0,0,0,0.3); font-weight: 700; }
+    .why-choose-us-section .section-header p { color: rgba(255, 255, 255, 0.9); font-size: 1.1rem; }
     .why-choose-us-section .feature-card {
-      background: rgba(255, 255, 255, 0.1); 
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 15px;
-      padding: 30px;
-      height: 100%;
-      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px; padding: 30px; height: 100%; transition: all 0.3s ease;
       box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
-
     .why-choose-us-section .feature-card:hover {
-      background: rgba(255, 255, 255, 0.2);
-      transform: translateY(-10px);
+      background: rgba(255, 255, 255, 0.2); transform: translateY(-10px);
       box-shadow: 0 15px 40px 0 rgba(0, 0, 0, 0.3);
     }
-
     .why-choose-us-section .feature-icon {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      color: #ffffff;
-      background: rgba(255, 255, 255, 0.2);
-      width: 70px; height: 70px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 50%;
+      font-size: 2.5rem; margin-bottom: 20px; color: #ffffff;
+      background: rgba(255, 255, 255, 0.2); width: 70px; height: 70px;
+      display: flex; align-items: center; justify-content: center; border-radius: 50%;
     }
-
     .why-choose-us-section .feature-title { color: #ffffff; font-weight: 700; margin-bottom: 15px; }
     .why-choose-us-section .feature-card p { color: rgba(255, 255, 255, 0.8); line-height: 1.6; margin-bottom: 20px; }
     .why-choose-us-section .read-more-btn { color: #fff; text-decoration: none; font-weight: 600; border-bottom: 2px solid transparent; transition: 0.3s; }
     .why-choose-us-section .read-more-btn:hover { color: #709ee3; border-bottom: 2px solid #709ee3; }
 
-    /* =========================================================
-       4. CLIENTS SECTION (FULL GLASS EFFECT)
-       ========================================================= */
-    .achievements {
-      width: 100%;
-      background-image: url("../static/img/photo-1486406146926-c627a92ad1ab\ \(1\).avif");
-      background-attachment: fixed;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-      padding: 100px 0;
-      position: relative;
-      margin: 0;
-      z-index: 1;
-    }
-
-    .achievements::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6); 
-      z-index: -1;
-    }
-
-    .client-logo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 30px;
-      padding: 50px;
-      align-items: center;
-      justify-items: center;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
-      border-radius: 20px;
-    }
-
-    .client-logo-grid img {
-      max-width: 120px;
-      height: auto;
-      max-height: 70px;
-      object-fit: contain;
-      transition: all 0.4s ease;
-      background: rgba(255, 255, 255, 0.85); 
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    .client-logo-grid img:hover {
-      transform: translateY(-5px) scale(1.1);
-      background: #ffffff;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    }
-
-    @media (max-width: 768px) {
-      .client-logo-grid {
-        grid-template-columns: repeat(2, 1fr);
-        padding: 30px 15px;
-      }
-    }
-
-    /* =========================================================
-       5. "OUR POSH IMPACT" - TRANSPARENT GLASS LOOK
-       ========================================================= */
-    
+    /* MILESTONES / IMPACT */
     #milestones {
       background: linear-gradient(rgba(15, 23, 42, 0.8), rgba(15, 23, 42, 0.8)), url("../static/img/impact.avif");
-      background-attachment: fixed;
-      background-position: center;
-      background-size: cover;
-      padding: 100px 0;
-      color: white;
-      position: relative;
+      background-attachment: fixed; background-position: center; background-size: cover;
+      padding: 100px 0; color: white; position: relative;
     }
-
     .section-title-impact {
-      color: #ffffff;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 4rem;
-      text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      color: #ffffff; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 2px; margin-bottom: 4rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
-
     .impact-card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 20px;
-      padding: 40px 30px;
-      height: 100%;
-      text-align: center;
-      color: #ffffff; 
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px; padding: 40px 30px; height: 100%; text-align: center;
+      color: #ffffff; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
       transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s ease;
-      position: relative;
-      overflow: hidden;
-      border-bottom: 4px solid transparent; 
+      position: relative; overflow: hidden; border-bottom: 4px solid transparent; 
     }
-
     .impact-card:hover {
-      transform: translateY(-10px);
-      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-10px); background: rgba(255, 255, 255, 0.15);
       box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
-
     .impact-card.style-gold { border-bottom-color: #f59e0b; }
     .impact-card.style-blue { border-bottom-color: #3b82f6; }
     .impact-card.style-pink { border-bottom-color: #ec4899; }
-    .impact-card.style-green { border-bottom-color: #10b981; }
-    .impact-card.style-purple { border-bottom-color: #8b5cf6; }
-
     .impact-card .icon-wrapper {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px auto;
-      font-size: 2rem;
-      transition: transform 0.5s ease;
+      width: 80px; height: 80px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px auto; font-size: 2rem; transition: transform 0.5s ease;
       background: rgba(255, 255, 255, 0.95) !important;
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
-
     .style-gold .icon-wrapper { color: #f59e0b; }
     .style-blue .icon-wrapper { color: #3b82f6; }
     .style-pink .icon-wrapper { color: #ec4899; }
-    .style-green .icon-wrapper { color: #10b981; }
-    .style-purple .icon-wrapper { color: #8b5cf6; }
-
-    .impact-card:hover .icon-wrapper {
-      transform: scale(1.1) rotate(360deg);
-    }
-
+    .impact-card:hover .icon-wrapper { transform: scale(1.1) rotate(360deg); }
     .impact-card h2.counter {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 10px;
-      color: #ffffff;
+      font-size: 3rem; font-weight: 800; margin-bottom: 10px; color: #ffffff;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
-    
-    .impact-card h2 {
-         color: #ffffff !important;
-    }
+    .impact-card h2 { color: #ffffff !important; }
+    .impact-card p { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; color: rgba(255, 255, 255, 0.95); }
+    .impact-card span { font-size: 0.9rem; color: rgba(255, 255, 255, 0.7); }
 
-    .impact-card p {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 5px;
-      color: rgba(255, 255, 255, 0.95);
-    }
-
-    .impact-card span {
-      font-size: 0.9rem;
-      color: rgba(255, 255, 255, 0.7);
-    }
-
-    /* ==============================================================
-       6. THE "MAGIC" POPUP CSS (Centered & Unique)
-       ============================================================== */
-    
-    /* 6a. The Full-Screen Overlay */
+    /* MAGIC POPUP */
     .magic-popup-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
-      backdrop-filter: blur(10px); /* Frosted glass effect */
-      z-index: 10000; /* Ensure it's on top of everything */
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.5s ease-in-out;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 10000; 
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; visibility: hidden; transition: all 0.5s ease-in-out;
     }
-
-    .magic-popup-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    /* 6b. The Central Card */
+    .magic-popup-overlay.active { opacity: 1; visibility: visible; }
     .magic-popup-card {
-      background: rgba(255, 255, 255, 0.95);
-      width: 90%;
-      max-width: 700px;
-      border-radius: 25px;
-      padding: 50px 40px;
-      position: relative;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.6);
-      transform: scale(0.8) translateY(20px);
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: rgba(255, 255, 255, 0.95); width: 90%; max-width: 700px;
+      border-radius: 25px; padding: 50px 40px; position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.6);
+      transform: scale(0.8) translateY(20px); transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-align: center;
     }
-
-    .magic-popup-overlay.active .magic-popup-card {
-      transform: scale(1) translateY(0);
-    }
-
+    .magic-popup-overlay.active .magic-popup-card { transform: scale(1) translateY(0); }
     .magic-close-btn {
-      position: absolute;
-      top: 20px; right: 20px;
-      background: #f1f5f9;
-      border: none;
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      color: #64748b;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 0.3s;
+      position: absolute; top: 20px; right: 20px; background: #f1f5f9;
+      border: none; width: 40px; height: 40px; border-radius: 50%;
+      font-size: 1.2rem; color: #64748b; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; transition: all 0.3s;
     }
-    .magic-close-btn:hover { 
-      color: #fff; 
-      background: #dc3545; 
-      transform: rotate(90deg);
-    }
-
-    /* The Flow Steps inside the Card */
+    .magic-close-btn:hover { color: #fff; background: #dc3545; transform: rotate(90deg); }
     .magic-steps-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin: 40px 0;
-      position: relative;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin: 40px 0; position: relative;
     }
-
-    /* Connecting Line */
     .magic-steps-container::before {
-      content: '';
-      position: absolute;
-      top: 30px; /* Half of icon height */
-      left: 10%;
-      right: 10%;
-      height: 4px;
-      background: #e2e8f0;
-      z-index: 0;
-      border-radius: 10px;
+      content: ''; position: absolute; top: 30px; left: 10%; right: 10%;
+      height: 4px; background: #e2e8f0; z-index: 0; border-radius: 10px;
     }
-
-    .magic-step {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      flex: 1;
-    }
-
+    .magic-step { position: relative; z-index: 1; text-align: center; flex: 1; }
     .m-icon {
-      width: 60px; height: 60px;
-      background: white;
-      border: 3px solid #0d6efd;
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      color: #0d6efd;
-      font-size: 1.4rem;
-      margin: 0 auto 15px;
-      box-shadow: 0 5px 20px rgba(13, 110, 253, 0.2);
-      transition: transform 0.3s;
+      width: 60px; height: 60px; background: white; border: 3px solid #0d6efd;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      color: #0d6efd; font-size: 1.4rem; margin: 0 auto 15px;
+      box-shadow: 0 5px 20px rgba(13, 110, 253, 0.2); transition: transform 0.3s;
     }
-    
     .magic-step:hover .m-icon { 
-      transform: scale(1.15); 
-      background: #0d6efd; 
-      color: white; 
+      transform: scale(1.15); background: #0d6efd; color: white; 
       box-shadow: 0 10px 25px rgba(13, 110, 253, 0.4);
     }
-
     .m-text { font-weight: 800; color: #1e293b; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.5px; }
     .m-sub { font-size: 0.85rem; color: #64748b; margin-top: 5px; font-weight: 500;}
-
     .magic-btn-main {
-      background: linear-gradient(135deg, #0d6efd, #0043a8);
-      color: white;
-      border: none;
-      padding: 15px 50px;
-      border-radius: 50px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3);
-      transition: transform 0.3s, box-shadow 0.3s;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
+      background: linear-gradient(135deg, #0d6efd, #0043a8); color: white;
+      border: none; padding: 15px 50px; border-radius: 50px;
+      font-weight: 700; font-size: 1.1rem; box-shadow: 0 10px 25px rgba(13, 110, 253, 0.3);
+      transition: transform 0.3s, box-shadow 0.3s; text-decoration: none;
+      display: inline-block; margin-top: 10px;
     }
     .magic-btn-main:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 35px rgba(13, 110, 253, 0.5);
-      color: white;
+      transform: translateY(-3px); box-shadow: 0 15px 35px rgba(13, 110, 253, 0.5); color: white;
     }
-    
-    /* Mobile Responsive for Popup */
     @media (max-width: 768px) {
-      .magic-steps-container {
-        flex-direction: column;
-        gap: 30px;
-        align-items: center;
-      }
-      .magic-steps-container::before {
-        width: 4px;
-        height: 80%;
-        left: 50%;
-        transform: translateX(-50%);
-        top: 0;
-      }
-      .magic-popup-card {
-        padding: 30px 20px;
-        width: 95%;
-      }
+      .magic-steps-container { flex-direction: column; gap: 30px; align-items: center; }
+      .magic-steps-container::before { width: 4px; height: 80%; left: 50%; transform: translateX(-50%); top: 0; }
+      .magic-popup-card { padding: 30px 20px; width: 95%; }
     }
 
+    /* =========================================================
+       UPDATED: 3D COSMIC WORKFLOW CHART (COMPACT SPACING)
+       ========================================================= */
+    #globe-workflow {
+        padding: 30px 0 80px; /* Reduced top padding */
+        background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+        overflow: hidden; position: relative; color: white;
+    }
+
+    #globe-workflow::before {
+        content: ''; position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+        background-image: radial-gradient(white 1px, transparent 1px), radial-gradient(white 1px, transparent 1px);
+        background-size: 50px 50px; background-position: 0 0, 25px 25px; opacity: 0.1;
+        animation: particleMove 60s linear infinite; z-index: 0;
+    }
+
+    @keyframes particleMove {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-100px); }
+    }
+
+    /* 3D Scene Container - REDUCED HEIGHT & ADDED NEGATIVE MARGIN */
+    .galaxy-scene {
+        position: relative; 
+        width: 100%; 
+        height: 650px; /* Was 900px - Reduced to remove empty space */
+        margin-top: -50px; /* Pulls the globe closer to the text */
+        perspective: 1200px; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 2;
+    }
+
+    /* The Tilted Orbit Ring */
+    .orbit-system {
+        position: relative; width: 800px; height: 800px;
+        transform-style: preserve-3d; transform: rotateX(60deg); 
+        animation: orbitSpin 30s linear infinite;
+    }
+
+    .orbit-system:hover { animation-play-state: paused; }
+    .orbit-system:hover .planet-card { animation-play-state: paused; }
+    .orbit-system:hover .sun-core { animation-play-state: paused; }
+
+    /* The Dashed Orbit Line */
+    .orbit-ring-visual {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        border: 2px dashed rgba(255, 255, 255, 0.3); border-radius: 50%;
+        box-shadow: 0 0 50px rgba(13, 110, 253, 0.2); transform: translateZ(0); 
+    }
+
+    /* =========================================
+       UPGRADED 3D SUN (SMALLER & ATTRACTIVE)
+       ========================================= */
+    .sun-core {
+        position: absolute; top: 50%; left: 50%;
+        width: 140px; height: 140px; /* Reduced Size */
+        border-radius: 50%;
+        
+        /* 1. Deep 3D Sphere Look */
+        background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 1) 0%, rgba(14, 165, 233, 1) 40%, rgba(2, 6, 23, 1) 90%);
+
+        /* 2. Intense Glowing Atmosphere */
+        box-shadow: 
+            inset -10px -10px 30px rgba(0,0,0,0.8),
+            0 0 25px rgba(14, 165, 233, 0.8),
+            0 0 70px rgba(14, 165, 233, 0.4);
+
+        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        
+        /* 3. Counter-rotate */
+        transform-origin: center center;
+        animation: sunStability 30s linear infinite;
+        
+        z-index: 20; border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    /* Inner Rotating Ring (Dashed) */
+    .sun-core::before {
+        content: ''; position: absolute; inset: -15px; border-radius: 50%;
+        border: 2px dashed rgba(14, 165, 233, 0.5);
+        animation: spinRingReverse 12s linear infinite; pointer-events: none;
+    }
+
+    /* Outer Rotating Ring (Solid) */
+    .sun-core::after {
+        content: ''; position: absolute; inset: -25px; border-radius: 50%;
+        border: 2px solid transparent; border-top-color: #38bdf8; border-bottom-color: #38bdf8;
+        animation: spinRing 8s linear infinite; pointer-events: none;
+        box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .sun-core h3 {
+        font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
+        margin: 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 5;
+    }
+    
+    .sun-core span {
+        font-size: 0.65rem; color: #bae6fd; letter-spacing: 2px;
+        text-transform: uppercase; margin-top: 2px; z-index: 5;
+    }
+
+    /* The Wrapper for Planets - UPDATED FOR 7 ITEMS */
+    .planet-wrapper {
+        position: absolute; top: 50%; left: 50%; width: 60px; height: 60px;
+        transform-style: preserve-3d;
+        /* Position logic handled inline via --i, updated for 7 items */
+        transform: 
+            rotateZ(calc(360deg / 7 * var(--i))) 
+            translateY(-400px) /* SCALED RADIUS */
+            rotateZ(calc(-360deg / 7 * var(--i))); 
+    }
+
+    /* The Actual Planet Content */
+    .planet-card {
+        width: 160px; display: flex; flex-direction: column; align-items: center; text-align: center;
+        /* Fix: RotateZ then RotateX */
+        animation: planetCounterSpin 30s linear infinite; transition: transform 0.3s; cursor: pointer;
+    }
+    
+    .planet-card:hover {
+        transform: rotateZ(calc(var(--current-rot) * -1)) rotateX(-60deg) scale(1.2); z-index: 100;
+    }
+
+    .planet-icon {
+        width: 70px; height: 70px;
+        background: radial-gradient(circle at 30% 30%, #ffffff, #e2e8f0);
+        border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        font-size: 1.8rem;
+        box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.3);
+        margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.5); color: #333;
+    }
+
+    .planet-title {
+        background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(5px);
+        padding: 5px 15px; border-radius: 12px; font-size: 0.95rem; font-weight: 700;
+        color: white; border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* --- ANIMATIONS --- */
+    @keyframes orbitSpin {
+        0% { transform: rotateX(60deg) rotateZ(0deg); }
+        100% { transform: rotateX(60deg) rotateZ(360deg); }
+    }
+
+    @keyframes planetCounterSpin {
+        0% { transform: rotateZ(0deg) rotateX(-60deg); }
+        100% { transform: rotateZ(-360deg) rotateX(-60deg); }
+    }
+    
+    @keyframes sunStability {
+        0% { transform: translate(-50%, -50%) rotateZ(0deg) rotateX(-60deg); }
+        100% { transform: translate(-50%, -50%) rotateZ(-360deg) rotateX(-60deg); }
+    }
+
+    @keyframes spinRing {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    @keyframes spinRingReverse {
+        0% { transform: rotate(360deg); }
+        100% { transform: rotate(0deg); }
+    }
+
+    /* GLOWS */
+    .p1 .planet-icon { color: #0d6efd; box-shadow: 0 0 20px rgba(13, 110, 253, 0.5); }
+    .p2 .planet-icon { color: #0dcaf0; box-shadow: 0 0 20px rgba(13, 202, 240, 0.5); }
+    .p3 .planet-icon { color: #6610f2; box-shadow: 0 0 20px rgba(102, 16, 242, 0.5); }
+    .p4 .planet-icon { color: #6f42c1; box-shadow: 0 0 20px rgba(111, 66, 193, 0.5); }
+    .p5 .planet-icon { color: #d63384; box-shadow: 0 0 20px rgba(214, 51, 132, 0.5); }
+    .p6 .planet-icon { color: #fd7e14; box-shadow: 0 0 20px rgba(253, 126, 20, 0.5); }
+    .p7 .planet-icon { color: #dc3545; box-shadow: 0 0 20px rgba(220, 53, 69, 0.5); }
+    .p8 .planet-icon { color: #198754; box-shadow: 0 0 20px rgba(25, 135, 84, 0.5); }
+
+    /* RESPONSIVE MOBILE - COLLAPSE 3D */
+    @media (max-width: 992px) {
+        .galaxy-scene { height: auto; perspective: none; margin-top: 50px;}
+        .orbit-system { 
+            width: 100%; height: auto; transform: none; animation: none;
+            display: flex; flex-direction: column; gap: 20px; align-items: center;
+        }
+        .orbit-ring-visual { display: none; }
+        .sun-core {
+            position: relative; transform: none; top: auto; left: auto; animation: none;
+            margin-bottom: 30px; width: 140px; height: 140px; box-shadow: 0 0 30px rgba(13, 110, 253, 0.4);
+        }
+        .sun-core::after { top: -10px; left: -10px; right: -10px; bottom: -10px; }
+        .sun-core::before { display: none; } /* Hide extra ring on mobile */
+        .sun-core h3 { font-size: 1rem; }
+        .planet-wrapper {
+            position: relative; top: auto; left: auto; transform: none !important; 
+            width: 100%; max-width: 400px; height: auto;
+        }
+        .planet-card {
+            transform: none !important; animation: none; flex-direction: row;
+            background: rgba(255,255,255,0.1); padding: 10px; border-radius: 15px; width: 100%;
+            justify-content: flex-start;
+        }
+        .planet-icon { margin-bottom: 0; margin-right: 20px; width: 50px; height: 50px; font-size: 1.2rem; }
+        .planet-title { background: transparent; border: none; font-size: 1rem; text-align: left; padding: 0;}
+    }
+
+    /* CLIENTS SECTION */
+    .achievements {
+      width: 100%;
+      background-image: url("../static/img/photo-1486406146926-c627a92ad1ab\ \(1\).avif");
+      background-attachment: fixed; background-position: center;
+      background-repeat: no-repeat; background-size: cover;
+      padding: 100px 0; position: relative; margin: 0; z-index: 1;
+    }
+    .achievements::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.6); z-index: -1;
+    }
+    
+    /* UPDATED: Responsive Grid for Clients */
+    .client-logo-grid {
+      display: grid; 
+      /* Reduced min size to 80px to allow 3 items per row on small screens */
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: 30px; padding: 50px; align-items: center; justify-items: center;
+      background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); border-radius: 20px;
+    }
+    /* Mobile Override for Padding */
+    @media (max-width: 768px) {
+        .client-logo-grid {
+            padding: 20px;
+            gap: 15px;
+        }
+    }
+
+    .client-logo-grid img {
+      max-width: 120px; height: auto; max-height: 70px; object-fit: contain;
+      transition: all 0.4s ease; background: rgba(255, 255, 255, 0.85); 
+      padding: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .client-logo-grid img:hover {
+      transform: translateY(-5px) scale(1.1); background: #ffffff;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+    
+    /* MODALS - KEEP EXISTING */
+    .modal-content { border: none; border-radius: 20px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3); background-color: #f8f9fa; }
+    .modal-header { background: linear-gradient(135deg, #0d6efd, #0a58ca); color: white; padding: 1.5rem 2rem; border-bottom: none; }
+    .word-span { opacity: 0; display: inline-block; transform: translateY(10px) scale(0.9); filter: blur(4px); transition: all 0.3s ease-out; margin-right: 4px; }
+    .word-span.visible { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    .animate-target { opacity: 0; }
   </style>
 </head>
 
@@ -687,20 +565,19 @@
       <div class="row align-items-center">
         <div class="col-lg-6" data-aos="fade-right">
           <div class="hero-glass-card">
-            <h1 class="fw-bold display-5 mb-3 wave-text">
-              <span>Safe</span> <span>Workplaces,</span> <span>Stronger</span> <span>Workforces</span>
+            <h1 class="hero-big-title">
+              Complete <span class="highlight-posh">POSH</span> & <br>
+              <span class="highlight-pocso">POCSO</span> Compliance
             </h1>
-            <p class="lead mb-0">
-           We believe that a truly successful organization is built on the foundation of safety, respect, and trust.
-              Our specialized training programs are designed to help companies go beyond compliance and foster
-              workplaces where every individual feels secure, valued, and empowered. Our approach combines expert
-              knowledge, interactive learning, and practical tools to ensure that organizations don’t just meet legal
-              requirements but also create an environment where people thrive.
+            <p class="hero-crisp-desc mb-0">
+              Your trusted partner in building safe, respectful, and legally compliant workplaces.
+              We specialize in the Prevention of Sexual Harassment and Child Protection 
+              consulting to empower organizations and institutions.
             </p>
           </div>
         </div>
         <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
-          <img src="{% static 'img/p1.jpeg' %}" alt="POSH Training" class="img-fluid rounded-3 shadow">
+          <img src="{% static 'img/p1.jpeg' %}" alt="POSH and POCSO Training" class="img-fluid rounded-3 shadow">
         </div>
       </div>
     </div>
@@ -716,31 +593,25 @@
           </div>
           <div class="col-md-6 ps-md-5 mt-4 mt-md-0" data-aos="fade-left">
             <div class="about-glass-card">
-              <h6 class="text-primary text-uppercase fw-semibold mb-2">About POSH</h6>
-              <h2 class="fw-bold mb-2 wave-text">
-                <span>Prevention</span> <span>of</span> <span>Sexual</span> <span>Harassment</span>
+              <h6 class="text-primary text-uppercase fw-semibold mb-2">About Us</h6>
+              <h2 class="fw-bold mb-3" style="font-size: 2.5rem; color: #1e293b;">
+                Safe Workplaces, <br> Stronger Workforces
               </h2>
-              <h4 class="text-secondary mb-3">Safe & Respectful Workplaces</h4>
-              <p class="text-muted mb-0" style="line-height: 1.8">
-                
-            We help organizations achieve complete POSH Act compliance while fostering a culture of safety, dignity,
-            and respect. Our expertise covers every aspect of compliance, including employee sensitisation to create
-            awareness and build positive workplace behaviours, setting up and training Internal Committees for fair
-            and effective grievance redressal, and formulating clear, customised POSH policies that reflect the
-            organization’s values. We also provide support in handling cases—both legal and non-legal—with
-            sensitivity and professionalism.
-                 </p>
+              <h4 class="text-secondary mb-4" style="font-size: 1.25rem;">Prevention of Sexual Harassment & Child Safety</h4>
+              <p style="font-size: 1.15rem; line-height: 1.8; color: #475569;">
+                We help organizations achieve complete <span class="fw-bold text-primary">POSH Act compliance</span> while fostering a culture of safety, dignity, and respect. 
+                Our expertise covers every aspect of compliance, including employee sensitisation, setting up Internal Committees, and formulating clear policies.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- NEW CLEAN & ATTRACTIVE Milestones Section -->
+      <!-- Impact Section -->
       <section id="milestones">
         <div class="container text-center">
           <h2 class="section-title-impact" data-aos="fade-down">Our POSH Impact</h2>
           <div class="row gy-4 justify-content-center">
-            
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
               <div class="impact-card style-gold">
                   <div class="icon-wrapper"><i class="fas fa-trophy"></i></div>
@@ -749,7 +620,6 @@
                   <span>Delivering top-notch training</span>
               </div>
             </div>
-
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
               <div class="impact-card style-blue">
                   <div class="icon-wrapper"><i class="fas fa-briefcase"></i></div>
@@ -758,7 +628,6 @@
                   <span>Solved with legal precision</span>
               </div>
             </div>
-
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
               <div class="impact-card style-pink">
                   <div class="icon-wrapper"><i class="fas fa-users"></i></div>
@@ -773,19 +642,15 @@
     </main>
   </div> 
 
-  <!-- Why Choose OHS? Section (FULL WIDTH) -->
+  <!-- Why Choose OHS -->
   <section class="why-choose-us-section" data-aos="fade-up">
     <div class="container">
       <div class="section-header text-center mb-5">
         <h2>Why Choose US?</h2>
-        <p>
-          Empowering organizations to build respectful, safe, and inclusive
-          workplaces through expert POSH compliance.
-        </p>
+        <p>Empowering organizations to build respectful, safe, and inclusive workplaces through expert POSH compliance.</p>
       </div>
-
       <div class="row gy-4 justify-content-center">
-        <!-- 1. Compliance -->
+        <!-- Cards -->
         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
@@ -794,8 +659,6 @@
             <a href="/why_choose_ohs#compliance" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 2. Expertise -->
         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-balance-scale"></i></div>
@@ -804,8 +667,6 @@
             <a href="/why_choose_ohs#expertise" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 3. Training -->
         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="300">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-users-cog"></i></div>
@@ -814,9 +675,7 @@
             <a href="/why_choose_ohs#training" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 4. Practical Approach -->
-        <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
+         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="400">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-lightbulb"></i></div>
             <h3 class="feature-title">Practical & Engaging Approach</h3>
@@ -824,8 +683,6 @@
             <a href="/why_choose_ohs#methodology" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 5. Confidentiality -->
         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="500">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-lock"></i></div>
@@ -834,8 +691,6 @@
             <a href="/why_choose_ohs#confidentiality" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 6. Ongoing Support -->
         <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="600">
           <div class="feature-card">
             <div class="feature-icon"><i class="fas fa-headset"></i></div>
@@ -844,122 +699,157 @@
             <a href="/why_choose_ohs#ongoing-support" class="read-more-btn">Read More</a>
           </div>
         </div>
-
-        <!-- 7. Legal Desk -->
-        <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="700">
-          <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-gavel"></i></div>
-            <h3 class="feature-title">Legal Desk for Case Handling</h3>
-            <p>Access our dedicated legal desk for expert guidance, query resolution, and professional support during case inquiries.</p>
-            <a href="/why_choose_ohs#case-management" class="read-more-btn">Read More</a>
-          </div>
-        </div>
-
-        <!-- 8. POCSO CARD -->
-        <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="800">
-          <div class="feature-card">
-            <div class="feature-icon"><i class="fas fa-child-reaching"></i></div>
-            <h3 class="feature-title">POCSO & Child Safety Compliance</h3>
-            <p>Creating safe zones for minors through specialized policies, staff sensitization, and strict adherence to the POCSO Act.</p>
-            <a href="/why_choose_ohs#pocso" class="read-more-btn">Read More</a>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
 
-  <!-- Services Section (ATTRACTIVE DARK THEME) -->
+  <!-- ==============================================
+       NEW: 3D COSMIC WORKFLOW SECTION
+       ============================================== -->
+  <section id="globe-workflow">
+    <div class="container text-center" style="position: relative; z-index: 5;">
+      
+      <!-- Reduced bottom margin and padding to tighten gap -->
+      <div class="mb-0 pb-2" data-aos="fade-down">
+        <h2 class="fw-bold text-white text-uppercase" style="text-shadow: 0 0 20px rgba(13,110,253,0.8);">The Compliance Ecosystem</h2>
+        <p class="text-white-50">Integrating POSH & POCSO for a safer, respectful workplace.</p>
+      </div>
+
+      <div class="galaxy-scene">
+        <div class="orbit-system">
+            
+            <!-- The Visual Dashed Ring -->
+            <div class="orbit-ring-visual"></div>
+
+            <!-- Central Sun -->
+            <div class="sun-core">
+                <h3>Safe<br>Workplace</h3>
+                <span>Core</span>
+            </div>
+
+            <!-- Planet 1: Policy -->
+            <div class="planet-wrapper p1" style="--i:0">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-file-signature"></i></div>
+                    <div class="planet-title">1. Create Policy</div>
+                </div>
+            </div>
+
+            <!-- Planet 2: She-Box (NEW ADDITION) -->
+            <div class="planet-wrapper p2" style="--i:1">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-laptop-file"></i></div>
+                    <div class="planet-title">2. She-Box Portal<br>Compliance</div>
+                </div>
+            </div>
+            
+            <!-- Planet 3: IC Training (Shifted) -->
+            <div class="planet-wrapper p3" style="--i:2">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                    <div class="planet-title">3. IC Training</div>
+                </div>
+            </div>
+
+            <!-- Planet 4: Sensitisation (Shifted) -->
+            <div class="planet-wrapper p4" style="--i:3">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-user-shield"></i></div>
+                    <div class="planet-title">4. Employee Sensitisation</div>
+                </div>
+            </div>
+
+            <!-- Planet 5: Awareness (Shifted) -->
+            <div class="planet-wrapper p5" style="--i:4">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-bullhorn"></i></div>
+                    <div class="planet-title">5. Awareness Activities</div>
+                </div>
+            </div>
+
+            <!-- Planet 6: Case Handling (Shifted) -->
+            <div class="planet-wrapper p6" style="--i:5">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-gavel"></i></div>
+                    <div class="planet-title">6. Case Handling</div>
+                </div>
+            </div>
+
+            <!-- Planet 7: Filing (Shifted) -->
+            <div class="planet-wrapper p7" style="--i:6">
+                <div class="planet-card">
+                    <div class="planet-icon"><i class="fas fa-clipboard-check"></i></div>
+                    <div class="planet-title">7. Annual Filing</div>
+                </div>
+            </div>
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+  <!-- ==============================================
+       END 3D COSMIC SECTION
+       ============================================== -->
+
+  <!-- Services Section -->
   <section id="services">
     <div class="container text-center">
       <h2 class="section-title-white" data-aos="fade-down">Our Core Services</h2>
       <div class="row justify-content-center gy-5">
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
           <div class="service-card card-compliance">
-            <div class="icon-wrapper">
-              <i class="fas fa-sitemap"></i>
-            </div>
+            <div class="icon-wrapper"><i class="fas fa-sitemap"></i></div>
             <h5 class="service-title">End-to-End POSH Compliance</h5>
-            <p class="service-desc">Comprehensive solutions from policy to redressal, ensuring 100% legal compliance.
-            </p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal"
-              data-bs-target="#modalCompliance">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
+            <p class="service-desc">Comprehensive solutions from policy to redressal, ensuring 100% legal compliance.</p>
+            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalCompliance">Read More <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
         </div>
-
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
           <div class="service-card card-policy">
-            <div class="icon-wrapper">
-              <i class="fas fa-file-contract"></i>
-            </div>
+            <div class="icon-wrapper"><i class="fas fa-file-contract"></i></div>
             <h5 class="service-title">POSH Policy Formulation</h5>
-            <p class="service-desc">Drafting clear, customised, and effective anti-harassment policies for your firm.
-            </p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalPolicy">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
+            <p class="service-desc">Drafting clear, customised, and effective anti-harassment policies for your firm.</p>
+            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalPolicy">Read More <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
         </div>
-
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
           <div class="service-card card-shebox">
-            <div class="icon-wrapper">
-              <i class="fas fa-archive"></i>
-            </div>
+            <div class="icon-wrapper"><i class="fas fa-archive"></i></div>
             <h5 class="service-title">She-Box & Case Handling</h5>
             <p class="service-desc">Expert assistance with SHe-Box registration and sensitive case management.</p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalSheBox">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
+            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalSheBox">Read More <i class="fas fa-arrow-right ms-1"></i></a>
           </div>
         </div>
-
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-          <div class="service-card card-legal">
-            <div class="icon-wrapper">
-              <i class="fas fa-balance-scale"></i>
+            <div class="service-card card-legal">
+                <div class="icon-wrapper"><i class="fas fa-balance-scale"></i></div>
+                <h5 class="service-title">Legal Support & Query Desk</h5>
+                <p class="service-desc">Reliable legal advice and a dedicated helpdesk for all POSH-related queries.</p>
+                <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalLegal">Read More <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
-            <h5 class="service-title">Legal Support & Query Desk</h5>
-            <p class="service-desc">Reliable legal advice and a dedicated helpdesk for all POSH-related queries.</p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalLegal">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-          </div>
         </div>
-
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
-          <div class="service-card card-external">
-            <div class="icon-wrapper">
-              <i class="fas fa-user-tie"></i>
+            <div class="service-card card-external">
+                <div class="icon-wrapper"><i class="fas fa-user-tie"></i></div>
+                <h5 class="service-title">External Member Support</h5>
+                <p class="service-desc">Providing impartial and experienced external members for your Internal Committee.</p>
+                <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalExternal">Read More <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
-            <h5 class="service-title">External Member Support</h5>
-            <p class="service-desc">Providing impartial and experienced external members for your Internal Committee.
-            </p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalExternal">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-          </div>
         </div>
-
         <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
-          <div class="service-card card-pocso">
-            <div class="icon-wrapper">
-              <i class="fas fa-child-reaching"></i>
+            <div class="service-card card-pocso">
+                <div class="icon-wrapper"><i class="fas fa-child-reaching"></i></div>
+                <h5 class="service-title">POCSO Compliance</h5>
+                <p class="service-desc">Safeguarding minors with Child Protection Policies and POCSO Act awareness.</p>
+                <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalPocso">Read More <i class="fas fa-arrow-right ms-1"></i></a>
             </div>
-            <h5 class="service-title">POCSO Compliance</h5>
-            <p class="service-desc">Safeguarding minors with Child Protection Policies and POCSO Act awareness.</p>
-            <a href="javascript:void(0);" class="read-more-pill" data-bs-toggle="modal" data-bs-target="#modalPocso">
-              Read More <i class="fas fa-arrow-right ms-1"></i>
-            </a>
-          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Modernized Client Section (FULL COLOR) -->
+  <!-- Clients Section -->
   <section class="achievements" data-aos="fade-up">
     <div class="container">
       <h2 class="section-title text-center fw-bold mb-5" style="color: white; text-shadow: 0 4px 10px rgba(0,0,0,0.8); font-size: 2.5rem; letter-spacing: 1px;">
@@ -992,48 +882,32 @@
     </div>
   </section>
 
-  <!-- ==============================================
-       THE UNIQUE "MAGIC" POPUP (Centered)
-       ============================================== -->
-  
+  <!-- Popup -->
   <div class="magic-popup-overlay" id="magicOverlay">
     <div class="magic-popup-card">
-      <button class="magic-close-btn" id="magicCloseBtn" title="Close">
-        <i class="fas fa-times"></i>
-      </button>
-      
+      <button class="magic-close-btn" id="magicCloseBtn" title="Close"><i class="fas fa-times"></i></button>
       <h3 class="fw-bold mb-2" style="color:#0d6efd;">Start Your Journey</h3>
       <p class="text-muted mb-4">Your path to certification in 3 simple steps</p>
-      
       <div class="magic-steps-container">
-        <!-- Step 1 -->
         <div class="magic-step">
           <div class="m-icon"><i class="fas fa-user-plus"></i></div>
           <div class="m-text">Register</div>
           <div class="m-sub">Sign Up & Pay</div>
         </div>
-        <!-- Step 2 -->
         <div class="magic-step">
           <div class="m-icon"><i class="fas fa-sign-in-alt"></i></div>
           <div class="m-text">Login</div>
           <div class="m-sub">Access Dashboard</div>
         </div>
-        <!-- Step 3 -->
         <div class="magic-step">
           <div class="m-icon"><i class="fas fa-certificate"></i></div>
           <div class="m-text">Certify</div>
           <div class="m-sub">Get Trained</div>
         </div>
       </div>
-
      <a href="{% url 'tutorial' %}" class="magic-btn-main">Get Started Now</a>
-
     </div>
   </div>
-  
-  <!-- ==============================================
-       END UNIQUE POPUP
-       ============================================== -->
 
   <!-- MODALS -->
   <div class="modal fade" id="modalCompliance" tabindex="-1" aria-hidden="true">
@@ -1045,12 +919,8 @@
         </div>
         <div class="modal-body">
           <div class="info-section">
-            <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Comprehensive Organizational
-              Compliance</h5>
-            <p class="text-muted animate-target" data-animate="word">
-              Achieving compliance with the Sexual Harassment of Women at Workplace Act, 2013, is more than just a
-              checkbox exercise; it is about mitigating risk and building a safe culture.
-            </p>
+            <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Comprehensive Organizational Compliance</h5>
+            <p class="text-muted animate-target" data-animate="word">Achieving compliance with the Sexual Harassment of Women at Workplace Act, 2013, is more than just a checkbox exercise; it is about mitigating risk and building a safe culture.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">What We Deliver:</h6>
@@ -1062,14 +932,9 @@
               <li><strong>Documentation:</strong> Templates for posters, notices, and minutes.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A 100% compliant, audit-ready
-            organization.
-          </div>
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A 100% compliant, audit-ready organization.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
@@ -1083,31 +948,21 @@
         </div>
         <div class="modal-body">
           <div class="info-section">
-            <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Drafting Robust & Customised Policies
-            </h5>
-            <p class="text-muted animate-target" data-animate="word">
-              A well-drafted policy is the backbone of a safe workplace. We move beyond generic templates to create
-              policies that reflect your specific organizational structure, industry type, and cultural values.
-            </p>
+            <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Drafting Robust & Customised Policies</h5>
+            <p class="text-muted animate-target" data-animate="word">A well-drafted policy is the backbone of a safe workplace. We move beyond generic templates to create policies that reflect your specific organizational structure, industry type, and cultural values.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">Key Elements:</h6>
             <ul class="modal-list animate-target" data-animate="word">
               <li><strong>Industry Adaptation:</strong> Policies tailored for IT, Manufacturing, or Remote work.</li>
-              <li><strong>Gender Neutrality:</strong> Options to protect all employees while maintaining legal
-                safeguards.</li>
+              <li><strong>Gender Neutrality:</strong> Options to protect all employees while maintaining legal safeguards.</li>
               <li><strong>Redressal Mechanism:</strong> Clearly defined steps for filing complaints and inquiries.</li>
               <li><strong>Zero Tolerance:</strong> Articulating exactly what constitutes sexual harassment.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A clear, legally sound document employees
-            trust.
-          </div>
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A clear, legally sound document employees trust.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
@@ -1122,11 +977,7 @@
         <div class="modal-body">
           <div class="info-section">
             <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Expert Case Management</h5>
-            <p class="text-muted animate-target" data-animate="word">
-              Handling a sexual harassment complaint requires extreme sensitivity, confidentiality, and adherence to
-              natural justice. We guide you through both internal complaints and those filed via the government SHe-Box
-              portal.
-            </p>
+            <p class="text-muted animate-target" data-animate="word">Handling a sexual harassment complaint requires extreme sensitivity, confidentiality, and adherence to natural justice. We guide you through both internal complaints and those filed via the government SHe-Box portal.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">Our Support Includes:</h6>
@@ -1137,14 +988,9 @@
               <li><strong>Conciliation:</strong> Handling settlement requests legally.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> Fair investigations that stand legal
-            scrutiny.
-          </div>
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> Fair investigations that stand legal scrutiny.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
@@ -1153,17 +999,13 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title text-uppercase"><i class="fas fa-balance-scale me-2"></i> Legal Support & Query Desk
-          </h4>
+          <h4 class="modal-title text-uppercase"><i class="fas fa-balance-scale me-2"></i> Legal Support & Query Desk</h4>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
           <div class="info-section">
             <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">On-Demand Legal Expertise</h5>
-            <p class="text-muted animate-target" data-animate="word">
-              POSH cases often involve complex legal gray areas. Our dedicated legal desk provides real-time support to
-              HR heads and IC members to resolve queries and ensure procedural correctness.
-            </p>
+            <p class="text-muted animate-target" data-animate="word">POSH cases often involve complex legal gray areas. Our dedicated legal desk provides real-time support to HR heads and IC members to resolve queries and ensure procedural correctness.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">Services Offered:</h6>
@@ -1174,13 +1016,9 @@
               <li><strong>Consequence Management:</strong> Helping implement disciplinary actions lawfully.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> Decisions backed by legal experts.
-          </div>
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> Decisions backed by legal experts.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
@@ -1195,10 +1033,7 @@
         <div class="modal-body">
           <div class="info-section">
             <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Impartial Third-Party Expertise</h5>
-            <p class="text-muted animate-target" data-animate="word">
-              The POSH Act mandates the inclusion of an External Member in the Internal Committee to ensure neutrality.
-              We provide qualified, experienced professionals to serve on your panel.
-            </p>
+            <p class="text-muted animate-target" data-animate="word">The POSH Act mandates the inclusion of an External Member in the Internal Committee to ensure neutrality. We provide qualified, experienced professionals to serve on your panel.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">Role of Our Members:</h6>
@@ -1209,18 +1044,13 @@
               <li><strong>Experience:</strong> Insights from handling 200+ cases.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A balanced, fair committee.
-          </div>
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A balanced, fair committee.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
 
-  <!-- NEW POCSO MODAL -->
   <div class="modal fade" id="modalPocso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -1231,9 +1061,7 @@
         <div class="modal-body">
           <div class="info-section">
             <h5 class="text-primary fw-bold mb-3 animate-target" data-type="title">Protection of Children from Sexual Offences</h5>
-            <p class="text-muted animate-target" data-animate="word">
-              For organizations dealing with minors (schools, sports academies, NGOs), compliance with the POCSO Act, 2012 is mandatory. We help create a safe environment for children by implementing strict child protection protocols and sensitization programs.
-            </p>
+            <p class="text-muted animate-target" data-animate="word">For organizations dealing with minors (schools, sports academies, NGOs), compliance with the POCSO Act, 2012 is mandatory. We help create a safe environment for children by implementing strict child protection protocols and sensitization programs.</p>
           </div>
           <div class="info-section">
             <h6 class="fw-bold mb-3 animate-target" data-type="title">Our POCSO Services:</h6>
@@ -1244,13 +1072,37 @@
               <li><strong>Student Workshops:</strong> Age-appropriate 'Good Touch, Bad Touch' awareness sessions.</li>
             </ul>
           </div>
-          <div class="outcome-box animate-target" data-animate="fade">
-            <i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A secure environment where children are protected and staff are empowered.
+          <div class="outcome-box animate-target" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A secure environment where children are protected and staff are empowered.</div>
+        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="modalMental" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="background: linear-gradient(135deg, #d63384, #a61e62);">
+          <h4 class="modal-title text-uppercase"><i class="fas fa-brain me-2"></i> Mental Health Training</h4>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="info-section" style="border-left: 5px solid #d63384;">
+            <h5 class="fw-bold mb-3 animate-target" style="color: #d63384;" data-type="title">Cultivating a Healthy Mindset</h5>
+            <p class="text-muted animate-target" data-animate="word">Employee well-being goes beyond physical safety. Our Mental Health training equips your workforce with the tools to manage stress, recognize burnout, and foster a supportive, stigma-free environment.</p>
           </div>
+          <div class="info-section" style="border-left: 5px solid #d63384;">
+            <h6 class="fw-bold mb-3 animate-target" data-type="title">Key Training Modules:</h6>
+            <ul class="modal-list animate-target" data-animate="word">
+              <li style="color: #d63384;"><strong style="color: #333;">Stress Management:</strong> Practical techniques to handle high-pressure situations.</li>
+              <li style="color: #d63384;"><strong style="color: #333;">Emotional Intelligence:</strong> Building empathy and better communication skills.</li>
+              <li style="color: #d63384;"><strong style="color: #333;">Work-Life Balance:</strong> Strategies to disconnect and recharge effectively.</li>
+              <li style="color: #d63384;"><strong style="color: #333;">Identifying Burnout:</strong> Early warning signs and supportive interventions.</li>
+            </ul>
+          </div>
+          <div class="outcome-box animate-target" style="background: #fce4ec; border: 1px solid #f8bbd0; color: #880e4f;" data-animate="fade"><i class="fas fa-check-circle me-2"></i> <strong>Outcome:</strong> A happier, more productive, and emotionally resilient workforce.</div>
         </div>
-        <div class="modal-footer bg-light border-0">
-          <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
-        </div>
+        <div class="modal-footer bg-light border-0"><button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button></div>
       </div>
     </div>
   </div>
@@ -1258,24 +1110,15 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
-    fetch("../HTML/navbar.html")
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("navbar-placeholder").innerHTML = data;
-        let script = document.createElement("script");
-        script.src = "../js/navbar.js";
-        document.body.appendChild(script);
-      });
+    fetch("../HTML/navbar.html").then(r => r.text()).then(d => {
+        document.getElementById("navbar-placeholder").innerHTML = d;
+        let script = document.createElement("script"); script.src = "../js/navbar.js"; document.body.appendChild(script);
+    });
 
-    fetch("footer.html")
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById("footer-container").innerHTML = data;
-      });
+    fetch("footer.html").then(r => r.text()).then(d => { document.getElementById("footer-container").innerHTML = d; });
 
     const counters = document.querySelectorAll('.counter');
     const speed = 200;
-
     const animateCounters = () => {
       counters.forEach(counter => {
         if (!counter.hasAttribute('data-target')) return;
@@ -1288,9 +1131,7 @@
             setTimeout(updateCount, 15);
           } else {
             let finalValue = target.toLocaleString('en-IN');
-            if (counter.getAttribute('data-plus') === 'true') {
-              finalValue += '+';
-            }
+            if (counter.getAttribute('data-plus') === 'true') finalValue += '+';
             counter.innerText = finalValue;
           }
         };
@@ -1300,117 +1141,65 @@
 
     const section = document.querySelector('#milestones');
     let started = false;
-
     window.addEventListener('scroll', () => {
       if (!section) return;
       const sectionTop = section.offsetTop - window.innerHeight + 100;
       if (!started && window.scrollY > sectionTop) {
-        animateCounters();
-        started = true;
+        animateCounters(); started = true;
       }
     });
 
-    AOS.init({
-      duration: 800,
-      easing: "ease-in-out",
-      once: false,
-      offset: 100,
-    });
+    AOS.init({ duration: 800, easing: "ease-in-out", once: false, offset: 100 });
     
-    // =======================================================
-    //  MAGIC POPUP LOGIC (SHOW ONCE & DISAPPEAR)
-    // =======================================================
     document.addEventListener("DOMContentLoaded", () => {
-      
       const overlay = document.getElementById('magicOverlay');
       const closeBtn = document.getElementById('magicCloseBtn');
-      
-      // 1. Check if user has already seen the popup in this session
-      // If NOT seen, show it.
       if (!sessionStorage.getItem('popupSeen')) {
-          setTimeout(() => {
-            overlay.classList.add('active');
-          }, 1000); // 1 second delay
+          setTimeout(() => { overlay.classList.add('active'); }, 1000);
       }
-
-      // 2. Click "Close" -> Disappear completely & Set Flag
       closeBtn.addEventListener('click', () => {
         overlay.classList.remove('active');
-        // Mark as seen so it doesn't come back on refresh
         sessionStorage.setItem('popupSeen', 'true');
       });
 
       const animatedElements = document.querySelectorAll('[data-animate="word"]');
       const originalContents = new Map();
-      animatedElements.forEach((el, index) => {
-        originalContents.set(el, el.innerHTML);
-      });
+      animatedElements.forEach((el) => originalContents.set(el, el.innerHTML));
 
-      const modals = document.querySelectorAll('.modal');
-      modals.forEach(modal => {
+      document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('show.bs.modal', function () {
-          const targets = this.querySelectorAll('.animate-target');
-          targets.forEach(el => {
-            el.classList.remove('ready');
-            el.style.opacity = '0';
-            if (el.getAttribute('data-animate') === 'word') {
-              el.innerHTML = originalContents.get(el);
-            }
+          this.querySelectorAll('.animate-target').forEach(el => {
+            el.classList.remove('ready'); el.style.opacity = '0';
+            if (el.getAttribute('data-animate') === 'word') el.innerHTML = originalContents.get(el);
           });
         });
-
         modal.addEventListener('shown.bs.modal', function () {
           let globalDelay = 100;
-          const targets = this.querySelectorAll('.animate-target');
-          targets.forEach(el => {
+          this.querySelectorAll('.animate-target').forEach(el => {
             if (el.getAttribute('data-type') === 'title') {
-              setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transition = "opacity 0.5s ease";
-              }, globalDelay);
+              setTimeout(() => { el.style.opacity = '1'; el.style.transition = "opacity 0.5s ease"; }, globalDelay);
               globalDelay += 200;
-            }
-            else if (el.tagName === 'P' && el.getAttribute('data-animate') === 'word') {
+            } else if (el.tagName === 'P' && el.getAttribute('data-animate') === 'word') {
               setTimeout(() => {
                 el.style.opacity = '1';
-                const text = el.innerText.trim();
-                el.innerHTML = '';
-                const words = text.split(' ');
-                words.forEach((word, i) => {
-                  const span = document.createElement('span');
-                  span.innerText = word;
-                  span.className = 'word-span';
-                  el.appendChild(span);
-                  setTimeout(() => {
-                    span.classList.add('visible');
-                  }, i * 30);
+                const text = el.innerText.trim(); el.innerHTML = '';
+                text.split(' ').forEach((word, i) => {
+                  const span = document.createElement('span'); span.innerText = word; span.className = 'word-span'; el.appendChild(span);
+                  setTimeout(() => span.classList.add('visible'), i * 30);
                 });
               }, globalDelay);
-              const wordCount = el.innerText.split(' ').length;
-              globalDelay += (wordCount * 30) + 300;
-            }
-            else if (el.tagName === 'UL' && el.getAttribute('data-animate') === 'word') {
+              globalDelay += (el.innerText.split(' ').length * 30) + 300;
+            } else if (el.tagName === 'UL' && el.getAttribute('data-animate') === 'word') {
               setTimeout(() => {
                 el.style.opacity = '1';
-                const items = el.querySelectorAll('li');
-                items.forEach((li, index) => {
-                  li.style.opacity = '0';
-                  li.style.transform = 'translateX(-10px)';
-                  li.style.transition = 'all 0.3s ease';
-                  setTimeout(() => {
-                    li.style.opacity = '1';
-                    li.style.transform = 'translateX(0)';
-                  }, index * 200);
+                el.querySelectorAll('li').forEach((li, index) => {
+                  li.style.opacity = '0'; li.style.transform = 'translateX(-10px)'; li.style.transition = 'all 0.3s ease';
+                  setTimeout(() => { li.style.opacity = '1'; li.style.transform = 'translateX(0)'; }, index * 200);
                 });
               }, globalDelay);
               globalDelay += (el.querySelectorAll('li').length * 200) + 200;
-            }
-            else if (el.getAttribute('data-animate') === 'fade') {
-              setTimeout(() => {
-                el.style.opacity = '1';
-                el.style.transform = 'translateY(0)';
-                el.style.transition = 'all 0.5s ease';
-              }, globalDelay);
+            } else if (el.getAttribute('data-animate') === 'fade') {
+              setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; el.style.transition = 'all 0.5s ease'; }, globalDelay);
             }
           });
         });
@@ -1418,6 +1207,5 @@
     });
   </script>
 </body>
-
 </html>
 {%endblock body %}
