@@ -47,6 +47,8 @@ urlpatterns = [
     
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
     path('accounts/profile/', views.custom_login_redirect, name='login_redirect'),
+    path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
+    path('login-redirect/', views.custom_login_redirect, name='custom_login_redirect'),
   
 
 ]
