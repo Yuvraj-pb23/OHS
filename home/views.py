@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import transaction 
 from django.db.models import Q
+from django.contrib.auth.decorators import user_passes_test
 
 # Models
 from .models import User, SubscriptionPlan, Subscription, Payment, Organization, OrganizationMember
@@ -18,10 +19,14 @@ from .chatbot_logic import predict_answer
 
 
 
-# --- 1. LOGIN REDIRECT LOGIC (CRITICAL) ---
+# --- 1. LOGIN REDIRECT LOGIC (UPDATED) ---
 @login_required
 def custom_login_redirect(request):
     user = request.user
+    
+    # 0. SUPERUSER -> Superuser Dashboard
+    if user.is_superuser:
+        return redirect('superuser_dashboard')
     
     # 1. ADMIN -> Dashboard
     if user.account_type == 'COMPANY_ADMIN':
@@ -29,6 +34,7 @@ def custom_login_redirect(request):
         
     # 2. USER (Employee/Individual) -> Direct to Training Page
     elif user.account_type in ['EMPLOYEE', 'INDIVIDUAL']:
+        # ... (keep your existing posh/pocso check logic here)
         has_posh = Subscription.objects.filter(
             Q(user=user) | Q(organization__organizationmember__user=user),
             status='ACTIVE',
@@ -50,7 +56,6 @@ def custom_login_redirect(request):
         return redirect('tutorial') 
         
     return redirect('home')
-
 # --- 2. COMPANY SUBSCRIPTION (SIGNUP) ---
 def company_subscription(request, plan_type):
     db_type = 'POSH' if 'POSH' in plan_type else 'POCSO'
@@ -352,3 +357,30 @@ def upload_employee_bulk(request):
             messages.error(request, f"Error processing file: {str(e)}")
             
     return redirect('company_dashboard')
+
+
+# --- 9. SUPERUSER DASHBOARD ---
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def superuser_dashboard(request):
+    """
+    Dashboard providing a global overview for the platform owner.
+    """
+    total_organizations = Organization.objects.count()
+    total_users = User.objects.count()
+    active_subscriptions = Subscription.objects.filter(status='ACTIVE').count()
+    
+    # Get all organizations to list them
+    organizations = Organization.objects.all().order_by('-id')
+    
+    # Recent payments (Assuming you have a Payment model)
+    recent_payments = Payment.objects.all().order_by('-id')[:10]
+
+    context = {
+        'total_organizations': total_organizations,
+        'total_users': total_users,
+        'active_subscriptions': active_subscriptions,
+        'organizations': organizations,
+        'recent_payments': recent_payments,
+    }
+    return render(request, 'superuser_dashboard.html', context)

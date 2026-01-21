@@ -1,0 +1,1456 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glassy Dashboard</title>
+    <!-- Icon Set -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --backdrop-blur: blur(10px);
+            --text-color: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.7);
+            --accent-color: #a2d2ff;
+            --chart-green: #2ecc71;
+            --chart-red: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            /* Default Background */
+            background: linear-gradient(45deg, #160f29, #240046, #3c096c);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 1s ease;
+        }
+
+        .blobs {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #7b2cbf; }
+        .blob-2 { bottom: -10%; right: -10%; width: 600px; height: 600px; background: #3a0ca3; }
+        .blob-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: #f72585; }
+
+        /* Dashboard Container */
+        .dashboard-container {
+            width: 95%;
+            height: 90vh;
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            overflow: hidden;
+            transition: grid-template-columns 0.4s ease;
+            position: relative; /* Added for mobile positioning */
+        }
+
+        .dashboard-container.collapsed {
+            grid-template-columns: 80px 1fr;
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            border-right: var(--glass-border);
+            overflow: hidden;
+            z-index: 10;
+            transition: all 0.4s ease; /* Smooth transition for mobile slide */
+        }
+
+        .logo {
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 50px;
+        }
+
+        .logo-image {
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            width: 100%;
+            opacity: 1;
+        }
+
+        .logo-image img {
+            max-height: 40px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        #menu-toggle {
+            cursor: pointer;
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            transition: 0.3s;
+            min-width: 24px;
+            display: flex;
+            justify-content: center;
+        }
+        #menu-toggle:hover { color: white; }
+
+        .menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .menu li {
+            margin-bottom: 1rem;
+        }
+
+        .menu a {
+            text-decoration: none;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 15px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .menu a:hover, .menu a.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .menu a i {
+            font-size: 1.2rem;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .menu a span {
+            transition: opacity 0.2s ease;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 1rem;
+            border-top: var(--glass-border);
+            white-space: nowrap;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .user-img {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: url('https://i.pravatar.cc/150?img=32') no-repeat center/cover;
+            border: 2px solid white;
+        }
+
+        .user-info h4 { font-size: 0.9rem; color: var(--text-color); }
+        .user-info p { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* --- COLLAPSED STATE STYLES --- */
+        .dashboard-container.collapsed .logo-image {
+            width: 0;
+            opacity: 0;
+            margin: 0;
+        }
+        .dashboard-container.collapsed .logo {
+            justify-content: center;
+        }
+        .dashboard-container.collapsed .menu a span {
+            opacity: 0;
+            width: 0;
+            display: none;
+        }
+        .dashboard-container.collapsed .menu a {
+            justify-content: center;
+            padding: 12px 0;
+        }
+        .dashboard-container.collapsed .user-info {
+            display: none;
+        }
+        .dashboard-container.collapsed .user-profile {
+            justify-content: center;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* --- NAVBAR --- */
+        .navbar {
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            border-bottom: var(--glass-border);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(5px);
+            z-index: 5;
+        }
+
+        /* NEW: Mobile Menu Button (Hidden on Desktop) */
+        .mobile-menu-btn {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .search-bar {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: var(--glass-border);
+            width: 350px;
+            transition: width 0.3s ease;
+        }
+
+        .search-bar:focus-within {
+            width: 400px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .search-bar input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+        }
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .header-icons i {
+            font-size: 1.2rem;
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .header-icons i:hover { 
+            color: var(--accent-color); 
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* --- SCROLLABLE CONTENT AREA --- */
+        .content-area {
+            padding: 2rem;
+            overflow-y: auto;
+            flex: 1;
+            position: relative;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+            backdrop-filter: blur(10px);
+            border: var(--glass-border);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.15);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .icon-1 { background: rgba(255, 99, 132, 0.5); }
+        .icon-2 { background: rgba(54, 162, 235, 0.5); }
+        .icon-3 { background: rgba(255, 206, 86, 0.5); }
+        .icon-4 { background: rgba(75, 192, 192, 0.5); }
+
+        .card h3 { font-size: 1.8rem; color: white; }
+        .card p { font-size: 0.9rem; color: var(--text-muted); }
+
+        /* --- CONTENT GRID --- */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .panel {
+            background: rgba(0, 0, 0, 0.2);
+            border: var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .panel h2 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+        }
+        .list-item:last-child { border-bottom: none; }
+        
+        .status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+        }
+        .status.completed { background: rgba(75, 192, 192, 0.4); }
+        .status.pending { background: rgba(255, 206, 86, 0.4); }
+
+        /* --- POSH VIEW SPECIFIC STYLES --- */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease;
+            height: 100%;
+        }
+
+        .view-section.active-view {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .posh-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+
+        .posh-main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .split-row {
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 20px; 
+            flex: 1; 
+        }
+
+        .posh-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: var(--glass-border);
+            border-radius: 16px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .posh-card-header {
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .posh-card-body {
+            flex: 1;
+            overflow-y: auto;
+            color: var(--text-muted);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        /* -- PIE CHART STYLES -- */
+        .pie-chart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .pie-chart {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--chart-green) 0% 75%, 
+                var(--chart-red) 75% 100%
+            );
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+
+        .chart-legend {
+            margin-top: 15px;
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+        }
+
+        .dot {
+            width: 10px; 
+            height: 10px; 
+            border-radius: 50%;
+        }
+
+        /* -- LINE CHART STYLES -- */
+        .line-chart-svg {
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+        
+        .line-chart-path {
+            fill: none;
+            stroke: var(--accent-color);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            filter: drop-shadow(0 0 5px var(--accent-color));
+            animation: drawLine 2s ease forwards;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+        }
+
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .line-chart-area {
+            fill: rgba(162, 210, 255, 0.2); /* faint accent color */
+            stroke: none;
+        }
+
+        .chart-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            padding: 0 5px;
+        }
+
+        .posh-side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* --- SETTINGS SPECIFIC STYLES --- */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+
+        .settings-left {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            height: 100%;
+        }
+
+        .settings-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: 0.3s;
+            flex: 1; /* Default Flex for small cards */
+        }
+        
+        /* The Bigger Profile Card */
+        .settings-card.profile-card {
+            flex: 2.5; /* Takes up 2.5x the space of others */
+            justify-content: flex-start;
+        }
+
+        .settings-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .settings-card h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Glass Input Fields */
+        .glass-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent-color);
+        }
+        label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .theme-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        .theme-option {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .theme-option:hover {
+            transform: scale(1.1);
+            border-color: white;
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+        }
+        .theme-label {
+            margin-top: 10px;
+            text-align: center;
+            color: white;
+            font-size: 0.85rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.2);
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--chart-green); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.4); }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- UPDATED RESPONSIVE MEDIA QUERIES --- */
+
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr 1fr; 
+            }
+            .posh-layout {
+                grid-template-columns: 1fr;
+            }
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+            .search-bar { width: 200px; }
+            .split-row {
+                grid-template-columns: 1fr; 
+            }
+        }
+
+        /* --- FIXED MOBILE VIEW --- */
+        @media (max-width: 768px) {
+            body {
+                overflow: auto; /* Allow scrolling on body for mobile */
+            }
+
+            .dashboard-container {
+                grid-template-columns: 1fr; /* Stack columns */
+                height: 100vh; /* Full viewport height */
+                width: 100%;
+                border-radius: 0;
+                position: relative; /* Context for absolute positioning */
+            }
+
+            /* HIDE DEFAULT SIDEBAR (but keep it available for JS toggle) */
+            .sidebar {
+                /* display: none;  <-- REMOVED THIS */
+                position: fixed; /* Fix to the screen */
+                top: 0;
+                left: -100%; /* Hide off-screen to the left */
+                height: 100vh;
+                width: 260px;
+                background: rgba(22, 15, 41, 0.98); /* Solid dark background for readability */
+                backdrop-filter: blur(20px);
+                z-index: 1000; /* On top of everything */
+                box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+                display: flex;
+            }
+
+            /* Class to add via JS to show sidebar */
+            .sidebar.mobile-active {
+                left: 0;
+            }
+
+            /* Hide the original desktop collapse button */
+            #menu-toggle {
+                display: none;
+            }
+
+            /* Show the Mobile Menu Button */
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navbar {
+                padding: 0 1rem;
+                justify-content: flex-start;
+            }
+
+            /* Adjust Search Bar */
+            .search-bar {
+                display: none; /* Hide on small mobile to save header space */
+            }
+
+            #page-title {
+                margin-right: auto;
+                font-size: 1.1rem;
+            }
+            
+            .header-icons {
+                margin-left: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="dashboard-container" id="dashboard">
+        
+        <!-- Sidebar with ID for JS selection -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <i class="ri-menu-fold-line" id="menu-toggle"></i>
+            </div>
+
+            <ul class="menu">
+                <li><a href="#" class="active" data-target="view-dashboard"><i class="ri-home-4-line"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-target="view-posh"><i class="ri-pie-chart-line"></i> <span>Posh</span></a></li>
+                <li><a href="#" data-target="view-posco"><i class="ri-shield-star-line"></i> <span>Posco</span></a></li>
+                <li><a href="#" data-target="view-settings"><i class="ri-settings-4-line"></i> <span>Settings</span></a></li>
+            </ul>
+
+            <div class="user-profile">
+                <div class="user-img"></div>
+                <div class="user-info">
+                    <h4>Alex Doe</h4>
+                    <p>Admin</p>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            
+            <nav class="navbar">
+                
+                <!-- NEW: Hamburger Button for Mobile -->
+                <div class="mobile-menu-btn" id="mobile-toggle-btn">
+                    <i class="ri-menu-2-line"></i>
+                </div>
+
+                <h2 id="page-title" style="color: white; font-weight: 500;">Overview</h2>
+                
+                <div class="search-bar">
+                    <i class="ri-search-line" style="color: var(--text-muted)"></i>
+                    <input type="text" placeholder="Search data, reports...">
+                </div>
+
+                <div class="header-icons">
+                    <i class="ri-notification-3-line" title="Notifications"></i>
+                    <i class="ri-message-3-line" title="Messages"></i>
+                    <i class="ri-settings-line" title="Settings"></i>
+                </div>
+            </nav>
+
+            <div class="content-area">
+                
+                <!-- DASHBOARD VIEW -->
+                <div id="view-dashboard" class="view-section active-view">
+                    <section class="stats-grid">
+                        <div class="card">
+                            <div class="card-top">
+                                <p>Total Number of Registration</p>
+                                <div class="card-icon icon-1"><i class="ri-user-add-line"></i></div>
+                            </div>
+                            <h3>2,450</h3>
+                            <p>+15% from last week</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-top">
+                                <p>Posh Registration</p>
+                                <div class="card-icon icon-2"><i class="ri-shield-check-line"></i></div>
+                            </div>
+                            <h3>1,850</h3>
+                            <p>+5% from last week</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-top">
+                                <p>Posco Registration</p>
+                                <div class="card-icon icon-3"><i class="ri-shield-star-line"></i></div>
+                            </div>
+                            <h3>45</h3>
+                            <p>+2% from last week</p>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-top">
+                                <p>Completed Training</p>
+                                <div class="card-icon icon-4"><i class="ri-checkbox-circle-line"></i></div>
+                            </div>
+                            <h3>3,120</h3>
+                            <p>+8% from last week</p>
+                        </div>
+                    </section>
+
+                    <section class="content-grid" style="margin-top: 20px;">
+                        <div class="panel">
+                            <h2>Posh Companies</h2>
+                            <div class="list-item">
+                                <span>Alpha Tech Solutions</span>
+                                <span class="status completed">Compliant</span>
+                            </div>
+                            <div class="list-item">
+                                <span>Innovate Inc</span>
+                                <span class="status pending">Pending</span>
+                            </div>
+                            <div class="list-item">
+                                <span>Global Systems</span>
+                                <span class="status completed">Compliant</span>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h2>Posco Registration</h2>
+                            <div class="list-item">
+                                <span>Greenwood High</span>
+                                <span class="status completed">Registered</span>
+                            </div>
+                            <div class="list-item">
+                                <span>Little Angels School</span>
+                                <span class="status pending">Pending</span>
+                            </div>
+                            <div class="list-item">
+                                <span>Sunrise Academy</span>
+                                <span class="status completed">Verified</span>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h2>Quick Actions</h2>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 10px;">
+                                <button style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 8px; cursor: pointer; text-align: left;">
+                                    <i class="ri-add-line"></i> Add New Item
+                                </button>
+                                <button style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 8px; cursor: pointer; text-align: left;">
+                                    <i class="ri-file-chart-line"></i> Generate Report
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- POSH VIEW -->
+                <div id="view-posh" class="view-section">
+                    <div class="posh-layout">
+                        
+                        <!-- Left Column -->
+                        <div class="posh-main-column">
+                            
+                            <!-- Split Row -->
+                            <div class="split-row">
+                                
+                                <!-- Part 1: Training Complete (Pie Chart) -->
+                                <div class="posh-card">
+                                    <div class="posh-card-header">
+                                        <h2>Training Complete</h2>
+                                        <i class="ri-pie-chart-2-line" style="color: var(--accent-color);"></i>
+                                    </div>
+                                    <div class="posh-card-body pie-chart-container">
+                                        <div class="pie-chart"></div>
+                                        
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-green);"></div>
+                                                <span>Complete (75%)</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-red);"></div>
+                                                <span>Pending (25%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Part 2: Registrations (Line Graph) -->
+                                <div class="posh-card">
+                                    <div class="posh-card-header">
+                                        <h2>Registrations</h2>
+                                        <i class="ri-line-chart-line" style="color: #4cd137;"></i>
+                                    </div>
+                                    <div class="posh-card-body">
+                                        <!-- SVG Line Chart -->
+                                        <div style="flex: 1; display: flex; align-items: flex-end; padding-bottom: 10px;">
+                                            <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                                                <path class="line-chart-area" d="M0,50 L0,35 L20,25 L40,30 L60,15 L80,20 L100,5 L100,50 Z" />
+                                                <polyline class="line-chart-path" points="0,35 20,25 40,30 60,15 80,20 100,5" />
+                                                <circle cx="0" cy="35" r="2" fill="white" />
+                                                <circle cx="20" cy="25" r="2" fill="white" />
+                                                <circle cx="40" cy="30" r="2" fill="white" />
+                                                <circle cx="60" cy="15" r="2" fill="white" />
+                                                <circle cx="80" cy="20" r="2" fill="white" />
+                                                <circle cx="100" cy="5" r="2" fill="white" />
+                                            </svg>
+                                        </div>
+                                        <div class="chart-labels">
+                                            <span>Jan</span>
+                                            <span>Feb</span>
+                                            <span>Mar</span>
+                                            <span>Apr</span>
+                                            <span>May</span>
+                                            <span>Jun</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Card: Recent Registrations -->
+                            <div class="posh-card" style="flex: 1;">
+                                <div class="posh-card-header">
+                                    <h2>Recent Registrations</h2>
+                                    <button style="background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">View All</button>
+                                </div>
+                                <div class="posh-card-body">
+                                    <ul style="list-style: none;">
+                                        <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
+                                            <div style="display: flex; align-items: center; gap: 15px;">
+                                                <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
+                                                    <i class="ri-building-4-line" style="color: #a2d2ff; font-size: 1.2rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Nexus Industries Ltd</h4>
+                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
+                                            <div style="display: flex; align-items: center; gap: 15px;">
+                                                <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
+                                                    <i class="ri-store-2-line" style="color: #4cd137; font-size: 1.2rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Vertex Global Solutions</h4>
+                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 45 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Side Column -->
+                        <div class="posh-side-column">
+                            
+                            <!-- QUICK STATS SECTION -->
+                            <div class="card" style="height: auto;">
+                                <h3>Quick Stats</h3>
+                                
+                                <!-- Total -->
+                                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                    <span style="color: var(--text-muted);">Total Registrations</span>
+                                    <span style="font-size: 1.2rem; font-weight: 600;">1,250</span>
+                                </div>
+
+                                <!-- Completed -->
+                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 8px; height: 8px; background: var(--chart-green); border-radius: 50%;"></div>
+                                        Completed
+                                    </span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-green);">938</span>
+                                </div>
+
+                                <!-- Pending -->
+                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 8px; height: 8px; background: var(--chart-red); border-radius: 50%;"></div>
+                                        Pending
+                                    </span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-red);">312</span>
+                                </div>
+                            </div>
+
+                            <!-- UPDATED: Training Completed Section -->
+                            <div class="panel" style="flex: 1;">
+                                <h2>Training Completed</h2>
+                                <div class="list-item">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <!-- Placeholder Avatar -->
+                                        <div style="width: 35px; height: 35px; background: url('https://i.pravatar.cc/150?img=11') center/cover; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"></div>
+                                        <div>
+                                            <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">Emily Clark</h4>
+                                            <p style="font-size: 0.75rem; color: var(--text-muted);">HR Manager</p>
+                                        </div>
+                                    </div>
+                                    <span style="color: var(--chart-green); font-size: 0.85rem; font-weight: 600;">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POSCO VIEW -->
+                <div id="view-posco" class="view-section">
+                    <div class="posh-layout">
+                        
+                        <!-- Left Column -->
+                        <div class="posh-main-column">
+                            
+                            <!-- Split Row -->
+                            <div class="split-row">
+                                
+                                <!-- Part 1: Posco Training Complete -->
+                                <div class="posh-card">
+                                    <div class="posh-card-header">
+                                        <h2>Posco Training Complete</h2>
+                                        <i class="ri-pie-chart-2-line" style="color: var(--accent-color);"></i>
+                                    </div>
+                                    <div class="posh-card-body pie-chart-container">
+                                        <div class="pie-chart"></div>
+                                        
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-green);"></div>
+                                                <span>Complete (75%)</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-red);"></div>
+                                                <span>Pending (25%)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Part 2: Posco Registrations (GREEN LINE) -->
+                                <div class="posh-card">
+                                    <div class="posh-card-header">
+                                        <h2>Posco Registrations</h2>
+                                        <!-- Icon matches green theme -->
+                                        <i class="ri-line-chart-line" style="color: var(--chart-green);"></i>
+                                    </div>
+                                    <div class="posh-card-body">
+                                        <!-- SVG Line Chart with GREEN style -->
+                                        <div style="flex: 1; display: flex; align-items: flex-end; padding-bottom: 10px;">
+                                            <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                                                <!-- Changed fill to green tint -->
+                                                <path class="line-chart-area" d="M0,50 L0,35 L20,25 L40,30 L60,15 L80,20 L100,5 L100,50 Z" 
+                                                      style="fill: rgba(46, 204, 113, 0.2); stroke: none;" />
+                                                <!-- Changed stroke to green and updated drop-shadow -->
+                                                <polyline class="line-chart-path" points="0,35 20,25 40,30 60,15 80,20 100,5" 
+                                                          style="stroke: var(--chart-green); filter: drop-shadow(0 0 5px var(--chart-green));" />
+                                                <circle cx="0" cy="35" r="2" fill="white" />
+                                                <circle cx="20" cy="25" r="2" fill="white" />
+                                                <circle cx="40" cy="30" r="2" fill="white" />
+                                                <circle cx="60" cy="15" r="2" fill="white" />
+                                                <circle cx="80" cy="20" r="2" fill="white" />
+                                                <circle cx="100" cy="5" r="2" fill="white" />
+                                            </svg>
+                                        </div>
+                                        <div class="chart-labels">
+                                            <span>Jan</span>
+                                            <span>Feb</span>
+                                            <span>Mar</span>
+                                            <span>Apr</span>
+                                            <span>May</span>
+                                            <span>Jun</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Bottom Card: Posco Recent Registrations (SCHOOLS) -->
+                            <div class="posh-card" style="flex: 1;">
+                                <div class="posh-card-header">
+                                    <h2>Posco Recent Registrations</h2>
+                                    <button style="background: rgba(255,255,255,0.1); border: 1px solid white; color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; cursor: pointer;">View All</button>
+                                </div>
+                                <div class="posh-card-body">
+                                    <ul style="list-style: none;">
+                                        <!-- School 1 -->
+                                        <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
+                                            <div style="display: flex; align-items: center; gap: 15px;">
+                                                <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
+                                                    <i class="ri-school-line" style="color: #a2d2ff; font-size: 1.2rem;"></i>
+                                                </div>
+                                                <div>
+                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Greenwood High School</h4>
+                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 10 mins ago</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- Right Side Column -->
+                        <div class="posh-side-column">
+                            
+                            <!-- QUICK STATS SECTION -->
+                            <div class="card" style="height: auto;">
+                                <h3>Quick Stats (Posco)</h3>
+                                
+                                <!-- Total -->
+                                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                    <span style="color: var(--text-muted);">Total Registrations</span>
+                                    <span style="font-size: 1.2rem; font-weight: 600;">1,250</span>
+                                </div>
+
+                                <!-- Completed -->
+                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 8px; height: 8px; background: var(--chart-green); border-radius: 50%;"></div>
+                                        Completed
+                                    </span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-green);">938</span>
+                                </div>
+
+                                <!-- Pending -->
+                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                        <div style="width: 8px; height: 8px; background: var(--chart-red); border-radius: 50%;"></div>
+                                        Pending
+                                    </span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-red);">312</span>
+                                </div>
+                            </div>
+
+                            <!-- Posco Training Completed Section -->
+                            <div class="panel" style="flex: 1;">
+                                <h2>Posco Training Completed</h2>
+                                <div class="list-item">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <!-- Placeholder Avatar -->
+                                        <div style="width: 35px; height: 35px; background: url('https://i.pravatar.cc/150?img=12') center/cover; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"></div>
+                                        <div>
+                                            <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">Aryan Sharma</h4>
+                                            <p style="font-size: 0.75rem; color: var(--text-muted);">Student - Class 10</p>
+                                        </div>
+                                    </div>
+                                    <span style="color: var(--chart-green); font-size: 0.85rem; font-weight: 600;">100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW SETTINGS VIEW -->
+                <div id="view-settings" class="view-section">
+                    <div class="settings-layout">
+                        
+                        <!-- LEFT COLUMN: 4 CARDS -->
+                        <div class="settings-left">
+                            
+                            <!-- Card 1: Profile (BIGGER CARD) -->
+                            <div class="settings-card profile-card">
+                                <h3><i class="ri-user-settings-line"></i> Edit Profile</h3>
+                                
+                                <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; width: 100%; margin-top: 20px;">
+                                    
+                                    <!-- Avatar Upload -->
+                                    <div style="position: relative; cursor: pointer;">
+                                        <div style="width: 100px; height: 100px; background: url('https://i.pravatar.cc/150?img=32') center/cover; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); box-shadow: 0 5px 15px rgba(0,0,0,0.2);"></div>
+                                        <div style="position: absolute; bottom: 0; right: 0; background: var(--accent-color); color: #240046; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; border: 2px solid #240046;">
+                                            <i class="ri-camera-line"></i>
+                                        </div>
+                                    </div>
+
+                                    <!-- Inputs -->
+                                    <div style="width: 100%;">
+                                        <label>Full Name</label>
+                                        <input type="text" value="Alex Doe" class="glass-input">
+                                    </div>
+
+                                    <div style="width: 100%;">
+                                        <label>Email Address</label>
+                                        <input type="email" value="alex.doe@admin.com" class="glass-input">
+                                    </div>
+
+                                    <div style="width: 100%;">
+                                        <label>Role</label>
+                                        <input type="text" value="Super Admin" class="glass-input" disabled style="opacity: 0.7; cursor: not-allowed;">
+                                    </div>
+
+                                    <button style="width: 100%; background: var(--accent-color); color: #240046; font-weight: 600; padding: 10px; border: none; border-radius: 8px; cursor: pointer; margin-top: 10px;">Save Changes</button>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Notifications -->
+                            <div class="settings-card">
+                                <h3><i class="ri-notification-badge-line"></i> Notifications</h3>
+                                <div class="toggle-row">
+                                    <span style="color: var(--text-muted); font-size: 0.9rem;">Email Alerts</span>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="toggle-row">
+                                    <span style="color: var(--text-muted); font-size: 0.9rem;">Push Notifications</span>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: Security -->
+                            <div class="settings-card">
+                                <h3><i class="ri-shield-keyhole-line"></i> Security</h3>
+                                <div style="margin-top: 10px;">
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                        <span style="color: var(--text-muted); font-size: 0.9rem;">2FA Status</span>
+                                        <span style="color: var(--chart-green); font-size: 0.9rem;">Enabled</span>
+                                    </div>
+                                    <button style="width: 100%; background: rgba(255,255,255,0.1); border: none; padding: 8px; color: white; border-radius: 8px; cursor: pointer; text-align: center; margin-top: 5px;">Change Password</button>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: System -->
+                            <div class="settings-card">
+                                <h3><i class="ri-settings-5-line"></i> System</h3>
+                                <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                                        <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Version</span>
+                                        <span style="color: white; font-weight: 500;">2.4.0</span>
+                                    </div>
+                                    <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; text-align: center;">
+                                        <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Language</span>
+                                        <span style="color: white; font-weight: 500;">EN</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- RIGHT COLUMN: 1 LONG CARD -->
+                        <div class="settings-right" style="height: 100%;">
+                            <div class="panel" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+                                <div style="margin-bottom: 30px;">
+                                    <i class="ri-palette-line" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 10px;"></i>
+                                    <h2 style="font-size: 1.8rem; margin-bottom: 10px; border-bottom: none;">Appearance</h2>
+                                    <p style="color: var(--text-muted); font-size: 0.95rem;">Customize your dashboard background theme.</p>
+                                </div>
+                                
+                                <div class="theme-grid">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="theme-option" onclick="changeTheme('purple')" 
+                                             style="background: linear-gradient(45deg, #160f29, #240046, #3c096c);">
+                                        </div>
+                                        <p class="theme-label">Original Purple</p>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="theme-option" onclick="changeTheme('ocean')" 
+                                             style="background: linear-gradient(45deg, #0F2027, #203A43, #2C5364);">
+                                        </div>
+                                        <p class="theme-label">Ocean Depths</p>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="theme-option" onclick="changeTheme('forest')" 
+                                             style="background: linear-gradient(45deg, #00251a, #004d40, #1b5e20);">
+                                        </div>
+                                        <p class="theme-label">Deep Forest</p>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="theme-option" onclick="changeTheme('sunset')" 
+                                             style="background: linear-gradient(45deg, #2b0808, #6d1b08, #a52a0a);">
+                                        </div>
+                                        <p class="theme-label">Sunset Fire</p>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div class="theme-option" onclick="changeTheme('midnight')" 
+                                             style="background: linear-gradient(45deg, #000000, #1f1c2c, #232526);">
+                                        </div>
+                                        <p class="theme-label">Midnight</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const menuItems = document.querySelectorAll('.menu a');
+        const sections = document.querySelectorAll('.view-section');
+        const pageTitle = document.getElementById('page-title');
+
+        // --- NEW: Variables for Mobile Menu ---
+        const mobileBtn = document.getElementById('mobile-toggle-btn');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('data-target');
+                if (targetId) {
+                    e.preventDefault();
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+
+                    sections.forEach(section => {
+                        section.classList.remove('active-view');
+                        section.style.display = 'none'; 
+                    });
+
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.style.display = 'block';
+                        setTimeout(() => {
+                            targetSection.classList.add('active-view');
+                        }, 10);
+                    }
+                    pageTitle.innerText = this.querySelector('span').innerText;
+
+                    // --- NEW: Close mobile sidebar automatically after clicking a link ---
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-active');
+                    }
+                }
+            });
+        });
+
+        const toggleBtn = document.getElementById('menu-toggle');
+        const dashboard = document.getElementById('dashboard');
+
+        // Only add listener if the desktop toggle button is visible/exists
+        if(toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                dashboard.classList.toggle('collapsed');
+            });
+        }
+
+        // --- NEW: MOBILE MENU TOGGLE LOGIC ---
+        if(mobileBtn) {
+            mobileBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent immediate closing
+                sidebar.classList.toggle('mobile-active');
+            });
+        }
+
+        // --- NEW: Close sidebar when clicking outside on the main content ---
+        mainContent.addEventListener('click', () => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-active')) {
+                sidebar.classList.remove('mobile-active');
+            }
+        });
+
+        // Function to change Background Theme
+        function changeTheme(theme) {
+            const body = document.body;
+            let gradient = '';
+
+            switch(theme) {
+                case 'purple':
+                    gradient = 'linear-gradient(45deg, #160f29, #240046, #3c096c)';
+                    break;
+                case 'ocean':
+                    gradient = 'linear-gradient(45deg, #0F2027, #203A43, #2C5364)';
+                    break;
+                case 'forest':
+                    gradient = 'linear-gradient(45deg, #00251a, #004d40, #1b5e20)';
+                    break;
+                case 'sunset':
+                    gradient = 'linear-gradient(45deg, #2b0808, #6d1b08, #a52a0a)';
+                    break;
+                case 'midnight':
+                    gradient = 'linear-gradient(45deg, #000000, #1f1c2c, #232526)';
+                    break;
+                default:
+                    gradient = 'linear-gradient(45deg, #160f29, #240046, #3c096c)';
+            }
+
+            body.style.background = gradient;
+            body.style.backgroundSize = '400% 400%';
+        }
+    </script>
+</body>
+</html>
