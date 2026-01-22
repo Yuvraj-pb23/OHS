@@ -29,7 +29,7 @@ nav.navbar {
   will-change: transform;
 }
 
-.logo img {
+/* .logo img {
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -41,7 +41,7 @@ nav.navbar {
 
 .logo img:hover {
   transform: scale(1.1);
-}
+} */
 
 .nav-links {
   display: flex;

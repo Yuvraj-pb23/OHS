@@ -17,7 +17,27 @@
 
   <style>
     /* =========================================
-       0. CRISPY TYPOGRAPHY & HIGHLIGHTS
+       0. IMAGE PROTECTION STYLES (ADDED)
+       ========================================= */
+    img {
+      /* Prevent dragging the image */
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      
+      /* Prevent selecting the image (highlighting) */
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      
+      /* Optional: prevents touch-and-hold context menu on mobile */
+      -webkit-touch-callout: none; 
+    }
+
+    /* =========================================
+       1. CRISPY TYPOGRAPHY & HIGHLIGHTS
        ========================================= */
     .hero-big-title {
       font-size: 3.5rem; font-weight: 800; line-height: 1.1;
@@ -1152,6 +1172,29 @@
     AOS.init({ duration: 800, easing: "ease-in-out", once: false, offset: 100 });
     
     document.addEventListener("DOMContentLoaded", () => {
+      
+      // ============================================
+      // ADDED: DISABLE IMAGE SAVE & DRAG
+      // ============================================
+      
+      // 1. Disable Right-Click on Images (Context Menu)
+      document.addEventListener('contextmenu', function(e) {
+          if (e.target.nodeName === 'IMG') {
+              e.preventDefault();
+          }
+      }, false);
+
+      // 2. Disable Drag-and-Drop on Images
+      document.addEventListener('dragstart', function(e) {
+          if (e.target.nodeName === 'IMG') {
+              e.preventDefault();
+          }
+      }, false);
+      
+      // ============================================
+      // END PROTECTION SCRIPT
+      // ============================================
+
       const overlay = document.getElementById('magicOverlay');
       const closeBtn = document.getElementById('magicCloseBtn');
       if (!sessionStorage.getItem('popupSeen')) {

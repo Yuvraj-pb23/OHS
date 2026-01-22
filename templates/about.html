@@ -17,6 +17,26 @@
 
     <style>
         /* ============================
+           0. IMAGE PROTECTION (ADDED)
+           ============================ */
+        img {
+            /* Disable dragging */
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            
+            /* Disable selection */
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            
+            /* Disable mobile touch menu */
+            -webkit-touch-callout: none;
+        }
+
+        /* ============================
            1. CORE SETTINGS
            ============================ */
         :root {
@@ -538,6 +558,21 @@
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
+      
+      // ============================================
+      // ADDED: PROTECT IMAGES (Disable Save/Drag)
+      // ============================================
+      document.addEventListener('contextmenu', e => {
+          if (e.target.tagName === 'IMG') e.preventDefault();
+      });
+
+      document.addEventListener('dragstart', e => {
+          if (e.target.tagName === 'IMG') e.preventDefault();
+      });
+      // ============================================
+      // END PROTECTION
+      // ============================================
+
       AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true });
       const initSlider = (selector, reverse = false) => {
         new Swiper(selector, {
