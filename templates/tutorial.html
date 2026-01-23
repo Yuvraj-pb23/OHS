@@ -435,10 +435,12 @@
                                 </a>
                             {% endif %}
                         {% else %}
+                            <!-- INDIVIDUAL: Go to Form directly -->
                             <a href="{% url 'individual_subscription' 'POSH Act' %}" class="sub-btn btn-posh-ind">
                                 Individual Access
                             </a>
-                            <a href="{% url 'company_subscription' 'POSH Act' %}" class="sub-btn btn-posh-comp">
+                            <!-- COMPANY: Go to Price Calculator (posh_c.html) -->
+                            <a href="{% url 'posh_c_page' %}" class="sub-btn btn-posh-comp">
                                 Company License
                             </a>
                         {% endif %}
@@ -480,67 +482,6 @@
         </div>
     </section>
 
-    <!-- 3. CORE SERVICES SECTION (From Page 1) -->
-    <!-- <section id="core-services">
-        <div class="container">
-            <div class="text-center section-title" data-aos="fade-up">
-                <h2>Our Core Services</h2>
-                <p class="text-muted">Specialized solutions designed for your organization.</p>
-            </div>
-            <div class="row g-4 ">
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-chalkboard-teacher fa-2x"></i></div>
-                        <h5>POSH Training Programs</h5>
-                        <p>Educating employees on POSH guidelines, workplace respect, and legal compliance.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="150">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-file-shield fa-2x"></i></div>
-                        <h5>End-to-End POSH Compliance</h5>
-                        <p>Comprehensive solutions for policy creation, training, and reporting.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-file-contract fa-2x"></i></div>
-                        <h5>POSH Policy Formulation</h5>
-                        <p>Drafting customized anti-sexual harassment policies for your organization.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="250">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-desktop fa-2x"></i></div>
-                        <h5>She-Box Registration</h5>
-                        <p>Assistance with the government's online complaint management system.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-headset fa-2x"></i></div>
-                        <h5>Legal Support & Query Desk</h5>
-                        <p>Expert legal advice and support for all your POSH-related queries.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="350">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-users fa-2x"></i></div>
-                        <h5>External Member Support</h5>
-                        <p>Providing impartial external members for your Internal Committee.</p>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
-                    <div class="service-card text-center">
-                        <div class="icon-wrapper"><i class="fas fa-child-reaching fa-2x"></i></div>
-                        <h5>POCSO Compliance</h5>
-                        <p>Legal guidance and safety frameworks for schools and child-care institutions.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section> -->
-    
     <!-- 4. DETAILED TRAINING PROGRAMS (From Page 1) -->
     <section id="training" class="training-section">
         <div class="container">

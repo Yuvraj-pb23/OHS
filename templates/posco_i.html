@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POCSO Compliance Subscription</title>
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            /* Warm Safety Colors */
+            --accent-color: #ff9f43; 
+            --accent-glow: rgba(255, 159, 67, 0.6);
+            /* Make glass background very transparent for the effect to work */
+            --glass-bg: rgba(255, 255, 255, 0.05); 
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            /* Background Image Setup */
+            /* Added a dark fallback color (#1a2533) so white gaps don't appear */
+            background: #1a2533 url('./footer-logo.png') no-repeat center center;
+            background-size: contain; 
+            position: relative;
+            overflow-x: hidden; /* Prevents scrollbar if image is huge */
+        }
+
+        /* Gradient Overlay - Reduced opacity so image shows through */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            /* Opacity lowered to 0.5 (was 0.8) to let the image shine through */
+            background: linear-gradient(45deg, rgba(34, 47, 62, 0.5), rgba(10, 61, 98, 0.5));
+            backdrop-filter: blur(3px); /* Slight blur on the background itself */
+            z-index: 0;
+        }
+
+        /* --- GLASS CARD --- */
+        .glass-card {
+            position: relative;
+            z-index: 1; /* Ensures card sits ON TOP of the overlay */
+            width: 450px;
+            padding: 40px;
+            border-radius: 24px;
+            
+            /* The Magic: Low opacity background + Blur */
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px); /* Strong blur for the frosted look */
+            -webkit-backdrop-filter: blur(20px);
+            
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); /* Deep shadow for depth */
+            color: white;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* --- BADGE --- */
+        .badge {
+            background: var(--accent-color);
+            color: #222;
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        /* --- HEADERS --- */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 0.9rem; color: #e0e0e0; margin-top: 5px;}
+
+        /* --- CALCULATOR SECTION --- */
+        .calculator-box {
+            background: rgba(0, 0, 0, 0.2); /* Dark semi-transparent box inside */
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .input-group label { font-size: 0.9rem; font-weight: 500; color: #ddd; }
+
+        /* Input Styling */
+        .num-input {
+            width: 90px;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            color: white;
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.1rem;
+            outline: none;
+        }
+        
+        .num-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+        /* Slider Styling */
+        .range-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .range-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transition: transform 0.2s;
+        }
+
+        .range-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+
+        /* Price Display */
+        .total-price {
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .calculation-text { font-size: 0.8rem; opacity: 0.8; margin-bottom: 2px; }
+
+        .price-display {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-shadow: 0 0 25px rgba(255, 159, 67, 0.4);
+            line-height: 1.1;
+        }
+        
+        .price-display span { font-size: 1.4rem; vertical-align: top; margin-right: 4px; }
+        .period { font-size: 0.85rem; color: #ccc; display: block; }
+
+        /* --- FEATURES LIST --- */
+        .features {
+            margin: 25px 0;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        .features ul { list-style: none; }
+        
+        .features li {
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: flex-start;
+            color: #f0f0f0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5); /* Improves text readability over img */
+        }
+
+        .features li i {
+            color: var(--accent-color);
+            margin-right: 12px;
+            margin-top: 4px;
+            font-size: 0.9rem;
+        }
+
+        /* --- BUTTON --- */
+        .btn-subscribe {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #ff9f43, #ff6b6b);
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-subscribe:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.6);
+        }
+
+        @media (max-width: 480px) {
+            .glass-card { width: 90%; padding: 30px 20px; }
+            .price-display { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-card">
+        <div class="header">
+            <span class="badge">Child Safety Act</span>
+            <h2>POCSO Compliance</h2>
+            <p>Training for Schools & Institutions</p>
+        </div>
+
+        <div class="calculator-box">
+            <div class="input-group">
+                <label>Staff / Teachers:</label>
+                <input type="number" id="pocsoNumInput" class="num-input" value="25" min="1">
+            </div>
+            
+            <input type="range" id="pocsoRange" class="range-slider" min="1" max="200" value="25">
+
+            <div class="total-price">
+                <div class="calculation-text" id="pocsoMath">25 staff x ₹1000</div>
+                <div class="price-display">
+                    <span>₹</span><span id="pocsoTotal">25,000</span>
+                </div>
+                <span class="period">Billed Annually</span>
+            </div>
+        </div>
+
+        <div class="features">
+            <ul>
+                <li><i class="fa-solid fa-child-reaching"></i> Understanding Child Abuse Signs</li>
+                <li><i class="fa-solid fa-gavel"></i> Legal Responsibility (Section 19)</li>
+                <li><i class="fa-solid fa-user-shield"></i> Reporting Mechanisms & Privacy</li>
+                <li><i class="fa-solid fa-handshake-angle"></i> Safe Interaction Guidelines</li>
+            </ul>
+        </div>
+
+        <button class="btn-subscribe" onclick="alert('Redirecting to Institution Details...')">
+            Enable Child Safety
+        </button>
+    </div>
+
+    <script>
+        /* --- CONFIGURATION --- */
+        const POCSO_PRICE_PER_USER = 1000; 
+        
+        /* --- ELEMENTS --- */
+        const range = document.getElementById('pocsoRange');
+        const numInput = document.getElementById('pocsoNumInput');
+        const totalDisplay = document.getElementById('pocsoTotal');
+        const mathDisplay = document.getElementById('pocsoMath');
+
+        /* --- FORMATTER --- */
+        const formatMoney = (num) => new Intl.NumberFormat('en-IN').format(num);
+
+        /* --- LOGIC --- */
+        function updatePocsoCost(val) {
+            let count = parseInt(val);
+            if (!count || count < 1) count = 1;
+
+            range.value = count;
+            numInput.value = count;
+
+            const total = count * POCSO_PRICE_PER_USER;
+
+            totalDisplay.innerText = formatMoney(total);
+            mathDisplay.innerText = `${count} staff x ₹${POCSO_PRICE_PER_USER}`;
+        }
+
+        /* --- LISTENERS --- */
+        range.addEventListener('input', (e) => updatePocsoCost(e.target.value));
+        numInput.addEventListener('input', (e) => updatePocsoCost(e.target.value));
+
+        // Init
+        updatePocsoCost(25);
+    </script>
+
+</body>
+</html>
