@@ -236,6 +236,26 @@
             z-index: 5;
         }
 
+        /* BACK BUTTON STYLE */
+        .back-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-right: 15px;
+            transition: 0.3s;
+        }
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--accent-color);
+        }
+
         /* NEW: Mobile Menu Button (Hidden on Desktop) */
         .mobile-menu-btn {
             display: none;
@@ -814,9 +834,14 @@
                     <i class="ri-menu-2-line"></i>
                 </div>
 
+                <!-- ADDED: BACK BUTTON -->
+                <a href="javascript:history.back()" class="back-button" title="Go Back">
+                    <i class="ri-arrow-left-line"></i>
+                </a>
+
                 <h2 id="page-title" style="color: white; font-weight: 500;">Overview</h2>
                 
-                <div class="search-bar">
+                <div class="search-bar" style="margin-left: 20px;">
                     <i class="ri-search-line" style="color: var(--text-muted)"></i>
                     <input type="text" placeholder="Search data, reports...">
                 </div>

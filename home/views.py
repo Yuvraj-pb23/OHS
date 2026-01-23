@@ -13,13 +13,13 @@ from django.db.models import Q
 from django.contrib.auth.decorators import user_passes_test
 
 # Models
+# Ensure your User model has 'phone' and 'department' fields if you want to save them to the DB.
 from .models import User, SubscriptionPlan, Subscription, Payment, Organization, OrganizationMember
+# Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
 
 
-
-
-# --- 1. LOGIN REDIRECT LOGIC (UPDATED) ---
+# --- 1. LOGIN REDIRECT LOGIC ---
 @login_required
 def custom_login_redirect(request):
     user = request.user
@@ -34,7 +34,6 @@ def custom_login_redirect(request):
         
     # 2. USER (Employee/Individual) -> Direct to Training Page
     elif user.account_type in ['EMPLOYEE', 'INDIVIDUAL']:
-        # ... (keep your existing posh/pocso check logic here)
         has_posh = Subscription.objects.filter(
             Q(user=user) | Q(organization__organizationmember__user=user),
             status='ACTIVE',
@@ -56,6 +55,7 @@ def custom_login_redirect(request):
         return redirect('tutorial') 
         
     return redirect('home')
+
 # --- 2. COMPANY SUBSCRIPTION (SIGNUP) ---
 def company_subscription(request, plan_type):
     db_type = 'POSH' if 'POSH' in plan_type else 'POCSO'
@@ -133,7 +133,7 @@ def add_employee(request):
         return redirect('company_dashboard')
     return redirect('company_dashboard')
 
-# --- 4. COMPANY DASHBOARD (UPDATED FOR NEW HTML) ---
+# --- 4. COMPANY DASHBOARD ---
 @login_required(login_url='login')
 def company_dashboard(request):
     user = request.user
@@ -152,7 +152,6 @@ def company_dashboard(request):
     seats_remaining = org.max_users - total_employees
     
     # Placeholder Logic: Assuming 0 completed for now
-    # (You can connect this to real course progress later)
     training_completed = 0 
     training_pending = total_employees - training_completed
 
@@ -160,7 +159,6 @@ def company_dashboard(request):
         'organization': org,
         'active_plan': active_sub,
         'members': members,
-        # Stats for the top cards
         'seats_used': total_employees,
         'seats_remaining': seats_remaining,
         'total_employees': total_employees,
@@ -199,8 +197,8 @@ def individual_subscription(request, plan_type):
             messages.error(request, str(e))
 
     context = {
-    'plan_type': plan.name if plan else "Unknown Plan", 
-    'price': plan.price if plan else 0
+        'plan_type': plan.name if plan else "Unknown Plan", 
+        'price': plan.price if plan else 0
     }
     return render(request, 'subscription_details.html', context)
 
@@ -233,7 +231,7 @@ def pocso_act_page(request):
         return redirect('tutorial')
     return render(request, 'pocso_act_page.html')
 
-# --- 7. STATIC & CHATBOT ---
+# --- 7. STATIC, CHATBOT & INTERMEDIATE PAGES ---
 def index(request): return render(request, 'index.html')
 def about(request): return render(request, 'about.html')
 def resources(request): return render(request, 'resources.html')
@@ -253,6 +251,13 @@ def tutorial_view(request): return render(request, 'tutorial.html')
 def posh_assessment(request): return render(request, 'posh_assessment.html')
 def pocso_assessment(request): return render(request, 'pocso_assessment.html')
 
+def posh_c(request):
+    """
+    Renders the intermediate page for POSH Individual course details 
+    before the subscription form.
+    """
+    return render(request, 'posh_c.html')
+
 @csrf_exempt
 def chatbot_response(request):
     if request.method == 'POST':
@@ -270,21 +275,22 @@ def chatbot_response(request):
             return JsonResponse({'error': 'Error'}, status=500)
     return JsonResponse({'error': 'Post only'}, status=405)
 
-# --- 8. BULK IMPORT FEATURES ---
+# --- 8. BULK IMPORT FEATURES (UPDATED) ---
 
 @login_required
 def download_employee_template(request):
     """
-    Downloads a CSV template for bulk employee upload.
+    Downloads a CSV template for bulk employee upload with specific fields.
     """
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="employee_template.csv"'
 
     writer = csv.writer(response)
-    # Define the headers
-    writer.writerow(['Full Name', 'Email', 'Password'])
-    # Optional: Add a sample row
-    writer.writerow(['John Doe', 'john@example.com', 'SecurePass123'])
+    # 1. Define the headers exactly as requested
+    writer.writerow(['Name', 'Last name', 'Department', 'Email', 'Phone no', 'Default password'])
+    
+    # 2. Add a sample row so the user knows how to fill it
+    writer.writerow(['John', 'Doe', 'IT', 'john.doe@company.com', '9876543210', 'Welcome@123'])
     
     return response
 
@@ -311,11 +317,15 @@ def upload_employee_bulk(request):
             return redirect('company_dashboard')
             
         try:
-            # Decode file
-            file_data = csv_file.read().decode("utf-8")
+            # Decode file using utf-8-sig to handle Excel BOM automatically
+            file_data = csv_file.read().decode("utf-8-sig")
             csv_data = io.StringIO(file_data)
             reader = csv.DictReader(csv_data)
             
+            # Normalize headers (strip whitespace from CSV headers just in case)
+            if reader.fieldnames:
+                reader.fieldnames = [name.strip() for name in reader.fieldnames]
+
             added_count = 0
             
             for row in reader:
@@ -325,10 +335,13 @@ def upload_employee_bulk(request):
                     messages.warning(request, f"Limit reached. Stopped after adding {added_count} users.")
                     break
                 
-                # 2. Extract Data
-                name = row.get('Full Name', '').strip()
+                # 2. Extract Data based on your specific headers
+                first_name = row.get('Name', '').strip()
+                last_name = row.get('Last name', '').strip()
+                department = row.get('Department', '').strip()
                 email = row.get('Email', '').strip()
-                password = row.get('Password', '').strip()
+                phone = row.get('Phone no', '').strip()
+                password = row.get('Default password', '').strip()
                 
                 if not email or not password:
                     continue # Skip invalid rows
@@ -338,15 +351,27 @@ def upload_employee_bulk(request):
                     continue
 
                 try:
+                    # Create the base user
                     user = User.objects.create_user(username=email, email=email, password=password)
-                    user.first_name = name
+                    user.first_name = first_name
+                    user.last_name = last_name
                     user.account_type = 'EMPLOYEE'
+
+                    # 4. Handle Custom Fields (Department / Phone)
+                    # We check if your User model has these fields to prevent errors
+                    if hasattr(user, 'department'):
+                        user.department = department
+                    if hasattr(user, 'phone'): 
+                        user.phone = phone
+                    
                     user.save()
                     
+                    # Create Organization Member Link
                     OrganizationMember.objects.create(organization=org, user=user, role='MEMBER')
                     added_count += 1
-                except:
-                    continue # Skip row on error
+                except Exception as e:
+                    # Log error internally if needed, skipping row
+                    continue 
             
             if added_count > 0:
                 messages.success(request, f"Successfully imported {added_count} employees.")
