@@ -236,13 +236,12 @@
             z-index: 5;
         }
 
-        /* BACK BUTTON STYLE */
-        .back-button {
+        /* LOGOUT BUTTON STYLE (formerly back-button) */
+        .logout-button {
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            text-decoration: none;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 8px;
@@ -250,10 +249,11 @@
             cursor: pointer;
             margin-right: 15px;
             transition: 0.3s;
+            outline: none;
         }
-        .back-button:hover {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--accent-color);
+        .logout-button:hover {
+            background: rgba(231, 76, 60, 0.4); /* Slight red tint for logout */
+            color: white;
         }
 
         /* NEW: Mobile Menu Button (Hidden on Desktop) */
@@ -834,10 +834,13 @@
                     <i class="ri-menu-2-line"></i>
                 </div>
 
-                <!-- ADDED: BACK BUTTON -->
-                <a href="javascript:history.back()" class="back-button" title="Go Back">
-                    <i class="ri-arrow-left-line"></i>
-                </a>
+                <!-- MODIFIED: LOGOUT BUTTON INSTEAD OF BACK BUTTON -->
+                <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="logout-button" title="Logout">
+                        <i class="ri-logout-box-line"></i>
+                    </button>
+                </form>
 
                 <h2 id="page-title" style="color: white; font-weight: 500;">Overview</h2>
                 

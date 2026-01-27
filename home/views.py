@@ -30,7 +30,6 @@ from .models import (
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
 
-
 # --- 1. LOGIN REDIRECT LOGIC ---
 @login_required
 def custom_login_redirect(request):
@@ -69,11 +68,10 @@ def custom_login_redirect(request):
     return redirect("home")
 
 
-# --- 2. COMPANY SUBSCRIPTION (SIGNUP) ---
+# --- 2. COMPANY SUBSCRIPTION (FORM) ---
 def company_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
     plan = SubscriptionPlan.objects.filter(type=db_type).first()
-
     if request.method == "POST":
         comp_name = request.POST.get("company_name")
         seats = int(request.POST.get("seats", 10))
@@ -84,7 +82,6 @@ def company_subscription(request, plan_type):
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
             return redirect(request.path)
-
         try:
             with transaction.atomic():
                 user = User.objects.create_user(
@@ -261,7 +258,7 @@ def company_dashboard(request):
     return render(request, "company_dashboard.html", context)
 
 
-# --- 5. INDIVIDUAL SUBSCRIPTION ---
+# --- 4. INDIVIDUAL SUBSCRIPTION (FORM) ---
 def individual_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
     plan = SubscriptionPlan.objects.filter(type=db_type).first()
@@ -275,7 +272,6 @@ def individual_subscription(request, plan_type):
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username taken.")
             return redirect(request.path)
-
         try:
             with transaction.atomic():
                 user = User.objects.create_user(
