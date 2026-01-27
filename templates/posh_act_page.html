@@ -1,458 +1,673 @@
-{% block body %}
-{% load static %}
+{% block body %} {% load static %}
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- Google Fonts: Poppins for a modern look -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link
+  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
 
 <style>
-    :root {
-        --primary: #4e54c8;
-        --primary-gradient: linear-gradient(135deg, #4e54c8, #8f94fb);
-        --glass-surface: rgba(255, 255, 255, 0.85);
-        --glass-border: rgba(255, 255, 255, 0.6);
-        --text-dark: #2d3436;
-        --text-muted: #636e72;
-        --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        --shadow-3d: 12px 12px 24px rgba(0, 0, 0, 0.1), -10px -10px 20px rgba(255, 255, 255, 0.8);
-    }
+  :root {
+    --primary: #4e54c8;
+    --primary-gradient: linear-gradient(135deg, #4e54c8, #8f94fb);
+    --glass-surface: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --text-dark: #2d3436;
+    --text-muted: #636e72;
+    --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --shadow-3d:
+      12px 12px 24px rgba(0, 0, 0, 0.1),
+      -10px -10px 20px rgba(255, 255, 255, 0.8);
+  }
 
-    body {
-        font-family: 'Poppins', sans-serif;
-        margin: 0;
-        color: var(--text-dark);
-        /* Background Image: Corporate/Workplace vibe for POSH */
-        background: linear-gradient(rgba(78, 84, 200, 0.85), rgba(143, 148, 251, 0.8)),url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000');
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center;
-        min-height: 100vh;
-        
-    }
+  body {
+    font-family: "Poppins", sans-serif;
+    margin: 0;
+    color: var(--text-dark);
+    /* Background Image: Corporate/Workplace vibe for POSH */
+    background:
+      linear-gradient(rgba(78, 84, 200, 0.85), rgba(143, 148, 251, 0.8)),
+      url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000");
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    min-height: 100vh;
+  }
 
-    /* --- Layout --- */
+  /* --- Layout --- */
+  .lms-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: 100vh;
+    max-width: 1600px;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  /* --- Sidebar (Glass Effect) --- */
+  .sidebar {
+    background: var(--glass-surface);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 30px;
+    height: calc(100vh - 40px);
+    position: sticky;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .sidebar-brand h2 {
+    color: var(--primary);
+    margin: 0;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+
+  /* Nav Items */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 18px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-dark);
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
+  }
+
+  .nav-item:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: translateX(5px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  }
+
+  .nav-item.active {
+    background: var(--primary-gradient);
+    color: white;
+    box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
+  }
+
+  .nav-item.completed {
+    border-left: 4px solid #00b894;
+    background: rgba(0, 184, 148, 0.1);
+  }
+  .nav-item.locked {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .nav-icon {
+    margin-right: 12px;
+  }
+
+  /* --- Main Content --- */
+  .main-content {
+    padding: 10px;
+    animation: fadeIn 0.8s ease-out;
+  }
+
+  .page-header h1 {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 5px;
+  }
+  .page-header p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-top: 0;
+  }
+
+  /* --- 3D Stats Section --- */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin: 30px 0;
+  }
+
+  /* Common Card Styles */
+  .glass-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 25px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: var(--shadow-soft);
+    position: relative;
+  }
+
+  /* 3D EFFECT FOR GRAPH CARD */
+  .card-3d-lift {
+    transition:
+      transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+      box-shadow 0.4s ease;
+    transform-style: preserve-3d;
+  }
+
+  .card-3d-lift:hover {
+    transform: translateY(-10px) rotateX(2deg);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  }
+
+  .graph-header {
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* 3D EFFECT FOR PROGRESS CIRCLE */
+  .progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    flex-direction: column;
+  }
+
+  .progress-3d-outer {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    /* Neumorphic / 3D Shadow look */
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    box-shadow:
+      10px 10px 20px #d1d1d1,
+      -10px -10px 20px #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.5s ease;
+  }
+
+  .card-3d-lift:hover .progress-3d-outer {
+    transform: scale(1.05);
+  }
+
+  /* SVG Ring Rotation Animation */
+  .progress-svg {
+    transform: rotate(-90deg);
+    width: 140px;
+    height: 140px;
+  }
+  .progress-circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 12;
+  }
+  .progress-circle-fg {
+    fill: none;
+    stroke: url(#gradientColor); /* Uses SVG gradient */
+    stroke-width: 12;
+    stroke-linecap: round;
+    stroke-dasharray: 377; /* Circumference 2*pi*60 */
+    stroke-dashoffset: 377; /* Start empty */
+    transition: stroke-dashoffset 2s ease-out;
+    filter: drop-shadow(0px 4px 6px rgba(78, 84, 200, 0.4)); /* Glow effect */
+  }
+
+  .progress-text {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .progress-text h3 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--primary);
+  }
+  .progress-text span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  /* --- Video List --- */
+  .video-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .video-item {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    background: var(--glass-surface);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 16px;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .video-item:hover {
+    transform: scale(1.01);
+    background: #fff;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  .vid-thumbnail {
+    height: 170px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  .vid-thumbnail video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .badge-blue {
+    background: #e3f2fd;
+    color: #1565c0;
+  }
+  .badge-green {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+  .badge-gray {
+    background: #f5f5f5;
+    color: #757575;
+  }
+
+  /* Animation Keyframes */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+
+
+  /* Mobile Responsive */
+  @media (max-width: 1024px) {
     .lms-container {
-        display: grid;
-        grid-template-columns: 280px 1fr;
-        min-height: 100vh;
-        max-width: 1600px;
-        margin: 0 auto;
-        gap: 20px;
-        padding: 20px;
+      grid-template-columns: 1fr;
     }
-
-    /* --- Sidebar (Glass Effect) --- */
     .sidebar {
-        background: var(--glass-surface);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--glass-border);
-        border-radius: 20px;
-        padding: 30px;
-        height: calc(100vh - 40px);
-        position: sticky;
-        top: 20px;
-        display: flex;
-        flex-direction: column;
-        box-shadow: var(--shadow-soft);
+      display: none;
     }
-
-    .sidebar-brand h2 {
-        color: var(--primary);
-        margin: 0;
-        font-weight: 700;
-        letter-spacing: -0.5px;
+    .mobile-nav {
+      display: block;
+      margin-bottom: 20px;
     }
-
-    /* Nav Items */
-    .nav-item {
-        display: flex;
-        align-items: center;
-        padding: 14px 18px;
-        border-radius: 12px;
-        text-decoration: none;
-        color: var(--text-dark);
-        font-weight: 500;
-        transition: all 0.3s ease;
-        margin-bottom: 8px;
+    .mobile-back {
+      background: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      text-decoration: none;
+      color: var(--primary);
+      font-weight: 600;
     }
-
-    .nav-item:hover {
-        background: rgba(255, 255, 255, 0.5);
-        transform: translateX(5px);
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    .nav-item.active {
-        background: var(--primary-gradient);
-        color: white;
-        box-shadow: 0 5px 15px rgba(78, 84, 200, 0.4);
-    }
-
-    .nav-item.completed { border-left: 4px solid #00b894; background: rgba(0, 184, 148, 0.1); }
-    .nav-item.locked { opacity: 0.6; cursor: not-allowed; }
-    .nav-icon { margin-right: 12px; }
-
-    /* --- Main Content --- */
-    .main-content {
-        padding: 10px;
-        animation: fadeIn 0.8s ease-out;
-    }
-
-    .page-header h1 {
-        color: white;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        margin-bottom: 5px;
-    }
-    .page-header p { color: rgba(255,255,255,0.9); margin-top: 0; }
-
-    /* --- 3D Stats Section --- */
     .stats-row {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 30px;
-        margin: 30px 0;
+      grid-template-columns: 1fr;
     }
-
-    /* Common Card Styles */
-    .glass-card {
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 25px;
-        border: 1px solid rgba(255,255,255,0.4);
-        box-shadow: var(--shadow-soft);
-        position: relative;
-    }
-
-    /* 3D EFFECT FOR GRAPH CARD */
-    .card-3d-lift {
-        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
-        transform-style: preserve-3d;
-    }
-    
-    .card-3d-lift:hover {
-        transform: translateY(-10px) rotateX(2deg);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-
-    .graph-header {
-        font-weight: 600;
-        color: var(--text-muted);
-        margin-bottom: 15px;
-        display: flex;
-        justify-content: space-between;
-    }
-
-    /* 3D EFFECT FOR PROGRESS CIRCLE */
-    .progress-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        flex-direction: column;
-    }
-
-    .progress-3d-outer {
-        width: 140px;
-        height: 140px;
-        border-radius: 50%;
-        /* Neumorphic / 3D Shadow look */
-        background: linear-gradient(145deg, #ffffff, #e6e6e6);
-        box-shadow:  10px 10px 20px #d1d1d1, -10px -10px 20px #ffffff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        transition: transform 0.5s ease;
-    }
-    
-    .card-3d-lift:hover .progress-3d-outer {
-        transform: scale(1.05);
-    }
-
-    /* SVG Ring Rotation Animation */
-    .progress-svg {
-        transform: rotate(-90deg);
-        width: 140px;
-        height: 140px;
-    }
-    .progress-circle-bg { fill: none; stroke: #eee; stroke-width: 12; }
-    .progress-circle-fg { 
-        fill: none; 
-        stroke: url(#gradientColor); /* Uses SVG gradient */
-        stroke-width: 12; 
-        stroke-linecap: round;
-        stroke-dasharray: 440; /* Circumference */
-        stroke-dashoffset: 440; /* Start empty */
-        animation: fillProgress 2s ease-out forwards;
-        filter: drop-shadow(0px 4px 6px rgba(78, 84, 200, 0.4)); /* Glow effect */
-    }
-
-    .progress-text {
-        position: absolute;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .progress-text h3 { margin: 0; font-size: 1.8rem; color: var(--primary); }
-    .progress-text span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;}
-
-
-    /* --- Video List --- */
-    .video-container { display: flex; flex-direction: column; gap: 20px; }
-
     .video-item {
-        display: grid;
-        grid-template-columns: 300px 1fr;
-        gap: 25px;
-        background: var(--glass-surface);
-        backdrop-filter: blur(10px);
-        padding: 20px;
-        border-radius: 16px;
-        transition: transform 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.5);
+      grid-template-columns: 1fr;
     }
-
-    .video-item:hover {
-        transform: scale(1.01);
-        background: #fff;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    }
-
     .vid-thumbnail {
-        height: 170px;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      height: auto;
+      aspect-ratio: 16/9;
     }
-    .vid-thumbnail video { width: 100%; height: 100%; object-fit: cover; }
-
-    .badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        display: inline-block;
-        margin-bottom: 8px;
-    }
-    .badge-blue { background: #e3f2fd; color: #1565c0; }
-    .badge-green { background: #e8f5e9; color: #2e7d32; }
-    .badge-gray { background: #f5f5f5; color: #757575; }
-
-    /* Animation Keyframes */
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fillProgress {
-        to { stroke-dashoffset: 220; } /* 50% of 440 */
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 1024px) {
-        .lms-container { grid-template-columns: 1fr; }
-        .sidebar { display: none; }
-        .mobile-nav { display: block; margin-bottom: 20px;}
-        .mobile-back { 
-            background: white; padding: 10px 20px; border-radius: 30px; 
-            text-decoration: none; color: var(--primary); font-weight: 600;
-        }
-        .stats-row { grid-template-columns: 1fr; }
-        .video-item { grid-template-columns: 1fr; }
-        .vid-thumbnail { height: auto; aspect-ratio: 16/9; }
-    }
-    .mobile-nav { display: none; }
+  }
+  .mobile-nav {
+    display: none;
+  }
 </style>
 
 <div class="lms-container">
-    
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <h2>POSH Training</h2>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Safe Workplace Initiative</p>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <h2>POSH Training</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem">
+        Safe Workplace Initiative
+      </p>
+    </div>
+
+    <nav class="vertical-nav" style="margin-top: 20px">
+      <a href="#" class="nav-item active">
+        <span class="nav-icon">📊</span> Overview
+      </a>
+      <a href="#mod1" class="nav-item completed">
+        <span class="nav-icon">✅</span> 1. Introduction
+      </a>
+      <a href="#mod2" class="nav-item">
+        <span class="nav-icon">▶️</span> 2. The Workplace
+      </a>
+      <a href="#mod3" class="nav-item locked">
+        <span class="nav-icon">🔒</span> 3. Redressal
+      </a>
+      <a
+        href="{% url 'posh_assessment' %}"
+        class="nav-item"
+        style="
+          margin-top: 20px;
+          border: 1px solid var(--primary);
+          color: var(--primary);
+        "
+      >
+        <span class="nav-icon">🏆</span> Take Quiz
+      </a>
+    </nav>
+
+    <div
+      style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee"
+    >
+      <a
+        href="{% url 'tutorial' %}"
+        style="
+          text-decoration: none;
+          color: var(--text-muted);
+          font-size: 0.9rem;
+        "
+        >← Exit Course</a
+      >
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="mobile-nav">
+      <a href="{% url 'tutorial' %}" class="mobile-back">← Back to Dashboard</a>
+    </div>
+
+    <div class="page-header">
+      <h1>My Learning Progress</h1>
+      <p>
+        Track your daily activity and continue your sexual harassment prevention
+        training.
+      </p>
+    </div>
+
+    <!-- 3D Stats Row -->
+    <div class="stats-row">
+      <!-- 3D Animated Histogram -->
+      <div class="glass-card card-3d-lift">
+        <div class="graph-header">
+          <span>Daily Watch Time</span>
+          <span style="font-size: 1.2rem">📈</span>
         </div>
-
-        <nav class="vertical-nav" style="margin-top: 20px;">
-            <a href="#" class="nav-item active">
-                <span class="nav-icon">📊</span> Overview
-            </a>
-            <a href="#mod1" class="nav-item completed">
-                <span class="nav-icon">✅</span> 1. Introduction
-            </a>
-            <a href="#mod2" class="nav-item">
-                <span class="nav-icon">▶️</span> 2. The Workplace
-            </a>
-            <a href="#mod3" class="nav-item locked">
-                <span class="nav-icon">🔒</span> 3. Redressal
-            </a>
-            <a href="{% url 'posh_assessment' %}" class="nav-item" style="margin-top:20px; border:1px solid var(--primary); color:var(--primary);">
-                <span class="nav-icon">🏆</span> Take Quiz
-            </a>
-        </nav>
-
-        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid #eee;">
-            <a href="{% url 'tutorial' %}" style="text-decoration:none; color:var(--text-muted); font-size:0.9rem;">← Exit Course</a>
+        <div style="height: 220px; width: 100%">
+          <canvas id="dailyChart"></canvas>
         </div>
-    </aside>
+      </div>
 
+      <!-- 3D Animated Pie/Progress -->
+      <div class="glass-card card-3d-lift">
+        <div class="graph-header" style="justify-content: center">
+          <span>Completion Status</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-3d-outer">
+            <!-- SVG for Gradient Ring -->
+            <svg class="progress-svg">
+              <defs>
+                <linearGradient
+                  id="gradientColor"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stop-color="#4e54c8" />
+                  <stop offset="100%" stop-color="#8f94fb" />
+                </linearGradient>
+              </defs>
+              <circle
+                class="progress-circle-bg"
+                cx="70"
+                cy="70"
+                r="60"
+              ></circle>
+              <!-- 
+                 circumference = 2 * pi * 60 ≈ 377
+                 stroke-dasharray = 377
+                 stroke-dashoffset = 377 - (377 * percentage / 100)
+              -->
+              <circle
+                class="progress-circle-fg"
+                cx="70"
+                cy="70"
+                r="60"
+                style="
+                  stroke-dasharray: 377;
+                  stroke-dashoffset: calc(377 - (377 * {{ percent_complete }} / 100));
+                "
+              ></circle>
+            </svg>
+            <div class="progress-text">
+              <h3>{{ percent_complete }}%</h3>
+              <span>Done</span>
+            </div>
+          </div>
+          <p style="margin: 15px 0 0 0; font-size: 0.85rem; color: #888">
+            {{ completed_count }} of {{ total_modules }} Modules
+          </p>
+        </div>
+      </div>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <h2 style="color: white; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3)">
+      Video Modules
+    </h2>
+
+    <!-- Video Playlist -->
+    <div class="video-container">
+      {% for item in modules %}
+      <div class="video-item" id="mod{{ item.obj.id }}" data-module-id="{{ item.obj.id }}">
         
-        <div class="mobile-nav">
-            <a href="{% url 'tutorial' %}" class="mobile-back">← Back to Dashboard</a>
-        </div>
+        {% if item.is_locked %}
+          <!-- LOCKED STATE -->
+          <div
+            class="vid-thumbnail"
+            style="
+              background: #eee;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            "
+          >
+            <span style="font-size: 2rem; opacity: 0.3">🔒</span>
+          </div>
+          <div class="vid-info">
+            <span class="badge badge-gray">Locked</span>
+            <h3>{{ item.obj.order }}. {{ item.obj.title }}</h3>
+            <p>{{ item.obj.description|truncatechars:100 }}</p>
+          </div>
 
-        <div class="page-header">
-            <h1>My Learning Progress</h1>
-            <p>Track your daily activity and continue your sexual harassment prevention training.</p>
-        </div>
-
-        <!-- 3D Stats Row -->
-        <div class="stats-row">
+        {% else %}
+          <!-- UNLOCKED STATE -->
+          <div class="vid-thumbnail">
+            <video 
+              controls 
+              class="training-video"
+              data-id="{{ item.obj.id }}"
+              poster="{% if item.obj.thumbnail %}{{ item.obj.thumbnail.url }}{% endif %}"
+            >
+              <source src="{{ item.obj.video_file.url }}" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+          <div class="vid-info">
+            {% if item.is_completed %}
+              <span class="badge badge-green">Completed</span>
+            {% else %}
+              <span class="badge badge-blue">Now Playing</span>
+            {% endif %}
             
-            <!-- 3D Animated Histogram -->
-            <div class="glass-card card-3d-lift">
-                <div class="graph-header">
-                    <span>Daily Watch Time</span>
-                    <span style="font-size:1.2rem;">📈</span>
-                </div>
-                <div style="height: 220px; width: 100%;">
-                    <canvas id="dailyChart"></canvas>
-                </div>
-            </div>
+            <h3>{{ item.obj.order }}. {{ item.obj.title }}</h3>
+            <p>{{ item.obj.description }}</p>
+          </div>
+        {% endif %}
 
-            <!-- 3D Animated Pie/Progress -->
-            <div class="glass-card card-3d-lift">
-                <div class="graph-header" style="justify-content: center;">
-                    <span>Completion Status</span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-3d-outer">
-                        <!-- SVG for Gradient Ring -->
-                        <svg class="progress-svg">
-                            <defs>
-                                <linearGradient id="gradientColor" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stop-color="#4e54c8" />
-                                    <stop offset="100%" stop-color="#8f94fb" />
-                                </linearGradient>
-                            </defs>
-                            <circle class="progress-circle-bg" cx="70" cy="70" r="60"></circle>
-                            <circle class="progress-circle-fg" cx="70" cy="70" r="60"></circle>
-                        </svg>
-                        <div class="progress-text">
-                            <h3>50%</h3>
-                            <span>Done</span>
-                        </div>
-                    </div>
-                    <p style="margin: 15px 0 0 0; font-size: 0.85rem; color: #888;">2 of 4 Modules</p>
-                </div>
-            </div>
-        </div>
-
-        <h2 style="color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">Video Modules</h2>
-
-        <!-- Video Playlist -->
-        <div class="video-container">
-            
-            <div class="video-item" id="mod1">
-                <div class="vid-thumbnail">
-                    <video controls>
-                        <source src="{% static 'videos/posh_intro.mp4' %}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="vid-info">
-                    <span class="badge badge-green">Completed</span>
-                    <h3>1. Introduction to POSH Act</h3>
-                    <p>Understanding the basics, legal definitions, and why this act is crucial for a safe working environment.</p>
-                </div>
-            </div>
-
-            <div class="video-item" id="mod2">
-                <div class="vid-thumbnail">
-                    <video controls>
-                        <source src="{% static 'videos/posh_workplace.mp4' %}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="vid-info">
-                    <span class="badge badge-blue">Now Playing</span>
-                    <h3>2. What constitutes a "Workplace"?</h3>
-                    <p>Learning that the workplace extends beyond the office to include client sites, transport, and off-site gatherings.</p>
-                </div>
-            </div>
-
-            <div class="video-item" id="mod3">
-                <div class="vid-thumbnail" style="background:#eee; display:flex; align-items:center; justify-content:center;">
-                    <span style="font-size:2rem; opacity:0.3;">🔒</span>
-                </div>
-                <div class="vid-info">
-                    <span class="badge badge-gray">Locked</span>
-                    <h3>3. Filing a Complaint</h3>
-                    <p>Detailed steps on how to approach the Internal Committee (IC) and the redressal mechanism.</p>
-                </div>
-            </div>
-
-        </div>
-    </main>
+      </div>
+      {% empty %}
+      <p style="text-align:center; color:white;">No training modules available yet.</p>
+      {% endfor %}
+    </div>
+  </main>
 </div>
 
-<!-- Script for Animated 3D Histogram -->
+<!-- Script for Animated 3D Histogram & Interaction -->
 <script>
-    const ctx = document.getElementById('dailyChart').getContext('2d');
-    
-    // Gradient for the bars to give 3D volume feel
-    let barGradient = ctx.createLinearGradient(0, 0, 0, 400);
-    barGradient.addColorStop(0, '#4e54c8');
-    barGradient.addColorStop(1, '#8f94fb');
+  // 1. Chart Initialization
+  const ctx = document.getElementById("dailyChart").getContext("2d");
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            datasets: [{
-                label: 'Minutes',
-                data: [10, 45, 25, 60, 20, 5, 10],
-                backgroundColor: barGradient,
-                borderRadius: 6, // Rounded tops
-                borderWidth: 0,
-                barPercentage: 0.6,
-                // Add shadow to bars using a plugin or just simple config
-                hoverBackgroundColor: '#2c3e50',
-            }]
+  // Gradient for the bars to give 3D volume feel
+  let barGradient = ctx.createLinearGradient(0, 0, 0, 400);
+  barGradient.addColorStop(0, "#4e54c8");
+  barGradient.addColorStop(1, "#8f94fb");
+
+  // Inject Data from Django
+  const chartLabels = JSON.parse('{{ chart_labels|safe }}');
+  const chartData = JSON.parse('{{ chart_data|safe }}');
+
+  new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels: chartLabels,
+      datasets: [
+        {
+          label: "Minutes",
+          data: chartData,
+          backgroundColor: barGradient,
+          borderRadius: 6, // Rounded tops
+          borderWidth: 0,
+          barPercentage: 0.6,
+          hoverBackgroundColor: "#2c3e50",
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-                duration: 2000,
-                easing: 'easeOutBounce' // Bouncy entrance
-            },
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: 'rgba(78, 84, 200, 0.9)',
-                    titleColor: '#fff',
-                    padding: 10,
-                    cornerRadius: 8,
-                    displayColors: false
-                }
-            },
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: 'rgba(0,0,0,0.05)', borderDash: [5, 5] },
-                    border: { display: false }
-                },
-                x: { 
-                    grid: { display: false },
-                    border: { display: false }
-                }
-            }
-        }
-    });
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: {
+        duration: 2000,
+        easing: "easeOutBounce", // Bouncy entrance
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: "rgba(78, 84, 200, 0.9)",
+          titleColor: "#fff",
+          padding: 10,
+          cornerRadius: 8,
+          displayColors: false,
+        },
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: "rgba(0,0,0,0.05)", borderDash: [5, 5] },
+          border: { display: false },
+        },
+        x: {
+          grid: { display: false },
+          border: { display: false },
+        },
+      },
+    },
+  });
+
+  // 2. Video Tracking & Progress
+  document.addEventListener('DOMContentLoaded', function() {
+      const videos = document.querySelectorAll('.training-video');
+      let watchInterval = null;
+
+      // CSRF Helper
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      // Helper to send POST
+      async function sendPost(url, data = {}) {
+          try {
+              const response = await fetch(url, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRFToken': csrftoken
+                  },
+                  body: JSON.stringify(data)
+              });
+              return await response.json();
+          } catch (error) {
+              console.error('Error:', error);
+          }
+      }
+
+      // Track Watch Time (Ping every 60s)
+      function startWatchTracking() {
+          if (watchInterval) return;
+          watchInterval = setInterval(() => {
+              // Check if ANY video is playing
+              let isPlaying = false;
+              videos.forEach(v => {
+                  if (!v.paused && !v.ended) isPlaying = true;
+              });
+
+              if (isPlaying) {
+                  sendPost("{% url 'update_watch_time' %}")
+                      .then(data => console.log("Watch time updated", data));
+              }
+          }, 60000); // 1 minute
+      }
+      startWatchTracking();
+
+      // Video Event Listeners
+      videos.forEach(video => {
+          // When video ends
+          video.addEventListener('ended', function() {
+              const modId = this.dataset.id;
+              console.log("Video ended for module:", modId);
+              
+              sendPost(`/ajax/mod-complete/${modId}/`)
+                  .then(data => {
+                      if (data.status === 'success') {
+                          // Reload to update UI (unlock next video, update progress)
+                          location.reload(); 
+                      }
+                  });
+          });
+      });
+  });
 </script>
 
 {% endblock body %}
