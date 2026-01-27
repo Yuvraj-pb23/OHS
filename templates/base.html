@@ -90,10 +90,119 @@
             cursor: default;
         }
 
+        /* ========================================== */
+        /*        NEW SLIDING SIDE POSTER CSS        */
+        /* ========================================== */
+        .side-poster-container {
+            position: fixed;
+            bottom: 30px;
+            right: -450px; /* Hidden initially */
+            width: 350px;
+            z-index: 10001;
+            transition: right 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        .side-poster-container.active {
+            right: 30px; /* Slide in to view */
+        }
+
+        .poster-card {
+            background: #ffffff;
+            padding: 30px 25px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            box-shadow: -10px 15px 40px rgba(0, 0, 0, 0.15);
+            border-left: 6px solid #6200ea;
+        }
+
+        .poster-icon {
+            width: 60px;
+            height: 60px;
+            background: #6200ea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 15px;
+            box-shadow: 0 10px 20px rgba(98, 0, 234, 0.2);
+        }
+
+        .poster-card h2 {
+            color: #1a1a1a;
+            font-weight: 800;
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+
+        .poster-card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .poster-btn {
+            background: #6200ea;
+            color: white !important;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: 0.3s;
+            width: 100%;
+        }
+
+        .poster-btn:hover {
+            background: #4a00b0;
+            transform: translateY(-2px);
+        }
+
+        .poster-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #ccc;
+            transition: 0.3s;
+        }
+
+        .poster-close:hover {
+            color: #d32f2f;
+        }
+
+        /* Mobile Adjustments for Poster */
+        @media (max-width: 480px) {
+            .side-poster-container {
+                width: 90%;
+                right: -110%;
+            }
+            .side-poster-container.active {
+                right: 5%;
+            }
+        }
+
     </style>
   </head>
 
   <body>
+    <!-- SLIDING POSTER SECTION -->
+    <div class="side-poster-container" id="mainPosterContainer">
+        <div class="poster-card">
+            <span class="poster-close" id="closePoster">&times;</span>
+            <div class="poster-icon">
+                <i class="fas fa-certificate"></i>
+            </div>
+            <h2>Specialized Training</h2>
+            <p>Elevate your organization's compliance with our expert-led <strong>POSH & POCSO Training</strong> sessions.</p>
+            <a href="/tutorial" class="poster-btn">Learn More & Apply</a>
+        </div>
+    </div>
+
     <!-- CSRF Token for security -->
     {% csrf_token %}
 
@@ -104,19 +213,6 @@
         <span></span>
         <span></span>
       </div>
-
-      <!-- <div class="logo">
-        <a href="/#hero" class="nav-link">
-          <img src="{% static 'img/footer-logo.png' %}" alt="OHS Logo" />
-        </a>
-      </div> -->
-
-      <!-- <div class="app-logo">
-       
-    <img src="{% static 'img/footer-logo.png' %}" alt="Sjango Logo">
-      
- 
-</div> -->
 
 <div class="app-logo">
     <a href="/#hero">
@@ -134,9 +230,7 @@
         <div class="dropdown">
           <a href="/about" class="nav-link {% if '/about' in request.path %}active{% endif %}">Our Team</a>
         </div>
-        <!-- <div class="dropdown">
-          <a href="/services" class="nav-link {% if '/services' in request.path %}active{% endif %}">Services</a>
-        </div> -->
+
         <div class="dropdown">
           <a href="/blog" class="nav-link {% if '/blog' in request.path %}active{% endif %}">Resources</a>
         </div>
@@ -232,7 +326,6 @@
             <ul class="list-unstyled">
               <li class="mb-2"><a href="/" class="footer-link"><i class="fas fa-angle-right me-2"></i>Home</a></li>
               <li class="mb-2"><a href="/about" class="footer-link"><i class="fas fa-angle-right me-2"></i>Our Team</a></li>
-              <!-- <li class="mb-2"><a href="/services" class="footer-link"><i class="fas fa-angle-right me-2"></i>Services</a></li> -->
               <li class="mb-2"><a href="/blog" class="footer-link"><i class="fas fa-angle-right me-2"></i>Resources</a></li>
                <li class="mb-2"><a href="/tutorial" class="footer-link"><i class="fas fa-angle-right me-2"></i>Training</a></li>
             </ul>
@@ -302,6 +395,24 @@
 
     <!-- JavaScript -->
     <script>
+      // --- SLIDING POSTER JAVASCRIPT ---
+      window.addEventListener('DOMContentLoaded', () => {
+          const posterContainer = document.getElementById('mainPosterContainer');
+          const closeBtn = document.getElementById('closePoster');
+
+          // Timer: Slide in from right after 7 seconds
+          setTimeout(() => {
+              posterContainer.classList.add('active');
+          }, 7000);
+
+          // Close function
+          const hidePoster = () => {
+              posterContainer.classList.remove('active');
+          };
+
+          closeBtn.addEventListener('click', hidePoster);
+      });
+
       // Mobile Menu Toggle
       const hamburger = document.getElementById("hamburger");
       const navLinks = document.getElementById("navLinks");

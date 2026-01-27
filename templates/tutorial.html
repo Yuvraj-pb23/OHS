@@ -381,27 +381,6 @@
 </head>
 <body>
 
-    <!-- 1. HERO SECTION -->
-    <!-- <header class="services-hero" data-aos="fade-in">
-        <div class="container">
-            <h1 data-aos="zoom-in" data-aos-duration="1000">Our Professional Services</h1>
-            <p data-aos="fade-up" data-aos-delay="200">
-                Comprehensive training and consulting to help you build a safe, respectful, and legally compliant environment.
-            </p>
-        </div>
-    </header> -->
-
-    <!-- Global Messages (From Page 2 logic) -->
-    <!-- <div class="container mt-4 text-center">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="custom-alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
-                    {% if message.tags == 'error' %}⚠️{% else %}✅{% endif %} {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div> -->
-
     <!-- 2. TRAINING ACCESS SECTION (Glassmorphism / Page 2 Content) -->
     <section class="tutorial-section-wrapper">
         <!-- Decorative Orbs -->
@@ -435,11 +414,11 @@
                                 </a>
                             {% endif %}
                         {% else %}
-                            <!-- INDIVIDUAL: Go to Form directly -->
-                            <a href="{% url 'individual_subscription' 'POSH Act' %}" class="sub-btn btn-posh-ind">
+                            <!-- UPDATED: Point to posh_i_page -->
+                            <a href="{% url 'posh_i_page' %}" class="sub-btn btn-posh-ind">
                                 Individual Access
                             </a>
-                            <!-- COMPANY: Go to Price Calculator (posh_c.html) -->
+                            <!-- UPDATED: Point to posh_c_page -->
                             <a href="{% url 'posh_c_page' %}" class="sub-btn btn-posh-comp">
                                 Company License
                             </a>
@@ -469,10 +448,12 @@
                                 </a>
                             {% endif %}
                         {% else %}
-                            <a href="{% url 'individual_subscription' 'POCSO Act' %}" class="sub-btn btn-pocso-ind">
+                            <!-- UPDATED: Point to pocso_i_page -->
+                            <a href="{% url 'pocso_i_page' %}" class="sub-btn btn-pocso-ind">
                                 Individual Access
                             </a>
-                            <a href="{% url 'company_subscription' 'POSCO Act' %}" class="sub-btn btn-pocso-comp">
+                            <!-- UPDATED: Point to pocso_c_page -->
+                            <a href="{% url 'pocso_c_page' %}" class="sub-btn btn-pocso-comp">
                                 School License
                             </a>
                         {% endif %}
