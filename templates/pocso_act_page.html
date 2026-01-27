@@ -216,64 +216,69 @@
                 <div class="circle-wrap">
                     <div class="progress-ring-alt">
                         <div class="progress-inner-alt">
-                            <h3>66%</h3>
+                            <h3>{{ percent_complete }}%</h3>
                             <span style="font-size: 0.7rem; letter-spacing: 1px; color: #ccc;">DONE</span>
                         </div>
                     </div>
-                    <p style="margin:0; font-size:0.9rem; color:#eee;">2 of 3 Modules Completed</p>
+                    <!-- 
+                       Optional: We can rotate the gradient based on percentage using JS or inline style if supported by conic-gradient.
+                       For now, let's keep the conic-gradient static or use JS to update it below.
+                    -->
+                    <p style="margin:0; font-size:0.9rem; color:#eee;">{{ completed_count }} of {{ total_modules }} Modules Completed</p>
                 </div>
             </div>
         </div>
 
         <!-- Video List Section -->
         <div class="video-list">
-            <div class="video-card glass-panel" id="vid1">
-                <div class="video-frame">
-                    <video controls>
-                        <source src="{% static 'video/Demo Video OHS.mp4' %}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="video-info">
+            {% for item in modules %}
+            <div class="video-card glass-panel" id="vid{{ item.obj.id }}" data-module-id="{{ item.obj.id }}">
+                
+                {% if item.is_locked %}
+                 <!-- Locked State -->
+                 <div class="video-frame" style="display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.5);">
+                    <span style="font-size: 3rem; opacity: 0.5;">🔒</span>
+                 </div>
+                 <div class="video-info">
                     <div style="margin-bottom: 12px;">
-                        <span class="tag">Module 1</span>
-                        <span class="tag" style="background:rgba(46, 125, 50, 0.4);">✓ Completed</span>
-                    </div>
-                    <h3>Introduction & Scope</h3>
-                    <p>Understanding the basics of the Protection of Children from Sexual Offences Act, 2012. This module covers essential definitions and legal frameworks.</p>
-                </div>
-            </div>
-
-            <div class="video-card glass-panel" id="vid2">
-                <div class="video-frame">
-                    <video controls>
-                        <source src="{% static 'videos/pocso_reporting.mp4' %}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="video-info">
-                    <div style="margin-bottom: 12px;">
-                        <span class="tag">Module 2</span>
-                        <span class="tag" style="background:rgba(239, 108, 0, 0.4);">⌛ In Progress</span>
-                    </div>
-                    <h3>Mandatory Reporting</h3>
-                    <p>Who is responsible for reporting abuse? This section explains Section 19 of the Act and the protocols for institutional reporting.</p>
-                </div>
-            </div>
-
-            <div class="video-card glass-panel" id="vid3">
-                <div class="video-frame">
-                    <video controls>
-                        <source src="{% static 'videos/pocso_penalties.mp4' %}" type="video/mp4">
-                    </video>
-                </div>
-                <div class="video-info">
-                    <div style="margin-bottom: 12px;">
-                        <span class="tag">Module 3</span>
+                        <span class="tag">Module {{ item.obj.order }}</span>
                         <span class="tag" style="background:rgba(198, 40, 40, 0.4);">🔒 Locked</span>
                     </div>
-                    <h3>Penalties & Punishments</h3>
-                    <p>An overview of the stringent punishments prescribed under the Act for various offences against children.</p>
-                </div>
+                    <h3>{{ item.obj.title }}</h3>
+                    <p>{{ item.obj.description|truncatechars:120 }}</p>
+                 </div>
+
+                {% else %}
+                 <!-- Unlocked State -->
+                 <div class="video-frame">
+                    <video 
+                        controls 
+                        class="training-video" 
+                        data-id="{{ item.obj.id }}"
+                        poster="{% if item.obj.thumbnail %}{{ item.obj.thumbnail.url }}{% endif %}"
+                    >
+                        <source src="{{ item.obj.video_file.url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                 </div>
+                 <div class="video-info">
+                    <div style="margin-bottom: 12px;">
+                        <span class="tag">Module {{ item.obj.order }}</span>
+                        {% if item.is_completed %}
+                            <span class="tag" style="background:rgba(46, 125, 50, 0.4);">✓ Completed</span>
+                        {% else %}
+                            <span class="tag" style="background:rgba(239, 108, 0, 0.4);">⌛ In Progress</span>
+                        {% endif %}
+                    </div>
+                    <h3>{{ item.obj.title }}</h3>
+                    <p>{{ item.obj.description }}</p>
+                 </div>
+                {% endif %}
+
             </div>
+            {% empty %}
+            <p>No training modules found.</p>
+            {% endfor %}
         </div>
 
         <!-- Final Assessment Section -->
@@ -281,7 +286,7 @@
             <div style="display: flex; align-items: center; gap: 30px;">
                 <div class="progress-ring-alt" style="width: 80px; height: 80px; margin: 0; box-shadow: none;">
                     <div class="progress-inner-alt" style="width: 65px; height: 65px;">
-                        <span style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">80%</span>
+                        <span style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">{{ percent_complete }}%</span>
                     </div>
                 </div>
                 <div>
@@ -290,24 +295,35 @@
                 </div>
             </div>
             <div>
+                {% if is_assessment_unlocked %}
                 <a href="{% url 'pocso_assessment' %}" class="btn-take-quiz">
                     <span>🏆 Final Assessment</span>
                 </a>
+                {% else %}
+                <button class="btn-take-quiz" style="opacity: 0.5; cursor: not-allowed; background: #555;">
+                    <span>🔒 Locked</span>
+                </button>
+                {% endif %}
             </div>
         </div>
     </main>
 </div>
 
 <!-- Graph Script -->
+<!-- Graph Script & Logic -->
 <script>
+    // 1. Chart Initialization
     const ctx = document.getElementById('dailyChartPocso').getContext('2d');
+    const chartLabels = JSON.parse('{{ chart_labels|safe }}');
+    const chartData = JSON.parse('{{ chart_data|safe }}');
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: chartLabels,
             datasets: [{
                 label: 'Minutes',
-                data: [12, 40, 15, 50, 20, 0, 10],
+                data: chartData,
                 backgroundColor: 'rgba(0, 229, 255, 0.5)',
                 borderColor: 'rgba(0, 229, 255, 1)',
                 borderWidth: 1.5,
@@ -331,6 +347,73 @@
                 }
             }
         }
+    });
+
+    // 2. Dynamic Progress Ring (Conic Gradient)
+    const percent = {{ percent_complete }};
+    const rings = document.querySelectorAll('.progress-ring-alt');
+    rings.forEach(ring => {
+        // Gradient: Cyan from 0% to X%, then transparent/white-alpha from X% to 100%
+        ring.style.background = `conic-gradient(#00e5ff 0% ${percent}%, rgba(255,255,255,0.1) ${percent}% 100%)`;
+    });
+
+    // 3. Video Tracking Logic (Same as POSH)
+    document.addEventListener('DOMContentLoaded', function() {
+        const videos = document.querySelectorAll('.training-video');
+        let watchInterval = null;
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                     if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        async function sendPost(url, data = {}) {
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    body: JSON.stringify(data)
+                });
+                return await response.json();
+            } catch (error) { console.error('Error:', error); }
+        }
+
+        // Ping for Watch Time
+        function startWatchTracking() {
+            if (watchInterval) return;
+            watchInterval = setInterval(() => {
+                let isPlaying = false;
+                videos.forEach(v => {
+                    if (!v.paused && !v.ended) isPlaying = true;
+                });
+                if (isPlaying) {
+                     sendPost("{% url 'update_watch_time' %}");
+                }
+            }, 60000); 
+        }
+        startWatchTracking();
+
+        // Completion Listener
+        videos.forEach(video => {
+            video.addEventListener('ended', function() {
+                const modId = this.dataset.id;
+                sendPost(`/ajax/mod-complete/${modId}/`)
+                    .then(data => {
+                        if (data.status === 'success') { location.reload(); }
+                    });
+            });
+        });
     });
 </script>
 

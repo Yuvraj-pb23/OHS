@@ -863,8 +863,8 @@
                                 <p>Total Number of Registration</p>
                                 <div class="card-icon icon-1"><i class="ri-user-add-line"></i></div>
                             </div>
-                            <h3>2,450</h3>
-                            <p>+15% from last week</p>
+                            <h3>{{ total_users }}</h3>
+                            <p>+{{ posh_counts.growth }}% from last week</p>
                         </div>
 
                         <div class="card">
@@ -872,8 +872,8 @@
                                 <p>Posh Registration</p>
                                 <div class="card-icon icon-2"><i class="ri-shield-check-line"></i></div>
                             </div>
-                            <h3>1,850</h3>
-                            <p>+5% from last week</p>
+                            <h3>{{ posh_counts.total }}</h3>
+                            <p>+{{ posh_counts.growth }}% from last week</p>
                         </div>
 
                         <div class="card">
@@ -881,8 +881,8 @@
                                 <p>Posco Registration</p>
                                 <div class="card-icon icon-3"><i class="ri-shield-star-line"></i></div>
                             </div>
-                            <h3>45</h3>
-                            <p>+2% from last week</p>
+                            <h3>{{ pocso_counts.total }}</h3>
+                            <p>+{{ pocso_counts.growth }}% from last week</p>
                         </div>
 
                         <div class="card">
@@ -890,42 +890,34 @@
                                 <p>Completed Training</p>
                                 <div class="card-icon icon-4"><i class="ri-checkbox-circle-line"></i></div>
                             </div>
-                            <h3>3,120</h3>
-                            <p>+8% from last week</p>
+                            <h3>{{ training_completed_count }}</h3>
+                            <p>+8% from last week</p> <!-- Placeholder growth -->
                         </div>
                     </section>
 
                     <section class="content-grid" style="margin-top: 20px;">
                         <div class="panel">
                             <h2>Posh Companies</h2>
+                            {% for org in recent_posh_orgs %}
                             <div class="list-item">
-                                <span>Alpha Tech Solutions</span>
-                                <span class="status completed">Compliant</span>
+                                <span>{{ org.name }}</span>
+                                <span class="status completed">Active</span>
                             </div>
-                            <div class="list-item">
-                                <span>Innovate Inc</span>
-                                <span class="status pending">Pending</span>
-                            </div>
-                            <div class="list-item">
-                                <span>Global Systems</span>
-                                <span class="status completed">Compliant</span>
-                            </div>
+                            {% empty %}
+                            <p class="text-muted small">No recent POSH organizations.</p>
+                            {% endfor %}
                         </div>
 
                         <div class="panel">
                             <h2>Posco Registration</h2>
+                            {% for org in recent_pocso_orgs %}
                             <div class="list-item">
-                                <span>Greenwood High</span>
-                                <span class="status completed">Registered</span>
+                                <span>{{ org.name }}</span>
+                                <span class="status completed">Active</span>
                             </div>
-                            <div class="list-item">
-                                <span>Little Angels School</span>
-                                <span class="status pending">Pending</span>
-                            </div>
-                            <div class="list-item">
-                                <span>Sunrise Academy</span>
-                                <span class="status completed">Verified</span>
-                            </div>
+                            {% empty %}
+                            <p class="text-muted small">No recent POCSO organizations.</p>
+                            {% endfor %}
                         </div>
 
                         <div class="panel">
@@ -959,16 +951,16 @@
                                         <i class="ri-pie-chart-2-line" style="color: var(--accent-color);"></i>
                                     </div>
                                     <div class="posh-card-body pie-chart-container">
-                                        <div class="pie-chart"></div>
+                                        <div class="pie-chart" style="background: conic-gradient(var(--chart-green) 0% {{ posh_counts.complete_percent }}%, var(--chart-red) {{ posh_counts.complete_percent }}% 100%);"></div>
                                         
                                         <div class="chart-legend">
                                             <div class="legend-item">
                                                 <div class="dot" style="background: var(--chart-green);"></div>
-                                                <span>Complete (75%)</span>
+                                                <span>Complete ({{ posh_counts.complete_percent }}%)</span>
                                             </div>
                                             <div class="legend-item">
                                                 <div class="dot" style="background: var(--chart-red);"></div>
-                                                <span>Pending (25%)</span>
+                                                <span>Pending ({{ posh_counts.pending_percent }}%)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -984,23 +976,17 @@
                                         <!-- SVG Line Chart -->
                                         <div style="flex: 1; display: flex; align-items: flex-end; padding-bottom: 10px;">
                                             <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
-                                                <path class="line-chart-area" d="M0,50 L0,35 L20,25 L40,30 L60,15 L80,20 L100,5 L100,50 Z" />
-                                                <polyline class="line-chart-path" points="0,35 20,25 40,30 60,15 80,20 100,5" />
-                                                <circle cx="0" cy="35" r="2" fill="white" />
-                                                <circle cx="20" cy="25" r="2" fill="white" />
-                                                <circle cx="40" cy="30" r="2" fill="white" />
-                                                <circle cx="60" cy="15" r="2" fill="white" />
-                                                <circle cx="80" cy="20" r="2" fill="white" />
-                                                <circle cx="100" cy="5" r="2" fill="white" />
+                                            <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                                                <path class="line-chart-area" d="{{ posh_counts.chart_area }}" />
+                                                <polyline class="line-chart-path" points="{{ posh_counts.chart_points }}" />
+                                                <!-- Dynamic Circles could be looped if needed, but for simplicity relying on points -->
+                                                <!-- Or loop through points if coordinates available? For now, points are SVG string -->
                                             </svg>
                                         </div>
                                         <div class="chart-labels">
-                                            <span>Jan</span>
-                                            <span>Feb</span>
-                                            <span>Mar</span>
-                                            <span>Apr</span>
-                                            <span>May</span>
-                                            <span>Jun</span>
+                                            {% for label in posh_counts.chart_labels %}
+                                            <span>{{ label }}</span>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -1014,28 +1000,21 @@
                                 </div>
                                 <div class="posh-card-body">
                                     <ul style="list-style: none;">
+                                        {% for org in recent_posh_orgs %}
                                         <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
                                             <div style="display: flex; align-items: center; gap: 15px;">
                                                 <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
                                                     <i class="ri-building-4-line" style="color: #a2d2ff; font-size: 1.2rem;"></i>
                                                 </div>
                                                 <div>
-                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Nexus Industries Ltd</h4>
-                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 10 mins ago</p>
+                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">{{ org.name }}</h4>
+                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered {{ org.created_at|timesince }} ago</p>
                                                 </div>
                                             </div>
                                         </li>
-                                        <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
-                                            <div style="display: flex; align-items: center; gap: 15px;">
-                                                <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
-                                                    <i class="ri-store-2-line" style="color: #4cd137; font-size: 1.2rem;"></i>
-                                                </div>
-                                                <div>
-                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Vertex Global Solutions</h4>
-                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 45 mins ago</p>
-                                                </div>
-                                            </div>
-                                        </li>
+                                        {% empty %}
+                                        <li class="list-item">No recent registrations.</li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -1045,48 +1024,56 @@
                         <!-- Right Side Column -->
                         <div class="posh-side-column">
                             
-                            <!-- QUICK STATS SECTION -->
-                            <div class="card" style="height: auto;">
-                                <h3>Quick Stats</h3>
-                                
-                                <!-- Total -->
-                                <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-                                    <span style="color: var(--text-muted);">Total Registrations</span>
-                                    <span style="font-size: 1.2rem; font-weight: 600;">1,250</span>
-                                </div>
+                                    <div class="card" style="height: auto;">
+                                        <h3>Quick Stats</h3>
+                                        
+                                        <!-- Total -->
+                                        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                            <span style="color: var(--text-muted);">Total Registrations</span>
+                                            <span style="font-size: 1.2rem; font-weight: 600;">{{ posh_counts.total }}</span>
+                                        </div>
 
-                                <!-- Completed -->
-                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
-                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 8px; height: 8px; background: var(--chart-green); border-radius: 50%;"></div>
-                                        Completed
-                                    </span>
-                                    <span style="font-size: 1.1rem; color: var(--chart-green);">938</span>
-                                </div>
+                                        <!-- Completed -->
+                                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                                            <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                                <div style="width: 8px; height: 8px; background: var(--chart-green);"></div>
+                                                Companies
+                                            </span>
+                                            <span style="font-size: 1.1rem; color: var(--chart-green);">{{ posh_counts.companies }}</span>
+                                        </div>
 
-                                <!-- Pending -->
-                                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
-                                        <div style="width: 8px; height: 8px; background: var(--chart-red); border-radius: 50%;"></div>
-                                        Pending
-                                    </span>
-                                    <span style="font-size: 1.1rem; color: var(--chart-red);">312</span>
-                                </div>
-                            </div>
+                                        <!-- Pending -->
+                                        <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                                            <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
+                                                <div style="width: 8px; height: 8px; background: var(--chart-red);"></div>
+                                                Schools
+                                            </span>
+                                            <span style="font-size: 1.1rem; color: var(--chart-red);">{{ posh_counts.schools }}</span>
+                                        </div>
+                                    </div>
 
                             <!-- UPDATED: Training Completed Section -->
                             <div class="panel" style="flex: 1;">
                                 <h2>Training Completed</h2>
-                                <div class="list-item">
-                                    <div style="display: flex; align-items: center; gap: 10px;">
-                                        <!-- Placeholder Avatar -->
-                                        <div style="width: 35px; height: 35px; background: url('https://i.pravatar.cc/150?img=11') center/cover; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"></div>
-                                        <div>
-                                            <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">Emily Clark</h4>
-                                            <p style="font-size: 0.75rem; color: var(--text-muted);">HR Manager</p>
+                                {% for user in posh_counts.completers %}
+                                    <div class="list-item">
+                                        <div style="display: flex; align-items: center; gap: 10px;">
+                                            <div style="width: 35px; height: 35px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                                {{ user.username|slice:":1"|upper }}
+                                            </div>
+                                            <div>
+                                                <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">{{ user.username }}</h4>
+                                                <p style="font-size: 0.7rem; color: var(--text-muted);">{{ user.email }}</p>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span style="font-size: 0.8rem; color: var(--chart-green); display: block;">100%</span>
+                                            <span style="font-size: 0.65rem; color: var(--text-muted);">Completed</span>
                                         </div>
                                     </div>
-                                    <span style="color: var(--chart-green); font-size: 0.85rem; font-weight: 600;">100%</span>
+                                    {% empty %}
+                                    <div class="list-item" style="color: var(--text-muted); font-size: 0.9rem;">No users have completed all modules yet.</div>
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -1110,16 +1097,16 @@
                                         <i class="ri-pie-chart-2-line" style="color: var(--accent-color);"></i>
                                     </div>
                                     <div class="posh-card-body pie-chart-container">
-                                        <div class="pie-chart"></div>
+                                        <div class="pie-chart" style="background: conic-gradient(var(--chart-green) 0% {{ pocso_counts.complete_percent }}%, var(--chart-red) {{ pocso_counts.complete_percent }}% 100%);"></div>
                                         
                                         <div class="chart-legend">
                                             <div class="legend-item">
                                                 <div class="dot" style="background: var(--chart-green);"></div>
-                                                <span>Complete (75%)</span>
+                                                <span>Complete ({{ pocso_counts.complete_percent }}%)</span>
                                             </div>
                                             <div class="legend-item">
                                                 <div class="dot" style="background: var(--chart-red);"></div>
-                                                <span>Pending (25%)</span>
+                                                <span>Pending ({{ pocso_counts.pending_percent }}%)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -1132,31 +1119,18 @@
                                         <!-- Icon matches green theme -->
                                         <i class="ri-line-chart-line" style="color: var(--chart-green);"></i>
                                     </div>
-                                    <div class="posh-card-body">
-                                        <!-- SVG Line Chart with GREEN style -->
-                                        <div style="flex: 1; display: flex; align-items: flex-end; padding-bottom: 10px;">
-                                            <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
-                                                <!-- Changed fill to green tint -->
-                                                <path class="line-chart-area" d="M0,50 L0,35 L20,25 L40,30 L60,15 L80,20 L100,5 L100,50 Z" 
-                                                      style="fill: rgba(46, 204, 113, 0.2); stroke: none;" />
-                                                <!-- Changed stroke to green and updated drop-shadow -->
-                                                <polyline class="line-chart-path" points="0,35 20,25 40,30 60,15 80,20 100,5" 
-                                                          style="stroke: var(--chart-green); filter: drop-shadow(0 0 5px var(--chart-green));" />
-                                                <circle cx="0" cy="35" r="2" fill="white" />
-                                                <circle cx="20" cy="25" r="2" fill="white" />
-                                                <circle cx="40" cy="30" r="2" fill="white" />
-                                                <circle cx="60" cy="15" r="2" fill="white" />
-                                                <circle cx="80" cy="20" r="2" fill="white" />
-                                                <circle cx="100" cy="5" r="2" fill="white" />
-                                            </svg>
-                                        </div>
-                                        <div class="chart-labels">
-                                            <span>Jan</span>
-                                            <span>Feb</span>
-                                            <span>Mar</span>
-                                            <span>Apr</span>
-                                            <span>May</span>
-                                            <span>Jun</span>
+                                    <div class="posh-card-body pie-chart-container">
+                                        <div class="pie-chart" style="background: conic-gradient(var(--chart-green) 0% {{ pocso_counts.complete_percent }}%, var(--chart-red) {{ pocso_counts.complete_percent }}% 100%);"></div>
+                                        
+                                        <div class="chart-legend">
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-green);"></div>
+                                                <span>Complete ({{ pocso_counts.complete_percent }}%)</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <div class="dot" style="background: var(--chart-red);"></div>
+                                                <span>Pending ({{ pocso_counts.pending_percent }}%)</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1170,18 +1144,21 @@
                                 </div>
                                 <div class="posh-card-body">
                                     <ul style="list-style: none;">
-                                        <!-- School 1 -->
+                                        {% for org in recent_pocso_orgs %}
                                         <li class="list-item" style="border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0;">
                                             <div style="display: flex; align-items: center; gap: 15px;">
                                                 <div style="background: rgba(255,255,255,0.1); padding: 8px; border-radius: 8px;">
                                                     <i class="ri-school-line" style="color: #a2d2ff; font-size: 1.2rem;"></i>
                                                 </div>
                                                 <div>
-                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">Greenwood High School</h4>
-                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered 10 mins ago</p>
+                                                    <h4 style="font-size: 0.95rem; font-weight: 500; color: white;">{{ org.name }}</h4>
+                                                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">Registered {{ org.created_at|timesince }} ago</p>
                                                 </div>
                                             </div>
                                         </li>
+                                        {% empty %}
+                                        <li class="list-item">No recent registrations.</li>
+                                        {% endfor %}
                                     </ul>
                                 </div>
                             </div>
@@ -1198,25 +1175,25 @@
                                 <!-- Total -->
                                 <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                                     <span style="color: var(--text-muted);">Total Registrations</span>
-                                    <span style="font-size: 1.2rem; font-weight: 600;">1,250</span>
+                                    <span style="font-size: 1.2rem; font-weight: 600;">{{ pocso_counts.total }}</span>
                                 </div>
 
                                 <!-- Completed -->
                                 <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
                                     <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
                                         <div style="width: 8px; height: 8px; background: var(--chart-green); border-radius: 50%;"></div>
-                                        Completed
+                                        Companies
                                     </span>
-                                    <span style="font-size: 1.1rem; color: var(--chart-green);">938</span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-green);">{{ pocso_counts.companies }}</span>
                                 </div>
 
                                 <!-- Pending -->
                                 <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
                                     <span style="color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
                                         <div style="width: 8px; height: 8px; background: var(--chart-red); border-radius: 50%;"></div>
-                                        Pending
+                                        Schools
                                     </span>
-                                    <span style="font-size: 1.1rem; color: var(--chart-red);">312</span>
+                                    <span style="font-size: 1.1rem; color: var(--chart-red);">{{ pocso_counts.schools }}</span>
                                 </div>
                             </div>
 

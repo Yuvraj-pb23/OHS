@@ -387,21 +387,41 @@
               <div class="lms-stats-row">
                   <div class="lms-card">
                       <h6 class="text-muted small mb-3">Daily Watch Time (Min)</h6>
-                      <div class="graph-wrapper"><canvas id="chart-{{ member.id }}"></canvas></div>
+                      <!-- Added data-chart-values to pass dynamic data to JS -->
+                      <div class="graph-wrapper"><canvas id="chart-{{ member.id }}" data-chart-values="{{ member.chart_data }}"></canvas></div>
                   </div>
                   <div class="lms-card">
                       <div class="circle-wrap">
-                          <div class="progress-ring"><div class="progress-inner"><h3>50%</h3></div></div>
-                          <p class="small text-center mb-0" style="font-size: 1rem;">2 of 4 Modules Completed</p>
+                          <div class="progress-ring" style="background: conic-gradient(var(--accent-solid) 0% {{ member.percent_complete }}%, #1e293b {{ member.percent_complete }}% 100%);">
+                              <div class="progress-inner">
+                                  <h3>{{ member.percent_complete }}%</h3>
+                              </div>
+                          </div>
+                          
+                          <p class="small text-center mb-0" style="font-size: 1rem;">{{ member.completed_modules_count }} of {{ total_modules_count }} Modules Completed</p>
                       </div>
                   </div>
               </div>
               <h6 class="mb-3" style="font-size: 1.2rem;">Course Modules</h6>
               <div class="lms-video-list">
+                  {% for mod in member.modules_status %}
                   <div class="lms-video-item">
-                      <div class="lms-vid-thumb"></div>
-                      <div class="lms-vid-info"><span class="badge-lms bg-completed">Completed</span><h6>1. Intro to POSH</h6></div>
+                      <div class="lms-vid-thumb">
+                        <!-- Placeholder thumb or use real one if available -->
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#555;">
+                            <i class="bi bi-play-circle-fill"></i>
+                        </div>
+                      </div>
+                      <div class="lms-vid-info">
+                        {% if mod.is_completed %}
+                            <span class="badge-lms bg-completed mb-1 d-inline-block">Completed</span>
+                        {% else %}
+                            <span class="badge-lms bg-locked mb-1 d-inline-block">Pending</span>
+                        {% endif %}
+                        <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                      </div>
                   </div>
+                  {% endfor %}
               </div>
             </div>
           </div>
@@ -575,17 +595,21 @@
         const modalId = event.target.id;
         if (modalId.startsWith('userProgressModal-')) {
             const memberId = modalId.split('-')[1];
-            const ctx = document.getElementById(`chart-${memberId}`).getContext('2d');
+            const canvas = document.getElementById(`chart-${memberId}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Get data from attribute
+            const chartData = JSON.parse(canvas.getAttribute('data-chart-values') || "[]");
             
             if (window[`chartObj${memberId}`]) window[`chartObj${memberId}`].destroy();
 
             window[`chartObj${memberId}`] = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                    labels: ['Today', '-1d', '-2d', '-3d', '-4d', '-5d', '-6d'].reverse(), // Simple labels or pass from backend
                     datasets: [{
-                        label: 'Min',
-                        data: [12, 19, 3, 5, 2, 3, 9],
+                        label: 'Min Watched',
+                        data: chartData.reverse(), // Reverse to show oldest to newest
                         backgroundColor: '#f97316',
                         borderRadius: 4,
                     }]
