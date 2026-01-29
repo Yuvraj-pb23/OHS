@@ -231,6 +231,31 @@
 
         <!-- Video List Section -->
         <div class="video-list">
+            <!-- static Demo Video -->
+            <div class="video-card glass-panel" id="demo-video">
+                 <div class="video-frame">
+                    <video 
+                        controls 
+                        class="training-video"
+                        data-id="{% if modules %}{{ modules.0.obj.id }}{% endif %}"
+                        style="width: 100%; height: 100%; object-fit: cover;"
+                    >
+                        <source src="{% static 'video/Demo Video OHS.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                 </div>
+                 <div class="video-info">
+                    <div style="margin-bottom: 12px;">
+                        <span class="tag">Demo / Intro</span>
+                        <span class="tag" style="background:rgba(46, 125, 50, 0.4);">Public</span>
+                        {% if modules and modules.0.is_completed %}
+                            <span class="tag" style="background:rgba(46, 125, 50, 0.4);">✓ Completed</span>
+                        {% endif %}
+                    </div>
+                    <h3>Course Introduction</h3>
+                    <p>Welcome to the OHS POCSO Training. Watch this brief introduction to understand the platform and course contents. (Completing this video will mark the first module as done).</p>
+                 </div>
+            </div>
             {% for item in modules %}
             <div class="video-card glass-panel" id="vid{{ item.obj.id }}" data-module-id="{{ item.obj.id }}">
                 
@@ -277,6 +302,7 @@
 
             </div>
             {% empty %}
+            <!-- Demo video is already shown above, so even if modules empty, page isn't empty -->
             <p>No training modules found.</p>
             {% endfor %}
         </div>
@@ -311,11 +337,14 @@
 
 <!-- Graph Script -->
 <!-- Graph Script & Logic -->
+<form id="csrf-form" style="display:none;">{% csrf_token %}</form>
 <script>
     // 1. Chart Initialization
     const ctx = document.getElementById('dailyChartPocso').getContext('2d');
-    const chartLabels = JSON.parse('{{ chart_labels|safe }}');
-    const chartData = JSON.parse('{{ chart_data|safe }}');
+    
+    // Data injected safely from Django
+    const chartLabels = {{ chart_labels|safe }};
+    const chartData = {{ chart_data|safe }};
 
     new Chart(ctx, {
         type: 'bar',
@@ -349,45 +378,65 @@
         }
     });
 
-    // 2. Dynamic Progress Ring (Conic Gradient)
+    // 2. Dynamic Progress Ring
     const percent = {{ percent_complete }};
     const rings = document.querySelectorAll('.progress-ring-alt');
     rings.forEach(ring => {
-        // Gradient: Cyan from 0% to X%, then transparent/white-alpha from X% to 100%
         ring.style.background = `conic-gradient(#00e5ff 0% ${percent}%, rgba(255,255,255,0.1) ${percent}% 100%)`;
     });
 
-    // 3. Video Tracking Logic (Same as POSH)
+    // 3. Video Tracking Logic
     document.addEventListener('DOMContentLoaded', function() {
         const videos = document.querySelectorAll('.training-video');
         let watchInterval = null;
 
-        function getCookie(name) {
+        // Robust CSRF Token Fetcher
+        function getCsrfToken() {
+            // Try to get from cookie
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
                 for (let i = 0; i < cookies.length; i++) {
                     const cookie = cookies[i].trim();
-                     if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    if (cookie.substring(0, 10) === ('csrftoken=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
                         break;
                     }
                 }
             }
-            return cookieValue;
+            if (cookieValue) return cookieValue;
+            
+            // Fallback: Try to get from hidden form input
+            const input = document.querySelector('#csrf-form input[name="csrfmiddlewaretoken"]');
+            return input ? input.value : '';
         }
-        const csrftoken = getCookie('csrftoken');
 
         async function sendPost(url, data = {}) {
+            const token = getCsrfToken();
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': csrftoken },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRFToken': token 
+                    },
                     body: JSON.stringify(data)
                 });
+                if (!response.ok) {
+                    console.error('Network response was not ok');
+                    return null;
+                }
                 return await response.json();
-            } catch (error) { console.error('Error:', error); }
+            } catch (error) { 
+                console.error('Fetch error:', error); 
+            }
         }
+
+        // URL Constants (using Django templates to avoid hardcoding)
+        const URL_UPDATE_WATCH = "{% url 'update_watch_time' %}";
+        // Base URL for completion (remove the placeholder '0' in JS)
+        // We use a dummy ID '0' to get the base path structure
+        const URL_MOD_COMPLETE_BASE = "{% url 'mod_complete' 0 %}".replace('0/', '');
 
         // Ping for Watch Time
         function startWatchTracking() {
@@ -398,7 +447,7 @@
                     if (!v.paused && !v.ended) isPlaying = true;
                 });
                 if (isPlaying) {
-                     sendPost("{% url 'update_watch_time' %}");
+                     sendPost(URL_UPDATE_WATCH);
                 }
             }, 60000); 
         }
@@ -408,9 +457,14 @@
         videos.forEach(video => {
             video.addEventListener('ended', function() {
                 const modId = this.dataset.id;
-                sendPost(`/ajax/mod-complete/${modId}/`)
+                // Construct URL correctly: base + ID + slash
+                const finalUrl = `${URL_MOD_COMPLETE_BASE}${modId}/`;
+                
+                sendPost(finalUrl)
                     .then(data => {
-                        if (data.status === 'success') { location.reload(); }
+                        if (data && data.status === 'success') { 
+                            location.reload(); 
+                        }
                     });
             });
         });

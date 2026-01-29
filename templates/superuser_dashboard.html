@@ -1115,25 +1115,27 @@
                                     </div>
                                 </div>
 
-                                <!-- Part 2: Posco Registrations (GREEN LINE) -->
+                                <!-- Part 2: Posco Registrations (GREEN LINE - Scaled) -->
                                 <div class="posh-card">
                                     <div class="posh-card-header">
                                         <h2>Posco Registrations</h2>
                                         <!-- Icon matches green theme -->
                                         <i class="ri-line-chart-line" style="color: var(--chart-green);"></i>
                                     </div>
-                                    <div class="posh-card-body pie-chart-container">
-                                        <div class="pie-chart" style="background: conic-gradient(var(--chart-green) 0% {{ pocso_counts.complete_percent }}%, var(--chart-red) {{ pocso_counts.complete_percent }}% 100%);"></div>
-                                        
-                                        <div class="chart-legend">
-                                            <div class="legend-item">
-                                                <div class="dot" style="background: var(--chart-green);"></div>
-                                                <span>Complete ({{ pocso_counts.complete_percent }}%)</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <div class="dot" style="background: var(--chart-red);"></div>
-                                                <span>Pending ({{ pocso_counts.pending_percent }}%)</span>
-                                            </div>
+                                    <div class="posh-card-body">
+                                        <!-- SVG Line Chart (Green Theme) -->
+                                        <div style="flex: 1; display: flex; align-items: flex-end; padding-bottom: 10px;">
+                                            <svg class="line-chart-svg" viewBox="0 0 100 50" preserveAspectRatio="none">
+                                                <!-- Use Green Color for Area fill -->
+                                                <path class="line-chart-area" d="{{ pocso_counts.chart_area }}" style="fill: rgba(46, 204, 113, 0.2);" />
+                                                <!-- Use Green Color for Line Stroke -->
+                                                <polyline class="line-chart-path" points="{{ pocso_counts.chart_points }}" style="stroke: var(--chart-green);" />
+                                            </svg>
+                                        </div>
+                                        <div class="chart-labels">
+                                            {% for label in pocso_counts.chart_labels %}
+                                            <span>{{ label }}</span>
+                                            {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -1203,17 +1205,26 @@
                             <!-- Posco Training Completed Section -->
                             <div class="panel" style="flex: 1;">
                                 <h2>Posco Training Completed</h2>
+                                {% for user in pocso_counts.completers %}
                                 <div class="list-item">
                                     <div style="display: flex; align-items: center; gap: 10px;">
                                         <!-- Placeholder Avatar -->
-                                        <div style="width: 35px; height: 35px; background: url('https://i.pravatar.cc/150?img=12') center/cover; border-radius: 50%; border: 1px solid rgba(255,255,255,0.3);"></div>
+                                        <div style="width: 35px; height: 35px; background: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                            {{ user.username|slice:":1"|upper }}
+                                        </div>
                                         <div>
-                                            <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">Aryan Sharma</h4>
-                                            <p style="font-size: 0.75rem; color: var(--text-muted);">Student - Class 10</p>
+                                            <h4 style="font-size: 0.9rem; font-weight: 500; color: white;">{{ user.username }}</h4>
+                                            <p style="font-size: 0.75rem; color: var(--text-muted);">{{ user.email }}</p>
                                         </div>
                                     </div>
-                                    <span style="color: var(--chart-green); font-size: 0.85rem; font-weight: 600;">100%</span>
+                                    <div style="text-align: right;">
+                                        <span style="color: var(--chart-green); font-size: 0.85rem; font-weight: 600; display: block;">100%</span>
+                                        <span style="font-size: 0.65rem; color: var(--text-muted);">{{ user.latest_completion|date:"M d" }}</span>
+                                    </div>
                                 </div>
+                                {% empty %}
+                                <div class="list-item" style="color: var(--text-muted); font-size: 0.9rem;">No users have completed all modules yet.</div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

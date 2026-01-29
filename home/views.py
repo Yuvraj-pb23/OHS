@@ -557,6 +557,27 @@ def posh_c(request):
     return render(request, "posh_c.html")
 
 
+def posh_i(request):
+    """
+    Renders the intermediate page for POSH Individual course details.
+    """
+    return render(request, "posh_i.html")
+
+
+def pocso_i(request):
+    """
+    Renders the intermediate page for POCSO Individual course details.
+    """
+    return render(request, "pocso_i.html")
+
+
+def pocso_c(request):
+    """
+    Renders the intermediate page for POCSO Corporate course details.
+    """
+    return render(request, "pocso_c.html")
+
+
 @csrf_exempt
 def chatbot_response(request):
     if request.method == "POST":
@@ -716,7 +737,7 @@ def superuser_dashboard(request):
     """
     Dashboard providing a global overview for the platform owner.
     """
-    from django.db.models import Count, Q
+    from django.db.models import Count, Q, Max
     from django.db.models.functions import TruncMonth
     from django.utils import timezone
     import datetime
@@ -777,22 +798,12 @@ def superuser_dashboard(request):
     total_schools = all_orgs.filter(organization_type="SCHOOL").count()
     
     # 2. Training Completion (Global)
-    # Count of distinct users who have ANY module progress marked as completed
-    # (Refined logic: Users who have completed ALL modules in their respective track)
-    # For global stats, let's just count users who have completed at least one module for now OR
-    # use the completion logic we built. Let's stick to "Users with 100% video progress" as per plan.
-    # This is expensive to calc for EVERY user on the fly. 
-    # Proximate: Count ModuleProgress where is_completed=True, divided by total modules?
-    # Better: Let's count how many have finished 'POSH' or 'POCSO' completely.
-    # For now, simplistic metric: Total unique users with at least one completed module
+    # Count unique users who have at least one completed module
     users_started_training = ModuleProgress.objects.filter(is_completed=True).values('user').distinct().count()
     
-    
     # 3. POSH Data
-    # Individuals
     posh_subs = Subscription.objects.filter(plan__type__in=["POSH", "BOTH"], status="ACTIVE")
     posh_individuals = posh_subs.filter(user__isnull=False).count()
-    # Organizations (Both Corp and School could have POSH)
     posh_orgs_subs = posh_subs.filter(organization__isnull=False)
     posh_companies = posh_orgs_subs.filter(organization__organization_type="CORPORATE").count()
     posh_schools = posh_orgs_subs.filter(organization__organization_type="SCHOOL").count()
@@ -809,43 +820,39 @@ def superuser_dashboard(request):
     pocso_total = pocso_individuals + pocso_companies + pocso_schools
     
     # 5. Lists for Tables
-    # Recent POSH Organizations
     recent_posh_orgs = Organization.objects.filter(
         subscriptions__plan__type__in=["POSH", "BOTH"],
         subscriptions__status="ACTIVE"
     ).distinct().order_by("-created_at")[:10]
     
-    # Recent POCSO Organizations
     recent_pocso_orgs = Organization.objects.filter(
         subscriptions__plan__type__in=["POCSO", "BOTH"],
         subscriptions__status="ACTIVE"
     ).distinct().order_by("-created_at")[:10]
 
-    # Growth Logic (Simple Mockup or Month-over-Month if needed)
-    # Placeholder for growth
-    posh_growth = 12 # Dynamic calc requires historical data snapshot
+    # Growth Logic
+    posh_growth = 12 
     pocso_growth = 8
 
-    # --- USER COMPLETION LISTS ---
-    # Find users who have completed ALL modules of a certain type
+    # --- USER COMPLETION LISTS (Dynamic Sorting) ---
     total_posh_modules = TrainingModule.objects.filter(module_type="POSH").count()
     total_pocso_modules = TrainingModule.objects.filter(module_type="POCSO").count()
     
     # 1. POSH Completed Users
-    # Filter users who have N completed ModuleProgress entries for POSH modules
-    # Ideally should join with checks, but simplified:
     if total_posh_modules > 0:
         posh_completers = User.objects.annotate(
-            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH"))
-        ).filter(completed_count=total_posh_modules)[:5] # Top 5
+            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH")),
+            latest_completion=Max('module_progress__timestamp', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH"))
+        ).filter(completed_count=total_posh_modules).order_by('-latest_completion')[:10]
     else:
         posh_completers = []
         
     # 2. POCSO Completed Users
     if total_pocso_modules > 0:
         pocso_completers = User.objects.annotate(
-            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO"))
-        ).filter(completed_count=total_pocso_modules)[:5]
+            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO")),
+            latest_completion=Max('module_progress__timestamp', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO"))
+        ).filter(completed_count=total_pocso_modules).order_by('-latest_completion')[:10]
     else:
         pocso_completers = []
 
@@ -859,15 +866,10 @@ def superuser_dashboard(request):
     ).distinct()
     posh_labels, posh_data = get_monthly_counts(posh_orgs_qs)
     posh_svg_points = generate_svg_points(posh_data)
-    posh_svg_area = f"0,50 {posh_svg_points} 100,50" # Close the area loop
+    posh_svg_area = f"0,50 {posh_svg_points} 100,50" 
 
-    # POSH Completion Pie
-    # Simplistic: % of Total POSH Orgs that have >0 completed training
-    # Better: Aggregate ModuleProgress for users in these orgs
-    # Mocking real calculation to save DB query load for now:
-    # Let's say 75% complete for demo if real data is 0
+    # POSH Completion Pie (Estimate)
     posh_complete_percent = 75 
-    # To make it dynamic based on data seeds:
     if posh_total > 0:
         posh_complete_percent = int((users_started_training / (posh_total if posh_total > 0 else 1)) * 100)
         posh_complete_percent = min(posh_complete_percent, 100)
@@ -882,11 +884,9 @@ def superuser_dashboard(request):
     pocso_svg_points = generate_svg_points(pocso_data)
     pocso_svg_area = f"0,50 {pocso_svg_points} 100,50"
 
-    # POCSO Completion Pie
+    # POCSO Completion Pie (Estimate)
     pocso_complete_percent = 60
     if pocso_total > 0:
-         # Just a placeholder logic re-using global stats for demo if specific query is too complex
-         # Ideally: Filter users belonging to School orgs...
          pocso_complete_percent = int((users_started_training / (pocso_total if pocso_total > 0 else 1)) * 100)
          pocso_complete_percent = min(pocso_complete_percent, 100)
 
@@ -894,7 +894,7 @@ def superuser_dashboard(request):
         "total_users": all_users_count,
         "total_companies": total_companies,
         "total_schools": total_schools,
-        "training_completed_count": users_started_training, # Label: "Users Started/Completed"
+        "training_completed_count": users_started_training,
         
         "posh_counts": {
             "total": posh_total,
@@ -907,7 +907,7 @@ def superuser_dashboard(request):
             "chart_area": posh_svg_area,
             "complete_percent": posh_complete_percent,
             "pending_percent": 100 - posh_complete_percent,
-            "completers": posh_completers, # NEW
+            "completers": posh_completers, 
         },
         
         "pocso_counts": {
@@ -921,7 +921,7 @@ def superuser_dashboard(request):
             "chart_area": pocso_svg_area,
             "complete_percent": pocso_complete_percent,
             "pending_percent": 100 - pocso_complete_percent,
-            "completers": pocso_completers, # NEW
+            "completers": pocso_completers,
         },
         
         "recent_posh_orgs": recent_posh_orgs,
