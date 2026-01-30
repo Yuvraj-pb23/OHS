@@ -195,9 +195,7 @@
                     <button class="btn-start" onclick="startVideo()">▶ Begin Learning</button>
                 </div>
 
-                <video id="mainPlayer" controls controlsList="nodownload" style="display: none;">
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                </video>
+                <video id="mainPlayer" controls controlsList="nodownload" style="display: none;"></video>
             </div>
             <h2 id="videoTitle" style="margin-top: 20px;">1. Introduction to POCSO Act</h2>
             <p id="videoDesc" style="color: #666;">Legal framework and the primary objectives of the Act.</p>
@@ -258,26 +256,114 @@
 </div>
 
 <script>
+    // --- BACKEND INTEGRATION START ---
+    
+    // 1. CSRF Helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
+    // 2. Fetch Helper
+    async function sendPost(url, data = {}) {
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify(data)
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    // 3. Inject Modules from Django Backend
     const modules = [
-        { id: 0, title: "1. Introduction to POCSO Act", desc: "Understanding the legal framework of child protection.", src: "https://www.w3schools.com/html/mov_bbb.mp4", thumb: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=600", status: "pending", watched: 0 },
-        { id: 1, title: "2. Identifying Abuse", desc: "Recognizing signs of physical and sexual exploitation.", src: "https://www.w3schools.com/html/movie.mp4", thumb: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=600", status: "locked", watched: 0 },
-        { id: 2, title: "3. Special Courts & Trials", desc: "The judicial process and child-friendly procedures.", src: "https://www.w3schools.com/html/mov_bbb.mp4", thumb: "https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&q=80&w=600", status: "locked", watched: 0 }
+        {% for item in modules %}
+        { 
+            id: {{ item.obj.id }}, 
+            title: "{{ item.obj.order }}. {{ item.obj.title|escapejs }}", 
+            desc: "{{ item.obj.description|escapejs }}", 
+            src: "{{ item.obj.video_file.url|escapejs }}", 
+            thumb: "{% if item.obj.thumbnail %}{{ item.obj.thumbnail.url|escapejs }}{% else %}https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=600{% endif %}", 
+            status: "{% if item.is_completed %}complete{% elif item.is_locked %}locked{% else %}pending{% endif %}", 
+            watched: 0 
+        },
+        {% endfor %}
     ];
+
+    // URL Constants
+    const URL_UPDATE_WATCH = "{% url 'update_watch_time' %}";
+    const URL_MOD_COMPLETE_BASE = "{% url 'mod_complete' 0 %}".replace('0/', '');
 
     let currentIdx = 0;
     let furthestTime = 0;
     const player = document.getElementById('mainPlayer');
     const alertBox = document.getElementById('alert-box');
 
+    // Watch Time Tracker
+    setInterval(() => {
+        if (!player.paused && !player.ended && player.style.display !== 'none') {
+            sendPost(URL_UPDATE_WATCH);
+        }
+    }, 60000); 
+
+    function updateTotalStats() {
+        // Just a local display statistic
+        const totalWatched = modules.reduce((s, m) => s + m.watched, 0);
+        const m = Math.floor(totalWatched / 60);
+        const s = Math.floor(totalWatched % 60);
+        document.getElementById('watch-time-display').innerText = `${m}:${s.toString().padStart(2, '0')}`;
+        
+        const done = modules.filter(m => m.status === 'complete').length;
+        const perc = Math.round((done / modules.length) * 100);
+        document.getElementById('perc-text').innerText = perc + "%";
+        document.getElementById('perc-bar').style.width = perc + "%";
+    }
+
+    // Error Logging
+    player.onerror = function() {
+        console.error("Video Error:", player.error);
+        alert("Error loading video. Please check your internet connection or contact support.");
+    };
+
     function renderModules() {
         const list = document.getElementById('module-list');
+        if (!list) return;
+        
         list.innerHTML = '';
+        if (modules.length === 0) {
+            list.innerHTML = '<p style="padding:20px; text-align:center;">No training modules available.</p>';
+            return;
+        }
+
         modules.forEach((mod, i) => {
             const item = document.createElement('div');
             item.className = `video-item ${mod.status === 'locked' ? 'locked' : ''}`;
             item.onclick = () => playVideo(i);
+            
+            // Icon handling
+            let icon = '▶';
+            if (mod.status === 'locked') icon = '🔒';
+            else if (mod.status === 'complete') icon = '✅';
+
             item.innerHTML = `
-                <div class="thumb-box" style="background-image:url('${mod.thumb}')">${mod.status === 'locked' ? '🔒' : '▶'}</div>
+                <div class="thumb-box" style="background-image:url('${mod.thumb}')">${icon}</div>
                 <div><h3 style="margin:0">${mod.title}</h3><p style="font-size:13px; color:#666;">${mod.desc}</p></div>
                 <span class="badge bg-${mod.status}">${mod.status}</span>
             `;
@@ -288,30 +374,38 @@
     }
 
     function startVideo() {
-        document.getElementById('video-cover').style.display = 'none';
-        player.style.display = 'block';
-        player.play();
+        if (modules.length === 0) {
+            alert("No modules loaded.");
+            return;
+        }
+        let startIdx = modules.findIndex(m => m.status === 'pending');
+        if (startIdx === -1) startIdx = 0; 
+        playVideo(startIdx);
     }
 
     function playVideo(idx) {
-        if (modules[idx].status === 'locked') return;
+        if (!modules[idx] || modules[idx].status === 'locked') return;
         currentIdx = idx;
-        furthestTime = 0;
-        player.pause();
-        player.style.display = 'none';
+        furthestTime = 0; 
         
         const cover = document.getElementById('video-cover');
-        cover.style.display = 'flex';
-        cover.style.backgroundImage = `url('${modules[idx].thumb}')`;
-        document.getElementById('cover-title').innerText = modules[idx].title;
-        document.getElementById('cover-desc').innerText = modules[idx].desc;
-        
+        if (cover) cover.style.display = 'none';
+
+        player.style.display = 'block';
         player.src = modules[idx].src;
+        player.load();
+        
         document.getElementById('videoTitle').innerText = modules[idx].title;
         document.getElementById('videoDesc').innerText = modules[idx].desc;
+        
+        player.play().catch(e => {
+            console.log("Autoplay prevented or error:", e);
+        });
+        
         renderModules();
     }
 
+    // PPT & Tab Logic 
     function startPPT() {
         document.getElementById('ppt-cover').style.display = 'none';
         document.getElementById('pptFrame').style.display = 'block';
@@ -355,6 +449,7 @@
         }
     }
 
+    // Player Events
     player.ontimeupdate = () => {
         if (player.currentTime > furthestTime + 1.5) {
             player.currentTime = furthestTime;
@@ -366,15 +461,27 @@
                 modules[currentIdx].watched = furthestTime;
             }
         }
-        if (player.currentTime > player.duration * 0.95) markComplete(currentIdx);
+        
+        if (player.currentTime > player.duration * 0.95) {
+            markComplete(currentIdx);
+        }
         updateTotalStats();
     };
 
     function markComplete(idx) {
         if (modules[idx].status !== 'complete') {
             modules[idx].status = 'complete';
-            if (modules[idx + 1]) modules[idx + 1].status = 'pending';
-            renderModules();
+            
+            // Backend Sync
+            const finalUrl = `${URL_MOD_COMPLETE_BASE}${modules[idx].id}/`;
+            sendPost(finalUrl).then(data => {
+                if (data && data.status === 'success') {
+                    if (modules[idx + 1]) {
+                         modules[idx + 1].status = 'pending';
+                    }
+                    renderModules();
+                }
+            });
         }
     }
 
@@ -402,6 +509,7 @@
         const m = Math.floor(totalWatched / 60);
         const s = Math.floor(totalWatched % 60);
         document.getElementById('watch-time-display').innerText = `${m}:${s.toString().padStart(2, '0')}`;
+        
         const done = modules.filter(m => m.status === 'complete').length;
         const perc = Math.round((done / modules.length) * 100);
         document.getElementById('perc-text').innerText = perc + "%";
