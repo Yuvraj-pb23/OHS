@@ -1,0 +1,611 @@
+{
+  "quiz_title": "POSH Act Knowledge Assessment",
+  "total_questions": 55,
+  "questions": [
+    {
+      "question_number": 1,
+      "question": "The POSH Act was enacted in which year?",
+      "options": {
+        "A": "2010",
+        "B": "2011",
+        "C": "2013",
+        "D": "2015"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 2,
+      "question": "What does POSH stand for?",
+      "options": {
+        "A": "Prevention of Sexual Harm",
+        "B": "Protection of Safety at Home",
+        "C": "Prevention, Prohibition and Redressal of Sexual Harassment",
+        "D": "Public Order and Safety Handling"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 3,
+      "question": "The primary objective of the POSH Act is to:",
+      "options": {
+        "A": "Punish offenders only",
+        "B": "Promote discipline",
+        "C": "Prevent, prohibit and redress sexual harassment",
+        "D": "Improve productivity"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 4,
+      "question": "POSH Act applies to which workplaces?",
+      "options": {
+        "A": "Only private companies",
+        "B": "Only government offices",
+        "C": "All workplaces in India",
+        "D": "Only IT companies"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 5,
+      "question": "Which of the following is NOT a pillar of the POSH Act?",
+      "options": {
+        "A": "Prevention",
+        "B": "Prohibition",
+        "C": "Redressal",
+        "D": "Promotion"
+      },
+      "correct_answer": "D"
+    },
+    {
+      "question_number": 6,
+      "question": "Who is protected under the POSH Act?",
+      "options": {
+        "A": "Only permanent employees",
+        "B": "Only women employees",
+        "C": "Any aggrieved woman at the workplace",
+        "D": "Only interns"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 7,
+      "question": "\"Workplace\" under POSH includes:",
+      "options": {
+        "A": "Office premises only",
+        "B": "Client locations and official travel",
+        "C": "Employer-owned buildings only",
+        "D": "Factories only"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 8,
+      "question": "Sexual harassment is judged from whose perspective?",
+      "options": {
+        "A": "Employer",
+        "B": "Accused",
+        "C": "Woman affected",
+        "D": "Internal Committee"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 9,
+      "question": "Which behaviour can qualify as sexual harassment?",
+      "options": {
+        "A": "Friendly greeting",
+        "B": "Unwelcome physical contact",
+        "C": "Professional feedback",
+        "D": "Formal discussion"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 10,
+      "question": "A single incident can amount to sexual harassment if it is:",
+      "options": {
+        "A": "Accidental",
+        "B": "Serious",
+        "C": "Informal",
+        "D": "Mutual"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 11,
+      "question": "Repeatedly asking for dates after refusal is considered:",
+      "options": {
+        "A": "Casual behaviour",
+        "B": "Harmless flirting",
+        "C": "Sexual harassment",
+        "D": "Social interaction"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 12,
+      "question": "Sending late-night personal messages to junior colleagues is:",
+      "options": {
+        "A": "Acceptable",
+        "B": "Friendly",
+        "C": "Unwelcome behaviour",
+        "D": "Professional"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 13,
+      "question": "Which of the following is non-verbal sexual harassment?",
+      "options": {
+        "A": "Email complaint",
+        "B": "Inappropriate staring",
+        "C": "Formal warning",
+        "D": "Work reminder"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 14,
+      "question": "Displaying explicit images at the workplace is:",
+      "options": {
+        "A": "Personal choice",
+        "B": "Entertainment",
+        "C": "Sexual harassment",
+        "D": "Free expression"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 15,
+      "question": "Creating a hostile or intimidating work environment amounts to:",
+      "options": {
+        "A": "Discipline",
+        "B": "Miscommunication",
+        "C": "Sexual harassment",
+        "D": "Performance issue"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 16,
+      "question": "Employers' duties are defined under which section of POSH Act?",
+      "options": {
+        "A": "Section 5",
+        "B": "Section 10",
+        "C": "Section 19",
+        "D": "Section 25"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 17,
+      "question": "Employers must display which information at the workplace?",
+      "options": {
+        "A": "Salary details",
+        "B": "POSH policy and IC details",
+        "C": "Personal contacts",
+        "D": "Attendance rules"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 18,
+      "question": "Which of the following is an employer responsibility?",
+      "options": {
+        "A": "Ignore complaints",
+        "B": "Conduct awareness programmes",
+        "C": "Discourage reporting",
+        "D": "Delay inquiry"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 19,
+      "question": "Organizations with how many employees must form an Internal Committee?",
+      "options": {
+        "A": "5",
+        "B": "8",
+        "C": "10",
+        "D": "20"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 20,
+      "question": "Who must be the Presiding Officer of the Internal Committee?",
+      "options": {
+        "A": "HR Manager",
+        "B": "External NGO member",
+        "C": "Senior woman employee",
+        "D": "Legal advisor"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 21,
+      "question": "Minimum percentage of women members in IC should be:",
+      "options": {
+        "A": "25%",
+        "B": "30%",
+        "C": "50%",
+        "D": "75%"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 22,
+      "question": "External member of IC should be from:",
+      "options": {
+        "A": "Police department",
+        "B": "NGO or professional body",
+        "C": "Company board",
+        "D": "Legal firm only"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 23,
+      "question": "Maximum tenure of IC members is:",
+      "options": {
+        "A": "1 year",
+        "B": "2 years",
+        "C": "3 years",
+        "D": "5 years"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 24,
+      "question": "A complaint should be filed within how many months of the incident?",
+      "options": {
+        "A": "1 month",
+        "B": "2 months",
+        "C": "3 months",
+        "D": "6 months"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 25,
+      "question": "IC can extend the complaint filing period by:",
+      "options": {
+        "A": "1 month",
+        "B": "2 months",
+        "C": "3 months",
+        "D": "No extension"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 26,
+      "question": "Conciliation can be initiated only when requested by:",
+      "options": {
+        "A": "Employer",
+        "B": "Respondent",
+        "C": "Complainant",
+        "D": "IC"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 27,
+      "question": "Which settlement is NOT allowed during conciliation?",
+      "options": {
+        "A": "Apology",
+        "B": "Warning",
+        "C": "Monetary settlement",
+        "D": "Transfer"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 28,
+      "question": "Inquiry must be completed within how many days?",
+      "options": {
+        "A": "60",
+        "B": "75",
+        "C": "90",
+        "D": "120"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 29,
+      "question": "Inquiry report must be submitted within how many days after completion?",
+      "options": {
+        "A": "5 days",
+        "B": "7 days",
+        "C": "10 days",
+        "D": "15 days"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 30,
+      "question": "Employer must act on IC recommendations within:",
+      "options": {
+        "A": "30 days",
+        "B": "45 days",
+        "C": "60 days",
+        "D": "90 days"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 31,
+      "question": "Confidentiality during POSH proceedings is:",
+      "options": {
+        "A": "Optional",
+        "B": "Mandatory",
+        "C": "Conditional",
+        "D": "Recommended"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 32,
+      "question": "Which is a right of the complainant?",
+      "options": {
+        "A": "Public disclosure",
+        "B": "Non-retaliatory environment",
+        "C": "Anonymous punishment",
+        "D": "Immediate termination"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 33,
+      "question": "Which is a right of the respondent?",
+      "options": {
+        "A": "Presumed guilt",
+        "B": "No hearing",
+        "C": "Opportunity to respond",
+        "D": "Immediate penalty"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 34,
+      "question": "IC can recommend which interim relief?",
+      "options": {
+        "A": "Salary deduction",
+        "B": "Transfer",
+        "C": "Termination",
+        "D": "Promotion"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 35,
+      "question": "Maximum leave allowed as interim relief is:",
+      "options": {
+        "A": "1 month",
+        "B": "2 months",
+        "C": "3 months",
+        "D": "6 months"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 36,
+      "question": "If allegations are proved, IC may recommend:",
+      "options": {
+        "A": "No action",
+        "B": "Disciplinary action",
+        "C": "Informal warning only",
+        "D": "Case closure"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 37,
+      "question": "Compensation to the complainant may be recovered from:",
+      "options": {
+        "A": "Employer funds",
+        "B": "Government",
+        "C": "Respondent's salary",
+        "D": "Insurance"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 38,
+      "question": "Which action supports POSH compliance?",
+      "options": {
+        "A": "Ignoring complaints",
+        "B": "Regular training",
+        "C": "Discouraging reporting",
+        "D": "Informal handling"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 39,
+      "question": "Gender sensitisation helps identify:",
+      "options": {
+        "A": "Technical errors",
+        "B": "Unconscious biases",
+        "C": "Financial gaps",
+        "D": "Legal loopholes"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 40,
+      "question": "Gender sensitisation encourages questioning of:",
+      "options": {
+        "A": "Authority",
+        "B": "Company rules",
+        "C": "Stereotypes",
+        "D": "Performance metrics"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 41,
+      "question": "Which guidelines preceded the POSH Act?",
+      "options": {
+        "A": "IPC Guidelines",
+        "B": "RTI Guidelines",
+        "C": "Vishaka Guidelines",
+        "D": "Labour Code"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 42,
+      "question": "Vishaka Guidelines were issued in which year?",
+      "options": {
+        "A": "1995",
+        "B": "1997",
+        "C": "2000",
+        "D": "2003"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 43,
+      "question": "POSH Act shifted accountability from individual to:",
+      "options": {
+        "A": "Government",
+        "B": "Police",
+        "C": "Institution",
+        "D": "Court"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 44,
+      "question": "Which is an example of unwelcome behaviour?",
+      "options": {
+        "A": "Mutual conversation",
+        "B": "Continued conduct after refusal",
+        "C": "Consensual interaction",
+        "D": "Professional feedback"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 45,
+      "question": "Blocking someone's path deliberately can be categorized as:",
+      "options": {
+        "A": "Accident",
+        "B": "Non-verbal harassment",
+        "C": "Team conflict",
+        "D": "Discipline"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 46,
+      "question": "Making sexual jokes in meetings is:",
+      "options": {
+        "A": "Team bonding",
+        "B": "Friendly humour",
+        "C": "Sexual harassment",
+        "D": "Informal talk"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 47,
+      "question": "POSH training aims to:",
+      "options": {
+        "A": "Increase sales",
+        "B": "Build awareness and respect",
+        "C": "Enforce punishment",
+        "D": "Reduce workforce"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 48,
+      "question": "Employees should refrain from sharing:",
+      "options": {
+        "A": "Work updates",
+        "B": "Meeting notes",
+        "C": "Sexist jokes",
+        "D": "Feedback"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 49,
+      "question": "Bystander intervention should always be:",
+      "options": {
+        "A": "Aggressive",
+        "B": "Public",
+        "C": "Safe",
+        "D": "Mandatory"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 50,
+      "question": "Which sector is covered under POSH Act?",
+      "options": {
+        "A": "Only IT",
+        "B": "Only government",
+        "C": "All sectors",
+        "D": "Only private"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 51,
+      "question": "Domestic workers are covered under POSH Act when employed in:",
+      "options": {
+        "A": "Offices",
+        "B": "Factories",
+        "C": "Dwelling places",
+        "D": "Shops"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 52,
+      "question": "Which behaviour shows power imbalance?",
+      "options": {
+        "A": "Mutual consent",
+        "B": "Pressure from senior",
+        "C": "Equal discussion",
+        "D": "Team feedback"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 53,
+      "question": "Staring or smirking sexually is classified as:",
+      "options": {
+        "A": "Verbal harassment",
+        "B": "Non-verbal harassment",
+        "C": "Written misconduct",
+        "D": "Casual behaviour"
+      },
+      "correct_answer": "B"
+    },
+    {
+      "question_number": 54,
+      "question": "POSH Act promotes which type of workplace?",
+      "options": {
+        "A": "Competitive",
+        "B": "Disciplined",
+        "C": "Safe and respectful",
+        "D": "Hierarchical"
+      },
+      "correct_answer": "C"
+    },
+    {
+      "question_number": 55,
+      "question": "Every employee has a responsibility to:",
+      "options": {
+        "A": "Stay silent",
+        "B": "Support respectful culture",
+        "C": "Avoid reporting",
+        "D": "Ignore misconduct"
+      },
+      "correct_answer": "B"
+    }
+  ]
+}

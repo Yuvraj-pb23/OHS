@@ -3,27 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POCSO Mastery Dashboard</title>
+    <title>POCSO Mastery Dashboard - Child Safety Compliance</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
         :root {
-            --primary: #0984e3;
-            --primary-gradient: linear-gradient(135deg, #0984e3, #74b9ff);
+            --primary: #4e54c8;
+            --primary-gradient: linear-gradient(135deg, #4e54c8, #8f94fb);
             --complete: #00b894;
-            --pending: #fdcb6e;
+            --pending: #f1c40f;
             --locked: #636e72;
             --glass-surface: rgba(255, 255, 255, 0.95);
             --text-dark: #2d3436;
+            --danger: #ff4757;
+            --success: #2ecc71;
         }
 
         body {
             font-family: "Poppins", sans-serif;
             margin: 0;
-            background: linear-gradient(rgba(9, 132, 227, 0.8), rgba(116, 185, 255, 0.8)),
-                url("https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=2000");
+            background: linear-gradient(rgba(78, 84, 200, 0.9), rgba(143, 148, 251, 0.9)),
+                url("https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=2000");
             background-attachment: fixed;
             background-size: cover;
             color: var(--text-dark);
@@ -48,7 +50,11 @@
             position: sticky;
             top: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
         }
+
+        .nav-menu { flex-grow: 1; }
 
         .nav-item {
             display: flex; align-items: center;
@@ -57,39 +63,48 @@
             margin-bottom: 10px; transition: 0.3s;
             cursor: pointer;
         }
+        .nav-item:hover { background: rgba(78, 84, 200, 0.1); }
         .nav-item.active { background: var(--primary-gradient); color: white; }
 
-        /* MAIN CONTENT */
+        .nav-item.logout {
+            margin-top: auto; color: var(--danger);
+            border: 1px solid transparent; font-weight: 600;
+        }
+        .nav-item.logout:hover {
+            background: rgba(255, 71, 87, 0.1); border-color: var(--danger);
+        }
+
         .main-content { animation: fadeIn 0.8s ease-out; }
 
         .section-card {
-            background: white;
-            border-radius: 24px;
-            padding: 25px;
-            margin-bottom: 25px;
+            background: white; border-radius: 24px;
+            padding: 25px; margin-bottom: 25px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
-        /* VIDEO PLAYER */
-        .video-player-container {
-            background: #000;
-            border-radius: 20px;
-            overflow: hidden;
-            aspect-ratio: 16/9;
+        /* Certificate Styling */
+        .cert-box {
+            text-align: center; padding: 50px 20px;
+            border-radius: 20px; transition: 0.5s;
+        }
+        .locked-state { border: 3px dashed #ccc; background: #f9f9f9; }
+        .unlocked-state { border: 3px solid var(--complete); background: #e8f5e9; }
+
+        /* Stage Area */
+        .stage-container {
+            background: #000; border-radius: 20px;
+            overflow: hidden; aspect-ratio: 16/9;
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             position: relative;
         }
         video { width: 100%; height: 100%; object-fit: cover; }
 
         .content-cover {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover;
-            background-position: center;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
             display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             z-index: 10; color: white; text-align: center;
-            transition: 0.5s;
         }
         .cover-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -101,19 +116,41 @@
             padding: 15px 40px; border-radius: 50px;
             border: none; font-weight: 700; cursor: pointer;
             margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s; z-index: 11;
+            transition: 0.3s;
         }
-        .btn-start:hover { transform: scale(1.05); }
+        .btn-start.disabled { background: #ccc; cursor: not-allowed; }
 
-        #alert-box {
-            position: absolute;
-            top: 20px; right: 20px;
-            background: #d63031; color: white;
-            padding: 15px 25px; border-radius: 12px;
-            display: none; z-index: 2147483647;
-            font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        #presence-indicator {
+            position: fixed; bottom: 20px; right: 20px;
+            background: #2ecc71; color: white; padding: 5px 15px;
+            border-radius: 20px; font-size: 12px; font-weight: bold;
+            z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
+        .tab-header { display: flex; gap: 15px; margin-bottom: 20px; }
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.2); border: 2px solid white;
+            color: white; padding: 10px 25px;
+            border-radius: 30px; cursor: pointer; font-weight: 600;
+        }
+        .tab-btn.active { background: white; color: var(--primary); }
+
+        .record-item {
+            display: grid; grid-template-columns: 180px 1fr auto;
+            gap: 20px; background: #f8f9fa;
+            padding: 15px; border-radius: 15px;
+            margin-bottom: 15px; cursor: pointer;
+            transition: 0.3s;
+        }
+        .record-item.locked { opacity: 0.6; cursor: not-allowed; }
+        
+        .thumb-box { width: 100%; height: 100px; background: #ddd; border-radius: 10px; background-size: cover; }
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .bg-complete { background: #e8f5e9; color: #2e7d32; }
+        .bg-pending { background: #fff3e0; color: #ef6c00; }
+        .bg-locked { background: #eeeeee; color: #757575; }
+
+        /* MODAL & PRACTICE QUIZ STYLES */
         .ppt-modal {
             display: none; position: fixed; top: 0; left: 0; 
             width: 100%; height: 100%; background: rgba(0,0,0,0.9);
@@ -121,411 +158,448 @@
         }
         .ppt-content { width: 90%; height: 85%; background: white; border-radius: 20px; overflow: hidden; position: relative; }
 
-        .tab-header { display: flex; gap: 15px; margin-bottom: 20px; }
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-            color: white; padding: 10px 25px;
-            border-radius: 30px; cursor: pointer; font-weight: 600;
+        .practice-quiz-container {
+            padding: 40px; height: 100%; overflow-y: auto;
+            box-sizing: border-box; background: #fdfdfd;
         }
-        .tab-btn.active { background: white; color: var(--primary); }
-
-        .video-item {
-            display: grid; grid-template-columns: 180px 1fr auto;
-            gap: 20px; background: #f8f9fa;
-            padding: 15px; border-radius: 15px;
-            margin-bottom: 15px; cursor: pointer;
-            transition: 0.3s; border: 2px solid transparent;
+        .pq-question { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--primary); }
+        .pq-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .pq-btn {
+            padding: 20px; border: 2px solid #ddd; border-radius: 12px;
+            background: white; font-size: 1.1rem; text-align: left; cursor: pointer;
+            transition: 0.2s; font-family: "Poppins", sans-serif;
         }
-        .video-item:hover { transform: translateX(10px); background: #fff; border-color: var(--primary); }
+        .pq-btn:hover:not(.disabled) { border-color: var(--primary); background: #f0f4ff; }
         
-        .thumb-box {
-            width: 100%; height: 100px;
-            background: #ddd; border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; background-size: cover;
+        /* States for answers */
+        .pq-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+        .pq-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        .pq-btn.disabled { cursor: default; pointer-events: none; }
+
+        .pq-next-btn {
+            background: var(--primary); color: white; border: none;
+            padding: 10px 30px; border-radius: 30px; margin-top: 30px;
+            font-size: 1rem; cursor: pointer; float: right; display: none;
         }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        .bg-complete { background: #e8f5e9; color: #2e7d32; }
-        .bg-pending { background: #fff3e0; color: #ef6c00; }
-        .bg-locked { background: #eeeeee; color: #757575; }
 
-        .cert-lock-overlay { background: #f1f2f6; border-radius: 15px; padding: 20px; text-align: center; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-<!-- PPT Modal -->
+<div id="presence-indicator">● System Active</div>
+
+<!-- UNIVERSAL MODAL FOR PPT AND PRACTICE QUIZ -->
 <div class="ppt-modal" id="pptModal">
     <div class="ppt-content">
-        <button onclick="closePPT()" style="position: absolute; right: 20px; top: 10px; font-size: 30px; border: none; background: none; cursor: pointer; z-index: 101;">&times;</button>
-        <div id="ppt-cover" class="content-cover">
-            <div class="cover-overlay"></div>
-            <h2 id="ppt-cover-title">Mandatory Reporting PPT</h2>
-            <p id="ppt-cover-desc">Section 19: Procedures and Responsibilities</p>
-            <button class="btn-start" onclick="startPPT()">Open Presentation</button>
-        </div>
+        <!-- Close Button -->
+        <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 1000; font-size: 24px;">&times;</button>
+        
+        <!-- Timer Badge (For PPT Slides only) -->
+        <div id="ppt-timer-badge" style="position: absolute; left: 20px; top: 10px; background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; z-index: 102; display: none;">Time: 0s</div>
+        
+        <!-- Iframe for Slides -->
         <iframe id="pptFrame" src="" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+
+        <!-- PRACTICE QUIZ CONTAINER -->
+        <div id="practiceQuizContainer" class="practice-quiz-container" style="display: none;">
+            <h2 style="text-align: center; margin-bottom: 30px;">POCSO Practice Quiz</h2>
+            <div id="pq-game-area">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #666;">
+                    <span id="pq-counter">Question 1/5</span>
+                    <span>No Timer</span>
+                </div>
+                <div id="pq-question-text" class="pq-question">Loading...</div>
+                <div id="pq-options-grid" class="pq-options"></div>
+                <button id="pq-next-btn" class="pq-next-btn" onclick="nextPracticeQuestion()">Next Question ➜</button>
+            </div>
+            
+            <div id="pq-result-area" style="text-align: center; display: none; padding-top: 50px;">
+                <h1>Practice Complete!</h1>
+                <p>You have successfully reviewed these concepts.</p>
+                <button class="btn-start" onclick="closeModal()">Close & Continue</button>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="lms-container">
     <aside class="sidebar">
-        <h2 style="color: var(--primary); margin-bottom: 5px;">POCSO Guard</h2>
-        <p style="font-size: 12px; color: #888; margin-bottom: 30px;">Child Protection LMS</p>
-        <nav>
-            <a onclick="showView('dashboard')" id="nav-dash" class="nav-item active">Training Center</a>
-            <a onclick="showView('certificate')" id="nav-cert" class="nav-item">Certification</a>
-        </nav>
+        <h2 style="color: var(--primary); margin-bottom: 20px;">POCSO AI</h2>
+        
+        <div class="nav-menu">
+            <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active">
+                <span>📊 Dashboard</span>
+            </div>
+            <div onclick="showView('certificate')" id="nav-cert" class="nav-item">
+                <span>📜 My Certificate</span>
+            </div>
+            
+            <!-- FINAL QUIZ LINK (External URL) -->
+            <div onclick="window.location.href='{% url 'pocso_assessment' %}'" class="nav-item">
+                <span>📝 Final Quiz</span>
+            </div>
+        </div>
+
+        <!-- LOGOUT BUTTON -->
+        <div onclick="logout()" class="nav-item logout">
+            <span>🚪 Logout</span>
+        </div>
     </aside>
 
-    <main class="main-content" id="dashboard-view">
-        <h1 style="color: white;">Course: POCSO Compliance 2024</h1>
-
-        <div class="section-card">
-            <div class="video-player-container">
-                <div id="alert-box">⚠️ No Skipping: Full module completion required!</div>
-                
-                <div id="video-cover" class="content-cover" style="background-image: url('https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=1000');">
-                    <div class="cover-overlay"></div>
-                    <h2 id="cover-title">1. Introduction to POCSO Act</h2>
-                    <p id="cover-desc">Protecting children from sexual abuse and exploitation.</p>
-                    <button class="btn-start" onclick="startVideo()">▶ Begin Learning</button>
-                </div>
-
-                <video id="mainPlayer" controls controlsList="nodownload" style="display: none;"></video>
-            </div>
-            <h2 id="videoTitle" style="margin-top: 20px;">1. Introduction to POCSO Act</h2>
-            <p id="videoDesc" style="color: #666;">Legal framework and the primary objectives of the Act.</p>
-        </div>
-
-        <div class="tab-header">
-            <button class="tab-btn active" onclick="switchTab('vids')">Video Modules</button>
-            <button class="tab-btn" onclick="switchTab('ppts')">Legal Guidelines</button>
-        </div>
-
-        <div id="vids-section">
-            <div id="module-list"></div>
-        </div>
-
-        <div id="ppts-section" style="display: none;">
-            <div class="video-item" onclick="openPPT('https://docs.google.com/presentation/d/1Ta77aFMjK3740YnwQMlkIbXP529PzWt_/embed', 'Mandatory Reporting Protocols', 'Legal obligations of staff members under Section 19.', 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=1000')">
-                <div class="thumb-box" style="background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=300');"></div>
-                <div>
-                    <h3>Mandatory Reporting Protocols</h3>
-                    <p>Legal obligations of staff members under Section 19.</p>
-                </div>
-                <button class="tab-btn" style="color: var(--primary); border-color: var(--primary);">Open Slides</button>
-            </div>
-        </div>
-
-        <!-- STATS SECTION -->
-        <div class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px;">
+    <main class="main-content">
+        <!-- DASHBOARD VIEW -->
+        <div id="dashboard-view">
+            <h1 style="color: white;">POCSO Compliance Training</h1>
             <div class="section-card">
-                <h3>Course Health</h3>
-                <div style="height: 200px;"><canvas id="statusChart"></canvas></div>
-            </div>
-            <div class="section-card" style="text-align: center;">
-                <h3>Engaged Minutes</h3>
-                <h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">00:00</h1>
-            </div>
-            <div class="section-card">
-                <h3>Progress</h3>
-                <h2 id="perc-text">0%</h2>
-                <div style="width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden;">
-                    <div id="perc-bar" style="width: 0%; height: 100%; background: var(--complete); transition: 1s;"></div>
+                <!-- VIDEO STAGE -->
+                <div id="video-stage">
+                    <div class="stage-container">
+                        <div id="video-cover" class="content-cover" style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1000');">
+                            <div class="cover-overlay"></div>
+                            <h2 id="cover-title">Module 1: The POCSO Act</h2>
+                            <button class="btn-start" onclick="startVideo()">▶ Start Video</button>
+                        </div>
+                        <video id="mainPlayer" controls style="display: none;"><source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4"></video>
+                    </div>
+                </div>
+
+                <!-- PPT/QUIZ STAGE (Cover Only) -->
+                <div id="ppt-stage" style="display: none;">
+                    <div class="stage-container">
+                        <div id="ppt-main-cover" class="content-cover" style="background-image: url('https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=1000');">
+                            <div class="cover-overlay"></div>
+                            <h2 id="ppt-main-title">Legal Resources</h2>
+                            <button class="btn-start" id="ppt-start-btn" onclick="triggerResourceAction()">📖 Open Resource</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
 
-    <!-- CERTIFICATE VIEW -->
-    <main class="main-content" id="certificate-view" style="display: none;">
-        <h1 style="color: white;">Certificate of POCSO Compliance</h1>
-        <div class="section-card">
-            <h2>Your Training Progress</h2>
-            <div id="cert-progress-details" style="margin: 30px 0;"></div>
-            <div id="cert-download-area" class="cert-lock-overlay">
-                <p id="cert-msg">🔒 Complete all modules to unlock your legal certification.</p>
-                <button id="downloadBtn" disabled class="btn-start" style="background: #ccc; cursor: not-allowed;">Download e-Certificate</button>
+            <div class="tab-header">
+                <button class="tab-btn active" id="tab-vids" onclick="switchTab('vids')">Video Modules</button>
+                <button class="tab-btn" id="tab-ppts" onclick="switchTab('ppts')">PPT & Resources</button>
+            </div>
+
+            <div id="vids-section"><div id="module-list"></div></div>
+            <div id="ppts-section" style="display: none;"><div id="ppt-list"></div></div>
+
+            <div class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px;">
+                <div class="section-card"><h3>Activity Mix</h3><div style="height: 200px;"><canvas id="statusChart"></canvas></div></div>
+                <div class="section-card" style="text-align: center;"><h3>Study Time</h3><h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">00:00</h1></div>
+                <div class="section-card"><h3>Completion</h3><h2 id="perc-text">0%</h2><div style="width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden;"><div id="perc-bar" style="width: 0%; height: 100%; background: var(--complete); transition: 1s;"></div></div></div>
+            </div>
+        </div>
+
+        <!-- CERTIFICATE VIEW -->
+        <div id="certificate-view" style="display: none;">
+            <h1 style="color: white;">Course Certification</h1>
+            <div class="section-card" id="cert-container">
+                <!-- Logic injected here -->
             </div>
         </div>
     </main>
 </div>
 
 <script>
-    // --- BACKEND INTEGRATION START ---
-    
-    // 1. CSRF Helper
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    const csrftoken = getCookie('csrftoken');
-
-    // 2. Fetch Helper
-    async function sendPost(url, data = {}) {
-        try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken
-                },
-                body: JSON.stringify(data)
-            });
-            return await response.json();
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    }
-
-    // 3. Inject Modules from Django Backend
+    // --- 1. DATA ---
     const modules = [
-        {% for item in modules %}
-        { 
-            id: {{ item.obj.id }}, 
-            title: "{{ item.obj.order }}. {{ item.obj.title|escapejs }}", 
-            desc: "{{ item.obj.description|escapejs }}", 
-            src: "{{ item.obj.video_file.url|escapejs }}", 
-            thumb: "{% if item.obj.thumbnail %}{{ item.obj.thumbnail.url|escapejs }}{% else %}https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=600{% endif %}", 
-            status: "{% if item.is_completed %}complete{% elif item.is_locked %}locked{% else %}pending{% endif %}", 
-            watched: 0 
-        },
-        {% endfor %}
+        { id: 0, title: "1. Understanding POCSO", status: "pending", watched: 0, thumb: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
+        { id: 1, title: "2. Mandatory Reporting", status: "locked", watched: 0, thumb: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/movie.mp4" }
     ];
 
-    // URL Constants
-    const URL_UPDATE_WATCH = "{% url 'update_watch_time' %}";
-    const URL_MOD_COMPLETE_BASE = "{% url 'mod_complete' 0 %}".replace('0/', '');
+    // Updated PPT Array with 'type'
+    const ppts = [
+        { id: 0, type: 'slide', title: "Child Protection Policy", status: "pending", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=600", url: "https://docs.google.com/presentation/d/1Ta77aFMjK3740YnwQMlkIbXP529PzWt_/embed" },
+        { id: 1, type: 'quiz', title: "Practice Quiz", status: "locked", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600", url: "" }
+    ];
 
+    // POCSO Specific Question Bank
+    const questionBank = [
+        { id: 1, question: "Who is defined as a 'child' under POCSO Act?", options: ["Under 14 years", "Under 16 years", "Under 18 years", "Under 21 years"], answer: 2 },
+        { id: 2, question: "Is reporting of sexual offences mandatory under POCSO?", options: ["Yes, for everyone", "Only for parents", "Only for teachers", "No, it is optional"], answer: 0 },
+        { id: 3, question: "What is the time limit for the police to record the statement of the child?", options: ["7 days", "24 hours", "30 days", "48 hours"], answer: 1 },
+        { id: 4, question: "Can the police be in uniform while recording the child's statement?", options: ["Yes, always", "No, never", "Depends on rank", "Only if armed"], answer: 1 },
+        { id: 5, question: "Does the Act apply to both boys and girls?", options: ["Only girls", "Only boys", "Yes, it is gender-neutral", "Only below 12 years"], answer: 2 },
+        { id: 6, question: "Who conducts the medical examination of the child?", options: ["Any Doctor", "Female Doctor", "Police Officer", "NGO Worker"], answer: 1 }
+    ];
+
+    // --- 2. GLOBAL VARIABLES ---
+    let activeMode = 'vids';
+    let pptTimerInterval = null;
     let currentIdx = 0;
+    let currentPPTIdx = 0;
     let furthestTime = 0;
     const player = document.getElementById('mainPlayer');
-    const alertBox = document.getElementById('alert-box');
+    
+    // Quiz Variables
+    let practiceQuestions = [];
+    let currentPracticeIndex = 0;
 
-    // Watch Time Tracker
-    setInterval(() => {
-        if (!player.paused && !player.ended && player.style.display !== 'none') {
-            sendPost(URL_UPDATE_WATCH);
+    function logout() {
+        if(confirm("Are you sure you want to logout?")) {
+            window.location.href = "{% url 'logout' %}";
         }
-    }, 60000); 
-
-    function updateTotalStats() {
-        // Just a local display statistic
-        const totalWatched = modules.reduce((s, m) => s + m.watched, 0);
-        const m = Math.floor(totalWatched / 60);
-        const s = Math.floor(totalWatched % 60);
-        document.getElementById('watch-time-display').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-        
-        const done = modules.filter(m => m.status === 'complete').length;
-        const perc = Math.round((done / modules.length) * 100);
-        document.getElementById('perc-text').innerText = perc + "%";
-        document.getElementById('perc-bar').style.width = perc + "%";
     }
 
-    // Error Logging
-    player.onerror = function() {
-        console.error("Video Error:", player.error);
-        alert("Error loading video. Please check your internet connection or contact support.");
-    };
+    // --- 3. NAVIGATION & TABS ---
+    function showView(v) {
+        document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
+        document.getElementById('certificate-view').style.display = v === 'certificate' ? 'block' : 'none';
+        
+        document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
+        document.getElementById('nav-cert').classList.toggle('active', v === 'certificate');
+        
+        if(v === 'certificate') renderCert();
+    }
 
+    function switchTab(type) {
+        activeMode = type;
+        document.getElementById('tab-vids').classList.toggle('active', type === 'vids');
+        document.getElementById('tab-ppts').classList.toggle('active', type === 'ppts');
+        document.getElementById('vids-section').style.display = type === 'vids' ? 'block' : 'none';
+        document.getElementById('ppts-section').style.display = type === 'ppts' ? 'block' : 'none';
+        document.getElementById('video-stage').style.display = type === 'vids' ? 'block' : 'none';
+        document.getElementById('ppt-stage').style.display = type === 'ppts' ? 'block' : 'none';
+        
+        if (type === 'vids') renderModules(); else renderPPTList();
+        updateTotalStats();
+    }
+
+    // --- 4. RENDER LISTS ---
     function renderModules() {
         const list = document.getElementById('module-list');
-        if (!list) return;
-        
         list.innerHTML = '';
-        if (modules.length === 0) {
-            list.innerHTML = '<p style="padding:20px; text-align:center;">No training modules available.</p>';
-            return;
-        }
-
         modules.forEach((mod, i) => {
             const item = document.createElement('div');
-            item.className = `video-item ${mod.status === 'locked' ? 'locked' : ''}`;
-            item.onclick = () => playVideo(i);
-            
-            // Icon handling
-            let icon = '▶';
-            if (mod.status === 'locked') icon = '🔒';
-            else if (mod.status === 'complete') icon = '✅';
-
-            item.innerHTML = `
-                <div class="thumb-box" style="background-image:url('${mod.thumb}')">${icon}</div>
-                <div><h3 style="margin:0">${mod.title}</h3><p style="font-size:13px; color:#666;">${mod.desc}</p></div>
-                <span class="badge bg-${mod.status}">${mod.status}</span>
-            `;
+            item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
+            item.onclick = () => { if(mod.status !== 'locked') { currentIdx = i; playVideo(i); } };
+            item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
             list.appendChild(item);
         });
         updateChart();
-        renderCertificateProgress();
     }
 
-    function startVideo() {
-        if (modules.length === 0) {
-            alert("No modules loaded.");
-            return;
-        }
-        let startIdx = modules.findIndex(m => m.status === 'pending');
-        if (startIdx === -1) startIdx = 0; 
-        playVideo(startIdx);
-    }
-
-    function playVideo(idx) {
-        if (!modules[idx] || modules[idx].status === 'locked') return;
-        currentIdx = idx;
-        furthestTime = 0; 
-        
-        const cover = document.getElementById('video-cover');
-        if (cover) cover.style.display = 'none';
-
-        player.style.display = 'block';
-        player.src = modules[idx].src;
-        player.load();
-        
-        document.getElementById('videoTitle').innerText = modules[idx].title;
-        document.getElementById('videoDesc').innerText = modules[idx].desc;
-        
-        player.play().catch(e => {
-            console.log("Autoplay prevented or error:", e);
+    function renderPPTList() {
+        const list = document.getElementById('ppt-list');
+        list.innerHTML = '';
+        ppts.forEach((ppt, i) => {
+            const item = document.createElement('div');
+            item.className = `record-item ${ppt.status === 'locked' ? 'locked' : ''}`;
+            item.onclick = () => selectResource(i);
+            item.innerHTML = `<div class="thumb-box" style="background-image:url('${ppt.thumb}')"></div><div><h3>${ppt.title}</h3></div><span class="badge bg-${ppt.status}">${ppt.status}</span>`;
+            list.appendChild(item);
         });
+        updateChart();
+    }
+
+    function selectResource(idx) {
+        currentPPTIdx = idx;
+        const res = ppts[idx];
+        document.getElementById('ppt-main-cover').style.backgroundImage = `url('${res.thumb}')`;
+        document.getElementById('ppt-main-title').innerText = res.title;
+        const btn = document.getElementById('ppt-start-btn');
         
-        renderModules();
-    }
-
-    // PPT & Tab Logic 
-    function startPPT() {
-        document.getElementById('ppt-cover').style.display = 'none';
-        document.getElementById('pptFrame').style.display = 'block';
-    }
-
-    function openPPT(url, title, desc, thumb) {
-        const frame = document.getElementById('pptFrame');
-        const cover = document.getElementById('ppt-cover');
-        frame.src = url;
-        frame.style.display = 'none';
-        cover.style.display = 'flex';
-        cover.style.backgroundImage = `url('${thumb}')`;
-        document.getElementById('ppt-cover-title').innerText = title;
-        document.getElementById('ppt-cover-desc').innerText = desc;
-        document.getElementById('pptModal').style.display = 'flex';
-    }
-
-    function closePPT() { 
-        document.getElementById('pptModal').style.display = 'none'; 
-        document.getElementById('pptFrame').src = ""; 
-    }
-
-    function showView(view) {
-        document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'block' : 'none';
-        document.getElementById('certificate-view').style.display = view === 'certificate' ? 'block' : 'none';
-        document.getElementById('nav-dash').className = view === 'dashboard' ? 'nav-item active' : 'nav-item';
-        document.getElementById('nav-cert').className = view === 'certificate' ? 'nav-item active' : 'nav-item';
-    }
-
-    function renderCertificateProgress() {
-        const container = document.getElementById('cert-progress-details');
-        const done = modules.filter(m => m.status === 'complete').length;
-        const perc = Math.round((done / modules.length) * 100);
-        container.innerHTML = `<p>POCSO Course Completion: <b>${done}</b> / <b>${modules.length}</b> units (${perc}%).</p>`;
-        if (perc === 100) {
-            document.getElementById('cert-msg').innerText = "✅ Certification Active: POCSO Specialist Training 2024";
-            const btn = document.getElementById('downloadBtn');
-            btn.disabled = false;
-            btn.style.background = 'var(--complete)';
-            btn.style.cursor = 'pointer';
-        }
-    }
-
-    // Player Events
-    player.ontimeupdate = () => {
-        if (player.currentTime > furthestTime + 1.5) {
-            player.currentTime = furthestTime;
-            alertBox.style.display = 'block';
-            setTimeout(() => alertBox.style.display = 'none', 2000);
+        if(res.type === 'quiz') {
+            btn.innerText = "✍️ Start Practice Quiz";
         } else {
-            if (player.currentTime > furthestTime) {
-                furthestTime = player.currentTime;
-                modules[currentIdx].watched = furthestTime;
-            }
+            btn.innerText = "📖 Open Slides";
         }
         
-        if (player.currentTime > player.duration * 0.95) {
-            markComplete(currentIdx);
+        if(res.status === 'locked') btn.classList.add('disabled'); else btn.classList.remove('disabled');
+    }
+
+    // --- 5. HANDLING ACTION (SLIDES or QUIZ) ---
+    function triggerResourceAction() {
+        const res = ppts[currentPPTIdx];
+        if (res.status === 'locked') return alert("🔒 Locked! Complete previous sections.");
+        
+        const modal = document.getElementById('pptModal');
+        const frame = document.getElementById('pptFrame');
+        const quizContainer = document.getElementById('practiceQuizContainer');
+        const timerBadge = document.getElementById('ppt-timer-badge');
+
+        modal.style.display = 'flex';
+
+        if(res.type === 'quiz') {
+            // QUIZ MODE
+            frame.style.display = 'none';
+            timerBadge.style.display = 'none';
+            quizContainer.style.display = 'block';
+            initPracticeQuiz();
+        } else {
+            // SLIDE MODE
+            quizContainer.style.display = 'none';
+            frame.style.display = 'block';
+            timerBadge.style.display = 'block';
+            frame.src = res.url;
+            startPPTTimer();
+        }
+    }
+
+    function closeModal() { 
+        document.getElementById('pptModal').style.display = 'none'; 
+        document.getElementById('pptFrame').src = "";
+        stopPPTTimer(); 
+    }
+
+    // --- 6. PRACTICE QUIZ LOGIC (No Timer, Reveal) ---
+    
+    // Shuffle Function
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    function initPracticeQuiz() {
+        practiceQuestions = shuffleArray([...questionBank]).slice(0, 5); // Take 5
+        currentPracticeIndex = 0;
+        document.getElementById('pq-game-area').style.display = 'block';
+        document.getElementById('pq-result-area').style.display = 'none';
+        loadPracticeQuestion();
+    }
+
+    function loadPracticeQuestion() {
+        const q = practiceQuestions[currentPracticeIndex];
+        document.getElementById('pq-counter').innerText = `Question ${currentPracticeIndex + 1}/${practiceQuestions.length}`;
+        document.getElementById('pq-question-text').innerText = q.question;
+        document.getElementById('pq-next-btn').style.display = 'none'; 
+
+        const grid = document.getElementById('pq-options-grid');
+        grid.innerHTML = '';
+
+        q.options.forEach((opt, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'pq-btn';
+            btn.innerText = opt;
+            // On Click: Show correct/wrong colors
+            btn.onclick = () => checkPracticeAnswer(btn, idx, q.answer);
+            grid.appendChild(btn);
+        });
+    }
+
+    function checkPracticeAnswer(btn, selectedIdx, correctIdx) {
+        const buttons = document.querySelectorAll('.pq-btn');
+        // Disable all
+        buttons.forEach(b => b.classList.add('disabled'));
+
+        if(selectedIdx === correctIdx) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('wrong');
+            // Highlight the correct one green
+            buttons[correctIdx].classList.add('correct');
+        }
+        // Show Next Button
+        document.getElementById('pq-next-btn').style.display = 'block';
+    }
+
+    function nextPracticeQuestion() {
+        currentPracticeIndex++;
+        if(currentPracticeIndex < practiceQuestions.length) {
+            loadPracticeQuestion();
+        } else {
+            // End of Quiz
+            document.getElementById('pq-game-area').style.display = 'none';
+            document.getElementById('pq-result-area').style.display = 'block';
+            
+            // Mark Complete
+            ppts[currentPPTIdx].status = 'complete';
+            renderPPTList();
+            updateTotalStats();
+        }
+    }
+
+    // --- 7. VIDEO & SLIDE TIMER LOGIC (Existing) ---
+    function startPPTTimer() {
+        if (pptTimerInterval) clearInterval(pptTimerInterval);
+        pptTimerInterval = setInterval(() => {
+            ppts[currentPPTIdx].viewedTime++;
+            document.getElementById('ppt-timer-badge').innerText = `Time: ${ppts[currentPPTIdx].viewedTime}s`;
+            if (ppts[currentPPTIdx].viewedTime >= 10 && ppts[currentPPTIdx].status !== 'complete') {
+                ppts[currentPPTIdx].status = 'complete';
+                if (ppts[currentPPTIdx + 1]) ppts[currentPPTIdx + 1].status = 'pending';
+                renderPPTList();
+            }
+            updateTotalStats();
+        }, 1000);
+    }
+    function stopPPTTimer() { clearInterval(pptTimerInterval); pptTimerInterval = null; }
+
+    function startVideo() { 
+        document.getElementById('video-cover').style.display = 'none'; 
+        player.style.display = 'block'; 
+        player.play(); 
+    }
+
+    function playVideo(idx) { 
+        player.pause(); player.style.display = 'none';
+        document.getElementById('video-cover').style.display = 'flex';
+        document.getElementById('video-cover').style.backgroundImage = `url('${modules[idx].thumb}')`;
+        player.src = modules[idx].src; furthestTime = 0;
+    }
+
+    player.ontimeupdate = () => {
+        if (player.currentTime > furthestTime + 1.5) player.currentTime = furthestTime;
+        else if (player.currentTime > furthestTime) { furthestTime = player.currentTime; modules[currentIdx].watched = furthestTime; }
+        if (player.currentTime > player.duration * 0.95 && modules[currentIdx].status !== 'complete') {
+            modules[currentIdx].status = 'complete';
+            if (modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
+            renderModules();
         }
         updateTotalStats();
     };
 
-    function markComplete(idx) {
-        if (modules[idx].status !== 'complete') {
-            modules[idx].status = 'complete';
-            
-            // Backend Sync
-            const finalUrl = `${URL_MOD_COMPLETE_BASE}${modules[idx].id}/`;
-            sendPost(finalUrl).then(data => {
-                if (data && data.status === 'success') {
-                    if (modules[idx + 1]) {
-                         modules[idx + 1].status = 'pending';
-                    }
-                    renderModules();
-                }
-            });
+    // --- 8. STATS & CERTIFICATE ---
+    function updateTotalStats() {
+        const totalTime = modules.reduce((s, m) => s + m.watched, 0) + ppts.reduce((s, p) => s + p.viewedTime, 0);
+        document.getElementById('watch-time-display').innerText = `${Math.floor(totalTime / 60)}:${Math.floor(totalTime % 60).toString().padStart(2, '0')}`;
+        const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
+        const perc = Math.round((done / (modules.length + ppts.length)) * 100) || 0;
+        document.getElementById('perc-text').innerText = perc + "%";
+        document.getElementById('perc-bar').style.width = perc + "%";
+        updateChart();
+        renderCert();
+    }
+
+    function renderCert() {
+        const container = document.getElementById('cert-container');
+        const vidsDone = modules.every(m => m.status === 'complete');
+        const pptsDone = ppts.every(p => p.status === 'complete');
+
+        if (vidsDone && pptsDone) {
+            container.innerHTML = `
+                <div class="cert-box unlocked-state">
+                    <h2 style="color: var(--complete)">🏆 Course Completed!</h2>
+                    <p>You have successfully completed all POCSO video modules and assessments.</p>
+                    <p>Proceed to the <strong>Final Quiz</strong> in the sidebar to get your certificate.</p>
+                </div>`;
+        } else {
+            container.innerHTML = `
+                <div class="cert-box locked-state">
+                    <h2 style="color: var(--locked)">🔒 Certificate Locked</h2>
+                    <p>You must complete <b>all Video Modules</b> and <b>all PPT/Resources</b> to unlock your certificate.</p>
+                    <div style="margin-top:20px; display: flex; justify-content: center; gap: 20px;">
+                        <span>${vidsDone ? '✅' : '❌'} Videos</span>
+                        <span>${pptsDone ? '✅' : '❌'} Resources</span>
+                    </div>
+                </div>`;
         }
     }
 
     let myChart;
     function updateChart() {
         const ctx = document.getElementById('statusChart').getContext('2d');
-        const counts = {
-            complete: modules.filter(m => m.status === 'complete').length,
-            pending: modules.filter(m => m.status === 'pending').length,
-            locked: modules.filter(m => m.status === 'locked').length
-        };
+        const dataSet = (activeMode === 'vids') ? modules : ppts;
+        const counts = [dataSet.filter(i => i.status === 'complete').length, dataSet.filter(i => i.status === 'pending').length, dataSet.filter(i => i.status === 'locked').length];
         if (myChart) myChart.destroy();
-        myChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Complete', 'Current', 'Locked'],
-                datasets: [{ data: [counts.complete, counts.pending, counts.locked], backgroundColor: ['#00b894', '#fdcb6e', '#636e72'] }]
-            },
-            options: { maintainAspectRatio: false, cutout: '70%' }
-        });
+        myChart = new Chart(ctx, { type: 'pie', data: { labels: ['Done', 'Pending', 'Locked'], datasets: [{ data: counts, backgroundColor: ['#4e54c8', '#ff4757', '#636e72'] }] }, options: { maintainAspectRatio: false } });
     }
 
-    function updateTotalStats() {
-        const totalWatched = modules.reduce((s, m) => s + m.watched, 0);
-        const m = Math.floor(totalWatched / 60);
-        const s = Math.floor(totalWatched % 60);
-        document.getElementById('watch-time-display').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-        
-        const done = modules.filter(m => m.status === 'complete').length;
-        const perc = Math.round((done / modules.length) * 100);
-        document.getElementById('perc-text').innerText = perc + "%";
-        document.getElementById('perc-bar').style.width = perc + "%";
-    }
-
-    function switchTab(type) {
-        document.getElementById('vids-section').style.display = type === 'vids' ? 'block' : 'none';
-        document.getElementById('ppts-section').style.display = type === 'ppts' ? 'block' : 'none';
-        const btns = document.querySelectorAll('.tab-btn');
-        btns[0].classList.toggle('active', type === 'vids');
-        btns[1].classList.toggle('active', type === 'ppts');
-    }
-
-    window.onload = renderModules;
+    window.onload = () => { renderModules(); updateTotalStats(); };
 </script>
-
 </body>
 </html>

@@ -91,10 +91,11 @@ urlpatterns = [
 
     # --- AUTHENTICATION ---
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='home'), name='logout'),
+    path('logout/', views.custom_logout, name='logout'),
     path('accounts/profile/', views.custom_login_redirect, name='login_redirect'),
     path('login-redirect/', views.custom_login_redirect, name='custom_login_redirect'),
-    
+    path('posh_assessment/', views.posh_assessment, name='posh_assessment'),
+    path('pocso_assessment/', views.pocso_assessment, name='pocso_assessment'),
     # --- SUPERUSER ---
     path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
     path('admin/', admin.site.urls),

@@ -928,3 +928,9 @@ def superuser_dashboard(request):
         "recent_pocso_orgs": recent_pocso_orgs,
     }
     return render(request, "superuser_dashboard.html", context)
+
+from django.contrib.auth import logout
+
+def custom_logout(request):
+    logout(request) # Clears the session
+    return redirect("home") 
