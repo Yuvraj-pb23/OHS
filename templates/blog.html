@@ -1,3 +1,5 @@
+
+
 {% extends 'base.html' %}
 {% block body %}
 {% load static %}
@@ -34,6 +36,17 @@
       --text-main: #1e293b;
       --text-muted: #64748b;
     }
+
+    /* --- ADDED PROTECTION STYLES --- */
+    img {
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      user-select: none;
+      -webkit-touch-callout: none;
+    }
+    /* ------------------------------ */
 
     body {
       font-family: 'Open Sans', sans-serif;
@@ -131,6 +144,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
       animation: float 6s ease-in-out infinite;
       border: 2px solid rgba(255,255,255,0.1);
+      pointer-events: none; /* Hero image protection */
     }
 
     /* --- 3. Topics Grid (Blog) --- */
@@ -173,6 +187,7 @@
       transition: transform 0.6s ease;
       position: relative;
       z-index: 1; 
+      pointer-events: none; /* Topic image protection */
     }
     .topic-card:hover img { transform: scale(1.02); }
 
@@ -237,6 +252,7 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
+      pointer-events: auto; /* Ensure button remains clickable */
     }
 
     .topic-card:hover .read-more {
@@ -438,7 +454,7 @@
     }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;"> <!-- Global context menu disable -->
 
   <!-- 1. Hero Section -->
   <section class="hero">
@@ -681,6 +697,20 @@
       once: true,
       offset: 120
     });
+
+    // PROTECTION: Disable right-click specifically on all images
+    document.addEventListener('contextmenu', function(e) {
+      if (e.target.tagName === 'IMG') {
+        e.preventDefault();
+      }
+    }, false);
+
+    // PROTECTION: Disable dragging on images
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.tagName === 'IMG') {
+        e.preventDefault();
+      }
+    }, false);
   </script>
 
 </body>

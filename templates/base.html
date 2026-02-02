@@ -89,6 +89,7 @@
             margin-right: 5px;
             cursor: default;
         }
+         
 
         /* ========================================== */
         /*        NEW SLIDING SIDE POSTER CSS        */
@@ -96,14 +97,14 @@
         .side-poster-container {
             position: fixed;
             bottom: 30px;
-            right: -450px; /* Hidden initially */
+            left: -450px; /* Changed from right to left (Hidden initially) */
             width: 350px;
             z-index: 10001;
-            transition: right 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            transition: left 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Changed transition to left */
         }
 
         .side-poster-container.active {
-            right: 30px; /* Slide in to view */
+            left: 30px; /* Changed from right to left (Slide in) */
         }
 
         .poster-card {
@@ -112,7 +113,7 @@
             border-radius: 20px;
             text-align: center;
             position: relative;
-            box-shadow: -10px 15px 40px rgba(0, 0, 0, 0.15);
+            box-shadow: 10px 15px 40px rgba(0, 0, 0, 0.15); /* Adjusted shadow for left side */
             border-left: 6px solid #6200ea;
         }
 
@@ -179,10 +180,12 @@
         @media (max-width: 480px) {
             .side-poster-container {
                 width: 90%;
-                right: -110%;
+                left: -110%; /* Changed from right to left */
+                right: auto;
             }
             .side-poster-container.active {
-                right: 5%;
+                left: 5%; /* Changed from right to left */
+                right: auto;
             }
         }
 
@@ -252,7 +255,13 @@
             </form>
         {% else %}
             <!-- If Logged Out: Show Login Button -->
-            <a href="{% url 'login' %}" class="btn-auth-login">Login</a>
+            <!-- <a href="{% url 'login' %}" class="btn-auth-login">Login</a> -->
+             <form action="{% url 'login' %}" method="get">
+  <button type="submit" class="btn-auth-login">
+    Login
+  </button>
+</form>
+
         {% endif %}
         <!-- ========================================== -->
         <!--         AUTHENTICATION LOGIC END           -->
@@ -400,7 +409,7 @@
           const posterContainer = document.getElementById('mainPosterContainer');
           const closeBtn = document.getElementById('closePoster');
 
-          // Timer: Slide in from right after 7 seconds
+          // Timer: Slide in after 7 seconds
           setTimeout(() => {
               posterContainer.classList.add('active');
           }, 7000);

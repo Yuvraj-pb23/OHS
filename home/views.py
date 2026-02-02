@@ -12,6 +12,7 @@ from django.db import transaction
 from django.db.models import Q
 from django.contrib.auth.decorators import user_passes_test
 from datetime import timedelta
+from django.contrib.auth import logout
 
 # Models
 # Ensure your User model has 'phone' and 'department' fields if you want to save them to the DB.
@@ -72,12 +73,18 @@ def custom_login_redirect(request):
 def company_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
     plan = SubscriptionPlan.objects.filter(type=db_type).first()
+    
     if request.method == "POST":
-        comp_name = request.POST.get("company_name")
-        seats = int(request.POST.get("seats", 10))
-        fullname = request.POST.get("fullname")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        comp_name = request.POST.get("company_name", "").strip()
+        seats = request.POST.get("seats", 10)
+        fullname = request.POST.get("fullname", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        # Restriction: Ensure all info is compulsory
+        if not all([comp_name, fullname, email, password]):
+            messages.error(request, "All fields are compulsory. Please fill out the entire form.")
+            return redirect(request.path)
 
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
@@ -92,7 +99,7 @@ def company_subscription(request, plan_type):
                 user.save()
 
                 org = Organization.objects.create(
-                    name=comp_name, owner=user, max_users=seats
+                    name=comp_name, owner=user, max_users=int(seats)
                 )
                 OrganizationMember.objects.create(
                     organization=org, user=user, role="ADMIN"
@@ -110,8 +117,16 @@ def company_subscription(request, plan_type):
 
         except Exception as e:
             messages.error(request, f"Error: {str(e)}")
+            return redirect(request.path)
 
-    return render(request, "company_signup.html", {"plan_type": plan_type})
+    # FIX FOR CACHE PROBLEM: Clear messages on a fresh GET request
+    else:
+        list(messages.get_messages(request))
+
+    response = render(request, "company_signup.html", {"plan_type": plan_type})
+    # FIX FOR CACHE PROBLEM: Disable browser caching for this page
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 
 # --- 3. ADD EMPLOYEE (SINGLE) ---
@@ -186,10 +201,6 @@ def company_dashboard(request):
     # Identify Training Type based on Plan
     training_type = "POSH" # Default
     if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
-        # If plan is POCSO, track POCSO. If BOTH, ideally we track both, but for dashboard simplicity 
-        # let's prioritize POSH or handle as per requirement. 
-        # For now, let's assume if it is NOT POSH-only, we check POCSO or just stick to POSH if it's the default.
-        # Let's check the plan type explicitly.
         if active_sub.plan.type == "POCSO":
            training_type = "POCSO"
 
@@ -204,7 +215,6 @@ def company_dashboard(request):
         user_obj = mem.user
         
         # Get progress for this user
-        # We need check if they finished ALL modules
         completed_modules = ModuleProgress.objects.filter(user=user_obj, module__module_type=training_type, is_completed=True).count()
         
         mem.percent_complete = int((completed_modules / total_modules_count) * 100) if total_modules_count > 0 else 0
@@ -217,7 +227,6 @@ def company_dashboard(request):
         # Get Last 7 Days Activity for Chart
         today = timezone.now().date()
         last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
-        # For the chart in the modal
         mem_chart_data = []
         for d in last_7_days:
              act = DailyActivity.objects.filter(user=user_obj, date=d).first()
@@ -225,11 +234,7 @@ def company_dashboard(request):
         mem.chart_data = json.dumps(mem_chart_data)
         
         # Module Status List for Modal
-        # We need to know which are completed to show badges
-        # Let's create a list of dicts: {title, is_completed}
         mem_modules_status = []
-        # Optimization: We already queried progress, but getting a list for display might need a fresh query or map
-        # Let's do a map for O(1) lookup
         user_progress_map = set(ModuleProgress.objects.filter(user=user_obj, module__module_type=training_type, is_completed=True).values_list('module_id', flat=True))
         
         for mod in all_modules:
@@ -237,7 +242,7 @@ def company_dashboard(request):
             mem_modules_status.append({
                 "title": mod.title,
                 "is_completed": is_done,
-                "duration": mod.duration_seconds # if needed
+                "duration": mod.duration_seconds
             })
         mem.modules_status = mem_modules_status
 
@@ -253,21 +258,32 @@ def company_dashboard(request):
         "total_employees": total_employees,
         "training_completed": training_completed_count,
         "training_pending": training_pending,
-        "total_modules_count": total_modules_count, # Added for template
+        "total_modules_count": total_modules_count, 
     }
-    return render(request, "company_dashboard.html", context)
+
+    # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
+    if active_sub and active_sub.plan.type == "POCSO":
+        return render(request, "company_dashboard_pocso.html", context)
+    else:
+        # Default to POSH dashboard
+        return render(request, "company_dashboard.html", context)
 
 
-# --- 4. INDIVIDUAL SUBSCRIPTION (FORM) ---
+# --- 5. INDIVIDUAL SUBSCRIPTION (FORM) ---
 def individual_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
     plan = SubscriptionPlan.objects.filter(type=db_type).first()
 
     if request.method == "POST":
-        fullname = request.POST.get("fullname")
-        username = request.POST.get("username")
-        email = request.POST.get("email")
-        password = request.POST.get("password")
+        fullname = request.POST.get("fullname", "").strip()
+        username = request.POST.get("username", "").strip()
+        email = request.POST.get("email", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        # Restriction: Ensure all info is compulsory
+        if not all([fullname, username, email, password]):
+            messages.error(request, "All fields are compulsory. Please fill out the entire form.")
+            return redirect(request.path)
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username taken.")
@@ -289,12 +305,20 @@ def individual_subscription(request, plan_type):
             return redirect("posh_act_page")
         except Exception as e:
             messages.error(request, str(e))
+            return redirect(request.path)
+
+    # FIX FOR CACHE PROBLEM: Clear messages on a fresh GET request
+    else:
+        list(messages.get_messages(request))
 
     context = {
         "plan_type": plan.name if plan else "Unknown Plan",
         "price": plan.price if plan else 0,
     }
-    return render(request, "subscription_details.html", context)
+    response = render(request, "subscription_details.html", context)
+    # FIX FOR CACHE PROBLEM: Disable browser caching
+    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response
 
 
 # --- 6. SECURE TRAINING PAGES ---
@@ -330,9 +354,8 @@ def posh_act_page(request):
     percent_complete = int((completed_count / total_modules) * 100) if total_modules > 0 else 0
 
     # 4. Determine Locked Status (Sequential Unlocking)
-    # Rule: Module is locked if previous module is not completed. First module always unlocked.
     module_list = []
-    previous_completed = True # First one is always allowed
+    previous_completed = True 
     
     for mod in modules:
         is_completed = progress_map.get(mod.id, False)
@@ -344,7 +367,6 @@ def posh_act_page(request):
             "is_locked": is_locked
         })
         
-        # Update for next iteration
         previous_completed = is_completed
 
     # 5. Daily Activity Stats for Chart (Last 7 days)
@@ -378,7 +400,6 @@ def update_watch_time(request):
     if request.method == "POST":
         try:
             today = timezone.now().date()
-            # increments by 1 minute (frontend should call this every 60s) or however we define generic 'ping'
             activity, created = DailyActivity.objects.get_or_create(user=request.user, date=today)
             activity.minutes_watched += 1
             activity.save()
@@ -470,7 +491,6 @@ def pocso_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        # Pass a flag to template to disable/enable final assessment
         "is_assessment_unlocked": percent_complete == 100
     }
     return render(request, "pocso_act_page.html", context)
@@ -537,8 +557,40 @@ def posh_compliance(request):
     return render(request, "posh_compliance.html")
 
 
+# --- UPDATED TUTORIAL VIEW ---
 def tutorial_view(request):
-    return render(request, "tutorial.html")
+    # Default to showing both for non-logged in users
+    show_posh = True
+    show_pocso = True
+
+    if request.user.is_authenticated:
+        # Check POSH Access
+        has_posh = Subscription.objects.filter(
+            Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+            status="ACTIVE",
+            plan__type__in=["POSH", "BOTH"],
+        ).exists()
+
+        # Check POCSO Access
+        has_pocso = Subscription.objects.filter(
+            Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+            status="ACTIVE",
+            plan__type__in=["POCSO", "BOTH"],
+        ).exists()
+
+        # If user has POSH but not POCSO, hide POCSO
+        if has_posh and not has_pocso:
+            show_pocso = False
+        
+        # If user has POCSO but not POSH, hide POSH
+        elif has_pocso and not has_posh:
+            show_posh = False
+            
+    context = {
+        "show_posh": show_posh,
+        "show_pocso": show_pocso
+    }
+    return render(request, "tutorial.html", context)
 
 
 def posh_assessment(request):
@@ -550,31 +602,18 @@ def pocso_assessment(request):
 
 
 def posh_c(request):
-    """
-    Renders the intermediate page for POSH Individual course details
-    before the subscription form.
-    """
     return render(request, "posh_c.html")
 
 
 def posh_i(request):
-    """
-    Renders the intermediate page for POSH Individual course details.
-    """
     return render(request, "posh_i.html")
 
 
 def pocso_i(request):
-    """
-    Renders the intermediate page for POCSO Individual course details.
-    """
     return render(request, "pocso_i.html")
 
 
 def pocso_c(request):
-    """
-    Renders the intermediate page for POCSO Corporate course details.
-    """
     return render(request, "pocso_c.html")
 
 
@@ -599,40 +638,27 @@ def chatbot_response(request):
     return JsonResponse({"error": "Post only"}, status=405)
 
 
-# --- 8. BULK IMPORT FEATURES (UPDATED) ---
+# --- 8. BULK IMPORT FEATURES ---
 
 
 @login_required
 def download_employee_template(request):
-    """
-    Downloads a CSV template for bulk employee upload with specific fields.
-    """
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="employee_template.csv"'
-
     writer = csv.writer(response)
-    # 1. Define the headers exactly as requested
     writer.writerow(
         ["Name", "Last name", "Department", "Email", "Phone no", "Default password"]
     )
-
-    # 2. Add a sample row so the user knows how to fill it
     writer.writerow(
         ["John", "Doe", "IT", "john.doe@company.com", "9876543210", "Welcome@123"]
     )
-
     return response
 
 
 @login_required
 def upload_employee_bulk(request):
-    """
-    Processes the uploaded CSV/Excel file to create employees.
-    """
     if request.method == "POST" and request.FILES.get("employee_file"):
         current_user = request.user
-
-        # Verify Admin
         membership = OrganizationMember.objects.filter(
             user=current_user, role="ADMIN"
         ).first()
@@ -643,25 +669,21 @@ def upload_employee_bulk(request):
         org = membership.organization
         csv_file = request.FILES["employee_file"]
 
-        # Simple file validation
         if not csv_file.name.endswith(".csv"):
             messages.error(request, "Please upload a CSV file.")
             return redirect("company_dashboard")
 
         try:
-            # Decode file using utf-8-sig to handle Excel BOM automatically
             file_data = csv_file.read().decode("utf-8-sig")
             csv_data = io.StringIO(file_data)
             reader = csv.DictReader(csv_data)
 
-            # Normalize headers (strip whitespace from CSV headers just in case)
             if reader.fieldnames:
                 reader.fieldnames = [name.strip() for name in reader.fieldnames]
 
             added_count = 0
 
             for row in reader:
-                # 1. Check Limits (Re-check every iteration)
                 current_count = OrganizationMember.objects.filter(
                     organization=org
                 ).count()
@@ -672,7 +694,6 @@ def upload_employee_bulk(request):
                     )
                     break
 
-                # 2. Extract Data based on your specific headers
                 first_name = row.get("Name", "").strip()
                 last_name = row.get("Last name", "").strip()
                 department = row.get("Department", "").strip()
@@ -681,14 +702,11 @@ def upload_employee_bulk(request):
                 password = row.get("Default password", "").strip()
 
                 if not email or not password:
-                    continue  # Skip invalid rows
-
-                # 3. Create User (Skip if exists)
+                    continue 
                 if User.objects.filter(email=email).exists():
                     continue
 
                 try:
-                    # Create the base user
                     user = User.objects.create_user(
                         username=email, email=email, password=password
                     )
@@ -696,8 +714,6 @@ def upload_employee_bulk(request):
                     user.last_name = last_name
                     user.account_type = "EMPLOYEE"
 
-                    # 4. Handle Custom Fields (Department / Phone)
-                    # We check if your User model has these fields to prevent errors
                     if hasattr(user, "department"):
                         user.department = department
                     if hasattr(user, "phone"):
@@ -705,13 +721,11 @@ def upload_employee_bulk(request):
 
                     user.save()
 
-                    # Create Organization Member Link
                     OrganizationMember.objects.create(
                         organization=org, user=user, role="MEMBER"
                     )
                     added_count += 1
                 except Exception as e:
-                    # Log error internally if needed, skipping row
                     continue
 
             if added_count > 0:
@@ -731,18 +745,13 @@ def upload_employee_bulk(request):
 
 # --- 9. SUPERUSER DASHBOARD ---
 @login_required
-@login_required
 @user_passes_test(lambda u: u.is_superuser)
 def superuser_dashboard(request):
-    """
-    Dashboard providing a global overview for the platform owner.
-    """
     from django.db.models import Count, Q, Max
     from django.db.models.functions import TruncMonth
     from django.utils import timezone
     import datetime
 
-    # Helper function to get monthly counts for last 6 months
     def get_monthly_counts(queryset):
         today = timezone.now().date()
         six_months_ago = today - datetime.timedelta(days=180)
@@ -753,29 +762,24 @@ def superuser_dashboard(request):
             .annotate(count=Count('id'))\
             .order_by('month')
             
-        # Initialize dictionary for last 6 months
         months_map = {}
         labels = []
         current = six_months_ago.replace(day=1)
         for i in range(6):
-            # Move to next month safely
             next_month = (current.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
             label = current.strftime("%b")
             labels.append(label)
             months_map[current.strftime("%Y-%m")] = 0
             current = next_month
 
-        # Fill with actual data
         for entry in monthly_data:
             month_str = entry['month'].strftime("%Y-%m")
             if month_str in months_map:
                 months_map[month_str] = entry['count']
         
-        # Convert to list of counts
         data_points = list(months_map.values())
         return labels, data_points
 
-    # Helper to generate SVG polyline points (0-100 x, 0-50 y inverted)
     def generate_svg_points(data_points):
         if not data_points:
             return ""
@@ -785,23 +789,18 @@ def superuser_dashboard(request):
         
         for i, val in enumerate(data_points):
             x = i * step_x
-            # Y axis is usually 50 height, so invert: 50 - (val/max * 40) (leaving padding)
             y = 50 - ((val / max_val) * 45) 
             points.append(f"{x},{y}")
         return " ".join(points)
 
-    # 1. Base Counts
     all_users_count = User.objects.count()
     all_orgs = Organization.objects.all()
     
     total_companies = all_orgs.filter(organization_type="CORPORATE").count()
     total_schools = all_orgs.filter(organization_type="SCHOOL").count()
     
-    # 2. Training Completion (Global)
-    # Count unique users who have at least one completed module
     users_started_training = ModuleProgress.objects.filter(is_completed=True).values('user').distinct().count()
     
-    # 3. POSH Data
     posh_subs = Subscription.objects.filter(plan__type__in=["POSH", "BOTH"], status="ACTIVE")
     posh_individuals = posh_subs.filter(user__isnull=False).count()
     posh_orgs_subs = posh_subs.filter(organization__isnull=False)
@@ -810,7 +809,6 @@ def superuser_dashboard(request):
     
     posh_total = posh_individuals + posh_companies + posh_schools
 
-    # 4. POCSO Data
     pocso_subs = Subscription.objects.filter(plan__type__in=["POCSO", "BOTH"], status="ACTIVE")
     pocso_individuals = pocso_subs.filter(user__isnull=False).count()
     pocso_orgs_subs = pocso_subs.filter(organization__isnull=False)
@@ -819,7 +817,6 @@ def superuser_dashboard(request):
     
     pocso_total = pocso_individuals + pocso_companies + pocso_schools
     
-    # 5. Lists for Tables
     recent_posh_orgs = Organization.objects.filter(
         subscriptions__plan__type__in=["POSH", "BOTH"],
         subscriptions__status="ACTIVE"
@@ -830,15 +827,12 @@ def superuser_dashboard(request):
         subscriptions__status="ACTIVE"
     ).distinct().order_by("-created_at")[:10]
 
-    # Growth Logic
     posh_growth = 12 
     pocso_growth = 8
 
-    # --- USER COMPLETION LISTS (Dynamic Sorting) ---
     total_posh_modules = TrainingModule.objects.filter(module_type="POSH").count()
     total_pocso_modules = TrainingModule.objects.filter(module_type="POCSO").count()
     
-    # 1. POSH Completed Users
     if total_posh_modules > 0:
         posh_completers = User.objects.annotate(
             completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH")),
@@ -847,7 +841,6 @@ def superuser_dashboard(request):
     else:
         posh_completers = []
         
-    # 2. POCSO Completed Users
     if total_pocso_modules > 0:
         pocso_completers = User.objects.annotate(
             completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO")),
@@ -856,9 +849,6 @@ def superuser_dashboard(request):
     else:
         pocso_completers = []
 
-    # --- CHART DATA CALCULATION ---
-    
-    # POSH Registrations (Companies)
     posh_orgs_qs = Organization.objects.filter(
         organization_type="CORPORATE",
         subscriptions__plan__type__in=["POSH", "BOTH"],
@@ -868,13 +858,11 @@ def superuser_dashboard(request):
     posh_svg_points = generate_svg_points(posh_data)
     posh_svg_area = f"0,50 {posh_svg_points} 100,50" 
 
-    # POSH Completion Pie (Estimate)
     posh_complete_percent = 75 
     if posh_total > 0:
         posh_complete_percent = int((users_started_training / (posh_total if posh_total > 0 else 1)) * 100)
         posh_complete_percent = min(posh_complete_percent, 100)
     
-    # POCSO Registrations (Schools)
     pocso_orgs_qs = Organization.objects.filter(
         organization_type="SCHOOL",
         subscriptions__plan__type__in=["POCSO", "BOTH"],
@@ -884,7 +872,6 @@ def superuser_dashboard(request):
     pocso_svg_points = generate_svg_points(pocso_data)
     pocso_svg_area = f"0,50 {pocso_svg_points} 100,50"
 
-    # POCSO Completion Pie (Estimate)
     pocso_complete_percent = 60
     if pocso_total > 0:
          pocso_complete_percent = int((users_started_training / (pocso_total if pocso_total > 0 else 1)) * 100)
@@ -929,8 +916,7 @@ def superuser_dashboard(request):
     }
     return render(request, "superuser_dashboard.html", context)
 
-from django.contrib.auth import logout
 
 def custom_logout(request):
-    logout(request) # Clears the session
-    return redirect("home") 
+    logout(request) 
+    return redirect("home")

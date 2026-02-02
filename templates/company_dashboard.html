@@ -1,4 +1,3 @@
-<!-- START OF FILE -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,10 +9,10 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
   
-  <!-- Chart.js (Required for the Pie Chart) -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
-  <!-- Font from File 2 for the LMS look -->
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -136,12 +135,12 @@
     }
 
     /* === MODAL & LMS SPECIFIC STYLES === */
-    /* Light modal body for LMS look, Dark header to match dashboard */
     .modal-content { background: #f8f9fa; border-radius: 20px; border: none; color: #2d3436; font-family: "Poppins", sans-serif; }
     .modal-header { background: #020617; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 20px 20px 0 0; }
     
-    /* 3-CHART ROW STYLES (Added for modification) */
+    /* 3-CHART ROW STYLES */
     .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+    
     .mini-stat-card {
         background: white; border-radius: 12px; padding: 10px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;
@@ -223,7 +222,7 @@
   </a>
   
   <a href="#" class="sidebar-back-btn" onclick="window.history.back(); return false;">
-    <i class="bi bi-arrow-left"></i><span>Back</span>
+    <i class="bi bi-arrow-left"></i><span>Logout</span>
   </a>
   
   <ul class="nav flex-column px-3 mt-3">
@@ -307,8 +306,7 @@
         <span class="role-badge">{{ member.role }}</span>
       </div>
 
-      <!-- MODIFIED EMPLOYEE MODAL (Small Size, 3 Charts) -->
-      <!-- Removed modal-lg -->
+      <!-- EMPLOYEE MODAL (Dynamic Charts) -->
       <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
@@ -319,27 +317,26 @@
             
             <div class="modal-body" style="padding: 20px;">
               
-              <!-- 1. THREE CHARTS ROW (Video Health Pie, Time, Completion) -->
-              <div class="stats-row">
-                  <!-- Chart 1: Video Health (Pie) -->
+              <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+              <div class="stats-row" id="stats-vids-{{ member.id }}">
+                  <!-- Video Pie -->
                   <div class="mini-stat-card">
                       <h3>Video Health</h3>
                       <div class="chart-container">
-                          <!-- Data passed to JS via attribute -->
-                          <canvas id="pie-{{ member.id }}" data-percent="{{ member.percent_complete }}"></canvas>
+                          <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.percent_complete }}"></canvas>
                       </div>
                   </div>
                   
-                  <!-- Chart 2: Activity Time (Text) -->
+                  <!-- Video Time -->
                   <div class="mini-stat-card">
-                      <h3>Activity Time</h3>
+                      <h3>Watch Time</h3>
                       <p class="time-text">02:15</p>
                       <small class="text-muted">Total Hours</small>
                   </div>
                   
-                  <!-- Chart 3: Completion (Bar) -->
+                  <!-- Video Progress Bar -->
                   <div class="mini-stat-card">
-                      <h3>Completion</h3>
+                      <h3>Video Comp.</h3>
                       <h2 style="margin:0; color:var(--lms-primary); font-size:1.8rem;">{{ member.percent_complete }}%</h2>
                       <div class="progress-track">
                           <div class="progress-fill" style="width: {{ member.percent_complete }}%;"></div>
@@ -347,13 +344,44 @@
                   </div>
               </div>
 
-              <!-- 2. Tabs -->
+              <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
+              <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none;">
+                  <!-- PPT Pie -->
+                  <div class="mini-stat-card">
+                      <h3>Quiz Health</h3>
+                      <div class="chart-container">
+                          <!-- Mock data for PPT (e.g. 60%) for demonstration -->
+                          <canvas id="pie-ppts-{{ member.id }}" data-percent="60"></canvas>
+                      </div>
+                  </div>
+                  
+                  <!-- PPT Time -->
+                  <div class="mini-stat-card">
+                      <h3>Reading Time</h3>
+                      <!-- Different color to show change -->
+                      <p class="time-text" style="color: var(--lms-pending);">00:45</p>
+                      <small class="text-muted">Total Hours</small>
+                  </div>
+                  
+                  <!-- PPT Progress Bar -->
+                  <div class="mini-stat-card">
+                      <h3>Quiz Comp.</h3>
+                      <h2 style="margin:0; color:var(--lms-pending); font-size:1.8rem;">60%</h2>
+                      <div class="progress-track">
+                          <div class="progress-fill" style="width: 60%; background: var(--lms-pending);"></div>
+                      </div>
+                  </div>
+              </div>
+
+              <!-- === TABS === -->
               <div class="lms-tab-header">
                   <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'vids')">Video Modules</button>
                   <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'ppts')">PPT & Quiz</button>
               </div>
 
-              <!-- 3. Tab Content: Video Modules -->
+              <!-- === CONTENT LISTS === -->
+              
+              <!-- Video List -->
               <div id="content-vids-{{ member.id }}">
                   {% for mod in member.modules_status %}
                   <div class="record-item">
@@ -373,7 +401,7 @@
                   {% endfor %}
               </div>
 
-              <!-- 4. Tab Content: PPT & Quiz (Static/Demo for layout as requested) -->
+              <!-- PPT List -->
               <div id="content-ppts-{{ member.id }}" style="display: none;">
                   <div class="record-item">
                       <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=200');"></div>
@@ -381,7 +409,7 @@
                           <h6>Legal Framework Slides</h6>
                           <p>Reading Material</p>
                       </div>
-                      <span class="lms-badge bg-locked">Locked</span>
+                      <span class="lms-badge bg-complete">Completed</span>
                   </div>
                   <div class="record-item">
                       <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=200');"></div>
@@ -389,7 +417,7 @@
                           <h6>Final Assessment Quiz</h6>
                           <p>Interactive Quiz</p>
                       </div>
-                      <span class="lms-badge bg-locked">Locked</span>
+                      <span class="lms-badge bg-pending">Pending</span>
                   </div>
               </div>
 
@@ -397,7 +425,6 @@
           </div>
         </div>
       </div>
-      <!-- END MODIFIED MODAL -->
       {% endfor %}
     </div>
   </div>
@@ -555,61 +582,83 @@
         });
     });
 
-    // NEW FUNCTION: Switches tabs inside the specific employee modal
+    // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
     function switchModalTab(memberId, tab) {
-        const vidBtn = document.getElementById(`btn-vids-${memberId}`);
-        const pptBtn = document.getElementById(`btn-ppts-${memberId}`);
+        // Content lists
         const vidContent = document.getElementById(`content-vids-${memberId}`);
         const pptContent = document.getElementById(`content-ppts-${memberId}`);
+        // Buttons
+        const vidBtn = document.getElementById(`btn-vids-${memberId}`);
+        const pptBtn = document.getElementById(`btn-ppts-${memberId}`);
+        // Stats Rows
+        const vidStats = document.getElementById(`stats-vids-${memberId}`);
+        const pptStats = document.getElementById(`stats-ppts-${memberId}`);
         
         if (tab === 'vids') {
             vidBtn.classList.add('active');
             pptBtn.classList.remove('active');
+            
             vidContent.style.display = 'block';
             pptContent.style.display = 'none';
+
+            // Show Video Charts, Hide PPT Charts
+            vidStats.style.display = 'grid';
+            pptStats.style.display = 'none';
         } else {
             pptBtn.classList.add('active');
             vidBtn.classList.remove('active');
+            
             pptContent.style.display = 'block';
             vidContent.style.display = 'none';
+
+            // Hide Video Charts, Show PPT Charts
+            pptStats.style.display = 'grid';
+            vidStats.style.display = 'none';
         }
     }
 
-    // Initialize Chart.js Pie Chart when the modal opens
+    // Helper to draw chart safely
+    function drawChart(canvasId, colorHex) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        // Clean up previous instance to prevent glitches
+        if (canvas.chartInstance) canvas.chartInstance.destroy();
+
+        const percent = parseInt(canvas.getAttribute('data-percent')) || 0;
+        const remaining = 100 - percent;
+
+        canvas.chartInstance = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Done', 'Pending'],
+                datasets: [{
+                    data: [percent, remaining],
+                    backgroundColor: [colorHex, '#eee'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                animation: { duration: 1000 }
+            }
+        });
+    }
+
+    // Initialize BOTH charts when the modal opens
     document.addEventListener('shown.bs.modal', function (event) {
         const modalId = event.target.id;
-        // Check if the opened modal is a user progress modal
         if (modalId.startsWith('userProgressModal-')) {
             const memberId = modalId.split('-')[1];
-            const canvas = document.getElementById(`pie-${memberId}`);
-            if (!canvas) return;
+            
+            // 1. Draw Video Chart (Primary Blue)
+            drawChart(`pie-vids-${memberId}`, '#4e54c8');
 
-            // Destroy previous chart instance if exists to prevent overlapping
-            if (window[`chartPie${memberId}`]) window[`chartPie${memberId}`].destroy();
-
-            // Get data from data-percent attribute
-            const percent = parseInt(canvas.getAttribute('data-percent')) || 0;
-            const remaining = 100 - percent;
-
-            // Create new Doughnut Chart
-            window[`chartPie${memberId}`] = new Chart(canvas, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Done', 'Pending'],
-                    datasets: [{
-                        data: [percent, remaining],
-                        backgroundColor: ['#4e54c8', '#eee'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    animation: { duration: 1000 }
-                }
-            });
+            // 2. Draw PPT Chart (Warning Yellow/Orange)
+            drawChart(`pie-ppts-${memberId}`, '#f1c40f');
         }
     });
 </script>
