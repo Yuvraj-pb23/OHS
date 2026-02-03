@@ -223,36 +223,21 @@ def load_topic_data(topic_name):
     if topic_name not in filename_map:
         return {}
 
-    filenames = [filename_map[topic_name]]
-    
-    # helper to normalize path
-    def resolve_path(p):
-        return str(p)
+    try:
+        json_path = os.path.join(settings.BASE_DIR, filename_map[topic_name])
+        # Fallback to current directory if BASE_DIR/json fails
+        if not os.path.exists(json_path):
+             json_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f'../{filename_map[topic_name]}')
+             
+        if not os.path.exists(json_path):
+            print(f"DEBUG: JSON file not found for {topic_name} at {json_path}")
+            return {}
 
-    candidates = [
-        # 1. settings.BASE_DIR
-        os.path.join(resolve_path(settings.BASE_DIR), filename_map[topic_name]),
-        # 2. Hardcoded OHS Root
-        os.path.join("/media/yuvraj/New Volume/OHS Latst/OHS", filename_map[topic_name]),
-        # 3. Relative to this file
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', filename_map[topic_name]),
-        # 4. Inside chat/data as fallback
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', filename_map[topic_name]),
-    ]
-
-    for json_path in candidates:
-        if os.path.exists(json_path):
-            try:
-                print(f"DEBUG: Loading JSON from {json_path}")
-                with open(json_path, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    if data: return data
-            except Exception as e:
-                print(f"Error loading JSON from {json_path}: {e}")
-                continue
-    
-    print(f"DEBUG: Could not find/load JSON for {topic_name}. Checked: {candidates}")
-    return {}
+        with open(json_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"Error loading JSON for {topic_name}: {e}")
+        return {}
 
 def get_subtopics_by_type(topic_name):
     data = load_topic_data(topic_name)
@@ -347,8 +332,6 @@ def chatbot_response(request):
         # to use JSON data if available
         if irc_type in SUPPORTED_TOPICS:
              subtopics = get_subtopics_by_type(irc_type)
-
-
              # Fallback to TextChatbot defaults if JSON is empty or missing
              if not subtopics and text_chatbot:
                  subtopics = text_chatbot.get_questions_by_type(irc_type)

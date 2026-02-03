@@ -1,8 +1,4 @@
-try:
-    import faiss
-except ImportError:
-    faiss = None
-
+import faiss
 import json
 import numpy as np
 import os
