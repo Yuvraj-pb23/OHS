@@ -393,6 +393,7 @@
 
             <div class="modules-row">
                 <!-- POSH MODULE -->
+                {% if show_posh %}
                 <div class="glass-module module-posh">
                     <a href="{% url 'posh_act_page' %}" style="text-decoration: none; color: inherit;">
                         <div class="module-icon">📜</div>
@@ -414,19 +415,19 @@
                                 </a>
                             {% endif %}
                         {% else %}
-                            <!-- UPDATED: Point to posh_i_page -->
                             <a href="{% url 'posh_i_page' %}" class="sub-btn btn-posh-ind">
                                 Individual Access
                             </a>
-                            <!-- UPDATED: Point to posh_c_page -->
                             <a href="{% url 'posh_c_page' %}" class="sub-btn btn-posh-comp">
                                 Company License
                             </a>
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
 
                 <!-- POCSO MODULE -->
+                {% if show_pocso %}
                 <div class="glass-module module-pocso">
                     <a href="{% url 'pocso_act_page' %}" style="text-decoration: none; color: inherit;">
                         <div class="module-icon"> 🧒 👧</div>
@@ -448,17 +449,16 @@
                                 </a>
                             {% endif %}
                         {% else %}
-                            <!-- UPDATED: Point to pocso_i_page -->
                             <a href="{% url 'pocso_i_page' %}" class="sub-btn btn-pocso-ind">
                                 Individual Access
                             </a>
-                            <!-- UPDATED: Point to pocso_c_page -->
                             <a href="{% url 'pocso_c_page' %}" class="sub-btn btn-pocso-comp">
                                 School License
                             </a>
                         {% endif %}
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </section>
@@ -473,6 +473,7 @@
 
             <div class="training-grid">
                 <!-- POSH (Red Tint) -->
+                {% if show_posh %}
                 <div class="training-card posh" data-aos="fade-up" data-aos-delay="100">
                     <h3>POSH Training</h3>
                     <div class="training-overview">
@@ -481,8 +482,10 @@
                     <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Understanding POSH Act 2013</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Legal framework and provisions</li><li>Definition of sexual harassment</li><li>Complaint mechanisms</li><li>Role of Internal Committee (IC)</li></ul></div></div></div>
                     <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Creating a Safe Work Environment</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Building awareness</li><li>Preventive measures</li><li>Bystander intervention</li><li>Inclusive culture</li></ul></div></div></div>
                 </div>
+                {% endif %}
 
                 <!-- POCSO (Orange Tint) -->
+                {% if show_pocso %}
                 <div class="training-card pocso" data-aos="fade-up" data-aos-delay="150">
                     <h3>POCSO Compliance</h3>
                     <div class="training-overview">
@@ -491,7 +494,9 @@
                     <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>POCSO Act 2012 Overview</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Key legal provisions</li><li>Mandatory reporting obligations</li><li>Child rights and protection</li><li>Role of Special Courts</li></ul></div></div></div>
                     <div class="module"><div class="module-header" onclick="toggleModule(this)"><span>Institutional Safety Protocols</span><i class="fas fa-chevron-down module-toggle"></i></div><div class="module-content"><div class="module-body"><ul class="key-points"><li>Child Protection Committees</li><li>Safe recruitment</li><li>Reporting channels</li><li>Staff code of conduct</li></ul></div></div></div>
                 </div>
+                {% endif %}
 
+                <!-- Shared Modules (Shown to all) -->
                 <!-- Ethics (Green Tint) -->
                 <div class="training-card ethics" data-aos="fade-up" data-aos-delay="200">
                     <h3>Workplace Ethics</h3>
