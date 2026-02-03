@@ -9,7 +9,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.contrib.auth.decorators import user_passes_test
 from datetime import timedelta
 from django.contrib.auth import logout
@@ -30,6 +30,7 @@ from .models import (
 
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
+
 
 # --- 1. LOGIN REDIRECT LOGIC ---
 @login_required
@@ -73,7 +74,7 @@ def custom_login_redirect(request):
 def company_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
     plan = SubscriptionPlan.objects.filter(type=db_type).first()
-    
+
     if request.method == "POST":
         comp_name = request.POST.get("company_name", "").strip()
         seats = request.POST.get("seats", 10)
@@ -83,7 +84,9 @@ def company_subscription(request, plan_type):
 
         # Restriction: Ensure all info is compulsory
         if not all([comp_name, fullname, email, password]):
-            messages.error(request, "All fields are compulsory. Please fill out the entire form.")
+            messages.error(
+                request, "All fields are compulsory. Please fill out the entire form."
+            )
             return redirect(request.path)
 
         if User.objects.filter(email=email).exists():
@@ -125,7 +128,7 @@ def company_subscription(request, plan_type):
 
     response = render(request, "company_signup.html", {"plan_type": plan_type})
     # FIX FOR CACHE PROBLEM: Disable browser caching for this page
-    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
 
 
@@ -197,55 +200,95 @@ def company_dashboard(request):
     # --- DATA CALCULATION FOR HTML ---
     total_employees = members.count()
     seats_remaining = org.max_users - total_employees
-    
+
     # Identify Training Type based on Plan
-    training_type = "POSH" # Default
+    training_type = "POSH"  # Default
     if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
         if active_sub.plan.type == "POCSO":
-           training_type = "POCSO"
+            training_type = "POCSO"
 
     # Fetch total modules for calculation
-    all_modules = TrainingModule.objects.filter(module_type=training_type).order_by("order")
+    all_modules = TrainingModule.objects.filter(module_type=training_type).order_by(
+        "order"
+    )
     total_modules_count = all_modules.count()
 
     training_completed_count = 0
-    
+
     # Annotate members with progress
     for mem in members:
         user_obj = mem.user
-        
+
         # Get progress for this user
-        completed_modules = ModuleProgress.objects.filter(user=user_obj, module__module_type=training_type, is_completed=True).count()
-        
-        mem.percent_complete = int((completed_modules / total_modules_count) * 100) if total_modules_count > 0 else 0
+        completed_modules = ModuleProgress.objects.filter(
+            user=user_obj, module__module_type=training_type, is_completed=True
+        ).count()
+
+        mem.percent_complete = (
+            int((completed_modules / total_modules_count) * 100)
+            if total_modules_count > 0
+            else 0
+        )
         mem.completed_modules_count = completed_modules
-        mem.is_training_completed = (completed_modules == total_modules_count) and (total_modules_count > 0)
-        
+        mem.is_training_completed = (completed_modules == total_modules_count) and (
+            total_modules_count > 0
+        )
+
         if mem.is_training_completed:
             training_completed_count += 1
-            
+
         # Get Last 7 Days Activity for Chart
         today = timezone.now().date()
         last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
         mem_chart_data = []
         for d in last_7_days:
-             act = DailyActivity.objects.filter(user=user_obj, date=d).first()
-             mem_chart_data.append(act.minutes_watched if act else 0)
+            act = DailyActivity.objects.filter(user=user_obj, date=d).first()
+            mem_chart_data.append(act.minutes_watched if act else 0)
         mem.chart_data = json.dumps(mem_chart_data)
-        
+
         # Module Status List for Modal
         mem_modules_status = []
-        user_progress_map = set(ModuleProgress.objects.filter(user=user_obj, module__module_type=training_type, is_completed=True).values_list('module_id', flat=True))
-        
+        user_progress_map = set(
+            ModuleProgress.objects.filter(
+                user=user_obj, module__module_type=training_type, is_completed=True
+            ).values_list("module_id", flat=True)
+        )
+
         for mod in all_modules:
             is_done = mod.id in user_progress_map
-            mem_modules_status.append({
+            item = {
                 "title": mod.title,
                 "is_completed": is_done,
-                "duration": mod.duration_seconds
-            })
-        mem.modules_status = mem_modules_status
+                "duration": mod.duration_seconds,
+                "thumbnail_url": mod.thumbnail.url if mod.thumbnail else "",
+                "ppt_url": mod.ppt_file.url if mod.ppt_file else "",
+                "is_ppt": bool(mod.ppt_file),
+            }
+            mem_modules_status.append(item)
 
+        mem.modules_status = mem_modules_status  # Kept for backward compat if needed, or just specific lists
+        mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"]]
+        mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"]]
+
+        # Calculate Total Active Time
+        total_mins_agg = (
+            DailyActivity.objects.filter(user=user_obj).aggregate(
+                Sum("minutes_watched")
+            )["minutes_watched__sum"]
+            or 0
+        )
+        total_secs_agg = (
+            DailyActivity.objects.filter(user=user_obj).aggregate(
+                Sum("seconds_watched")
+            )["seconds_watched__sum"]
+            or 0
+        )
+
+        # Convert all to integer seconds
+        grand_total_seconds = (total_mins_agg * 60) + total_secs_agg
+        hours = grand_total_seconds // 3600
+        minutes = (grand_total_seconds % 3600) // 60
+        mem.total_active_time = f"{hours}h {minutes}m"
 
     training_pending = total_employees - training_completed_count
 
@@ -258,7 +301,7 @@ def company_dashboard(request):
         "total_employees": total_employees,
         "training_completed": training_completed_count,
         "training_pending": training_pending,
-        "total_modules_count": total_modules_count, 
+        "total_modules_count": total_modules_count,
     }
 
     # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
@@ -282,7 +325,9 @@ def individual_subscription(request, plan_type):
 
         # Restriction: Ensure all info is compulsory
         if not all([fullname, username, email, password]):
-            messages.error(request, "All fields are compulsory. Please fill out the entire form.")
+            messages.error(
+                request, "All fields are compulsory. Please fill out the entire form."
+            )
             return redirect(request.path)
 
         if User.objects.filter(username=username).exists():
@@ -317,7 +362,7 @@ def individual_subscription(request, plan_type):
     }
     response = render(request, "subscription_details.html", context)
     # FIX FOR CACHE PROBLEM: Disable browser caching
-    response['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
 
 
@@ -341,7 +386,7 @@ def posh_act_page(request):
     # 2. Fetch User Progress
     progress_map = {}
     completed_count = 0
-    
+
     # Initialize progress for all modules if not exists
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
@@ -351,41 +396,90 @@ def posh_act_page(request):
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
-    percent_complete = int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    percent_complete = (
+        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    )
 
-    # 4. Determine Locked Status (Sequential Unlocking)
-    module_list = []
-    previous_completed = True 
-    
-    for mod in modules:
+    # 4. Determine Locked Status & Split
+    video_list = []
+    ppt_list = []
+
+    # Process Videos Sequence
+    video_modules = [m for m in modules if not m.ppt_file]
+    previous_completed = True
+    for mod in video_modules:
         is_completed = progress_map.get(mod.id, False)
         is_locked = not previous_completed
-        
-        module_list.append({
-            "obj": mod,
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
             "is_completed": is_completed,
-            "is_locked": is_locked
-        })
-        
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": mod.video_file.url if mod.video_file else "",
+            "url": "",
+            "duration": mod.duration_seconds,
+        }
+        video_list.append(item)
+        previous_completed = is_completed
+
+    # Process PPT Sequence
+    ppt_modules = [m for m in modules if m.ppt_file]
+    previous_completed = True
+    for mod in ppt_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": "",
+            "url": mod.ppt_file.url if mod.ppt_file else "",
+            "duration": mod.duration_seconds,
+        }
+        ppt_list.append(item)
         previous_completed = is_completed
 
     # 5. Daily Activity Stats for Chart (Last 7 days)
     today = timezone.now().date()
+
+    # Calculate Total Study Time (Lifetime)
+    total_mins_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))[
+            "minutes_watched__sum"
+        ]
+        or 0
+    )
+    total_secs_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))[
+            "seconds_watched__sum"
+        ]
+        or 0
+    )
+    total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
     chart_data = []
-    
+
     for d in last_7_days:
         activity = DailyActivity.objects.filter(user=user, date=d).first()
         chart_data.append(activity.minutes_watched if activity else 0)
 
     context = {
-        "modules": module_list,
+        "video_modules": video_list,
+        "ppt_modules": ppt_list,
         "percent_complete": percent_complete,
         "completed_count": completed_count,
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
+        "chart_data": json.dumps(chart_data),
+        "total_seconds_watched": total_seconds_watched,  # Passed to frontend
     }
 
     return render(request, "posh_act_page.html", context)
@@ -395,15 +489,35 @@ def posh_act_page(request):
 @login_required
 def update_watch_time(request):
     """
-    API called by frontend every Minute (or 30s) to record watch time.
+    API called by frontend to record watch time (seconds).
+    Frequency: ~5s
     """
     if request.method == "POST":
         try:
+            data = json.loads(request.body)
+            seconds_delta = int(
+                data.get("seconds", 60)
+            )  # Default to 60 for backward compat if any old frontend hits it
+
             today = timezone.now().date()
-            activity, created = DailyActivity.objects.get_or_create(user=request.user, date=today)
-            activity.minutes_watched += 1
+            activity, created = DailyActivity.objects.get_or_create(
+                user=request.user, date=today
+            )
+
+            # Add delta
+            activity.seconds_watched += seconds_delta
+
+            # Normalize: If seconds >= 60, convert to minutes
+            if activity.seconds_watched >= 60:
+                extra_mins = activity.seconds_watched // 60
+                activity.minutes_watched += extra_mins
+                activity.seconds_watched = activity.seconds_watched % 60
+
             activity.save()
-            return JsonResponse({"status": "success", "total_minutes": activity.minutes_watched})
+
+            # Return Total Time in Minutes (for backward compat display) + Raw Seconds
+            total_minutes = activity.minutes_watched
+            return JsonResponse({"status": "success", "total_minutes": total_minutes})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error"}, status=400)
@@ -418,12 +532,16 @@ def mod_complete(request, module_id):
     if request.method == "POST":
         try:
             module = TrainingModule.objects.get(id=module_id)
-            prog, created = ModuleProgress.objects.get_or_create(user=request.user, module=module)
+            prog, created = ModuleProgress.objects.get_or_create(
+                user=request.user, module=module
+            )
             prog.is_completed = True
             prog.save()
             return JsonResponse({"status": "success", "module_id": module_id})
         except TrainingModule.DoesNotExist:
-             return JsonResponse({"status": "error", "message": "Module not found"}, status=404)
+            return JsonResponse(
+                {"status": "error", "message": "Module not found"}, status=404
+            )
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error"}, status=400)
@@ -448,7 +566,7 @@ def pocso_act_page(request):
     # 2. Fetch User Progress
     progress_map = {}
     completed_count = 0
-    
+
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
         progress_map[mod.id] = prog.is_completed
@@ -457,41 +575,92 @@ def pocso_act_page(request):
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
-    percent_complete = int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    percent_complete = (
+        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    )
 
-    # 4. Determine Locked Status
-    module_list = []
-    previous_completed = True 
-    
-    for mod in modules:
+    # 4. Determine Locked Status & Split
+    video_list = []
+    ppt_list = []
+
+    # Process Videos Sequence
+    video_modules = [m for m in modules if not m.ppt_file]
+    previous_completed = True
+    for mod in video_modules:
         is_completed = progress_map.get(mod.id, False)
         is_locked = not previous_completed
-        
-        module_list.append({
-            "obj": mod,
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
             "is_completed": is_completed,
-            "is_locked": is_locked
-        })
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": mod.video_file.url if mod.video_file else "",
+            "url": "",
+            "duration": mod.duration_seconds,
+        }
+        video_list.append(item)
         previous_completed = is_completed
 
-    # 5. Daily Activity
+    # Process PPT Sequence
+    ppt_modules = [m for m in modules if m.ppt_file]
+    previous_completed = True
+    for mod in ppt_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": "",
+            "url": mod.ppt_file.url if mod.ppt_file else "",
+            "duration": mod.duration_seconds,
+        }
+        ppt_list.append(item)
+        previous_completed = is_completed
+
+    # 5. Daily Activity Stats for Chart (Last 7 days)
     today = timezone.now().date()
+
+    # Calculate Total Study Time (Lifetime)
+    total_mins_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))[
+            "minutes_watched__sum"
+        ]
+        or 0
+    )
+    total_secs_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))[
+            "seconds_watched__sum"
+        ]
+        or 0
+    )
+    total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
     chart_data = []
-    
+
     for d in last_7_days:
         activity = DailyActivity.objects.filter(user=user, date=d).first()
         chart_data.append(activity.minutes_watched if activity else 0)
 
     context = {
-        "modules": module_list,
+        "video_modules": video_list,
+        "ppt_modules": ppt_list,
         "percent_complete": percent_complete,
         "completed_count": completed_count,
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        "is_assessment_unlocked": percent_complete == 100
+        "chart_data": json.dumps(chart_data),
+        "total_seconds_watched": total_seconds_watched,  # Passed to frontend
+        # Pass a flag to template to disable/enable final assessment
+        "is_assessment_unlocked": percent_complete == 100,
     }
     return render(request, "pocso_act_page.html", context)
 
@@ -566,14 +735,16 @@ def tutorial_view(request):
     if request.user.is_authenticated:
         # Check POSH Access
         has_posh = Subscription.objects.filter(
-            Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+            Q(user=request.user)
+            | Q(organization__organizationmember__user=request.user),
             status="ACTIVE",
             plan__type__in=["POSH", "BOTH"],
         ).exists()
 
         # Check POCSO Access
         has_pocso = Subscription.objects.filter(
-            Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+            Q(user=request.user)
+            | Q(organization__organizationmember__user=request.user),
             status="ACTIVE",
             plan__type__in=["POCSO", "BOTH"],
         ).exists()
@@ -581,15 +752,12 @@ def tutorial_view(request):
         # If user has POSH but not POCSO, hide POCSO
         if has_posh and not has_pocso:
             show_pocso = False
-        
+
         # If user has POCSO but not POSH, hide POSH
         elif has_pocso and not has_posh:
             show_posh = False
-            
-    context = {
-        "show_posh": show_posh,
-        "show_pocso": show_pocso
-    }
+
+    context = {"show_posh": show_posh, "show_pocso": show_pocso}
     return render(request, "tutorial.html", context)
 
 
@@ -702,7 +870,7 @@ def upload_employee_bulk(request):
                 password = row.get("Default password", "").strip()
 
                 if not email or not password:
-                    continue 
+                    continue
                 if User.objects.filter(email=email).exists():
                     continue
 
@@ -755,28 +923,32 @@ def superuser_dashboard(request):
     def get_monthly_counts(queryset):
         today = timezone.now().date()
         six_months_ago = today - datetime.timedelta(days=180)
-        
-        monthly_data = queryset.filter(created_at__gte=six_months_ago)\
-            .annotate(month=TruncMonth('created_at'))\
-            .values('month')\
-            .annotate(count=Count('id'))\
-            .order_by('month')
-            
+
+        monthly_data = (
+            queryset.filter(created_at__gte=six_months_ago)
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("id"))
+            .order_by("month")
+        )
+
         months_map = {}
         labels = []
         current = six_months_ago.replace(day=1)
         for i in range(6):
-            next_month = (current.replace(day=28) + datetime.timedelta(days=4)).replace(day=1)
+            next_month = (current.replace(day=28) + datetime.timedelta(days=4)).replace(
+                day=1
+            )
             label = current.strftime("%b")
             labels.append(label)
             months_map[current.strftime("%Y-%m")] = 0
             current = next_month
 
         for entry in monthly_data:
-            month_str = entry['month'].strftime("%Y-%m")
+            month_str = entry["month"].strftime("%Y-%m")
             if month_str in months_map:
-                months_map[month_str] = entry['count']
-        
+                months_map[month_str] = entry["count"]
+
         data_points = list(months_map.values())
         return labels, data_points
 
@@ -786,87 +958,146 @@ def superuser_dashboard(request):
         max_val = max(data_points) if max(data_points) > 0 else 1
         points = []
         step_x = 100 / (len(data_points) - 1) if len(data_points) > 1 else 100
-        
+
         for i, val in enumerate(data_points):
             x = i * step_x
-            y = 50 - ((val / max_val) * 45) 
+            y = 50 - ((val / max_val) * 45)
             points.append(f"{x},{y}")
         return " ".join(points)
 
     all_users_count = User.objects.count()
     all_orgs = Organization.objects.all()
-    
+
     total_companies = all_orgs.filter(organization_type="CORPORATE").count()
     total_schools = all_orgs.filter(organization_type="SCHOOL").count()
-    
-    users_started_training = ModuleProgress.objects.filter(is_completed=True).values('user').distinct().count()
-    
-    posh_subs = Subscription.objects.filter(plan__type__in=["POSH", "BOTH"], status="ACTIVE")
+
+    users_started_training = (
+        ModuleProgress.objects.filter(is_completed=True)
+        .values("user")
+        .distinct()
+        .count()
+    )
+
+    posh_subs = Subscription.objects.filter(
+        plan__type__in=["POSH", "BOTH"], status="ACTIVE"
+    )
     posh_individuals = posh_subs.filter(user__isnull=False).count()
     posh_orgs_subs = posh_subs.filter(organization__isnull=False)
-    posh_companies = posh_orgs_subs.filter(organization__organization_type="CORPORATE").count()
-    posh_schools = posh_orgs_subs.filter(organization__organization_type="SCHOOL").count()
-    
+    posh_companies = posh_orgs_subs.filter(
+        organization__organization_type="CORPORATE"
+    ).count()
+    posh_schools = posh_orgs_subs.filter(
+        organization__organization_type="SCHOOL"
+    ).count()
+
     posh_total = posh_individuals + posh_companies + posh_schools
 
-    pocso_subs = Subscription.objects.filter(plan__type__in=["POCSO", "BOTH"], status="ACTIVE")
+    pocso_subs = Subscription.objects.filter(
+        plan__type__in=["POCSO", "BOTH"], status="ACTIVE"
+    )
     pocso_individuals = pocso_subs.filter(user__isnull=False).count()
     pocso_orgs_subs = pocso_subs.filter(organization__isnull=False)
-    pocso_companies = pocso_orgs_subs.filter(organization__organization_type="CORPORATE").count()
-    pocso_schools = pocso_orgs_subs.filter(organization__organization_type="SCHOOL").count()
-    
-    pocso_total = pocso_individuals + pocso_companies + pocso_schools
-    
-    recent_posh_orgs = Organization.objects.filter(
-        subscriptions__plan__type__in=["POSH", "BOTH"],
-        subscriptions__status="ACTIVE"
-    ).distinct().order_by("-created_at")[:10]
-    
-    recent_pocso_orgs = Organization.objects.filter(
-        subscriptions__plan__type__in=["POCSO", "BOTH"],
-        subscriptions__status="ACTIVE"
-    ).distinct().order_by("-created_at")[:10]
+    pocso_companies = pocso_orgs_subs.filter(
+        organization__organization_type="CORPORATE"
+    ).count()
+    pocso_schools = pocso_orgs_subs.filter(
+        organization__organization_type="SCHOOL"
+    ).count()
 
-    posh_growth = 12 
+    pocso_total = pocso_individuals + pocso_companies + pocso_schools
+
+    recent_posh_orgs = (
+        Organization.objects.filter(
+            subscriptions__plan__type__in=["POSH", "BOTH"],
+            subscriptions__status="ACTIVE",
+        )
+        .distinct()
+        .order_by("-created_at")[:10]
+    )
+
+    recent_pocso_orgs = (
+        Organization.objects.filter(
+            subscriptions__plan__type__in=["POCSO", "BOTH"],
+            subscriptions__status="ACTIVE",
+        )
+        .distinct()
+        .order_by("-created_at")[:10]
+    )
+
+    posh_growth = 12
     pocso_growth = 8
 
     total_posh_modules = TrainingModule.objects.filter(module_type="POSH").count()
     total_pocso_modules = TrainingModule.objects.filter(module_type="POCSO").count()
-    
+
     if total_posh_modules > 0:
-        posh_completers = User.objects.annotate(
-            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH")),
-            latest_completion=Max('module_progress__timestamp', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POSH"))
-        ).filter(completed_count=total_posh_modules).order_by('-latest_completion')[:10]
+        posh_completers = (
+            User.objects.annotate(
+                completed_count=Count(
+                    "module_progress",
+                    filter=Q(
+                        module_progress__is_completed=True,
+                        module_progress__module__module_type="POSH",
+                    ),
+                ),
+                latest_completion=Max(
+                    "module_progress__timestamp",
+                    filter=Q(
+                        module_progress__is_completed=True,
+                        module_progress__module__module_type="POSH",
+                    ),
+                ),
+            )
+            .filter(completed_count=total_posh_modules)
+            .order_by("-latest_completion")[:10]
+        )
     else:
         posh_completers = []
-        
+
     if total_pocso_modules > 0:
-        pocso_completers = User.objects.annotate(
-            completed_count=Count('module_progress', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO")),
-            latest_completion=Max('module_progress__timestamp', filter=Q(module_progress__is_completed=True, module_progress__module__module_type="POCSO"))
-        ).filter(completed_count=total_pocso_modules).order_by('-latest_completion')[:10]
+        pocso_completers = (
+            User.objects.annotate(
+                completed_count=Count(
+                    "module_progress",
+                    filter=Q(
+                        module_progress__is_completed=True,
+                        module_progress__module__module_type="POCSO",
+                    ),
+                ),
+                latest_completion=Max(
+                    "module_progress__timestamp",
+                    filter=Q(
+                        module_progress__is_completed=True,
+                        module_progress__module__module_type="POCSO",
+                    ),
+                ),
+            )
+            .filter(completed_count=total_pocso_modules)
+            .order_by("-latest_completion")[:10]
+        )
     else:
         pocso_completers = []
 
     posh_orgs_qs = Organization.objects.filter(
         organization_type="CORPORATE",
         subscriptions__plan__type__in=["POSH", "BOTH"],
-        subscriptions__status="ACTIVE"
+        subscriptions__status="ACTIVE",
     ).distinct()
     posh_labels, posh_data = get_monthly_counts(posh_orgs_qs)
     posh_svg_points = generate_svg_points(posh_data)
-    posh_svg_area = f"0,50 {posh_svg_points} 100,50" 
+    posh_svg_area = f"0,50 {posh_svg_points} 100,50"
 
-    posh_complete_percent = 75 
+    posh_complete_percent = 75
     if posh_total > 0:
-        posh_complete_percent = int((users_started_training / (posh_total if posh_total > 0 else 1)) * 100)
+        posh_complete_percent = int(
+            (users_started_training / (posh_total if posh_total > 0 else 1)) * 100
+        )
         posh_complete_percent = min(posh_complete_percent, 100)
-    
+
     pocso_orgs_qs = Organization.objects.filter(
         organization_type="SCHOOL",
         subscriptions__plan__type__in=["POCSO", "BOTH"],
-        subscriptions__status="ACTIVE"
+        subscriptions__status="ACTIVE",
     ).distinct()
     pocso_labels, pocso_data = get_monthly_counts(pocso_orgs_qs)
     pocso_svg_points = generate_svg_points(pocso_data)
@@ -874,15 +1105,16 @@ def superuser_dashboard(request):
 
     pocso_complete_percent = 60
     if pocso_total > 0:
-         pocso_complete_percent = int((users_started_training / (pocso_total if pocso_total > 0 else 1)) * 100)
-         pocso_complete_percent = min(pocso_complete_percent, 100)
+        pocso_complete_percent = int(
+            (users_started_training / (pocso_total if pocso_total > 0 else 1)) * 100
+        )
+        pocso_complete_percent = min(pocso_complete_percent, 100)
 
     context = {
         "total_users": all_users_count,
         "total_companies": total_companies,
         "total_schools": total_schools,
         "training_completed_count": users_started_training,
-        
         "posh_counts": {
             "total": posh_total,
             "individuals": posh_individuals,
@@ -894,9 +1126,8 @@ def superuser_dashboard(request):
             "chart_area": posh_svg_area,
             "complete_percent": posh_complete_percent,
             "pending_percent": 100 - posh_complete_percent,
-            "completers": posh_completers, 
+            "completers": posh_completers,
         },
-        
         "pocso_counts": {
             "total": pocso_total,
             "individuals": pocso_individuals,
@@ -910,7 +1141,6 @@ def superuser_dashboard(request):
             "pending_percent": 100 - pocso_complete_percent,
             "completers": pocso_completers,
         },
-        
         "recent_posh_orgs": recent_posh_orgs,
         "recent_pocso_orgs": recent_pocso_orgs,
     }
@@ -918,5 +1148,5 @@ def superuser_dashboard(request):
 
 
 def custom_logout(request):
-    logout(request) 
+    logout(request)
     return redirect("home")

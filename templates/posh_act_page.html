@@ -322,16 +322,33 @@
     // --- 1. DATA ---
     
     // Video Data
+    // Video Data (Dynamic)
     const modules = [
-        { id: 0, title: "1. Intro to POSH", status: "pending", watched: 0, thumb: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
-        { id: 1, title: "2. Workplace", status: "locked", watched: 0, thumb: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/movie.mp4" }
+        {% for m in video_modules %}
+        { 
+            id: {{ m.id }}, 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            watched: 0, 
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600' }}", 
+            src: "{{ m.src }}" 
+        },
+        {% endfor %}
     ];
 
-    // PPT & Resource Data (Added type: 'quiz' for the second item)
+    // PPT & Resource Data (Dynamic)
     const ppts = [
-        { id: 0, type: 'slide', title: "Legal Framework", status: "pending", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600", url: "https://docs.google.com/presentation/d/1Ta77aFMjK3740YnwQMlkIbXP529PzWt_/embed" },
-        // TYPE QUIZ: This will trigger the JS quiz logic, not an iframe
-        { id: 1, type: 'quiz', title: "Practice Quiz", status: "locked", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600", url: "" }
+        {% for m in ppt_modules %}
+        { 
+            id: {{ m.id }}, 
+            type: "{% if 'Quiz' in m.title or 'quiz' in m.title %}quiz{% else %}slide{% endif %}", 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            viewedTime: 0, 
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600' }}", 
+            url: "{{ m.url }}" 
+        },
+        {% endfor %}
     ];
 
     // Question Bank (Shared)
@@ -351,6 +368,11 @@
     let currentPPTIdx = 0;
     let furthestTime = 0;
     const player = document.getElementById('mainPlayer');
+    
+    // Initialize from DB (minutes converted to seconds)
+    // Django passes 'total_minutes_watched', we start from there.
+    let totalSecondsWatched = {{ total_seconds_watched|default:0 }}; 
+    let sessionSeconds = 0;
 
     // Practice Quiz Specific Vars
     let practiceQuestions = [];
@@ -536,14 +558,69 @@
     }
 
 
+    // --- API INTEGRATION ---
+    async function markComplete(id) {
+        if (id === undefined || id === null) return;
+        console.log("Marking complete:", id);
+        try {
+            await fetch(`/ajax/mod-complete/${id}/`, { 
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Progress saved for module:", id);
+        } catch (e) {
+            console.error("Error saving progress:", e);
+        }
+    }
+
+    // --- HEARTBEAT FOR TIME TRACKING ---
+    // Pings backend every 5s to record activity
+    let lastTime = Date.now();
+    setInterval(async () => {
+        const now = Date.now();
+        const deltaSeconds = Math.floor((now - lastTime) / 1000);
+        lastTime = now;
+
+        const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
+        const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; // PPT or Quiz
+
+        if ((isVideoPlaying || isPPTOpen) && deltaSeconds > 0) {
+             try {
+                // Modified to include credentials and better logging
+                const res = await fetch(`/ajax/update-watch-time/`, { 
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ seconds: deltaSeconds }),
+                    credentials: 'same-origin'
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                     // Log occasionally or on first success to verify
+                } else {
+                    console.error("Failed to update time. Status:", res.status);
+                }
+             } catch (e) {
+                 console.error("Error updating time:", e);
+             }
+        }
+    }, 5000); // 5 seconds
+
     // --- 7. VIDEO & TIMER LOGIC (Existing) ---
     function startPPTTimer() {
         if (pptTimerInterval) clearInterval(pptTimerInterval);
         pptTimerInterval = setInterval(() => {
             ppts[currentPPTIdx].viewedTime++;
+            sessionSeconds++; // Add to session total
             document.getElementById('ppt-timer-badge').innerText = `Time: ${ppts[currentPPTIdx].viewedTime}s`;
             if (ppts[currentPPTIdx].viewedTime >= 10 && ppts[currentPPTIdx].status !== 'complete') {
                 ppts[currentPPTIdx].status = 'complete';
+                markComplete(ppts[currentPPTIdx].id); // API CALL
                 if (ppts[currentPPTIdx + 1]) ppts[currentPPTIdx + 1].status = 'pending';
                 renderPPTList();
             }
@@ -567,10 +644,14 @@
     }
 
     player.ontimeupdate = () => {
+        if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
+        player.lastTime = player.currentTime;
+
         if (player.currentTime > furthestTime + 1.5) player.currentTime = furthestTime;
         else if (player.currentTime > furthestTime) { furthestTime = player.currentTime; modules[currentIdx].watched = furthestTime; }
         if (player.currentTime > player.duration * 0.95 && modules[currentIdx].status !== 'complete') {
             modules[currentIdx].status = 'complete';
+            markComplete(modules[currentIdx].id); // API CALL
             if (modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
             renderModules();
         }
@@ -578,10 +659,11 @@
     };
 
     function updateTotalStats() {
+        // Just show the Total DB Time + Session Time
+        const displaySeconds = totalSecondsWatched + sessionSeconds;
+        document.getElementById('watch-time-display').innerText = `${Math.floor(displaySeconds / 60)}:${Math.floor(displaySeconds % 60).toString().padStart(2, '0')}`;
+
         const dataSet = (activeMode === 'vids') ? modules : ppts;
-        const timeKey = (activeMode === 'vids') ? 'watched' : 'viewedTime';
-        const totalTime = dataSet.reduce((s, item) => s + item[timeKey], 0);
-        document.getElementById('watch-time-display').innerText = `${Math.floor(totalTime / 60)}:${Math.floor(totalTime % 60).toString().padStart(2, '0')}`;
         const done = dataSet.filter(item => item.status === 'complete').length;
         const perc = Math.round((done / dataSet.length) * 100) || 0;
         document.getElementById('perc-text').innerText = perc + "%";

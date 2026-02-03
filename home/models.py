@@ -152,7 +152,8 @@ class TrainingModule(models.Model):
     )
     title = models.CharField(max_length=200)
     description = models.TextField()
-    video_file = models.FileField(upload_to="training_videos/")
+    video_file = models.FileField(upload_to="training_videos/", blank=True, null=True)
+    ppt_file = models.FileField(upload_to="training_ppts/", blank=True, null=True)
     thumbnail = models.ImageField(upload_to="training_thumbnails/", blank=True, null=True)
     module_type = models.CharField(max_length=10, choices=MODULE_TYPES, default="POSH")
     order = models.IntegerField(default=1)  # To sequence modules 1, 2, 3...
@@ -184,6 +185,7 @@ class DailyActivity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="daily_activity")
     date = models.DateField(default=timezone.now)
     minutes_watched = models.IntegerField(default=0)
+    seconds_watched = models.IntegerField(default=0)
 
     class Meta:
         unique_together = ("user", "date")

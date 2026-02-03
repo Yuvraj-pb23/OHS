@@ -1,0 +1,903 @@
+{
+    "topic": "Mental Health at the Workplace",
+    "subtopics": [
+        {
+            "id": "mental_health_literacy",
+            "title": "Mental Health Literacy",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the clinical difference between \"Stress\" and \"Anxiety\"?",
+                    "answer": "Stress is typically a response to an external trigger (like a deadline), disappearing once the situation is resolved. Anxiety is a persistent, internal feeling of dread or unease that remains even in the absence of a specific stressor."
+                },
+                {
+                    "id": "q2",
+                    "question": "How do we define \"Burnout\" according to the WHO?",
+                    "answer": "It is a syndrome conceptualized as resulting from chronic workplace stress that has not been successfully managed, characterized by feelings of energy depletion, increased mental distance from one’s job, and reduced professional efficacy."
+                },
+                {
+                    "id": "q3",
+                    "question": "What are the physical symptoms of a Panic Attack?",
+                    "answer": "Common symptoms include a racing heart, chest pain, shortness of breath, trembling, and sweating. It often feels like a \"heart attack\" or a loss of control, peaking within minutes."
+                },
+                {
+                    "id": "q4",
+                    "question": "How does Depression manifest in a workplace setting?",
+                    "answer": "It may appear as persistent low energy, difficulty concentrating, indecisiveness, withdrawal from team interactions, or a significant drop in productivity that lasts for more than two weeks."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"High-Functioning Anxiety\"?",
+                    "answer": "This refers to individuals who appear successful and calm on the outside but experience intense internal nervousness, overthinking, and a constant need for perfectionism to manage their fears."
+                },
+                {
+                    "id": "q6",
+                    "question": "What are the cognitive signs of chronic stress?",
+                    "answer": "These include \"brain fog,\" memory lapses, inability to focus on simple tasks, and a tendency to catastrophize (expecting the worst-case scenario)."
+                },
+                {
+                    "id": "q7",
+                    "question": "Identify three behavioral signs of a teammate struggling with mental health.",
+                    "answer": "Increased irritability over minor issues, social withdrawal from team lunches or meetings, and a sudden change in appearance or hygiene."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is the \"Window of Tolerance\"?",
+                    "answer": "It is the zone where a person can function and process emotions effectively. When pushed out of this window (hyper-arousal or hypo-arousal), they become overwhelmed or shut down."
+                },
+                {
+                    "id": "q9",
+                    "question": "How can sleep deprivation impact work performance?",
+                    "answer": "Lack of sleep impairs the prefrontal cortex, leading to poor impulse control, slower reaction times, and heightened emotional reactivity."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the difference between sadness and Clinical Depression?",
+                    "answer": "Sadness is a temporary emotion triggered by a specific event. Clinical Depression is a persistent state of low mood and loss of interest that interferes with daily life for a prolonged period."
+                },
+                {
+                    "id": "q11",
+                    "question": "Define \"Emotional Intelligence\" in the context of mental health.",
+                    "answer": "The ability to recognize and manage one’s own emotions while empathetically responding to the emotions of others, which helps prevent interpersonal conflicts."
+                },
+                {
+                    "id": "q12",
+                    "question": "What are \"Micro-stresses\" and how do they accumulate?",
+                    "answer": "Small, brief moments of stress (a confusing email, a minor delay) that, while individually manageable, aggregate over time to cause significant burnout."
+                },
+                {
+                    "id": "q13",
+                    "question": "Explain the \"Fight, Flight, or Freeze\" response at work.",
+                    "answer": "A physiological reaction to perceived threats. In the office, \"Flight\" might look like avoiding a boss, while \"Fight\" might look like aggressive debating."
+                },
+                {
+                    "id": "q14",
+                    "question": "How does \"Imposter Syndrome\" affect mental health?",
+                    "answer": "It creates a chronic fear of being \"found out\" as a fraud, leading to overworking, exhaustion, and high levels of baseline anxiety."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the role of Resilience in mental health?",
+                    "answer": "Resilience is not about \"toughing it out\" but having the tools and support systems to bounce back from adversity and adapt to change."
+                },
+                {
+                    "id": "q16",
+                    "question": "What are the signs of \"Secondary Traumatic Stress\" (Compassion Fatigue)?",
+                    "answer": "Common in HR or caregiving roles, it is the emotional strain felt when someone is frequently exposed to the trauma or suffering of others."
+                },
+                {
+                    "id": "q17",
+                    "question": "How does \"Toxic Positivity\" harm mental health?",
+                    "answer": "By demanding a \"positive vibes only\" attitude, it invalidates real human suffering and prevents people from seeking help or processing difficult emotions."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the link between physical health and mental well-being?",
+                    "answer": "The gut-brain axis and hormonal balance mean that poor nutrition and lack of movement can directly exacerbate symptoms of anxiety and depression."
+                },
+                {
+                    "id": "q19",
+                    "question": "Define \"Mindfulness\" and its benefit for stress.",
+                    "answer": "Mindfulness is the practice of being present in the moment without judgment. It lowers cortisol levels and helps break the cycle of ruminative thinking."
+                },
+                {
+                    "id": "q20",
+                    "question": "Why is early identification of symptoms crucial?",
+                    "answer": "Early intervention can prevent a mild mental health issue from escalating into a chronic condition, reducing the need for long-term medical leave."
+                }
+            ]
+        },
+        {
+            "id": "legal_rights_and_compliance",
+            "title": "Legal Rights & Compliance",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the primary objective of the Mental Healthcare Act (2017) in India?",
+                    "answer": "To protect, promote, and fulfill the rights of persons with mental illness during care and treatment, ensuring they are treated with dignity and without discrimination."
+                },
+                {
+                    "id": "q2",
+                    "question": "Does an employee have to disclose their mental health diagnosis to their employer?",
+                    "answer": "No. Under the right to confidentiality, employees are not legally obligated to disclose their diagnosis unless it directly impacts the safety of others or specific job requirements."
+                },
+                {
+                    "id": "q3",
+                    "question": "What does the \"Right to Confidentiality\" entail under the Act?",
+                    "answer": "Medical professionals and employers must keep an individual's mental health records private, sharing them only with explicit consent or in life-threatening emergencies."
+                },
+                {
+                    "id": "q4",
+                    "question": "Define \"Non-discrimination\" in the context of hiring.",
+                    "answer": "Employers cannot refuse to hire a candidate solely based on a history of mental illness, provided the candidate is currently fit to perform the job duties."
+                },
+                {
+                    "id": "q5",
+                    "question": "What are \"Reasonable Accommodations\"?",
+                    "answer": "Adjustments to the work environment or schedule—such as flexible hours or a quiet workspace—that enable an employee with a mental health condition to perform their job."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can an employee be terminated for having a mental illness?",
+                    "answer": "No. Termination solely due to mental illness is illegal. Employers must provide support and accommodations before considering performance-related actions."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is the \"Right to Access Healthcare\"?",
+                    "answer": "The Act ensures that every person has a right to access mental healthcare services run or funded by the government, including in workplace-related insurance."
+                },
+                {
+                    "id": "q8",
+                    "question": "How does the Act address the use of restraints or seclusion?",
+                    "answer": "It strictly prohibits the use of physical restraints or seclusion in mental health facilities unless as a last resort to prevent immediate harm."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is an \"Advance Directive\"?",
+                    "answer": "A legal document where an individual specifies how they wish to be treated (or not treated) for a mental illness should they lose the capacity to make decisions in the future."
+                },
+                {
+                    "id": "q10",
+                    "question": "Who is a \"Nominated Representative\"?",
+                    "answer": "A person chosen by an individual to help make decisions on their behalf during a mental health crisis when they cannot decide for themselves."
+                },
+                {
+                    "id": "q11",
+                    "question": "Are mental health treatments covered by health insurance in India?",
+                    "answer": "Yes, per IRDAI guidelines and the 2017 Act, insurers must treat mental illness on par with physical illness regarding coverage and claims."
+                },
+                {
+                    "id": "q12",
+                    "question": "What is the employer's liability regarding workplace-induced stress?",
+                    "answer": "Employers can be held liable if a toxic work environment directly leads to a clinical mental health condition due to negligence or lack of protective policies."
+                },
+                {
+                    "id": "q13",
+                    "question": "What constitutes \"Mental Health Harassment\" at work?",
+                    "answer": "Persistent bullying, mocking a person’s condition, or using their mental health status to isolate or penalize them professionally."
+                },
+                {
+                    "id": "q14",
+                    "question": "Does the Act protect the rights of homeless persons with mental illness?",
+                    "answer": "Yes, it mandates that the government provide support and healthcare to anyone with mental illness, regardless of their housing status."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the \"Mental Health Review Board\"?",
+                    "answer": "A quasi-judicial body established to oversee the implementation of the Act, handle complaints, and protect the rights of patients."
+                },
+                {
+                    "id": "q16",
+                    "question": "How should a company handle a request for \"Mental Health Leave\"?",
+                    "answer": "It should be treated with the same validity and confidentiality as any other medical leave request, without requiring intrusive details."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is the \"Right to Live in a Community\"?",
+                    "answer": "The right of a person with mental illness to live as part of the community rather than being indefinitely sequestered in a mental hospital."
+                },
+                {
+                    "id": "q18",
+                    "question": "Explain the concept of \"Informed Consent\" in treatment.",
+                    "answer": "Treatment cannot be forced; the individual must be given full information about the procedure, side effects, and alternatives before agreeing."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is the penalty for violating the Mental Healthcare Act?",
+                    "answer": "Violations can result in fines and imprisonment for individuals or officers of a company found guilty of non-compliance or abuse."
+                },
+                {
+                    "id": "q20",
+                    "question": "How does the Act view attempted suicide?",
+                    "answer": "It effectively decriminalizes suicide by stating that anyone who attempts suicide is presumed to be under severe stress and should be provided with care, not punishment."
+                }
+            ]
+        },
+        {
+            "id": "psychological_safety",
+            "title": "Psychological Safety",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the core definition of \"Psychological Safety\"?",
+                    "answer": "A shared belief held by members of a team that the team is safe for interpersonal risk-taking—where one can speak up without being punished or humiliated."
+                },
+                {
+                    "id": "q2",
+                    "question": "How does Psychological Safety drive innovation?",
+                    "answer": "When employees feel safe to share \"half-baked\" ideas or challenge the status quo, the organization gains access to diverse perspectives and creative solutions."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is the \"Blame Culture\" and why is it toxic?",
+                    "answer": "A culture where the first reaction to a mistake is finding someone to punish. This leads to people hiding errors, which prevents organizational learning."
+                },
+                {
+                    "id": "q4",
+                    "question": "How can a leader demonstrate \"Vulnerability\"?",
+                    "answer": "By admitting when they don’t have all the answers or sharing their own challenges, a leader signals that it is okay for others to be human too."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"Active Listening\" in a team meeting?",
+                    "answer": "Giving full attention to the speaker, reflecting back what was heard, and asking clarifying questions rather than just waiting for your turn to speak."
+                },
+                {
+                    "id": "q6",
+                    "question": "How do \"Microaggressions\" undermine psychological safety?",
+                    "answer": "Small, everyday slights or insults related to identity (race, gender, mental health) create a \"death by a thousand cuts\" effect, making people feel unwelcome."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is the \"Speak-Up\" culture?",
+                    "answer": "An environment where employees at all levels feel empowered to report ethical concerns, safety risks, or mental health struggles without fear of retaliation."
+                },
+                {
+                    "id": "q8",
+                    "question": "Explain the relationship between Psychological Safety and Performance.",
+                    "answer": "While high expectations drive work, psychological safety ensures that high pressure doesn't turn into debilitating fear, allowing for sustained peak performance."
+                },
+                {
+                    "id": "q9",
+                    "question": "How should a manager handle a team member’s \"Public Mistake\"?",
+                    "answer": "Address the mistake as a \"learning opportunity\" for the whole team, focusing on the process/system rather than shaming the individual."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is \"Inclusive Leadership\"?",
+                    "answer": "Leading in a way that ensures all team members—regardless of their background or personality—feel valued, heard, and integrated into the group."
+                },
+                {
+                    "id": "q11",
+                    "question": "Define \"Cognitive Diversity.\"",
+                    "answer": "The inclusion of people who have different ways of thinking, processing information, and problem-solving, which is only possible in a safe environment."
+                },
+                {
+                    "id": "q12",
+                    "question": "How can remote work impact psychological safety?",
+                    "answer": "The lack of \"water cooler\" chats can lead to misunderstandings. Intentional efforts are needed to ensure remote workers feel seen and safe to contribute."
+                },
+                {
+                    "id": "q13",
+                    "question": "What is a \"Post-Mortem\" meeting?",
+                    "answer": "A meeting held after a project failure to analyze what went wrong without assigning blame, focusing entirely on improving future workflows."
+                },
+                {
+                    "id": "q14",
+                    "question": "How do power dynamics affect safety?",
+                    "answer": "Significant power gaps can silence junior employees. Leaders must actively \"lower\" their status to invite honest feedback from the ranks."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is \"Workplace Gaslighting\"?",
+                    "answer": "A form of psychological manipulation where a person is led to doubt their own perceptions or reality (e.g., \"That never happened,\" or \"You're just being sensitive\")."
+                },
+                {
+                    "id": "q16",
+                    "question": "How to encourage quiet voices in a meeting?",
+                    "answer": "Use techniques like \"Round Robin\" (everyone speaks) or \"Brain-writing\" (submit ideas anonymously) to ensure introverts or anxious staff contribute."
+                },
+                {
+                    "id": "q17",
+                    "question": "Why is \"Trust\" different from \"Psychological Safety\"?",
+                    "answer": "Trust is between two individuals; Psychological Safety is a collective climate or \"group norm\" regarding how the team interacts."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the \"Anxiety-Learning Zone\"?",
+                    "answer": "The sweet spot where safety is high and the challenge is high. If safety is low but the challenge is high, employees enter the \"Anxiety Zone.\""
+                },
+                {
+                    "id": "q19",
+                    "question": "What is the \"Anxiety-Learning Zone\"?",
+                    "answer": "The sweet spot where safety is high and the challenge is high. If safety is low but the challenge is high, employees enter the \"Anxiety Zone.\""
+                },
+                {
+                    "id": "q20",
+                    "question": "What is \"Allyship\" in mental health?",
+                    "answer": "When employees who are not struggling with mental health issues use their influence to support and advocate for those who are."
+                },
+                {
+                    "id": "q21",
+                    "question": "How does \"Radical Candor\" fit into safety?",
+                    "answer": "It involves challenging someone directly while showing you care personally; it is the opposite of \"Obnoxious Aggression.\""
+                },
+                {
+                    "id": "q22",
+                    "question": "Can a team have \"Too Much\" psychological safety?",
+                    "answer": "No, but it can be mistaken for \"complacency.\" Safety allows for more rigorous debate and accountability, not less."
+                },
+                {
+                    "id": "q23",
+                    "question": "How to rebuild safety after a layoff?",
+                    "answer": "Acknowledge the \"Survivor’s Guilt,\" be transparent about the future, and give remaining employees space to grieve and ask questions."
+                },
+                {
+                    "id": "q24",
+                    "question": "What is the role of HR in fostering safety?",
+                    "answer": "HR acts as a neutral ground, providing the frameworks and training necessary for managers to build safe team micro-cultures."
+                },
+                {
+                    "id": "q25",
+                    "question": "Why is \"Belonging\" the end goal of psychological safety?",
+                    "answer": "Belonging is the feeling that you are an integral part of the group because of who you are, not in spite of it."
+                }
+            ]
+        },
+        {
+            "id": "managerial_responsibilities",
+            "title": "Managerial Responsibilities",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the primary role of a manager in mental health?",
+                    "answer": "To be a \"bridge\" to professional help, not a therapist. Managers identify changes in behavior and offer support and resources."
+                },
+                {
+                    "id": "q2",
+                    "question": "How to conduct a \"Check-in\" conversation?",
+                    "answer": "Schedule it regularly (not just when there's a problem), ask open-ended questions like \"How can I better support you?\", and listen more than you talk."
+                },
+                {
+                    "id": "q3",
+                    "question": "Identify \"At-Risk\" behaviors in a high performer.",
+                    "answer": "A sudden shift to \"over-working\" (sending emails at 3 AM), increased perfectionism, or uncharacteristic irritability with peers."
+                },
+                {
+                    "id": "q4",
+                    "question": "How should a manager approach an employee about their performance and mental health?",
+                    "answer": "Focus on the observed behavior: \"I’ve noticed you’ve missed the last three deadlines, which isn't like you. Is everything okay, and how can I help?\""
+                },
+                {
+                    "id": "q5",
+                    "question": "What is the \"SBI\" model for feedback?",
+                    "answer": "Situation, Behavior, and Impact. This keeps feedback objective and less likely to trigger a defensive or anxious reaction."
+                },
+                {
+                    "id": "q6",
+                    "question": "How to support an employee returning from mental health leave?",
+                    "answer": "Meet before they return to discuss a \"Graduated Return\" (reduced hours initially) and clarify what they want (or don't want) shared with the team."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is a \"Stay Interview\"?",
+                    "answer": "A proactive conversation to understand what keeps an employee at the company and what stressors might make them want to leave."
+                },
+                {
+                    "id": "q8",
+                    "question": "How to handle an employee who starts crying in a meeting?",
+                    "answer": "Offer a break, provide a private space, ask \"Would you like to talk, or do you need a moment?\", and remain calm and non-judgmental."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is the manager's role in \"Workload Management\"?",
+                    "answer": "Regularly auditing the team's capacity and prioritizing tasks to prevent the chronic \"over-capacity\" that leads to burnout."
+                },
+                {
+                    "id": "q10",
+                    "question": "How to spot \"Presenteeism\"?",
+                    "answer": "When an employee is physically at their desk but mentally disengaged or unproductive due to illness or stress."
+                },
+                {
+                    "id": "q11",
+                    "question": "How to handle a \"Toxic High Performer\"?",
+                    "answer": "Address the behavior immediately. Their technical output does not justify the mental health damage they cause to the rest of the team."
+                },
+                {
+                    "id": "q12",
+                    "question": "What is a \"Wellness Action Plan\" (WAP)?",
+                    "answer": "A collaborative document where an employee outlines what keeps them healthy at work and what they need from their manager when they are struggling."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to give \"Constructive Feedback\" to an anxious employee?",
+                    "answer": "Deliver it in writing first so they can process it, followed by a face-to-face meeting to discuss solutions and offer reassurance."
+                },
+                {
+                    "id": "q14",
+                    "question": "Why is \"Consistency\" important in management?",
+                    "answer": "Unpredictable managerial moods create a \"walking on eggshells\" environment, which is a major source of workplace anxiety."
+                },
+                {
+                    "id": "q15",
+                    "question": "How to promote an Employee Assistance Program (EAP)?",
+                    "answer": "Mention it regularly in team meetings (not just during crises) to normalize its use as a standard tool for well-being."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is \"Compassionate Accountability\"?",
+                    "answer": "Holding people to high standards while acknowledging their personal challenges and providing the necessary support to meet those standards."
+                },
+                {
+                    "id": "q17",
+                    "question": "How to manage \"Grief\" in the team?",
+                    "answer": "Acknowledge the loss, offer flexibility, and don't expect \"business as usual\" immediately. Every individual’s grieving process is different."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the \"First Responder\" mentality for managers?",
+                    "answer": "Being the first to notice a problem and \"triaging\" it by connecting the employee to professional HR or medical resources."
+                },
+                {
+                    "id": "q19",
+                    "question": "How to handle disclosure of a mental health condition?",
+                    "answer": "Thank them for their trust, ask what accommodations they need, and reassure them that their career growth is not impacted by this disclosure."
+                },
+                {
+                    "id": "q20",
+                    "question": "Why should managers avoid \"Toxic Productivity\"?",
+                    "answer": "Glorifying \"the hustle\" or \"busy-ness\" creates a culture where taking care of one's mental health is seen as a weakness."
+                },
+                {
+                    "id": "q21",
+                    "question": "How to lead by example in mental health?",
+                    "answer": "By taking your own vacation time, setting \"Out of Office\" replies, and not sending non-urgent emails during off-hours."
+                },
+                {
+                    "id": "q22",
+                    "question": "What is the \"Balance of Power\" in mental health talks?",
+                    "answer": "Recognize that an employee may feel intimidated; choose a neutral, private setting and keep the tone supportive and peer-like."
+                },
+                {
+                    "id": "q23",
+                    "question": "How to spot \"Quiet Quitting\"?",
+                    "answer": "When an employee does the absolute minimum required. This is often a sign of burnout or a lack of psychological safety and engagement."
+                },
+                {
+                    "id": "q24",
+                    "question": "What is \"Career Pathing\" for mental health?",
+                    "answer": "Discussing long-term goals to give an employee a sense of purpose and \"light at the end of the tunnel\" during stressful periods."
+                },
+                {
+                    "id": "q25",
+                    "question": "How to end a mental health-related check-in?",
+                    "answer": "Summarize the agreed-upon next steps, reassure them of your support, and set a specific time to follow up."
+                }
+            ]
+        },
+        {
+            "id": "work_life_integration",
+            "title": "Work-Life Integration",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the \"Right to Disconnect\"?",
+                    "answer": "The policy that employees should not be penalized for failing to respond to work communications (calls, emails) outside of working hours."
+                },
+                {
+                    "id": "q2",
+                    "question": "How does \"Work-Life Integration\" differ from \"Work-Life Balance\"?",
+                    "answer": "Balance suggests a 50/50 split; Integration acknowledges that work and life are intertwined, allowing for flexibility (e.g., attending a school event at 2 PM and working later)."
+                },
+                {
+                    "id": "q3",
+                    "question": "Define \"Zoom Fatigue.\"",
+                    "answer": "The exhaustion caused by excessive video calls, which require more intense \"gaze\" and cognitive effort to decode non-verbal cues than in-person meetings."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is \"Boundary Setting\" at work?",
+                    "answer": "Communicating clear limits on your availability, such as \"I don't check emails after 7 PM,\" to protect your personal time."
+                },
+                {
+                    "id": "q5",
+                    "question": "How can managers support \"Flexible Schedules\"?",
+                    "answer": "By focusing on \"outcomes\" rather than \"hours clocked,\" allowing employees to work when they are most productive."
+                },
+                {
+                    "id": "q6",
+                    "question": "What is the \"Third Space\" concept?",
+                    "answer": "The transition period between work and home (like a commute). In remote work, people must create a \"ritual\" to mark this transition."
+                },
+                {
+                    "id": "q7",
+                    "question": "How does \"Always-On\" culture impact the brain?",
+                    "answer": "It keeps the brain in a state of high-cortisol \"hyper-vigilance,\" preventing the deep rest required for creative thinking."
+                },
+                {
+                    "id": "q8",
+                    "question": "Identify one benefit of a \"Meeting-Free Friday.\"",
+                    "answer": "It allows employees \"Deep Work\" time to finish tasks, reducing the stress of a pending backlog heading into the weekend."
+                },
+                {
+                    "id": "q9",
+                    "question": "How to manage \"Time Zone Fatigue\" in global teams?",
+                    "answer": "Rotate meeting times so the same region isn't always attending at midnight, and use asynchronous communication (Slack, Loom) more effectively."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is \"Digital Detox\"?",
+                    "answer": "Intentional periods of time away from screens and work notifications to allow the nervous system to regulate."
+                },
+                {
+                    "id": "q11",
+                    "question": "How to set up a \"Healthy Home Office\"?",
+                    "answer": "Ensure natural light, an ergonomic chair, and a clear physical separation between the \"work zone\" and \"rest zone.\""
+                },
+                {
+                    "id": "q12",
+                    "question": "What is the \"Urgency Bias\"?",
+                    "answer": "The tendency to treat every incoming notification as a priority, even when it is not, leading to constant task-switching and stress."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to encourage \"Micro-breaks\" during the day?",
+                    "answer": "The 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds to reduce eye strain and mental fatigue."
+                },
+                {
+                    "id": "q14",
+                    "question": "Why is \"Vacation Shaming\" harmful?",
+                    "answer": "Making jokes or comments about someone taking time off discourages others from resting, eventually leading to team-wide burnout."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is \"Leaveism\"?",
+                    "answer": "The phenomenon where employees use their holiday time to catch up on work or work while they are officially on sick leave."
+                },
+                {
+                    "id": "q16",
+                    "question": "How can parents be supported in the workplace?",
+                    "answer": "Through parental leave, childcare support, and understanding that their schedules may be interrupted by family emergencies."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is \"Choice Architecture\" in flexible work?",
+                    "answer": "Designing a workplace where the default is flexibility, making it easy for people to choose the style that suits their mental health."
+                },
+                {
+                    "id": "q18",
+                    "question": "How to combat \"Isolation\" in remote workers?",
+                    "answer": "Schedule \"Virtual Coffee\" or \"No-Work\" social calls to maintain the human connection that protects against loneliness."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is \"Job Crafting\"?",
+                    "answer": "Allowing employees to adjust their tasks and interactions to better align with their personal strengths and life needs."
+                },
+                {
+                    "id": "q20",
+                    "question": "Why is \"Sleep Hygiene\" a workplace issue?",
+                    "answer": "Because work stress is the #1 killer of sleep; companies should actively discourage late-night pings that disrupt the sleep cycle."
+                }
+            ]
+        },
+        {
+            "id": "stigma_and_language",
+            "title": "Stigma & Language",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Why avoid the term \"Crazy\" or \"Insane\" in the office?",
+                    "answer": "These terms are historically used to delegitimize people with mental health conditions, creating a culture where people fear being labeled."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is \"Person-First Language\"?",
+                    "answer": "Saying \"a person with schizophrenia\" rather than \"a schizophrenic,\" which centers the human being rather than the diagnosis."
+                },
+                {
+                    "id": "q3",
+                    "question": "Debunk the myth: \"Mental illness is a sign of weakness.\"",
+                    "answer": "Mental illness is a health condition influenced by genetics, biology, and environment; it has nothing to do with willpower or character."
+                },
+                {
+                    "id": "q4",
+                    "question": "How to respond to \"They’re just doing it for attention\"?",
+                    "answer": "Even if someone is \"seeking attention,\" it is a signal that they have an unmet need. Dismissing it can lead to dangerous outcomes."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"Self-Stigma\"?",
+                    "answer": "When an individual internalizes society's negative views about mental illness, leading to shame and a refusal to seek help."
+                },
+                {
+                    "id": "q6",
+                    "question": "Why is it harmful to say \"I'm so OCD\" about being organized?",
+                    "answer": "It trivializes a serious, often debilitating clinical disorder (Obsessive-Compulsive Disorder) into a \"quirky\" personality trait."
+                },
+                {
+                    "id": "q7",
+                    "question": "How to talk about \"Suicide\" safely?",
+                    "answer": "Avoid \"committed suicide\" (which implies a crime); use \"died by suicide\" or \"lost their life to suicide.\""
+                },
+                {
+                    "id": "q8",
+                    "question": "What is \"Structural Stigma\"?",
+                    "answer": "When company policies (like lack of mental health leave) unintentionally disadvantage those with mental health conditions."
+                },
+                {
+                    "id": "q9",
+                    "question": "How to normalize mental health in everyday chat?",
+                    "answer": "By speaking about it as naturally as physical health—e.g., \"I'm seeing my therapist today\" just as one would say \"I'm seeing my dentist.\""
+                },
+                {
+                    "id": "q10",
+                    "question": "Debunk the myth: \"You can't work if you have a mental illness.\"",
+                    "answer": "The vast majority of people with mental health conditions are highly productive, especially when provided with the right support."
+                },
+                {
+                    "id": "q11",
+                    "question": "What is the \"Halo Effect\" in mental health?",
+                    "answer": "The bias where we assume a \"successful\" person couldn't possibly be struggling with depression or suicidal thoughts."
+                },
+                {
+                    "id": "q12",
+                    "question": "Why is \"Gallows Humor\" risky in the workplace?",
+                    "answer": "While it may help some cope, it can deeply offend or alienate others who are currently in a crisis."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to correct a colleague using stigmatizing language?",
+                    "answer": "Gently pull them aside: \"Hey, I noticed you used [word]. I’ve learned that can be hurtful to some people; maybe try [alternative] instead?\""
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the \"Double Burden\" of stigma?",
+                    "answer": "Suffering from the symptoms of the illness itself plus the social exclusion and shame caused by the stigma."
+                },
+                {
+                    "id": "q15",
+                    "question": "Why is \"Education\" the best cure for stigma?",
+                    "answer": "Stigma is built on fear and ignorance; providing factual information about the prevalence and treatability of mental health conditions erodes that fear."
+                }
+            ]
+        },
+        {
+            "id": "crisis_intervention",
+            "title": "Crisis Intervention",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is \"Mental Health First Aid\" (MHFA)?",
+                    "answer": "An initial response provided to someone developing a mental health problem or experiencing a crisis until professional treatment is received."
+                },
+                {
+                    "id": "q2",
+                    "question": "Identify the \"Warning Signs\" of a suicide crisis.",
+                    "answer": "Giving away possessions, saying goodbye, social withdrawal, expressing \"hopelessness,\" or a sudden, calm mood after a period of intense depression."
+                },
+                {
+                    "id": "q3",
+                    "question": "Does asking someone \"Are you thinking of suicide\" put the idea in their head?",
+                    "answer": "No. Research shows that asking directly often provides relief to the person and is the first step in getting them help."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is an \"Emergency Action Plan\" for a crisis at work?",
+                    "answer": "A set of clear steps: 1. Keep the person safe. 2. Contact the EAP or emergency services. 3. Notify the designated crisis lead in HR."
+                },
+                {
+                    "id": "q5",
+                    "question": "How to \"De-escalate\" an agitated colleague?",
+                    "answer": "Speak in a low, calm voice, give them physical space, listen without interrupting, and avoid saying \"Calm down\" (which usually has the opposite effect)."
+                },
+                {
+                    "id": "q6",
+                    "question": "What is the role of an EAP (Employee Assistance Program)?",
+                    "answer": "To provide confidential, professional counseling and support services for employees facing personal or work-related problems."
+                },
+                {
+                    "id": "q7",
+                    "question": "When should you call an ambulance for a mental health issue?",
+                    "answer": "When there is an immediate risk of self-harm, harm to others, or if the person has lost touch with reality (psychosis) and is in danger."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is \"Active Support\" during a panic attack?",
+                    "answer": "Guide them through a breathing exercise (inhale for 4, hold for 4, exhale for 4) and stay with them until the peak of the attack passes."
+                },
+                {
+                    "id": "q9",
+                    "question": "How to maintain \"Boundaries\" while helping a colleague in crisis?",
+                    "answer": "Remember you are a coworker, not a therapist. Connect them to pros and then step back to protect your own mental health."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is \"Postvention\"?",
+                    "answer": "Interventions provided after a suicide or crisis to help the remaining team members cope with grief and prevent \"contagion\" effects."
+                },
+                {
+                    "id": "q11",
+                    "question": "Explain the \"ALGEE\" action plan in MHFA.",
+                    "answer": "Assess for risk, Listen non-judgmentally, Give reassurance, Encourage professional help, Encourage self-help strategies."
+                },
+                {
+                    "id": "q12",
+                    "question": "What is a \"Safety Plan\"?",
+                    "answer": "A prioritized list of coping strategies and social supports that an individual can use when they are in a crisis."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to handle a colleague who is \"High\" or \"Intoxicated\" at work?",
+                    "answer": "Ensure they get home safely (don't let them drive) and address the substance use as a health/performance issue the next day with HR."
+                },
+                {
+                    "id": "q14",
+                    "question": "Why is \"Confidentiality\" tricky in a crisis?",
+                    "answer": "Safety trumps confidentiality. If a person is an immediate danger to themselves, you must report it to authorities/family, even if they asked you not to."
+                },
+                {
+                    "id": "q15",
+                    "question": "How to provide \"Reassurance\" without being dismissive?",
+                    "answer": "Instead of saying \"Everything will be fine,\" say \"I can see you're in pain, but you're not alone, and there is help available.\""
+                }
+            ]
+        },
+        {
+            "id": "scenario_based_challenges",
+            "title": "Scenario-Based Challenges",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Scenario: A teammate is \"dumping\" their trauma on you every day. How to handle?",
+                    "answer": "Set a boundary: \"I care about you, but I'm not equipped to help you with this. Let’s look at the EAP options together so you get the right support.\""
+                },
+                {
+                    "id": "q2",
+                    "question": "Scenario: You suspect your boss is burnt out. What do you do?",
+                    "answer": "Offer specific help with tasks: \"I noticed you're juggling a lot; can I take [Project X] off your plate this week to give you some breathing room?\""
+                },
+                {
+                    "id": "q3",
+                    "question": "Scenario: A high-performer is being toxic and rude to juniors. How to intervene?",
+                    "answer": "The manager must address the impact of the behavior on team morale, making it clear that technical skill does not excuse a lack of respect."
+                },
+                {
+                    "id": "q4",
+                    "question": "Scenario: An employee’s productivity drops after a divorce. How to support?",
+                    "answer": "Acknowledge the life event, offer temporary flexibility, and set \"mini-milestones\" to help them feel a sense of accomplishment without being overwhelmed."
+                },
+                {
+                    "id": "q5",
+                    "question": "Scenario: A team member is \"Gaslighting\" others in meetings. How to stop it?",
+                    "answer": "Publicly clarify facts: \"Actually, we did agree on that deadline in the last email; let's look at the notes to make sure we're all on the same page.\""
+                },
+                {
+                    "id": "q6",
+                    "question": "Scenario: You hear a colleague making a joke about \"Self-Harm.\" How to respond?",
+                    "answer": "Pull them aside: \"That joke felt a bit heavy. Are you just joking, or is there something on your mind? I’m here if you need to talk.\""
+                },
+                {
+                    "id": "q7",
+                    "question": "Scenario: A colleague returns after a suicide attempt. How does the team act?",
+                    "answer": "Treat them normally. Don't whisper or \"tip-toe\" around them. A simple \"It’s good to have you back\" is sufficient."
+                },
+                {
+                    "id": "q8",
+                    "question": "Scenario: A remote worker hasn't turned on their camera in weeks and is missing calls.",
+                    "answer": "Initiate a 1-on-1 \"Human-first\" call to check in on their well-being before discussing the technical issues."
+                },
+                {
+                    "id": "q9",
+                    "question": "Scenario: A \"Workaholic\" teammate is making everyone else feel guilty for leaving at 5 PM.",
+                    "answer": "The manager should clarify that \"leaving on time\" is the expected norm and that overworking is not a metric for promotion."
+                },
+                {
+                    "id": "q10",
+                    "question": "Scenario: A team experiences a \"Project Failure\" after months of work. How to prevent a mental health dip?",
+                    "answer": "Hold a \"celebration of effort\" to decouple self-worth from the project's outcome and allow for a \"recovery day.\""
+                },
+                {
+                    "id": "q11",
+                    "question": "Scenario: An employee is grieving a \"Non-Traditional\" loss (e.g., a pet).",
+                    "answer": "Validate the grief. For many, pets are family. Offer the same empathy you would for any other bereavement."
+                },
+                {
+                    "id": "q12",
+                    "question": "Scenario: You notice \"Cliques\" forming that exclude a specific person.",
+                    "answer": "Actively disrupt the clique by assigning cross-functional pairs for tasks and emphasizing a \"One Team\" culture."
+                },
+                {
+                    "id": "q13",
+                    "question": "Scenario: An employee is struggling with \"Menopause\" symptoms affecting work.",
+                    "answer": "Treat it as a medical accommodation—offer fans, flexible breaks, or remote work days to manage physical discomfort."
+                },
+                {
+                    "id": "q14",
+                    "question": "Scenario: A colleague is constantly \"Apologizing\" for their work quality (Anxiety).",
+                    "answer": "Provide \"Positive Reinforcement\" by highlighting specific things they did well to help build their confidence."
+                },
+                {
+                    "id": "q15",
+                    "question": "Scenario: A team member is being bullied by a client.",
+                    "answer": "The manager must step in and protect the employee, potentially firing the client if the abuse continues."
+                },
+                {
+                    "id": "q16",
+                    "question": "Scenario: There is a \"Rumor\" about someone’s mental health going around.",
+                    "answer": "Shut it down immediately: \"We don't discuss colleagues' personal health here. Let's get back to the agenda.\""
+                },
+                {
+                    "id": "q17",
+                    "question": "Scenario: You feel \"Imposter Syndrome\" before a big presentation.",
+                    "answer": "Practice \"Reframing\": Tell yourself the physical jitters are \"excitement\" rather than \"fear.\""
+                },
+                {
+                    "id": "q18",
+                    "question": "Scenario: A teammate is \"Oversharing\" about their therapy sessions.",
+                    "answer": "Gently redirect: \"I'm glad therapy is helping you, but let's keep our focus on the project for now and chat more during lunch.\""
+                },
+                {
+                    "id": "q19",
+                    "question": "Scenario: An employee refuses to take their mandated vacation.",
+                    "answer": "The manager should explain that \"rest is a requirement for performance\" and help them delegate tasks so they feel safe leaving."
+                },
+                {
+                    "id": "q20",
+                    "question": "Scenario: A colleague is exhibiting signs of \"Paranoia\" or \"Delusions.\"",
+                    "answer": "Do not argue with the delusion. Stay calm, ensure they are safe, and immediately involve HR and medical professionals."
+                },
+                {
+                    "id": "q21",
+                    "question": "Scenario: You are a manager and you made a mistake that upset the team.",
+                    "answer": "Own it. Apologize sincerely, explain what you learned, and ask how you can make it right."
+                },
+                {
+                    "id": "q22",
+                    "question": "Scenario: A teammate is struggling with \"ADHD\" in a noisy office.",
+                    "answer": "Allow them to use noise-canceling headphones or provide a \"quiet pod\" for focused work."
+                },
+                {
+                    "id": "q23",
+                    "question": "Scenario: An employee is struggling to balance \"Elderly Care\" and work.",
+                    "answer": "Offer \"Split-shifts\" so they can handle caregiving duties in the morning and work in the afternoon/evening."
+                },
+                {
+                    "id": "q24",
+                    "question": "Scenario: You see a \"Passive-Aggressive\" comment in a Slack channel.",
+                    "answer": "Move the conversation to a video/voice call to resolve the underlying tension; text is terrible for nuances."
+                },
+                {
+                    "id": "q25",
+                    "question": "Scenario: A team member is \"Socially Withdrawn\" after a promotion.",
+                    "answer": "They may be feeling the pressure of new responsibilities. Offer a mentor to help them navigate the transition."
+                },
+                {
+                    "id": "q26",
+                    "question": "Scenario: An employee asks for a \"Mental Health Day\" during a peak deadline.",
+                    "answer": "If possible, grant it. One day of rest now is better than two weeks of sick leave later due to a total breakdown."
+                },
+                {
+                    "id": "q27",
+                    "question": "Scenario: A colleague is being \"Micro-managed\" by another peer.",
+                    "answer": "Clarify roles and responsibilities to empower the employee to own their work without interference."
+                },
+                {
+                    "id": "q28",
+                    "question": "Scenario: You feel \"Burned Out\" yourself as a manager.",
+                    "answer": "Be honest with your own lead. You cannot pour from an empty cup; seek support before your team feels the impact."
+                },
+                {
+                    "id": "q29",
+                    "question": "Scenario: An employee is \"Struggling to Focus\" in a fully remote environment.",
+                    "answer": "Suggest a \"Co-working\" session where you both stay on a muted Zoom call to simulate an office environment."
+                },
+                {
+                    "id": "q30",
+                    "question": "Scenario: The team is \"Fearful\" after a sudden change in leadership.",
+                    "answer": "Provide as much transparency as possible. Frequent, honest communication is the best antidote to organizational anxiety."
+                }
+            ]
+        }
+    ]
+}

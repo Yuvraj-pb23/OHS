@@ -1,0 +1,903 @@
+{
+    "topic": "POSH (Prevention of Sexual Harassment)",
+    "subtopics": [
+        {
+            "id": "definitions_and_scope",
+            "title": "Definitions & Scope",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the full name of the POSH Act?",
+                    "answer": "The Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013."
+                },
+                {
+                    "id": "q2",
+                    "question": "Who is an \"Aggrieved Woman\" under the Act?",
+                    "answer": "A woman of any age, whether employed or not, who alleges to have been subjected to any act of sexual harassment by the respondent."
+                },
+                {
+                    "id": "q3",
+                    "question": "Does the Act protect men?",
+                    "answer": "The Act is gender-specific for women, but many organizations have gender-neutral internal policies."
+                },
+                {
+                    "id": "q4",
+                    "question": "Is a \"Domestic Worker\" covered under POSH?",
+                    "answer": "Yes, the Act specifically includes domestic workers in dwelling places."
+                },
+                {
+                    "id": "q5",
+                    "question": "What are the five categories of \"unwelcome acts\" defined in Section 2(n)?",
+                    "answer": "(i) Physical contact/advances, (ii) Demand for sexual favors, (iii) Sexually colored remarks, (iv) Showing pornography, (v) Any other unwelcome physical/verbal/non-verbal conduct of a sexual nature."
+                },
+                {
+                    "id": "q6",
+                    "question": "Define \"Quid Pro Quo\" harassment.",
+                    "answer": "\"This for that\"—promising work benefits (promotion, raise) in exchange for sexual favors."
+                },
+                {
+                    "id": "q7",
+                    "question": "Define \"Hostile Work Environment.\"",
+                    "answer": "Creating an intimidating or offensive atmosphere that interferes with a woman's work performance."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is an intern considered an \"employee\"?",
+                    "answer": "Yes, interns (paid or unpaid), trainees, and apprentices are all covered."
+                },
+                {
+                    "id": "q9",
+                    "question": "Does \"Workplace\" include a company-provided bus or cab?",
+                    "answer": "Yes, transportation provided by the employer for the journey to/from work is an \"extended workplace.\""
+                },
+                {
+                    "id": "q10",
+                    "question": "What about a hotel room during a business trip?",
+                    "answer": "Yes, any place visited by the employee arising out of or during the course of employment is a workplace."
+                },
+                {
+                    "id": "q11",
+                    "question": "Is \"unwelcome\" the same as \"non-consensual\"?",
+                    "answer": "\"Unwelcome\" is broader; even if a woman doesn't say \"no\" out of fear, the act can still be unwelcome."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can a woman file a complaint against another woman?",
+                    "answer": "Yes, the law allows for a woman to be the \"respondent.\""
+                },
+                {
+                    "id": "q13",
+                    "question": "Is a one-time incident enough to be harassment?",
+                    "answer": "Yes, a single severe incident can constitute sexual harassment."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the \"Impact vs. Intent\" rule?",
+                    "answer": "The harasser’s intent doesn't matter; the law focuses on the impact on the aggrieved woman."
+                },
+                {
+                    "id": "q15",
+                    "question": "Are contractual or daily-wage workers covered?",
+                    "answer": "Yes, the definition of employee is highly inclusive."
+                },
+                {
+                    "id": "q16",
+                    "question": "Is a client or a vendor considered a \"Respondent\"?",
+                    "answer": "Yes, if they harass an employee at the workplace."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the Act apply to NGOs and hospitals?",
+                    "answer": "Yes, it applies to all private and public sector organizations."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can \"staring\" be considered sexual harassment?",
+                    "answer": "Yes, it falls under \"non-verbal conduct of a sexual nature.\""
+                },
+                {
+                    "id": "q19",
+                    "question": "Are \"sexually colored remarks\" limited to spoken words?",
+                    "answer": "No, it includes texts, emails, and social media comments."
+                },
+                {
+                    "id": "q20",
+                    "question": "Is an office holiday party considered a workplace?",
+                    "answer": "Yes, if it is organized or funded by the employer."
+                },
+                {
+                    "id": "q21",
+                    "question": "Does the Act apply to the \"Unorganized Sector\"?",
+                    "answer": "Yes, through the Local Committee (LC)."
+                },
+                {
+                    "id": "q22",
+                    "question": "What is an \"Ad-hoc\" employee?",
+                    "answer": "Someone employed on a temporary or casual basis; they are fully protected."
+                },
+                {
+                    "id": "q23",
+                    "question": "Can a student in a school/college be an \"Aggrieved Woman\"?",
+                    "answer": "Yes, the Act covers students and researchers in educational institutions."
+                },
+                {
+                    "id": "q24",
+                    "question": "Define \"Sexual Harassment\" in 3 words.",
+                    "answer": "Unwelcome sexual conduct."
+                },
+                {
+                    "id": "q25",
+                    "question": "Is \"interference with work\" a criterion for harassment?",
+                    "answer": "Yes, if it creates an intimidating environment."
+                }
+            ]
+        },
+        {
+            "id": "the_internal_committee",
+            "title": "The Internal Committee (IC)",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the minimum number of members in an IC?",
+                    "answer": "Four."
+                },
+                {
+                    "id": "q2",
+                    "question": "Who must be the Presiding Officer (PO) of the IC?",
+                    "answer": "A woman employed at a senior level at the workplace."
+                },
+                {
+                    "id": "q3",
+                    "question": "How many members of the IC must be women?",
+                    "answer": "At least one-half (50%) of the total members."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the role of the \"External Member\"?",
+                    "answer": "To ensure impartiality and bring expertise from an NGO or legal background."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is the maximum tenure of an IC member?",
+                    "answer": "Three years from the date of their nomination."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can the IC exist without an External Member?",
+                    "answer": "No, the committee would be considered illegally constituted."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is a \"Quorum\" for an IC meeting?",
+                    "answer": "A minimum of three members, including the Presiding Officer."
+                },
+                {
+                    "id": "q8",
+                    "question": "Does the IC have the powers of a Civil Court?",
+                    "answer": "Yes, under the Code of Civil Procedure, 1908."
+                },
+                {
+                    "id": "q9",
+                    "question": "Can an IC member be removed before 3 years?",
+                    "answer": "Yes, if they breach confidentiality or are convicted of an offense."
+                },
+                {
+                    "id": "q10",
+                    "question": "What happens if a company has multiple branches?",
+                    "answer": "An IC must be constituted at all administrative units or offices."
+                },
+                {
+                    "id": "q11",
+                    "question": "Are IC members paid for their work?",
+                    "answer": "External members are entitled to an allowance/fees; internal members usually perform it as part of their duty."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can an HR Head be the Presiding Officer?",
+                    "answer": "Yes, provided she is a senior-level woman employee."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is the IC responsible for \"Prevention\" or just \"Redressal\"?",
+                    "answer": "Both; they must also organize awareness programs."
+                },
+                {
+                    "id": "q14",
+                    "question": "Can the IC initiate an inquiry without a written complaint?",
+                    "answer": "No, a written complaint is a mandatory trigger."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the IC’s power regarding witnesses?",
+                    "answer": "They can summon any person and examine them on oath."
+                },
+                {
+                    "id": "q16",
+                    "question": "Who appoints the IC members?",
+                    "answer": "The Employer, through an order in writing."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can a male employee be a member of the IC?",
+                    "answer": "Yes, as long as the 50% women requirement is met."
+                },
+                {
+                    "id": "q18",
+                    "question": "Is training for IC members mandatory?",
+                    "answer": "Yes, the employer must provide skill-building and training for IC members."
+                },
+                {
+                    "id": "q19",
+                    "question": "What if the PO is the one being accused?",
+                    "answer": "She must recuse herself, and a new senior woman must be appointed as PO for that case."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can the IC demand documents from the Respondent?",
+                    "answer": "Yes, they have the power to require the discovery and production of documents."
+                },
+                {
+                    "id": "q21",
+                    "question": "What is \"Conflict of Interest\" in an IC?",
+                    "answer": "When a member has a personal or professional relationship with a party that might bias their judgment."
+                },
+                {
+                    "id": "q22",
+                    "question": "Does the IC report to the HR department?",
+                    "answer": "No, the IC is an independent body that submits reports to the Employer."
+                },
+                {
+                    "id": "q23",
+                    "question": "Can an external member be a lawyer?",
+                    "answer": "Yes, often they are lawyers or social workers familiar with POSH."
+                },
+                {
+                    "id": "q24",
+                    "question": "What is the \"District Officer's\" role in IC?",
+                    "answer": "The IC submits an Annual Report to the District Officer."
+                },
+                {
+                    "id": "q25",
+                    "question": "Can an IC member be sued for their decisions?",
+                    "answer": "Generally, they are protected if they act in \"good faith\" as per the Act."
+                }
+            ]
+        },
+        {
+            "id": "filing_a_complaint",
+            "title": "Filing a Complaint",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the time limit for filing a complaint?",
+                    "answer": "Within 3 months from the date of the incident (or the last incident in a series)."
+                },
+                {
+                    "id": "q2",
+                    "question": "Can the 3-month timeline be extended?",
+                    "answer": "Yes, the IC can extend it by another 3 months if they are satisfied with the reasons for the delay."
+                },
+                {
+                    "id": "q3",
+                    "question": "Does the complaint need to be in writing?",
+                    "answer": "Yes, 6 copies of the written complaint along with supporting documents/witness names are required."
+                },
+                {
+                    "id": "q4",
+                    "question": "What if the woman cannot write?",
+                    "answer": "The IC is legally bound to provide \"all reasonable assistance\" to help her put the complaint in writing."
+                },
+                {
+                    "id": "q5",
+                    "question": "Can a friend or relative file the complaint?",
+                    "answer": "Yes, if the woman is physically or mentally incapacitated, or in case of her death."
+                },
+                {
+                    "id": "q6",
+                    "question": "Are anonymous complaints valid?",
+                    "answer": "No, the Act requires a signed complaint. However, the IC can use an anonymous tip to conduct \"general awareness\" sessions."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can a complaint be filed via email?",
+                    "answer": "Yes, most ICs accept digital complaints, which are then formalized."
+                },
+                {
+                    "id": "q8",
+                    "question": "Must the complaint name specific witnesses?",
+                    "answer": "It is highly recommended to include witness names and contact details at the time of filing."
+                },
+                {
+                    "id": "q9",
+                    "question": "What should the complaint include?",
+                    "answer": "Dates, times, location, details of the incident, and name of the respondent."
+                },
+                {
+                    "id": "q10",
+                    "question": "Is there a fee for filing a POSH complaint?",
+                    "answer": "No, the process is free for the aggrieved woman."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can a complaint be filed after leaving the company?",
+                    "answer": "Yes, as long as it is within the 3-month limitation period."
+                },
+                {
+                    "id": "q12",
+                    "question": "Who can file if the woman is deceased?",
+                    "answer": "Her legal heir or any person with knowledge of the incident (with the heir's consent)."
+                },
+                {
+                    "id": "q13",
+                    "question": "What is a \"Nodal Officer\"?",
+                    "answer": "A person designated by the District Officer to receive complaints in the unorganized sector."
+                },
+                {
+                    "id": "q14",
+                    "question": "Can the IC refuse a complaint?",
+                    "answer": "Only if it doesn't fall under \"Sexual Harassment\" or is outside their jurisdiction."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the first step the IC takes after receiving a complaint?",
+                    "answer": "They must send a copy of the complaint to the Respondent within 7 working days."
+                },
+                {
+                    "id": "q16",
+                    "question": "How long does the Respondent have to reply?",
+                    "answer": "10 working days from the date of receiving the complaint copy."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can a complaint be filed against a former employee?",
+                    "answer": "Yes, if the incident occurred while they were employed."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the harasser is a Senior Executive?",
+                    "answer": "The process remains the same; the IC’s independence is protected by law."
+                },
+                {
+                    "id": "q19",
+                    "question": "Can a woman file a police complaint (FIR) simultaneously?",
+                    "answer": "Yes, the internal inquiry and a criminal case can run parallelly."
+                },
+                {
+                    "id": "q20",
+                    "question": "Does \"mental incapacity\" include trauma?",
+                    "answer": "Yes, if a psychiatrist/psychologist certifies the woman is unable to file herself."
+                }
+            ]
+        },
+        {
+            "id": "inquiry_and_procedure",
+            "title": "Inquiry & Procedure",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "How long does the IC have to complete an inquiry?",
+                    "answer": "90 days."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is \"Natural Justice\"?",
+                    "answer": "Ensuring both sides are heard fairly and the IC remains unbiased."
+                },
+                {
+                    "id": "q3",
+                    "question": "Can the parties bring lawyers to the hearing?",
+                    "answer": "No, legal practitioners are strictly barred from representing parties in IC proceedings."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the standard of proof used by the IC?",
+                    "answer": "\"Preponderance of Probability\" (What is more likely to have happened)."
+                },
+                {
+                    "id": "q5",
+                    "question": "What happens if a party misses 3 consecutive hearings?",
+                    "answer": "The IC can terminate the inquiry or pass an \"Ex-parte\" decision (decide without them)."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can the IC interview witnesses privately?",
+                    "answer": "No, the principles of natural justice require that evidence be shared with both parties."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is \"Interim Relief\"?",
+                    "answer": "Temporary measures like transferring the respondent or granting the woman 3 months of paid leave."
+                },
+                {
+                    "id": "q8",
+                    "question": "Are IC proceedings open to the public?",
+                    "answer": "No, they are strictly confidential and held \"In-camera.\""
+                },
+                {
+                    "id": "q9",
+                    "question": "Can the IC record the audio/video of the hearing?",
+                    "answer": "Yes, but only for internal record-keeping and with the consent of those involved."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the \"Right to Cross-Examination\"?",
+                    "answer": "The respondent's right to challenge the complainant’s testimony (usually done through written questions to avoid direct confrontation)."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can the IC summon people from outside the company?",
+                    "answer": "Yes, they have the powers of a Civil Court to summon any person as a witness."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if the witness refuses to cooperate?",
+                    "answer": "The IC can report this to the employer for disciplinary action."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is the IC bound by the \"Indian Evidence Act\"?",
+                    "answer": "No, they follow the principles of Natural Justice, which are more flexible."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is \"Victimization\" during an inquiry?",
+                    "answer": "Any adverse action (bad appraisal, isolation) taken against the woman for filing the complaint."
+                },
+                {
+                    "id": "q15",
+                    "question": "Can the IC ask about the woman’s sexual history?",
+                    "answer": "Absolutely not; it is irrelevant to the case."
+                },
+                {
+                    "id": "q16",
+                    "question": "How are \"Minutes of the Meeting\" handled?",
+                    "answer": "They must be recorded and signed by all present members and the parties."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is \"Circumstantial Evidence\"?",
+                    "answer": "Indirect evidence (logs, gate entries, mood changes) that supports a claim."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can the IC order a lie-detector test?",
+                    "answer": "No, they do not have the power for forensic criminal testing."
+                },
+                {
+                    "id": "q19",
+                    "question": "Who bears the cost of the inquiry?",
+                    "answer": "The employer."
+                },
+                {
+                    "id": "q20",
+                    "question": "What if the IC discovers a criminal offense?",
+                    "answer": "They must assist the woman if she chooses to file a police report."
+                },
+                {
+                    "id": "q21",
+                    "question": "Can the PO (Presiding Officer) be changed mid-way?",
+                    "answer": "Only in exceptional cases like resignation or bias."
+                },
+                {
+                    "id": "q22",
+                    "question": "Is a \"He-said/She-said\" case automatically dismissed?",
+                    "answer": "No; the IC must weigh the credibility of both parties and look for indirect evidence."
+                },
+                {
+                    "id": "q23",
+                    "question": "Can the IC take \"Suo Moto\" action?",
+                    "answer": "No, they cannot start an inquiry without a formal complaint."
+                },
+                {
+                    "id": "q24",
+                    "question": "What happens to the interim leave granted?",
+                    "answer": "It is in addition to the leaves the woman is already entitled to."
+                },
+                {
+                    "id": "q25",
+                    "question": "Does the IC have to meet daily?",
+                    "answer": "No, they schedule hearings based on the availability of parties and witnesses."
+                }
+            ]
+        },
+        {
+            "id": "conciliation_and_settlement",
+            "title": "Conciliation & Settlement",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Who can request conciliation?",
+                    "answer": "Only the aggrieved woman."
+                },
+                {
+                    "id": "q2",
+                    "question": "Can the IC force the parties to settle?",
+                    "answer": "No; conciliation must be entirely voluntary."
+                },
+                {
+                    "id": "q3",
+                    "question": "Can a monetary settlement be part of conciliation?",
+                    "answer": "No, the Act strictly prohibits money-based settlements."
+                },
+                {
+                    "id": "q4",
+                    "question": "What kind of settlements are allowed?",
+                    "answer": "Apologies, changes in reporting structure, or counseling for the respondent."
+                },
+                {
+                    "id": "q5",
+                    "question": "Does a successful conciliation lead to an inquiry?",
+                    "answer": "No; the matter is closed once the settlement is recorded."
+                },
+                {
+                    "id": "q6",
+                    "question": "What happens if the respondent violates the settlement?",
+                    "answer": "The woman can ask the IC to revive the inquiry."
+                },
+                {
+                    "id": "q7",
+                    "question": "To whom does the IC send the conciliation report?",
+                    "answer": "To the Employer, the Complainant, and the Respondent."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is the \"External Member\" required for conciliation?",
+                    "answer": "Yes, the IC must be fully constituted."
+                },
+                {
+                    "id": "q9",
+                    "question": "Can the employer intervene in a conciliation?",
+                    "answer": "No, the process is handled solely by the IC."
+                },
+                {
+                    "id": "q10",
+                    "question": "Is conciliation mandatory before an inquiry?",
+                    "answer": "No, it is an optional choice given to the woman."
+                },
+                {
+                    "id": "q11",
+                    "question": "What if the woman changes her mind during conciliation?",
+                    "answer": "She can stop the process and opt for a formal inquiry."
+                },
+                {
+                    "id": "q12",
+                    "question": "Does the IC give a \"finding\" in conciliation?",
+                    "answer": "No; they only record the mutually agreed terms."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is a conciliation report confidential?",
+                    "answer": "Yes, the same secrecy rules apply as an inquiry."
+                },
+                {
+                    "id": "q14",
+                    "question": "Can the respondent request conciliation?",
+                    "answer": "No, the law gives this right only to the woman."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the timeframe for conciliation?",
+                    "answer": "It should ideally be wrapped up quickly to avoid delaying a potential inquiry."
+                }
+            ]
+        },
+        {
+            "id": "recommendations_and_action",
+            "title": "Recommendations & Action",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "How long does the IC have to submit the Final Report?",
+                    "answer": "10 days after completing the inquiry."
+                },
+                {
+                    "id": "q2",
+                    "question": "What if the allegations are NOT proven?",
+                    "answer": "The IC recommends that no action be taken."
+                },
+                {
+                    "id": "q3",
+                    "question": "What if the complaint is found to be \"Malicious\"?",
+                    "answer": "The IC can recommend action against the complainant as per company service rules."
+                },
+                {
+                    "id": "q4",
+                    "question": "Is \"Inability to Prove\" the same as a \"False Complaint\"?",
+                    "answer": "No; a complaint is only malicious if there is intent to deceive."
+                },
+                {
+                    "id": "q5",
+                    "question": "What punishments can the IC recommend for the Respondent?",
+                    "answer": "Warning, fine, withholding promotion, counseling, or termination."
+                },
+                {
+                    "id": "q6",
+                    "question": "How is \"Compensation\" calculated?",
+                    "answer": "Based on mental trauma, medical expenses, loss of career, and the respondent's income."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can the employer ignore the IC’s recommendation?",
+                    "answer": "No; the employer must act on the recommendation within 60 days."
+                },
+                {
+                    "id": "q8",
+                    "question": "Can the IC recommend a police FIR?",
+                    "answer": "Yes, if the act is a criminal offense under the Indian Penal Code (or BNS)."
+                },
+                {
+                    "id": "q9",
+                    "question": "Who can appeal against the IC’s decision?",
+                    "answer": "Either party (Complainant or Respondent)."
+                },
+                {
+                    "id": "q10",
+                    "question": "Where is an appeal filed?",
+                    "answer": "In a court or tribunal as per service rules, within 90 days."
+                },
+                {
+                    "id": "q11",
+                    "question": "Does a \"warning\" count as a punishment?",
+                    "answer": "Yes, it is a formal disciplinary action."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if the respondent is a high-performer?",
+                    "answer": "Performance is irrelevant; the IC must judge based on the harassment evidence."
+                },
+                {
+                    "id": "q13",
+                    "question": "Can the IC recommend \"Community Service\"?",
+                    "answer": "Yes, if the company policy allows it for minor misconduct."
+                },
+                {
+                    "id": "q14",
+                    "question": "Can the compensation be deducted from the respondent’s salary?",
+                    "answer": "Yes, the employer is authorized to do so."
+                },
+                {
+                    "id": "q15",
+                    "question": "What if the respondent has left the company?",
+                    "answer": "The IC still submits the report; the employer can mark \"not for re-hire\" or withhold dues."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is the \"Reasoned Order\"?",
+                    "answer": "A report that clearly explains why the IC reached its conclusion."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can the IC recommend that the respondent apologize in public?",
+                    "answer": "No; apologies should be handled privately to maintain confidentiality."
+                },
+                {
+                    "id": "q18",
+                    "question": "Is a \"Transfer\" a punishment?",
+                    "answer": "It can be a recommendation to prevent further contact."
+                },
+                {
+                    "id": "q19",
+                    "question": "Can the IC recommend a fine for a false witness?",
+                    "answer": "Yes, they can recommend disciplinary action."
+                },
+                {
+                    "id": "q20",
+                    "question": "What if the employer fails to act on the report?",
+                    "answer": "They face a fine of up to ₹50,000 and possible cancellation of their business license."
+                }
+            ]
+        },
+        {
+            "id": "employer_obligations",
+            "title": "Employer Obligations",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the fine for an employer’s first non-compliance?",
+                    "answer": "Up to ₹50,000."
+                },
+                {
+                    "id": "q2",
+                    "question": "What happens on a second non-compliance?",
+                    "answer": "The fine is doubled, and business licenses or registrations may be cancelled."
+                },
+                {
+                    "id": "q3",
+                    "question": "Is a written POSH Policy mandatory?",
+                    "answer": "Yes, every organization with 10+ employees must have one."
+                },
+                {
+                    "id": "q4",
+                    "question": "Where should the IC members' names be displayed?",
+                    "answer": "In a conspicuous place in the office (e.g., notice boards)."
+                },
+                {
+                    "id": "q5",
+                    "question": "When is the POSH Annual Report due?",
+                    "answer": "Usually by January 31st for the previous calendar year."
+                },
+                {
+                    "id": "q6",
+                    "question": "To whom is the Annual Report submitted?",
+                    "answer": "To the District Officer (DO) and the Employer."
+                },
+                {
+                    "id": "q7",
+                    "question": "What must the Annual Report include?",
+                    "answer": "Number of complaints received, disposed of, pending for 90+ days, and awareness sessions held."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is a \"Nil Report\" required?",
+                    "answer": "Yes, even if there were zero complaints, a report must be filed."
+                },
+                {
+                    "id": "q9",
+                    "question": "How often must awareness programs be held?",
+                    "answer": "Regularly; at least once or twice a year for all employees."
+                },
+                {
+                    "id": "q10",
+                    "question": "Is \"Gender Sensitization\" training mandatory?",
+                    "answer": "Yes, it is a key preventive obligation of the employer."
+                },
+                {
+                    "id": "q11",
+                    "question": "Must the employer provide a safe working environment?",
+                    "answer": "Yes, this includes preventing third-party harassment."
+                },
+                {
+                    "id": "q12",
+                    "question": "Does the employer have to assist in filing a police report?",
+                    "answer": "Yes, if the woman chooses to do so."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is there a \"National SHe-Box\"?",
+                    "answer": "Yes, it is a central portal by the Ministry of Women and Child Development for reporting."
+                },
+                {
+                    "id": "q14",
+                    "question": "Should POSH compliance be mentioned in the Board’s Report?",
+                    "answer": "Yes, under the Companies Act, listed companies must disclose this."
+                },
+                {
+                    "id": "q15",
+                    "question": "Who is responsible for training the IC members?",
+                    "answer": "The Employer."
+                }
+            ]
+        },
+        {
+            "id": "scenario_based_grey_areas",
+            "title": "Scenario-Based \"Grey Areas\"",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Scenario: A colleague follows a woman on Instagram and likes every old photo. POSH?",
+                    "answer": "If it makes her uncomfortable and is unwelcome, it can be considered \"stalking\" and \"non-verbal harassment.\""
+                },
+                {
+                    "id": "q2",
+                    "question": "Scenario: Harassment happens at a client’s office. Who investigates?",
+                    "answer": "The woman’s own employer's IC should investigate, with cooperation from the client’s office."
+                },
+                {
+                    "id": "q3",
+                    "question": "Scenario: An employee is harassed by a food delivery person in the office cafeteria. POSH?",
+                    "answer": "Yes, it is \"Third-party harassment.\" The employer must take action to ban the person and assist the victim."
+                },
+                {
+                    "id": "q4",
+                    "question": "Scenario: A manager asks a team member for a \"private dinner\" to discuss her promotion. POSH?",
+                    "answer": "Yes, this is a \"Quid Pro Quo\" situation."
+                },
+                {
+                    "id": "q5",
+                    "question": "Scenario: An employee displays a suggestive desktop wallpaper. POSH?",
+                    "answer": "Yes, this creates a \"Hostile Work Environment.\""
+                },
+                {
+                    "id": "q6",
+                    "question": "Scenario: \"Office Gossip\" about a woman's character. POSH?",
+                    "answer": "Yes, it falls under verbal conduct of a sexual nature that creates a hostile environment."
+                },
+                {
+                    "id": "q7",
+                    "question": "Scenario: A man is harassed by a woman. Can the IC reject it?",
+                    "answer": "Under the POSH Act, yes. However, under a \"Gender Neutral\" company policy, they should investigate."
+                },
+                {
+                    "id": "q8",
+                    "question": "Scenario: Two employees are in a consensual relationship that turns sour. POSH?",
+                    "answer": "Only if one party begins harassing the other after the relationship ends."
+                },
+                {
+                    "id": "q9",
+                    "question": "Scenario: An incident occurs at a \"Work from Home\" location. POSH?",
+                    "answer": "Yes, the home is an \"extended workplace\" during work hours."
+                },
+                {
+                    "id": "q10",
+                    "question": "Scenario: Harassment via an anonymous \"fake\" profile. POSH?",
+                    "answer": "The IC can investigate if the harasser can be identified as an employee (e.g., via IT logs)."
+                },
+                {
+                    "id": "q11",
+                    "question": "Scenario: A client sends lewd messages on LinkedIn. POSH?",
+                    "answer": "Yes, the employer must assist the employee and can terminate the client relationship."
+                },
+                {
+                    "id": "q12",
+                    "question": "Scenario: Touching a colleague’s hair and calling it \"friendly.\" POSH?",
+                    "answer": "If it is unwelcome by the recipient, it is harassment."
+                },
+                {
+                    "id": "q13",
+                    "question": "Scenario: \"Man-splaining\" or regular yelling. POSH?",
+                    "answer": "Not necessarily sexual harassment (it’s general misconduct) unless it has a sexual undertone."
+                },
+                {
+                    "id": "q14",
+                    "question": "Scenario: An employee is harassed in the office lift. POSH?",
+                    "answer": "Yes, it is within the workplace premises."
+                },
+                {
+                    "id": "q15",
+                    "question": "Scenario: A manager comments on a woman's pregnancy in a derogatory sexual way. POSH?",
+                    "answer": "Yes, this is a sexually colored remark."
+                },
+                {
+                    "id": "q16",
+                    "question": "Scenario: A group of men share \"adult\" jokes in the presence of a woman colleague. POSH?",
+                    "answer": "Yes, it creates a \"Hostile Work Environment.\""
+                },
+                {
+                    "id": "q17",
+                    "question": "Scenario: An employee complains about harassment that happened 2 years ago. POSH?",
+                    "answer": "Technically barred by the 3+3 month rule, but the IC can look into it for \"general safety\" concerns."
+                },
+                {
+                    "id": "q18",
+                    "question": "Scenario: A woman is harassed at a conference in another city. POSH?",
+                    "answer": "Yes, it is an \"extended workplace.\""
+                },
+                {
+                    "id": "q19",
+                    "question": "Scenario: A colleague asks for a date once, she says no, and he never asks again. POSH?",
+                    "answer": "Likely not harassment, as it wasn't persistent or severe enough to be \"unwelcome\" in a legal sense."
+                },
+                {
+                    "id": "q20",
+                    "question": "Scenario: A witness is afraid to testify due to the respondent's power. IC action?",
+                    "answer": "The IC must offer protection and can allow written statements."
+                },
+                {
+                    "id": "q21",
+                    "question": "Scenario: The IC leaked the complainant's name. Penalty?",
+                    "answer": "The leaking member must be removed, and the employer can be fined."
+                },
+                {
+                    "id": "q22",
+                    "question": "Scenario: A contractor is harassed by a full-time employee. POSH?",
+                    "answer": "Yes, she is an \"Aggrieved Woman\" under the Act."
+                },
+                {
+                    "id": "q23",
+                    "question": "Scenario: Sending a \"Red Heart\" emoji to a subordinate. POSH?",
+                    "answer": "In a professional context, this is often considered inappropriate and potentially unwelcome."
+                },
+                {
+                    "id": "q24",
+                    "question": "Scenario: A respondent resigns as soon as the complaint is filed. IC action?",
+                    "answer": "The inquiry continues to its logical end to record the findings."
+                },
+                {
+                    "id": "q25",
+                    "question": "Scenario: A woman is harassed in a company-sponsored marathon. POSH?",
+                    "answer": "Yes, it is an official event organized by the employer."
+                }
+            ]
+        }
+    ]
+}

@@ -1,589 +1,1091 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ organization.name }} Dashboard</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ organization.name }} Dashboard</title>
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-  
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
 
-  <style>
-    :root {
-      /* ORIGINAL DASHBOARD VARIABLES */
-      --sidebar-width: 280px; 
-      --bg-main: #020617;
-      --bg-card: rgba(20, 25, 40, 0.95);
-      --bg-sidebar: #020617;
-      --border-soft: rgba(249, 115, 22, 0.35);
-      --text-main: #f8fafc;
-      --text-muted: #cbd5e1;
-      --accent: linear-gradient(135deg, #f97316, #fb923c);
-      --accent-solid: #fb923c;
-      
-      /* ADDED VARIABLES FOR MODAL DESIGN */
-      --lms-primary: #4e54c8;
-      --lms-complete: #00b894;
-      --lms-pending: #f1c40f;
-      --lms-locked: #636e72;
-    }
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    body {
-      background: radial-gradient(circle at top, #0f172a, #020617);
-      color: var(--text-main);
-      font-family: 'Inter', system-ui, sans-serif;
-      margin: 0;
-      overflow-x: hidden;
-      font-size: 1.05rem;
-    }
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-    /* SIDEBAR */
-    .sidebar {
-      position: fixed;
-      width: var(--sidebar-width);
-      height: 100vh;
-      background: linear-gradient(180deg, #020617, #020617);
-      border-right: 1px solid var(--border-soft);
-      padding: 1.5rem 0;
-      z-index: 1000;
-    }
+    <style>
+      :root {
+        /* ORIGINAL DASHBOARD VARIABLES */
+        --sidebar-width: 280px;
+        --bg-main: #020617;
+        --bg-card: rgba(20, 25, 40, 0.95);
+        --bg-sidebar: #020617;
+        --border-soft: rgba(249, 115, 22, 0.35);
+        --text-main: #f8fafc;
+        --text-muted: #cbd5e1;
+        --accent: linear-gradient(135deg, #f97316, #fb923c);
+        --accent-solid: #fb923c;
 
-    .sidebar-brand {
-      padding: 0 1.5rem 1.8rem;
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
+        /* ADDED VARIABLES FOR MODAL DESIGN */
+        --lms-primary: #4e54c8;
+        --lms-complete: #00b894;
+        --lms-pending: #f1c40f;
+        --lms-locked: #636e72;
+      }
 
-    .sidebar-brand i { font-size: 2rem; color: var(--accent-solid); flex-shrink: 0; }
-    .sidebar-brand span { white-space: normal; line-height: 1.2; word-break: break-word; }
+      body {
+        background: radial-gradient(circle at top, #0f172a, #020617);
+        color: var(--text-main);
+        font-family: "Inter", system-ui, sans-serif;
+        margin: 0;
+        overflow-x: hidden;
+        font-size: 1.05rem;
+      }
 
-    .nav-link, .sidebar-back-btn {
-      color: #e5e7eb !important;
-      padding: 1rem 1.5rem;
-      margin: 0.5rem 0;
-      border-radius: 0 30px 30px 0;
-      display: flex; align-items: center; gap: 16px;
-      transition: all 0.25s ease;
-      text-decoration: none; font-weight: 600; cursor: pointer; font-size: 1.15rem;
-    }
+      /* SIDEBAR */
+      .sidebar {
+        position: fixed;
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: linear-gradient(180deg, #020617, #020617);
+        border-right: 1px solid var(--border-soft);
+        padding: 1.5rem 0;
+        z-index: 1000;
+      }
 
-    .nav-link:hover, .sidebar-back-btn:hover { background: rgba(249, 115, 22, 0.15); transform: translateX(4px); }
-    .nav-link.active { background: var(--accent); color: #020617 !important; box-shadow: 0 8px 25px rgba(249, 115, 22, 0.6); }
+      .sidebar-brand {
+        padding: 0 1.5rem 1.8rem;
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+      }
 
-    /* MAIN */
-    .main-content { margin-left: var(--sidebar-width); padding: 2.5rem; min-height: 100vh; }
-    .section-title { font-size: 1.8rem; font-weight: 700; }
-    .content-section { display: none; animation: fadeIn 0.4s ease; }
-    .content-section.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+      .sidebar-brand i {
+        font-size: 2rem;
+        color: var(--accent-solid);
+        flex-shrink: 0;
+      }
+      .sidebar-brand span {
+        white-space: normal;
+        line-height: 1.2;
+        word-break: break-word;
+      }
 
-    /* STATS & CARDS */
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.8rem; margin-bottom: 3rem; }
-    .stat-card {
-      background: linear-gradient(180deg, rgba(30,35,60,0.95), rgba(10,15,30,0.95));
-      border-radius: 20px; padding: 2rem; border: 1px solid var(--border-soft);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.7); text-align: center;
-    }
-    .stat-label { color: var(--text-muted); font-size: 1.3rem; font-weight: 500; margin-bottom: 0.5rem; }
-    .stat-value { font-size: 3.5rem; font-weight: 900; color: var(--accent-solid); line-height: 1.2; }
+      .nav-link,
+      .sidebar-back-btn {
+        color: #e5e7eb !important;
+        padding: 1rem 1.5rem;
+        margin: 0.5rem 0;
+        border-radius: 0 30px 30px 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: all 0.25s ease;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1.15rem;
+      }
 
-    /* MEMBERS GRID */
-    .members-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.8rem; }
-    .member-card {
-      background: linear-gradient(180deg, rgba(30,35,60,0.95), rgba(10,15,30,0.95));
-      border-radius: 20px; padding: 1.8rem; border: 1px solid var(--border-soft);
-      box-shadow: 0 18px 40px rgba(0,0,0,0.7); transition: transform 0.3s ease; cursor: pointer;
-    }
-    .member-card:hover { transform: translateY(-6px); border-color: var(--accent-solid); }
-    .avatar {
-      width: 64px; height: 64px; border-radius: 50%; background: var(--accent); display: flex; align-items: center;
-      justify-content: center; font-weight: 800; color: #020617; margin-bottom: 1.2rem; font-size: 1.5rem;
-    }
-    .member-name { font-weight: 700; color: white; font-size: 1.3rem; margin-bottom: 0.3rem; }
-    .member-email { font-size: 1rem; color: var(--text-muted); }
-    .role-badge {
-      background: rgba(249, 115, 22, 0.18); color: #fdba74; padding: 0.45rem 1rem; border-radius: 30px;
-      font-size: 0.95rem; font-weight: 700; border: 1px solid rgba(249,115,22,0.45); display: inline-block; margin-top: 10px;
-    }
+      .nav-link:hover,
+      .sidebar-back-btn:hover {
+        background: rgba(249, 115, 22, 0.15);
+        transform: translateX(4px);
+      }
+      .nav-link.active {
+        background: var(--accent);
+        color: #020617 !important;
+        box-shadow: 0 8px 25px rgba(249, 115, 22, 0.6);
+      }
 
-    /* POSTER & CERTIFICATE STYLES */
-    .poster-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
-    .poster-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid var(--border-soft); text-align: center; }
-    .poster-placeholder {
-        width: 100%; height: 350px; background: #1e293b; border-radius: 8px; display: flex; align-items: center;
-        justify-content: center; color: var(--text-muted); margin-bottom: 15px; border: 2px dashed var(--border-soft); font-size: 1.2rem;
-    }
-    .policy-text {
-        background: rgba(255,255,255,0.03); padding: 40px; border-radius: 12px; border: 1px solid var(--border-soft);
-        line-height: 1.9; color: #e2e8f0; height: 70vh; overflow-y: auto; font-size: 1.1rem;
-    }
-    .cert-card {
-        display: flex; align-items: center; justify-content: space-between; background: rgba(255,255,255,0.05);
-        padding: 25px; border-radius: 16px; border: 1px solid var(--border-soft); margin-bottom: 20px;
-    }
+      /* MAIN */
+      .main-content {
+        margin-left: var(--sidebar-width);
+        padding: 2.5rem;
+        min-height: 100vh;
+      }
+      .section-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+      }
+      .content-section {
+        display: none;
+        animation: fadeIn 0.4s ease;
+      }
+      .content-section.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-    /* === MODAL & LMS SPECIFIC STYLES === */
-    .modal-content { background: #f8f9fa; border-radius: 20px; border: none; color: #2d3436; font-family: "Poppins", sans-serif; }
-    .modal-header { background: #020617; color: white; border-bottom: 1px solid rgba(255,255,255,0.1); border-radius: 20px 20px 0 0; }
-    
-    /* 3-CHART ROW STYLES */
-    .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-    
-    .mini-stat-card {
-        background: white; border-radius: 12px; padding: 10px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center;
-        border: 1px solid #eee; display: flex; flex-direction: column; justify-content: center; align-items: center;
+      /* STATS & CARDS */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.8rem;
+        margin-bottom: 3rem;
+      }
+      .stat-card {
+        background: linear-gradient(
+          180deg,
+          rgba(30, 35, 60, 0.95),
+          rgba(10, 15, 30, 0.95)
+        );
+        border-radius: 20px;
+        padding: 2rem;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+        text-align: center;
+      }
+      .stat-label {
+        color: var(--text-muted);
+        font-size: 1.3rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+      }
+      .stat-value {
+        font-size: 3.5rem;
+        font-weight: 900;
+        color: var(--accent-solid);
+        line-height: 1.2;
+      }
+
+      /* MEMBERS GRID */
+      .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 1.8rem;
+      }
+      .member-card {
+        background: linear-gradient(
+          180deg,
+          rgba(30, 35, 60, 0.95),
+          rgba(10, 15, 30, 0.95)
+        );
+        border-radius: 20px;
+        padding: 1.8rem;
+        border: 1px solid var(--border-soft);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+      .member-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--accent-solid);
+      }
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        color: #020617;
+        margin-bottom: 1.2rem;
+        font-size: 1.5rem;
+      }
+      .member-name {
+        font-weight: 700;
+        color: white;
+        font-size: 1.3rem;
+        margin-bottom: 0.3rem;
+      }
+      .member-email {
+        font-size: 1rem;
+        color: var(--text-muted);
+      }
+      .role-badge {
+        background: rgba(249, 115, 22, 0.18);
+        color: #fdba74;
+        padding: 0.45rem 1rem;
+        border-radius: 30px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        border: 1px solid rgba(249, 115, 22, 0.45);
+        display: inline-block;
+        margin-top: 10px;
+      }
+
+      /* POSTER & CERTIFICATE STYLES */
+      .poster-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 25px;
+      }
+      .poster-item {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid var(--border-soft);
+        text-align: center;
+      }
+      .poster-placeholder {
+        width: 100%;
+        height: 350px;
+        background: #1e293b;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-muted);
+        margin-bottom: 15px;
+        border: 2px dashed var(--border-soft);
+        font-size: 1.2rem;
+      }
+      .policy-text {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 40px;
+        border-radius: 12px;
+        border: 1px solid var(--border-soft);
+        line-height: 1.9;
+        color: #e2e8f0;
+        height: 70vh;
+        overflow-y: auto;
+        font-size: 1.1rem;
+      }
+      .cert-card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 25px;
+        border-radius: 16px;
+        border: 1px solid var(--border-soft);
+        margin-bottom: 20px;
+      }
+
+      /* === MODAL & LMS SPECIFIC STYLES === */
+      .modal-content {
+        background: #f8f9fa;
+        border-radius: 20px;
+        border: none;
+        color: #2d3436;
+        font-family: "Poppins", sans-serif;
+      }
+      .modal-header {
+        background: #020617;
+        color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px 20px 0 0;
+      }
+
+      /* 3-CHART ROW STYLES */
+      .stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .mini-stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
         min-height: 120px;
-    }
-    .mini-stat-card h3 { font-size: 0.8rem; margin-bottom: 8px; color: #636e72; font-weight: 600; text-transform: uppercase; }
-    .time-text { font-size: 1.5rem; font-weight: 700; color: var(--lms-primary); margin: 0; }
-    
-    .chart-container { position: relative; height: 80px; width: 80px; }
-    
-    .progress-track { width: 100%; height: 8px; background: #eee; border-radius: 5px; overflow: hidden; margin-top: 5px; }
-    .progress-fill { height: 100%; background: var(--lms-complete); border-radius: 5px; }
+      }
+      .mini-stat-card h3 {
+        font-size: 0.8rem;
+        margin-bottom: 8px;
+        color: #636e72;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .time-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--lms-primary);
+        margin: 0;
+      }
 
-    /* Tabs */
-    .lms-tab-header { display: flex; gap: 10px; margin-bottom: 15px; }
-    .lms-tab-btn {
-        background: white; border: 2px solid #e0e0e0; color: #555; padding: 8px 20px;
-        border-radius: 30px; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.3s;
-    }
-    .lms-tab-btn.active {
-        background: var(--lms-primary); color: white; border-color: var(--lms-primary);
+      .chart-container {
+        position: relative;
+        height: 80px;
+        width: 80px;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 8px;
+        background: #eee;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-top: 5px;
+      }
+      .progress-fill {
+        height: 100%;
+        background: var(--lms-complete);
+        border-radius: 5px;
+      }
+
+      /* Tabs */
+      .lms-tab-header {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .lms-tab-btn {
+        background: white;
+        border: 2px solid #e0e0e0;
+        color: #555;
+        padding: 8px 20px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: 0.3s;
+      }
+      .lms-tab-btn.active {
+        background: var(--lms-primary);
+        color: white;
+        border-color: var(--lms-primary);
         box-shadow: 0 4px 10px rgba(78, 84, 200, 0.3);
-    }
+      }
 
-    /* Record Item List */
-    .record-item {
-        display: grid; grid-template-columns: 80px 1fr auto; gap: 15px; background: white;
-        padding: 10px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s;
-        border: 1px solid transparent; box-shadow: 0 2px 8px rgba(0,0,0,0.05); align-items: center;
-    }
-    .record-item:hover { border-color: var(--lms-primary); }
-    .record-thumb {
-        width: 100%; height: 50px; background: #ddd; border-radius: 8px;
-        background-size: cover; background-position: center;
-    }
-    .record-info h6 { margin: 0; font-size: 0.95rem; font-weight: 600; color: #2d3436; }
-    .record-info p { margin: 0; font-size: 0.75rem; color: #636e72; }
-    .lms-badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; }
-    .bg-complete { background: #e8f5e9; color: #2e7d32; }
-    .bg-pending { background: #fff3e0; color: #ef6c00; }
-    .bg-locked { background: #eeeeee; color: #757575; }
+      /* Record Item List */
+      .record-item {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 15px;
+        background: white;
+        padding: 10px;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        transition: 0.3s;
+        border: 1px solid transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        align-items: center;
+      }
+      .record-item:hover {
+        border-color: var(--lms-primary);
+      }
+      .record-thumb {
+        width: 100%;
+        height: 50px;
+        background: #ddd;
+        border-radius: 8px;
+        background-size: cover;
+        background-position: center;
+      }
+      .record-info h6 {
+        margin: 0;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #2d3436;
+      }
+      .record-info p {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #636e72;
+      }
+      .lms-badge {
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+      .bg-complete {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+      .bg-pending {
+        background: #fff3e0;
+        color: #ef6c00;
+      }
+      .bg-locked {
+        background: #eeeeee;
+        color: #757575;
+      }
 
-    /* Buttons */
-    .btn-gradient {
-      background: var(--accent); color: #020617; border: none; border-radius: 14px;
-      font-weight: 800; padding: 0.8rem 2rem; box-shadow: 0 12px 30px rgba(249,115,22,0.7);
-    }
-    .btn-outline-light { padding: 0.6rem 1.2rem; font-size: 1rem; }
-    
-    .form-control { 
-        background: #020617; border: 1px solid var(--border-soft); color: #f8fafc !important;
-        border-radius: 12px; padding: 0.8rem; font-size: 1.1rem; 
-    }
-    .form-control::placeholder { color: #94a3b8 !important; opacity: 0.8; }
-    
-    /* Dark Modals for Add/Import overrides */
-    #addEmployeeModal .modal-content, #bulkImportModal .modal-content { background: #020617; color: white; border: 1px solid var(--border-soft); }
-    #addEmployeeModal .modal-header, #bulkImportModal .modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+      /* Buttons */
+      .btn-gradient {
+        background: var(--accent);
+        color: #020617;
+        border: none;
+        border-radius: 14px;
+        font-weight: 800;
+        padding: 0.8rem 2rem;
+        box-shadow: 0 12px 30px rgba(249, 115, 22, 0.7);
+      }
+      .btn-outline-light {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+      }
 
-    .alert { border-radius: 12px; margin-bottom: 2rem; border: none; font-size: 1.1rem; }
+      .form-control {
+        background: #020617;
+        border: 1px solid var(--border-soft);
+        color: #f8fafc !important;
+        border-radius: 12px;
+        padding: 0.8rem;
+        font-size: 1.1rem;
+      }
+      .form-control::placeholder {
+        color: #94a3b8 !important;
+        opacity: 0.8;
+      }
 
-    @media (max-width: 992px) {
-      :root { --sidebar-width: 80px; }
-      .sidebar-brand span, .nav-link span, .sidebar-back-btn span { display: none; }
-      .main-content { margin-left: 80px; }
-      .stats-row { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
+      /* Dark Modals for Add/Import overrides */
+      #addEmployeeModal .modal-content,
+      #bulkImportModal .modal-content {
+        background: #020617;
+        color: white;
+        border: 1px solid var(--border-soft);
+      }
+      #addEmployeeModal .modal-header,
+      #bulkImportModal .modal-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
 
-<body>
+      .alert {
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        border: none;
+        font-size: 1.1rem;
+      }
 
-<!-- SIDEBAR -->
-<nav class="sidebar">
-  <a href="#" class="sidebar-brand">
-    <i class="bi bi-building"></i>
-    <span>{{ organization.name }}</span>
-  </a>
-  
-  <a href="#" class="sidebar-back-btn" onclick="window.history.back(); return false;">
-    <i class="bi bi-arrow-left"></i><span>Logout</span>
-  </a>
-  
-  <ul class="nav flex-column px-3 mt-3">
-    <li class="nav-item">
-        <a class="nav-link active" onclick="showSection('dashboard', this)">
+      @media (max-width: 992px) {
+        :root {
+          --sidebar-width: 80px;
+        }
+        .sidebar-brand span,
+        .nav-link span,
+        .sidebar-back-btn span {
+          display: none;
+        }
+        .main-content {
+          margin-left: 80px;
+        }
+        .stats-row {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar">
+      <a href="#" class="sidebar-brand">
+        <i class="bi bi-building"></i>
+        <span>{{ organization.name }}</span>
+      </a>
+
+      <a
+        href="#"
+        class="sidebar-back-btn"
+        onclick="
+          window.history.back();
+          return false;
+        "
+      >
+        <i class="bi bi-arrow-left"></i><span>Logout</span>
+      </a>
+
+      <ul class="nav flex-column px-3 mt-3">
+        <li class="nav-item">
+          <a class="nav-link active" onclick="showSection('dashboard', this)">
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" onclick="showSection('posters', this)">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('posters', this)">
             <i class="bi bi-images"></i>
             <span>Posters</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" onclick="showSection('policy', this)">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('policy', this)">
             <i class="bi bi-file-earmark-text"></i>
             <span>POSH Policy</span>
-        </a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" onclick="showSection('certificates', this)">
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('certificates', this)">
             <i class="bi bi-award"></i>
             <span>Certificates</span>
-        </a>
-    </li>
-  </ul>
-</nav>
+          </a>
+        </li>
+      </ul>
+    </nav>
 
-<main class="main-content">
-
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <main class="main-content">
+      {% if messages %} {% for message in messages %}
+      <div
+        class="alert alert-{{ message.tags }} alert-dismissible fade show"
+        role="alert"
+      >
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        ></button>
       </div>
-    {% endfor %}
-  {% endif %}
+      {% endfor %} {% endif %}
 
-  <!-- === SECTION 1: DASHBOARD === -->
-  <div id="dashboard" class="content-section active">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Total Employees</div>
-        <div class="stat-value">{{ total_employees }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Training Completed</div>
-        <div class="stat-value" style="color: #4ade80;">{{ training_completed }}</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Training Pending</div>
-        <div class="stat-value" style="color: #fb923c;">{{ training_pending }}</div>
-      </div>
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="section-title"><i class="bi bi-people me-2"></i>Team Members</h2>
-      <div class="d-flex gap-3 align-items-center">
-          <div class="position-relative">
-            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-            <input type="text" id="memberSearch" class="form-control ps-5" placeholder="Search user..." style="min-width: 250px;">
+      <!-- === SECTION 1: DASHBOARD === -->
+      <div id="dashboard" class="content-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Employees</div>
+            <div class="stat-value">{{ total_employees }}</div>
           </div>
-          <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
-            <i class="bi bi-file-earmark-spreadsheet me-2"></i>Bulk Import
-          </button>
-          <button class="btn btn-gradient" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-            <i class="bi bi-plus-lg me-2"></i>Add Employee
-          </button>
-      </div>
-    </div>
-
-    <div class="members-grid" id="membersGrid">
-      {% for member in members %}
-      <div class="member-card" data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}">
-        <div class="avatar">{{ member.user.first_name|first|upper }}</div>
-        <h3 class="member-name">{{ member.user.get_full_name|default:member.user.first_name }}</h3>
-        <p class="member-email">{{ member.user.email }}</p>
-        <span class="role-badge">{{ member.role }}</span>
-      </div>
-
-      <!-- EMPLOYEE MODAL (Dynamic Charts) -->
-      <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header border-0">
-              <h5 class="modal-title">{{ member.user.first_name }}'s Status</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <div class="stat-card">
+            <div class="stat-label">Training Completed</div>
+            <div class="stat-value" style="color: #4ade80">
+              {{ training_completed }}
             </div>
-            
-            <div class="modal-body" style="padding: 20px;">
-              
-              <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
-              <div class="stats-row" id="stats-vids-{{ member.id }}">
-                  <!-- Video Pie -->
-                  <div class="mini-stat-card">
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Training Pending</div>
+            <div class="stat-value" style="color: #fb923c">
+              {{ training_pending }}
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title">
+            <i class="bi bi-people me-2"></i>Team Members
+          </h2>
+          <div class="d-flex gap-3 align-items-center">
+            <div class="position-relative">
+              <i
+                class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+              ></i>
+              <input
+                type="text"
+                id="memberSearch"
+                class="form-control ps-5"
+                placeholder="Search user..."
+                style="min-width: 250px"
+              />
+            </div>
+            <button
+              class="btn btn-outline-light"
+              data-bs-toggle="modal"
+              data-bs-target="#bulkImportModal"
+            >
+              <i class="bi bi-file-earmark-spreadsheet me-2"></i>Bulk Import
+            </button>
+            <button
+              class="btn btn-gradient"
+              data-bs-toggle="modal"
+              data-bs-target="#addEmployeeModal"
+            >
+              <i class="bi bi-plus-lg me-2"></i>Add Employee
+            </button>
+          </div>
+        </div>
+
+        <div class="members-grid" id="membersGrid">
+          {% for member in members %}
+          <div
+            class="member-card"
+            data-bs-toggle="modal"
+            data-bs-target="#userProgressModal-{{ member.id }}"
+          >
+            <div class="avatar">{{ member.user.first_name|first|upper }}</div>
+            <h3 class="member-name">
+              {{ member.user.get_full_name|default:member.user.first_name }}
+            </h3>
+            <p class="member-email">{{ member.user.email }}</p>
+            <span class="role-badge">{{ member.role }}</span>
+          </div>
+
+          <!-- EMPLOYEE MODAL (Dynamic Charts) -->
+          <div
+            class="modal fade"
+            id="userProgressModal-{{ member.id }}"
+            tabindex="-1"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title">
+                    {{ member.user.first_name }}'s Status
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+
+                <div class="modal-body" style="padding: 20px">
+                  <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+                  <div class="stats-row" id="stats-vids-{{ member.id }}">
+                    <!-- Video Pie -->
+                    <div class="mini-stat-card">
                       <h3>Video Health</h3>
                       <div class="chart-container">
-                          <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.percent_complete }}"></canvas>
+                        <canvas
+                          id="pie-vids-{{ member.id }}"
+                          data-percent="{{ member.percent_complete }}"
+                        ></canvas>
                       </div>
-                  </div>
-                  
-                  <!-- Video Time -->
-                  <div class="mini-stat-card">
+                    </div>
+
+                    <!-- Video Time -->
+                    <div class="mini-stat-card">
                       <h3>Watch Time</h3>
                       <p class="time-text">02:15</p>
                       <small class="text-muted">Total Hours</small>
-                  </div>
-                  
-                  <!-- Video Progress Bar -->
-                  <div class="mini-stat-card">
-                      <h3>Video Comp.</h3>
-                      <h2 style="margin:0; color:var(--lms-primary); font-size:1.8rem;">{{ member.percent_complete }}%</h2>
-                      <div class="progress-track">
-                          <div class="progress-fill" style="width: {{ member.percent_complete }}%;"></div>
-                      </div>
-                  </div>
-              </div>
+                    </div>
 
-              <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
-              <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none;">
-                  <!-- PPT Pie -->
-                  <div class="mini-stat-card">
+                    <!-- Video Progress Bar -->
+                    <div class="mini-stat-card">
+                      <h3>Video Comp.</h3>
+                      <h2
+                        style="
+                          margin: 0;
+                          color: var(--lms-primary);
+                          font-size: 1.8rem;
+                        "
+                      >
+                        {{ member.percent_complete }}%
+                      </h2>
+                      <div class="progress-track">
+                        <div
+                          class="progress-fill"
+                          style="width: {{ member.percent_complete }}%;"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
+                  <div
+                    class="stats-row"
+                    id="stats-ppts-{{ member.id }}"
+                    style="display: none"
+                  >
+                    <!-- PPT Pie -->
+                    <div class="mini-stat-card">
                       <h3>Quiz Health</h3>
                       <div class="chart-container">
-                          <!-- Mock data for PPT (e.g. 60%) for demonstration -->
-                          <canvas id="pie-ppts-{{ member.id }}" data-percent="60"></canvas>
+                        <!-- Mock data for PPT (e.g. 60%) for demonstration -->
+                        <canvas
+                          id="pie-ppts-{{ member.id }}"
+                          data-percent="60"
+                        ></canvas>
                       </div>
-                  </div>
-                  
-                  <!-- PPT Time -->
-                  <div class="mini-stat-card">
+                    </div>
+
+                    <!-- PPT Time -->
+                    <div class="mini-stat-card">
                       <h3>Reading Time</h3>
                       <!-- Different color to show change -->
-                      <p class="time-text" style="color: var(--lms-pending);">00:45</p>
+                      <p class="time-text" style="color: var(--lms-pending)">
+                        00:45
+                      </p>
                       <small class="text-muted">Total Hours</small>
-                  </div>
-                  
-                  <!-- PPT Progress Bar -->
-                  <div class="mini-stat-card">
+                    </div>
+
+                    <!-- PPT Progress Bar -->
+                    <div class="mini-stat-card">
                       <h3>Quiz Comp.</h3>
-                      <h2 style="margin:0; color:var(--lms-pending); font-size:1.8rem;">60%</h2>
+                      <h2
+                        style="
+                          margin: 0;
+                          color: var(--lms-pending);
+                          font-size: 1.8rem;
+                        "
+                      >
+                        60%
+                      </h2>
                       <div class="progress-track">
-                          <div class="progress-fill" style="width: 60%; background: var(--lms-pending);"></div>
+                        <div
+                          class="progress-fill"
+                          style="width: 60%; background: var(--lms-pending)"
+                        ></div>
                       </div>
+                    </div>
                   </div>
-              </div>
 
-              <!-- === TABS === -->
-              <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'vids')">Video Modules</button>
-                  <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'ppts')">PPT & Quiz</button>
-              </div>
+                  <!-- === TABS === -->
+                  <div class="lms-tab-header">
+                    <button
+                      class="lms-tab-btn active"
+                      id="btn-vids-{{ member.id }}"
+                      onclick="switchModalTab('{{ member.id }}', 'vids')"
+                    >
+                      Video Modules
+                    </button>
+                    <button
+                      class="lms-tab-btn"
+                      id="btn-ppts-{{ member.id }}"
+                      onclick="switchModalTab('{{ member.id }}', 'ppts')"
+                    >
+                      PPT & Quiz
+                    </button>
+                  </div>
 
-              <!-- === CONTENT LISTS === -->
-              
-              <!-- Video List -->
-              <div id="content-vids-{{ member.id }}">
-                  {% for mod in member.modules_status %}
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=200');"></div>
+                  <!-- === CONTENT LISTS === -->
+
+                  <!-- Video List -->
+                  <div id="content-vids-{{ member.id }}">
+                    {% for mod in member.video_modules %}
+                    <div class="record-item">
+                      <div
+                        class="record-thumb"
+                        style="background-image: url('{{ mod.thumbnail_url }}');"
+                      ></div>
                       <div class="record-info">
-                          <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
-                          <p>Video Lesson</p>
+                        <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                        <p>Video Lesson</p>
                       </div>
                       {% if mod.is_completed %}
-                          <span class="lms-badge bg-complete">Completed</span>
-                      {% else %}
-                          <span class="lms-badge bg-pending">Pending</span>
-                      {% endif %}
-                  </div>
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">No modules assigned</div>
-                  {% endfor %}
-              </div>
-
-              <!-- PPT List -->
-              <div id="content-ppts-{{ member.id }}" style="display: none;">
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>Legal Framework Slides</h6>
-                          <p>Reading Material</p>
-                      </div>
                       <span class="lms-badge bg-complete">Completed</span>
-                  </div>
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>Final Assessment Quiz</h6>
-                          <p>Interactive Quiz</p>
-                      </div>
+                      {% else %}
                       <span class="lms-badge bg-pending">Pending</span>
+                      {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted p-2 small">
+                      No video modules assigned
+                    </div>
+                    {% endfor %}
                   </div>
-              </div>
 
+                  <!-- PPT List -->
+                  <div id="content-ppts-{{ member.id }}" style="display: none">
+                    {% for mod in member.ppt_modules %}
+                    <div class="record-item">
+                      <!-- Use a generic icon or thumbnail for PPT -->
+                      <div
+                        class="record-thumb"
+                        style="
+                          background-color: #ffeaa7;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        <i
+                          class="bi bi-file-earmark-text"
+                          style="font-size: 1.5rem; color: #fdcb6e"
+                        ></i>
+                      </div>
+                      <div class="record-info">
+                        <h6>{{ mod.title }}</h6>
+                        <p>Reading Material</p>
+                      </div>
+                      <!-- PPTs are clickable to download/view -->
+                      {% if mod.ppt_url %}
+                      <a
+                        href="{{ mod.ppt_url }}"
+                        target="_blank"
+                        class="lms-badge bg-complete"
+                        style="text-decoration: none"
+                        >View</a
+                      >
+                      {% else %}
+                      <span class="lms-badge bg-locked">Locked</span>
+                      {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted p-2 small">
+                      No PPT modules assigned
+                    </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- === SECTION 2: POSTERS === -->
+      <div id="posters" class="content-section">
+        <h2 class="mb-4 section-title">
+          <i class="bi bi-images me-2"></i>Awareness Posters
+        </h2>
+        <div class="poster-grid">
+          <div class="poster-item">
+            <div class="poster-placeholder">
+              <i class="bi bi-image fs-1 d-block mb-2"></i>
+              <span>Poster 1 (Portrait)</span>
+            </div>
+            <h5>POSH Awareness 1</h5>
+            <button class="btn btn-sm btn-outline-light mt-2">
+              <i class="bi bi-download me-2"></i>Download
+            </button>
+          </div>
+          <div class="poster-item">
+            <div class="poster-placeholder">
+              <i class="bi bi-image fs-1 d-block mb-2"></i>
+              <span>Poster 2 (Landscape)</span>
+            </div>
+            <h5>Workplace Safety</h5>
+            <button class="btn btn-sm btn-outline-light mt-2">
+              <i class="bi bi-download me-2"></i>Download
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- === SECTION 3: POLICY === -->
+      <div id="policy" class="content-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title">
+            <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
+          </h2>
+          <button class="btn btn-outline-light">
+            <i class="bi bi-printer me-2"></i>Print Policy
+          </button>
+        </div>
+        <div class="policy-text">
+          <h3 class="text-center mb-4">
+            Prevention of Sexual Harassment (POSH) Policy
+          </h3>
+          <p>
+            <strong>1. Introduction</strong><br />
+            This policy has been framed in accordance with the provisions of
+            "The Sexual Harassment of Women at Workplace (Prevention,
+            Prohibition and Redressal) Act, 2013". Our organization is committed
+            to providing a safe environment for all employees.
+          </p>
+          <p>
+            <strong>2. Scope</strong><br />
+            This policy is applicable to all employees, including permanent,
+            temporary, contractual, and trainees.
+          </p>
+          <p>
+            <strong>3. Definition of Sexual Harassment</strong><br />
+            Sexual harassment includes any one or more of the following
+            unwelcome acts or behavior (whether directly or by implication):<br />
+            - Physical contact and advances.<br />
+            - A demand or request for sexual favors.<br />
+            - Making sexually colored remarks.<br />
+            - Showing pornography.<br />
+            - Any other unwelcome physical, verbal or non-verbal conduct of
+            sexual nature.
+          </p>
+          <p>
+            <strong>4. Internal Complaints Committee (ICC)</strong><br />
+            An Internal Complaints Committee has been constituted to address
+            grievances. Any aggrieved woman may make, in writing, a complaint of
+            sexual harassment at workplace to the Internal Committee within a
+            period of three months from the date of incident.
+          </p>
+          <p class="text-muted text-center mt-5">-- End of Policy --</p>
+        </div>
+      </div>
+
+      <!-- === SECTION 4: CERTIFICATES === -->
+      <div id="certificates" class="content-section">
+        <h2 class="mb-4 section-title">
+          <i class="bi bi-award me-2"></i>Certificates
+        </h2>
+        <div class="cert-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-dark p-3 rounded text-warning fs-3">
+              <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <div>
+              <h5 class="mb-1">Organization Compliance Certificate (2024)</h5>
+              <p class="mb-0 text-muted small">Issued on: Jan 15, 2024</p>
+            </div>
+          </div>
+          <button class="btn btn-gradient btn-sm">
+            <i class="bi bi-download me-2"></i>Download
+          </button>
+        </div>
+        <div class="cert-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="bg-dark p-3 rounded text-muted fs-3">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <div>
+              <h5 class="mb-1">Training Completion Report</h5>
+              <p class="mb-0 text-muted small">Generated on: Feb 01, 2024</p>
+            </div>
+          </div>
+          <button class="btn btn-outline-light btn-sm">
+            <i class="bi bi-eye me-2"></i>View
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Add Single Employee Modal -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">Add New Employee</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="{% url 'add_employee' %}">
+              {% csrf_token %}
+              <input
+                class="form-control mb-3"
+                name="emp_name"
+                placeholder="Full Name"
+                required
+              />
+              <input
+                class="form-control mb-3"
+                name="emp_email"
+                type="email"
+                placeholder="Email"
+                required
+              />
+              <input
+                class="form-control mb-4"
+                name="emp_password"
+                type="password"
+                placeholder="Password"
+                required
+              />
+              <button class="btn btn-gradient w-100">Add Employee</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BULK IMPORT MODAL -->
+    <div class="modal fade" id="bulkImportModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">
+              <i class="bi bi-file-earmark-spreadsheet me-2"></i>Bulk Import
+              Employees
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div
+              class="mb-4 pb-4 border-bottom"
+              style="border-color: var(--border-soft) !important"
+            >
+              <h6 class="text-muted mb-2">Step 1: Get the Format</h6>
+              <p class="small text-muted mb-3">
+                Download the standard Excel/CSV template to ensure your data is
+                formatted correctly.
+              </p>
+              <a
+                href="{% url 'download_employee_template' %}"
+                class="btn btn-sm btn-outline-warning w-100"
+              >
+                <i class="bi bi-download me-2"></i>Download Template
+              </a>
+            </div>
+            <div>
+              <h6 class="text-muted mb-2">Step 2: Upload Data</h6>
+              <p class="small text-muted mb-3">
+                Upload the filled template file here.
+              </p>
+              <form
+                method="POST"
+                action="{% url 'upload_employee_bulk' %}"
+                enctype="multipart/form-data"
+              >
+                {% csrf_token %}
+                <div class="mb-3">
+                  <input
+                    class="form-control"
+                    type="file"
+                    name="employee_file"
+                    accept=".csv"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-gradient w-100">
+                  <i class="bi bi-cloud-upload me-2"></i>Upload & Create Cards
+                </button>
+              </form>
             </div>
           </div>
         </div>
       </div>
-      {% endfor %}
     </div>
-  </div>
 
-  <!-- === SECTION 2: POSTERS === -->
-  <div id="posters" class="content-section">
-    <h2 class="mb-4 section-title"><i class="bi bi-images me-2"></i>Awareness Posters</h2>
-    <div class="poster-grid">
-        <div class="poster-item">
-            <div class="poster-placeholder">
-                <i class="bi bi-image fs-1 d-block mb-2"></i>
-                <span>Poster 1 (Portrait)</span>
-            </div>
-            <h5>POSH Awareness 1</h5>
-            <button class="btn btn-sm btn-outline-light mt-2"><i class="bi bi-download me-2"></i>Download</button>
-        </div>
-        <div class="poster-item">
-            <div class="poster-placeholder">
-                <i class="bi bi-image fs-1 d-block mb-2"></i>
-                <span>Poster 2 (Landscape)</span>
-            </div>
-            <h5>Workplace Safety</h5>
-            <button class="btn btn-sm btn-outline-light mt-2"><i class="bi bi-download me-2"></i>Download</button>
-        </div>
-    </div>
-  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- === SECTION 3: POLICY === -->
-  <div id="policy" class="content-section">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title"><i class="bi bi-file-earmark-text me-2"></i>POSH Policy</h2>
-        <button class="btn btn-outline-light"><i class="bi bi-printer me-2"></i>Print Policy</button>
-    </div>
-    <div class="policy-text">
-        <h3 class="text-center mb-4">Prevention of Sexual Harassment (POSH) Policy</h3>
-        <p><strong>1. Introduction</strong><br>
-        This policy has been framed in accordance with the provisions of "The Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013". Our organization is committed to providing a safe environment for all employees.</p>
-        <p><strong>2. Scope</strong><br>
-        This policy is applicable to all employees, including permanent, temporary, contractual, and trainees.</p>
-        <p><strong>3. Definition of Sexual Harassment</strong><br>
-        Sexual harassment includes any one or more of the following unwelcome acts or behavior (whether directly or by implication):<br>
-        - Physical contact and advances.<br>
-        - A demand or request for sexual favors.<br>
-        - Making sexually colored remarks.<br>
-        - Showing pornography.<br>
-        - Any other unwelcome physical, verbal or non-verbal conduct of sexual nature.</p>
-        <p><strong>4. Internal Complaints Committee (ICC)</strong><br>
-        An Internal Complaints Committee has been constituted to address grievances. Any aggrieved woman may make, in writing, a complaint of sexual harassment at workplace to the Internal Committee within a period of three months from the date of incident.</p>
-        <p class="text-muted text-center mt-5">-- End of Policy --</p>
-    </div>
-  </div>
+    <script>
+      function showSection(sectionId, element) {
+        document
+          .querySelectorAll(".content-section")
+          .forEach((sec) => sec.classList.remove("active"));
+        document.getElementById(sectionId).classList.add("active");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((link) => link.classList.remove("active"));
+        element.classList.add("active");
+      }
 
-  <!-- === SECTION 4: CERTIFICATES === -->
-  <div id="certificates" class="content-section">
-    <h2 class="mb-4 section-title"><i class="bi bi-award me-2"></i>Certificates</h2>
-    <div class="cert-card">
-        <div class="d-flex align-items-center gap-3">
-            <div class="bg-dark p-3 rounded text-warning fs-3"><i class="bi bi-patch-check-fill"></i></div>
-            <div>
-                <h5 class="mb-1">Organization Compliance Certificate (2024)</h5>
-                <p class="mb-0 text-muted small">Issued on: Jan 15, 2024</p>
-            </div>
-        </div>
-        <button class="btn btn-gradient btn-sm"><i class="bi bi-download me-2"></i>Download</button>
-    </div>
-    <div class="cert-card">
-        <div class="d-flex align-items-center gap-3">
-            <div class="bg-dark p-3 rounded text-muted fs-3"><i class="bi bi-file-earmark-pdf"></i></div>
-            <div>
-                <h5 class="mb-1">Training Completion Report</h5>
-                <p class="mb-0 text-muted small">Generated on: Feb 01, 2024</p>
-            </div>
-        </div>
-        <button class="btn btn-outline-light btn-sm"><i class="bi bi-eye me-2"></i>View</button>
-    </div>
-  </div>
-</main>
-
-<!-- Add Single Employee Modal -->
-<div class="modal fade" id="addEmployeeModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title">Add New Employee</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <form method="POST" action="{% url 'add_employee' %}">
-          {% csrf_token %}
-          <input class="form-control mb-3" name="emp_name" placeholder="Full Name" required>
-          <input class="form-control mb-3" name="emp_email" type="email" placeholder="Email" required>
-          <input class="form-control mb-4" name="emp_password" type="password" placeholder="Password" required>
-          <button class="btn btn-gradient w-100">Add Employee</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- BULK IMPORT MODAL -->
-<div class="modal fade" id="bulkImportModal" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header border-0">
-        <h5 class="modal-title"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Bulk Import Employees</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-4 pb-4 border-bottom" style="border-color: var(--border-soft) !important;">
-            <h6 class="text-muted mb-2">Step 1: Get the Format</h6>
-            <p class="small text-muted mb-3">Download the standard Excel/CSV template to ensure your data is formatted correctly.</p>
-            <a href="{% url 'download_employee_template' %}" class="btn btn-sm btn-outline-warning w-100">
-                <i class="bi bi-download me-2"></i>Download Template
-            </a>
-        </div>
-        <div>
-            <h6 class="text-muted mb-2">Step 2: Upload Data</h6>
-            <p class="small text-muted mb-3">Upload the filled template file here.</p>
-            <form method="POST" action="{% url 'upload_employee_bulk' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <input class="form-control" type="file" name="employee_file" accept=".csv" required>
-                </div>
-                <button type="submit" class="btn btn-gradient w-100">
-                    <i class="bi bi-cloud-upload me-2"></i>Upload & Create Cards
-                </button>
-            </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    function showSection(sectionId, element) {
-        document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
-        document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-        element.classList.add('active');
-    }
-
-    document.getElementById('memberSearch').addEventListener('input', function() {
-        const filter = this.value.toLowerCase();
-        const cards = document.querySelectorAll('.member-card');
-        cards.forEach(card => {
-            const name = card.querySelector('.member-name').innerText.toLowerCase();
-            const email = card.querySelector('.member-email').innerText.toLowerCase();
+      document
+        .getElementById("memberSearch")
+        .addEventListener("input", function () {
+          const filter = this.value.toLowerCase();
+          const cards = document.querySelectorAll(".member-card");
+          cards.forEach((card) => {
+            const name = card
+              .querySelector(".member-name")
+              .innerText.toLowerCase();
+            const email = card
+              .querySelector(".member-email")
+              .innerText.toLowerCase();
             if (name.includes(filter) || email.includes(filter)) {
-                card.style.display = "";
+              card.style.display = "";
             } else {
-                card.style.display = "none";
+              card.style.display = "none";
             }
+          });
         });
-    });
 
-    // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
-    function switchModalTab(memberId, tab) {
+      // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
+      function switchModalTab(memberId, tab) {
         // Content lists
         const vidContent = document.getElementById(`content-vids-${memberId}`);
         const pptContent = document.getElementById(`content-ppts-${memberId}`);
@@ -593,75 +1095,79 @@
         // Stats Rows
         const vidStats = document.getElementById(`stats-vids-${memberId}`);
         const pptStats = document.getElementById(`stats-ppts-${memberId}`);
-        
-        if (tab === 'vids') {
-            vidBtn.classList.add('active');
-            pptBtn.classList.remove('active');
-            
-            vidContent.style.display = 'block';
-            pptContent.style.display = 'none';
 
-            // Show Video Charts, Hide PPT Charts
-            vidStats.style.display = 'grid';
-            pptStats.style.display = 'none';
+        if (tab === "vids") {
+          vidBtn.classList.add("active");
+          pptBtn.classList.remove("active");
+
+          vidContent.style.display = "block";
+          pptContent.style.display = "none";
+
+          // Show Video Charts, Hide PPT Charts
+          vidStats.style.display = "grid";
+          pptStats.style.display = "none";
         } else {
-            pptBtn.classList.add('active');
-            vidBtn.classList.remove('active');
-            
-            pptContent.style.display = 'block';
-            vidContent.style.display = 'none';
+          pptBtn.classList.add("active");
+          vidBtn.classList.remove("active");
 
-            // Hide Video Charts, Show PPT Charts
-            pptStats.style.display = 'grid';
-            vidStats.style.display = 'none';
+          pptContent.style.display = "block";
+          vidContent.style.display = "none";
+
+          // Hide Video Charts, Show PPT Charts
+          pptStats.style.display = "grid";
+          vidStats.style.display = "none";
         }
-    }
+      }
 
-    // Helper to draw chart safely
-    function drawChart(canvasId, colorHex) {
+      // Helper to draw chart safely
+      function drawChart(canvasId, colorHex) {
         const canvas = document.getElementById(canvasId);
         if (!canvas) return;
 
         // Clean up previous instance to prevent glitches
         if (canvas.chartInstance) canvas.chartInstance.destroy();
 
-        const percent = parseInt(canvas.getAttribute('data-percent')) || 0;
+        const percent = parseInt(canvas.getAttribute("data-percent")) || 0;
         const remaining = 100 - percent;
 
         canvas.chartInstance = new Chart(canvas, {
-            type: 'doughnut',
-            data: {
-                labels: ['Done', 'Pending'],
-                datasets: [{
-                    data: [percent, remaining],
-                    backgroundColor: [colorHex, '#eee'],
-                    borderWidth: 0
-                }]
+          type: "doughnut",
+          data: {
+            labels: ["Done", "Pending"],
+            datasets: [
+              {
+                data: [percent, remaining],
+                backgroundColor: [colorHex, "#eee"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "70%",
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false },
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '70%',
-                plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                animation: { duration: 1000 }
-            }
+            animation: { duration: 1000 },
+          },
         });
-    }
+      }
 
-    // Initialize BOTH charts when the modal opens
-    document.addEventListener('shown.bs.modal', function (event) {
+      // Initialize BOTH charts when the modal opens
+      document.addEventListener("shown.bs.modal", function (event) {
         const modalId = event.target.id;
-        if (modalId.startsWith('userProgressModal-')) {
-            const memberId = modalId.split('-')[1];
-            
-            // 1. Draw Video Chart (Primary Blue)
-            drawChart(`pie-vids-${memberId}`, '#4e54c8');
+        if (modalId.startsWith("userProgressModal-")) {
+          const memberId = modalId.split("-")[1];
 
-            // 2. Draw PPT Chart (Warning Yellow/Orange)
-            drawChart(`pie-ppts-${memberId}`, '#f1c40f');
+          // 1. Draw Video Chart (Primary Blue)
+          drawChart(`pie-vids-${memberId}`, "#4e54c8");
+
+          // 2. Draw PPT Chart (Warning Yellow/Orange)
+          drawChart(`pie-ppts-${memberId}`, "#f1c40f");
         }
-    });
-</script>
-
-</body>
+      });
+    </script>
+  </body>
 </html>

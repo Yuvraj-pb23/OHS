@@ -1,0 +1,903 @@
+{
+    "topic": "POCSO (Protection of Children from Sexual Offences)",
+    "subtopics": [
+        {
+            "id": "legal_core_and_definitions",
+            "title": "Legal Core & Definitions",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "How does the POCSO Act define a \"Child\"?",
+                    "answer": "Under Section 2(d) of the POCSO Act, a child is defined as any person below the age of eighteen years. This definition is absolute and does not change based on the child's maturity, physical development, or whether they were living independently at the time of the offence."
+                },
+                {
+                    "id": "q2",
+                    "question": "Is the POCSO Act gender-neutral?",
+                    "answer": "Yes, the POCSO Act is entirely gender-neutral. Unlike some older laws that primarily protected female victims, POCSO recognizes that both boys and girls can be victims of sexual abuse and provides equal protection and legal recourse to all children regardless of their gender."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is the difference between \"Sexual Assault\" and \"Sexual Harassment\" under this Act?",
+                    "answer": "Sexual Assault involves physical contact with sexual intent, such as touching the child's private parts or making the child touch the perpetrator. Sexual Harassment (Section 11) is broader and includes non-contact acts like making sexual remarks, showing pornography, stalking, or any gestures/sounds of a sexual nature intended to insult the child's modesty."
+                },
+                {
+                    "id": "q4",
+                    "question": "What constitutes \"Penetrative Sexual Assault\" (Section 3)?",
+                    "answer": "This is a grave offence where the perpetrator inserts their penis, any object, or any body part into the vagina, urethra, or anus of a child, or makes the child do so with them. It also includes oral-genital contact. The law focuses on the act of penetration, however slight, rather than the completion of a sexual act."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"Sexual Intent\" as per the Act?",
+                    "answer": "Sexual intent is the underlying motive for the physical contact or gesture. The court looks at the nature of the act, the circumstances, and whether the conduct was intended to satisfy the perpetrator's sexual desires or to violate the child's bodily integrity for a sexual purpose."
+                },
+                {
+                    "id": "q6",
+                    "question": "Are the punishments for Penetrative Sexual Assault different from non-penetrative?",
+                    "answer": "Yes. Penetrative Sexual Assault (Section 4) carries a minimum of ten years to life imprisonment plus a fine. Non-penetrative Sexual Assault (Section 7 & 8) carries a minimum of three years to seven years of imprisonment plus a fine. The severity of the punishment scales with the physical gravity of the violation."
+                },
+                {
+                    "id": "q7",
+                    "question": "How does the Act view \"Consent\" when the victim is a minor?",
+                    "answer": "Under POCSO, the concept of \"legal consent\" does not exist for anyone under the age of 18. Even if a child \"agreed\" to the act, the law treats it as an offence because a child is legally deemed incapable of giving valid consent to sexual activity."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is \"Sexual Assault with a weapon\" under Section 5?",
+                    "answer": "If a person uses a weapon, or any object that can cause bodily harm, while committing sexual assault, it is classified as Aggravated Penetrative Sexual Assault. This recognizes the added trauma and physical danger posed to the child during the crime."
+                },
+                {
+                    "id": "q9",
+                    "question": "Define \"Shared Household\" in the context of POCSO.",
+                    "answer": "A shared household refers to a place where the victim and the perpetrator live together or have lived together at any point. If an offence occurs in a shared household, it is often viewed through the lens of a \"position of trust,\" which can lead to aggravated charges."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the significance of the 2019 Amendment regarding the death penalty?",
+                    "answer": "The 2019 Amendment introduced the provision of the death penalty for \"Aggravated Penetrative Sexual Assault\" (Section 6) in cases involving extreme cruelty or repeat offences, reflecting a zero-tolerance policy for the most heinous crimes against children."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can a child be a \"Respondent\" or perpetrator?",
+                    "answer": "If the person who committed the act is also under 18, they are treated as a \"Child in Conflict with the Law.\" They are not tried in a regular Special Court but are handled by the Juvenile Justice Board (JJB) according to the Juvenile Justice Act."
+                },
+                {
+                    "id": "q12",
+                    "question": "What is the definition of \"vagina\" under POCSO?",
+                    "answer": "The Act defines \"vagina\" to include the labia majora. This specific detail ensures that even external contact/penetration of the genital area is legally captured under the highest level of offence."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is \"Digital Penetration\" covered under Section 3?",
+                    "answer": "Yes, the insertion of any body part (including fingers) or any object into a child's private parts is legally classified as Penetrative Sexual Assault, carrying the same weight as penile penetration."
+                },
+                {
+                    "id": "q14",
+                    "question": "What does Section 11 (Sexual Harassment) say about \"stalking\"?",
+                    "answer": "Following a child, repeatedly attempting to contact them, or monitoring their use of the internet/electronic communication for sexual purposes is defined as sexual harassment under POCSO."
+                },
+                {
+                    "id": "q15",
+                    "question": "Does the Act apply to offences committed outside India?",
+                    "answer": "If the perpetrator is an Indian citizen or the victim is an Indian child, the law can be applied even if the offence occurred outside the country, ensuring children are protected across borders."
+                },
+                {
+                    "id": "q16",
+                    "question": "How is \"Pornographic Purpose\" defined?",
+                    "answer": "It refers to the intent to create, store, or distribute material that depicts a child engaged in real or simulated sexual activities or the lascivious depiction of a child's private parts."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is the role of the \"Special Court\"?",
+                    "answer": "These are dedicated courts designated by the State Government to try POCSO cases exclusively, designed to be child-friendly and to speed up the trial process."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can \"unintentional\" touching be charged under POCSO?",
+                    "answer": "No. The Act specifically requires the element of \"sexual intent.\" Accidental contact or medical examinations performed by doctors with parental consent and professional intent do not fall under POCSO."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is \"Sexual Assault in a Disaster\"?",
+                    "answer": "If a person takes advantage of a child during a natural calamity, riot, or disaster to commit sexual assault, it is automatically categorized as an \"Aggravated\" offence due to the child's extreme vulnerability."
+                },
+                {
+                    "id": "q20",
+                    "question": "Define \"Modesty\" in the context of Section 11.",
+                    "answer": "Modesty refers to the child's sense of privacy and dignity. Any act that shocks or violates this sense—such as forced stripping or lewd comments—is a violation of the Act."
+                },
+                {
+                    "id": "q21",
+                    "question": "Does the Act cover \"Psychological Abuse\"?",
+                    "answer": "While POCSO focuses on sexual offences, many sexual harassment definitions include acts that cause psychological trauma (like showing porn). The resulting mental health impact is often a factor in sentencing."
+                },
+                {
+                    "id": "q22",
+                    "question": "What is the \"Minimum Age\" for a child to give evidence?",
+                    "answer": "There is no minimum age. Any child capable of understanding questions and providing rational answers can give evidence. The court must ensure the child feels safe and comfortable while doing so."
+                },
+                {
+                    "id": "q23",
+                    "question": "Is \"Attempt to Commit an Offence\" punishable?",
+                    "answer": "Yes, under Section 15, any person who attempts to commit an offence or causes an offence to be committed is liable to be punished with half of the maximum term provided for that offence."
+                },
+                {
+                    "id": "q24",
+                    "question": "Does the Act protect children in childcare institutions?",
+                    "answer": "Yes, and offences committed by staff in these institutions are treated as \"Aggravated\" because the staff are in a position of authority and care."
+                },
+                {
+                    "id": "q25",
+                    "question": "How does POCSO interact with the IPC (Indian Penal Code)?",
+                    "answer": "POCSO is a \"Special Law.\" If an act is an offence under both POCSO and IPC, the perpetrator is charged under the law that provides the more stringent punishment (usually POCSO)."
+                }
+            ]
+        },
+        {
+            "id": "mandatory_reporting",
+            "title": "Mandatory Reporting (Sec 19)",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What does Section 19 of the POCSO Act mandate?",
+                    "answer": "Section 19 makes it mandatory for any person (including neighbors, teachers, doctors, or family members) who has an apprehension or knowledge that a sexual offence against a child has been committed, or is likely to be committed, to report it to the Special Juvenile Police Unit (SJPU) or the local police."
+                },
+                {
+                    "id": "q2",
+                    "question": "Is there a penalty for not reporting a POCSO offence?",
+                    "answer": "Yes, under Section 21, any person who fails to report an offence or fails to record a complaint (in the case of police) can be punished with imprisonment for up to six months, or a fine, or both. For heads of institutions, the penalty is more severe."
+                },
+                {
+                    "id": "q3",
+                    "question": "Does the reporter need \"proof\" before filing a report?",
+                    "answer": "No. The law uses the word \"apprehension.\" If a person has a reasonable suspicion based on a child's behavior, physical marks, or a verbal hint, they are legally obligated to report. The responsibility of finding \"proof\" lies with the police, not the reporter."
+                },
+                {
+                    "id": "q4",
+                    "question": "Are doctors and hospitals bound by confidentiality in POCSO cases?",
+                    "answer": "Mandatory reporting overrides the traditional doctor-patient confidentiality. Doctors must report any suspected abuse discovered during a medical checkup. Failure to do so makes the medical professional liable for prosecution under Section 21."
+                },
+                {
+                    "id": "q5",
+                    "question": "What if the child asks the teacher NOT to tell anyone?",
+                    "answer": "The teacher is still legally bound to report. While the teacher should support the child emotionally, they must explain that reporting is necessary for the child's safety and is a legal requirement they cannot bypass."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can a reporter be sued for defamation if the case turns out to be false?",
+                    "answer": "Section 19(4) provides immunity to anyone who reports an offence in \"good faith.\" As long as the report wasn't made with malicious intent to harass someone, the reporter cannot be held liable for any civil or criminal proceedings."
+                },
+                {
+                    "id": "q7",
+                    "question": "Where should a POCSO report be filed?",
+                    "answer": "It can be filed at the nearest police station, with the Special Juvenile Police Unit (SJPU), or through the Childline helpline (1098). The police are then required to record the information and provide a copy to the reporter."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is the \"Zero FIR\" concept in POCSO?",
+                    "answer": "A report can be filed at any police station regardless of where the crime occurred. The police must record it and then transfer it to the appropriate jurisdiction. They cannot refuse a POCSO report based on \"territorial jurisdiction.\""
+                },
+                {
+                    "id": "q9",
+                    "question": "Does the \"Mandatory Reporting\" rule apply to the child's parents?",
+                    "answer": "Yes, the law applies to \"any person.\" If parents suppress information about abuse (often due to social stigma), they can technically be charged under Section 21, though the focus is usually on those in professional positions of trust."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the punishment for a police officer who refuses to record a complaint?",
+                    "answer": "A police officer or SJPU member who fails to record the information reported to them under Section 19 can be punished with imprisonment for a term which may extend to one year."
+                },
+                {
+                    "id": "q11",
+                    "question": "How quickly should a report be made?",
+                    "answer": "The Act says the report must be made \"immediately.\" Delay in reporting can be detrimental to the investigation and may lead to the loss of medical evidence, so promptness is a legal and practical necessity."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can a report be made anonymously?",
+                    "answer": "While the police prefer a signed statement to proceed with an investigation, they are duty-bound to act on information received. Many institutional policies allow for internal anonymous reporting which then results in an official institutional report to the police."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is reporting mandatory even if the offence is \"minor\" (like lewd comments)?",
+                    "answer": "Yes. POCSO does not differentiate between \"big\" and \"small\" offences for the purpose of reporting. Any act defined as an offence under the Act must be reported."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the role of the Child Welfare Committee (CWC) in reporting?",
+                    "answer": "Once a report is made, the police must also inform the CWC within 24 hours. The CWC ensures the child is provided with immediate care, protection, and a safe place to stay if their home environment is unsafe."
+                },
+                {
+                    "id": "q15",
+                    "question": "How should an institution handle a report against an employee?",
+                    "answer": "The head of the institution must immediately report the matter to the police and suspend the employee from any child-facing duties during the investigation. They should not conduct their own \"internal inquiry\" as a substitute for a police report."
+                },
+                {
+                    "id": "q16",
+                    "question": "Is a reporter protected from retaliation?",
+                    "answer": "Yes, the Act and various state rules provide for witness and reporter protection. If a person feels threatened after reporting, the Special Court can order police protection for them."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the reporter need the child's parents' permission to report?",
+                    "answer": "No. The legal obligation to protect the child is paramount. If the reporter suspects that the parents might be involved or might suppress the case, they should report directly to the SJPU or CWC."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the penalty for \"false reporting\" under POCSO?",
+                    "answer": "Under Section 22, if a person makes a false complaint with the intent to humiliate or blackmail someone, they can be punished with up to six months of imprisonment. However, this is not applied if the report was a mistake made in good faith."
+                },
+                {
+                    "id": "q19",
+                    "question": "What are the requirements for recording a report by the police?",
+                    "answer": "The police must record the statement in a language the reporter understands. It must be read over to the reporter, and a copy must be provided to them free of cost immediately."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can a person be punished for not reporting a \"threat\" of abuse?",
+                    "answer": "Yes, Section 19 covers knowledge of an offence that is \"likely to be committed.\" If a person knows a child is in imminent danger and does nothing, they are in violation of the Act."
+                },
+                {
+                    "id": "q21",
+                    "question": "How does the Act ensure the reporter’s identity is safe?",
+                    "answer": "During the reporting and investigation stage, the police and media are prohibited from disclosing any information that might lead to the identification of the child or the reporter if it puts the child at risk."
+                },
+                {
+                    "id": "q22",
+                    "question": "What happens if a reporting officer is a woman?",
+                    "answer": "The law mandates that the statement of the child should be recorded by a woman police officer, preferably not in uniform, to make the child feel more comfortable during the reporting process."
+                },
+                {
+                    "id": "q23",
+                    "question": "Does \"Mandatory Reporting\" apply to religious institutions?",
+                    "answer": "Yes, there are no exemptions. Any person in a religious or community institution who becomes aware of an offence must report it under the same Section 19 rules."
+                },
+                {
+                    "id": "q24",
+                    "question": "Can an institution be fined for \"Non-Reporting\"?",
+                    "answer": "Yes, institutional failure to report is viewed seriously and can lead to the cancellation of licenses, heavy fines, and criminal charges against the management."
+                },
+                {
+                    "id": "q25",
+                    "question": "What is the \"Social Welfare\" aspect of Section 19?",
+                    "answer": "Beyond legal punishment, the goal of mandatory reporting is to ensure that no child suffers in silence and that the \"culture of silence\" in society is broken by institutionalizing accountability."
+                }
+            ]
+        },
+        {
+            "id": "aggravated_offences",
+            "title": "Aggravated Offences",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What constitutes \"Aggravated Penetrative Sexual Assault\" under Section 5?",
+                    "answer": "This occurs when penetrative sexual assault is committed by persons in positions of trust or authority, such as police officers, public servants, armed forces personnel, or management/staff of jails, remand homes, hospitals, or educational institutions. It also applies if the assault results in pregnancy, physical injury to sexual organs, or if the child is mentally ill or disabled."
+                },
+                {
+                    "id": "q2",
+                    "question": "Why does the Act treat offences by teachers or doctors more severely?",
+                    "answer": "These individuals are \"persons in a position of trust.\" The law recognizes that children are uniquely vulnerable to authority figures. Abuse by a trusted adult is seen as a double betrayal—of the child's body and of the social contract that mandates these professionals to protect and nurture."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is the minimum punishment for Aggravated Penetrative Sexual Assault?",
+                    "answer": "Following the 2019 Amendment, the minimum punishment is rigorous imprisonment for 20 years, which may extend to life imprisonment (meaning the remainder of natural life) or even the death penalty in extreme cases."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is Section 9, \"Aggravated Sexual Assault\"?",
+                    "answer": "This covers non-penetrative sexual assault committed by authority figures (police, teachers, etc.) or during a natural calamity. It essentially mirrors the list in Section 5 but applies to acts of touching with sexual intent without penetration."
+                },
+                {
+                    "id": "q5",
+                    "question": "Does committing a crime during a natural calamity affect the charge?",
+                    "answer": "Yes. Section 5(m) and 9(p) state that offences committed during a natural calamity or similar situations of violence/distress are \"aggravated.\" This is because the child is at their most helpless during such events, and the perpetrator has exploited a crisis."
+                },
+                {
+                    "id": "q6",
+                    "question": "What if the offender is a relative or family member?",
+                    "answer": "This is considered an aggravated offence under Section 5(n). The law specifically aims to break the \"shame\" and \"secrecy\" within families, ensuring that relatives do not receive leniency for violating the safety of the household."
+                },
+                {
+                    "id": "q7",
+                    "question": "Is causing \"Death\" during an assault an aggravated offence?",
+                    "answer": "Yes, the 2019 Amendment added Section 5(iv), which classifies an assault resulting in the child's death as an aggravated penetrative sexual assault, punishable by death."
+                },
+                {
+                    "id": "q8",
+                    "question": "What if the child is infected with an STD/HIV?",
+                    "answer": "If the assault results in the child contracting a sexually transmitted disease or HIV, it is automatically categorized as \"aggravated\" due to the permanent and severe health impact on the minor."
+                },
+                {
+                    "id": "q9",
+                    "question": "Does using hormones to induce early maturity count as aggravated?",
+                    "answer": "Yes, Section 9(v) includes the administration of any drug or hormone to a child with the intent to make them attain early sexual maturity as an act of aggravated sexual assault."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the punishment for Aggravated Sexual Assault (non-penetrative)?",
+                    "answer": "The punishment is imprisonment for a term not less than 5 years, which may extend to 7 years, along with a fine."
+                },
+                {
+                    "id": "q11",
+                    "question": "Does the Act consider the \"mental health\" of the child in aggravated cases?",
+                    "answer": "Yes. Section 5(j) and 9(l) state that if the offence is committed against a child who is mentally ill or has a mental disability, it is an aggravated offence. The law recognizes that such children may have limited ability to understand or resist the act, making the crime more heinous."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if the offence is committed by multiple people (Gang Rape)?",
+                    "answer": "Under Section 5(g), if the penetrative sexual assault is committed by one or more persons acting in furtherance of a common intention, it is \"Aggravated Penetrative Sexual Assault.\" Every person involved is liable for the maximum punishment, including life imprisonment or death."
+                },
+                {
+                    "id": "q13",
+                    "question": "How does the law treat a doctor who abuses a child during an exam?",
+                    "answer": "This is covered under Section 5(c). Because the child is in a vulnerable state (undergoing medical treatment) and the doctor is a professional in a position of trust, the act is treated as an aggravated offence with significantly higher penalties than a regular assault."
+                },
+                {
+                    "id": "q14",
+                    "question": "What if the perpetrator is a member of the Armed Forces or Police?",
+                    "answer": "Sections 5(a) and 5(b) specifically name personnel of the armed forces or security forces. If they commit an offence within the area of their deployment or take advantage of their uniform/authority, it is an aggravated offence."
+                },
+                {
+                    "id": "q15",
+                    "question": "Is it an aggravated offence if the child is pregnant after the assault?",
+                    "answer": "Yes. Section 5(k) explicitly states that if the penetrative sexual assault results in the pregnancy of the child, it is an aggravated offence. This accounts for the lifelong physical and psychological impact of such a consequence on a minor."
+                },
+                {
+                    "id": "q16",
+                    "question": "What if the perpetrator uses a \"drug\" to facilitate the assault?",
+                    "answer": "Section 5(f) covers the administration of any substance (drugs, alcohol, or intoxicants) with the intent to facilitate the sexual assault. This is aggravated because it involves premeditated steps to incapacitate the child."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the law protect children in \"Observation Homes\"?",
+                    "answer": "Yes. Section 5(e) specifies that staff or management of a remand home, observation home, or any other custody-based institution commit an aggravated offence if they abuse a child in their care."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the perpetrator knows the child is \"vulnerable\"?",
+                    "answer": "Section 5(o) states that if the perpetrator knows the child is particularly vulnerable due to a disaster or being in a state of distress, and uses that opportunity to commit an assault, the charge is aggravated."
+                },
+                {
+                    "id": "q19",
+                    "question": "Is \"maiming\" or \"disfiguring\" covered?",
+                    "answer": "Yes. If the sexual assault causes grievous hurt, permanent scarring, or disfigurement to the child, it is categorized as Aggravated Penetrative Sexual Assault under Section 5(i)."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can the court award \"Death Penalty\" for non-penetrative aggravated assault?",
+                    "answer": "No. The death penalty is reserved for Section 6 (Aggravated Penetrative Sexual Assault). For Section 10 (Aggravated Sexual Assault), the punishment is rigorous imprisonment for 5 to 7 years."
+                }
+            ]
+        },
+        {
+            "id": "child_pornography_and_digital",
+            "title": "Child Pornography & Digital Safety",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "How is \"Child Pornography\" defined under Section 2(da)?",
+                    "answer": "It includes any visual depiction of sexually explicit conduct involving a child, including photographs, videos, or digital/computer-generated images. Crucially, it also includes images that are indistinguishable from an actual child, covering \"Deepfakes\" and AI-generated content."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is the penalty for \"Storing\" child pornography?",
+                    "answer": "Section 15 states that simple storage for non-commercial purposes carries a fine for the first offence. However, storing it with the intent to transmit or distribute carries imprisonment of up to 3 years."
+                },
+                {
+                    "id": "q3",
+                    "question": "Is it an offence to fail to delete or report child pornography?",
+                    "answer": "Yes. If a person comes across such material on their device and fails to delete it or report it to the authorities, they are liable under the 2019 Amendment."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the punishment for \"Using\" a child for pornographic purposes (Section 13)?",
+                    "answer": "Using a child for pornography resulting in penetrative sexual assault can lead to imprisonment for 20 years or life, reflecting the gravity of exploiting children for digital media."
+                },
+                {
+                    "id": "q5",
+                    "question": "Does the law cover \"Indecent Representation\" in advertisements?",
+                    "answer": "Yes, representing a child indecently or obscenely in any program or advertisement on television or the internet is a punishable offence under Section 13."
+                },
+                {
+                    "id": "q6",
+                    "question": "Is \"consuming\" child pornography without storing it a crime?",
+                    "answer": "Under the 2019 Amendment, \"viewing\" child pornography is not explicitly a criminal offence for a first-time individual viewer, but \"storing,\" \"possessing,\" or \"transmitting\" is. However, any digital footprint of viewing often leads to an investigation of possession."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is the penalty for \"Commercial\" Child Pornography?",
+                    "answer": "Under Section 14, using a child for pornographic purposes for commercial gain (selling or distributing) carries a minimum of 7 years, which can extend to 14 years or life, along with a heavy fine."
+                },
+                {
+                    "id": "q8",
+                    "question": "What happens if a child’s image is \"Deepfaked\" into pornography?",
+                    "answer": "This is covered under the definition of \"visual depiction.\" Even if the image is computer-generated or morphed (AI), if it resembles a child in a sexual act, it is treated as child pornography under POCSO."
+                },
+                {
+                    "id": "q9",
+                    "question": "Is a child's \"consent\" to be filmed a defense?",
+                    "answer": "Absolutely not. As with physical acts, a minor cannot legally consent to being filmed or photographed for pornographic purposes. The adult recording it is always the criminal."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is the liability of Internet Service Providers (ISPs)?",
+                    "answer": "While POCSO focuses on the perpetrator, the IT Act and POCSO work together to mandate that ISPs or social media platforms must remove child sexual abuse material (CSAM) as soon as they are notified, or they face legal action."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can a person be arrested for having CSAM in their \"Deleted\" folder?",
+                    "answer": "Yes. Forensic experts can retrieve deleted data. If it is proven the person intentionally downloaded and kept the material, they are liable for possession under Section 15."
+                },
+                {
+                    "id": "q12",
+                    "question": "What constitutes \"Transmission\" of child pornography?",
+                    "answer": "Sharing an image or link via WhatsApp, Telegram, Email, or any social media platform constitutes transmission. Even sharing it \"privately\" to one person is a crime."
+                },
+                {
+                    "id": "q13",
+                    "question": "What is \"Self-Generated\" CSAM?",
+                    "answer": "This occurs when a child is coerced (often through grooming) into taking and sending photos of themselves. The person who requested or received the photos is the one liable under POCSO for \"using\" a child for pornographic purposes."
+                },
+                {
+                    "id": "q14",
+                    "question": "Are cyber-café owners responsible?",
+                    "answer": "If an owner knowingly allows their systems to be used for storing or distributing child pornography, they can be charged as an abettor to the crime."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the penalty for a \"Second Conviction\" in pornography cases?",
+                    "answer": "For repeat offences of storing/possessing CSAM with intent to transmit, the punishment is increased to a minimum of 5 years of rigorous imprisonment."
+                },
+                {
+                    "id": "q16",
+                    "question": "How does the law treat \"Sextortion\"?",
+                    "answer": "Using a sexual image of a child to blackmail or threaten them is a combination of Section 11 (Sexual Harassment) and Section 13 (Using a child for pornographic purposes), often leading to aggravated charges."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the law cover \"Indecent Language\" in digital games?",
+                    "answer": "If the language is of a sexual nature and directed at a child to insult their modesty, it falls under Sexual Harassment (Section 11) via digital means."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the duty of a person who finds CSAM on a public device?",
+                    "answer": "They are legally bound under Section 19 (Mandatory Reporting) to inform the police or the SJPU immediately."
+                },
+                {
+                    "id": "q19",
+                    "question": "Can the police seize devices without a warrant in POCSO digital cases?",
+                    "answer": "In urgent cases where there is a risk of data being wiped, the police have the power to seize electronic devices as part of the investigation to preserve forensic evidence."
+                },
+                {
+                    "id": "q20",
+                    "question": "Is \"Morphing\" a child’s face onto an adult body a POCSO offence?",
+                    "answer": "Yes. This falls under the definition of creating pornographic material involving a child and is treated with the same severity as actual child pornography."
+                }
+            ]
+        },
+        {
+            "id": "investigation_procedures",
+            "title": "Investigation Procedures",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Where should a child's statement be recorded?",
+                    "answer": "Under Section 24, the statement should be recorded at the child's residence or a place of their choice. This is to ensure the child feels safe and is not intimidated by the clinical or harsh environment of a police station."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is the \"No Police Uniform\" rule?",
+                    "answer": "While recording a child's statement, the police officer (preferably a woman) must NOT be in uniform. This is a deliberate psychological safeguard to reduce the child's fear and anxiety associated with police authority."
+                },
+                {
+                    "id": "q3",
+                    "question": "Can a child be detained at a police station at night?",
+                    "answer": "Absolutely not. The Act strictly prohibits detaining any child in a police station overnight for any reason, prioritizing the child's right to sleep in a familiar, safe environment."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the role of the Special Juvenile Police Unit (SJPU)?",
+                    "answer": "The SJPU is a specialized wing in every district, headed by a high-ranking officer, designed to handle cases involving children with sensitivity, empathy, and specialized training in child psychology."
+                },
+                {
+                    "id": "q5",
+                    "question": "How does the law prevent the child from facing the accused?",
+                    "answer": "During investigation and trial, the police and court must ensure the child does not come into direct contact with the accused at any point. This may involve using curtains, single-visibility mirrors, or video conferencing."
+                },
+                {
+                    "id": "q6",
+                    "question": "Who is allowed to be present when a child’s statement is recorded?",
+                    "answer": "Only the child’s parents or a person in whom the child reposes trust can be present. This ensures the child feels supported and is not intimidated by the presence of many officials."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can the police use a \"leading question\" during the interview?",
+                    "answer": "Ideally, no. The investigator should allow the child to tell their story in their own words. However, the law understands that children may need prompting, provided the prompts do not \"put words\" into the child's mouth."
+                },
+                {
+                    "id": "q8",
+                    "question": "How is the \"Identity\" of the child protected during investigation?",
+                    "answer": "Section 23 prohibits the media or any person from publishing the name, address, school, or any detail that could reveal the child's identity, unless the Special Court allows it in the interest of the child."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is the \"One-Stop Centre\" (OSC)?",
+                    "answer": "Many districts have OSCs (Sakhi Centres) where medical, legal, and police assistance are provided under one roof so the child doesn't have to travel to multiple locations."
+                },
+                {
+                    "id": "q10",
+                    "question": "Is the police required to provide \"Free Legal Aid\"?",
+                    "answer": "Yes. The police must inform the child and their family about their right to legal aid. The District Legal Services Authority (DLSA) then provides a lawyer free of cost."
+                },
+                {
+                    "id": "q11",
+                    "question": "What is the \"Preliminary Assessment\" in JJ cases?",
+                    "answer": "If the accused is between 16–18 years and the crime is \"heinous,\" a preliminary assessment is done to decide if they should be tried as an adult."
+                },
+                {
+                    "id": "q12",
+                    "question": "How should a statement be recorded if the child has a speech disability?",
+                    "answer": "The police must take the assistance of an interpreter or a special educator to ensure the child's statement is accurately captured."
+                },
+                {
+                    "id": "q13",
+                    "question": "Can the accused be present during the recording of the statement?",
+                    "answer": "Never. The law ensures the accused and the child are kept separate to prevent the child from being intimidated or retracting their statement out of fear."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the \"Language\" requirement for the statement?",
+                    "answer": "The statement must be recorded in the language spoken/understood by the child. If the police don't speak that language, an interpreter must be used."
+                },
+                {
+                    "id": "q15",
+                    "question": "Is the statement read back to the child?",
+                    "answer": "Yes. The recorded statement must be read over to the child (or their guardian) to confirm it is accurate before they sign or thumb-print it."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is the \"Medical Emergency\" exception in investigation?",
+                    "answer": "If a child needs immediate medical help, the police must prioritize taking the child to a hospital over recording a statement."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the child have to visit the police station?",
+                    "answer": "The law says \"as far as possible,\" the child should NOT be called to the police station. The police should go to the child's home or a neutral child-friendly location."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the child \"recants\" (changes) their statement later?",
+                    "answer": "The court examines why the child changed the story. If there is evidence of pressure or threats from the accused's family, the original statement (given under Section 164 CRPC) often holds more weight."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is the role of the \"Support Person\"?",
+                    "answer": "Under POCSO Rules, a Support Person is appointed to accompany the child through the legal process, helping them understand what is happening and providing emotional stability."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can the police share the child’s statement with the media?",
+                    "answer": "No. Disclosing any part of the investigation that identifies the child is a criminal offence punishable by imprisonment."
+                }
+            ]
+        },
+        {
+            "id": "medical_examination",
+            "title": "Medical Examination",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Who must conduct the medical examination of a girl child?",
+                    "answer": "Section 27 mandates that if the victim is a girl, the medical examination MUST be conducted by a woman doctor to preserve the child's dignity and minimize trauma."
+                },
+                {
+                    "id": "q2",
+                    "question": "Is a parent’s presence required during the exam?",
+                    "answer": "Yes, the examination must be conducted in the presence of a parent or a person in whom the child reposes trust. If no such person is available, a woman nominated by the head of the medical institution must be present."
+                },
+                {
+                    "id": "q3",
+                    "question": "Can a medical exam be conducted before an FIR is registered?",
+                    "answer": "Yes. Section 27(1) allows for the medical examination to proceed even if an FIR has not been formally registered yet, ensuring that critical forensic evidence is not lost during administrative delays."
+                },
+                {
+                    "id": "q4",
+                    "question": "Is the \"Two-Finger Test\" allowed?",
+                    "answer": "Absolutely not. The Supreme Court of India has banned the \"two-finger test\" as it is unscientific and violates the dignity and privacy of the victim. Any doctor performing it can be held liable."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is the \"Consent\" requirement for the medical exam?",
+                    "answer": "While the child's parents usually give consent, if the child is old enough to understand, their consent is also taken. If parents refuse but the exam is vital for the child's health or evidence, the CWC can authorize it."
+                },
+                {
+                    "id": "q6",
+                    "question": "How is \"Forensic Evidence\" (DNA) collected?",
+                    "answer": "Doctors use a \"Sexual Assault Forensic Evidence\" (SAFE) kit to collect swabs, clothing, and hair samples, which are then sealed and sent to a Forensic Science Laboratory (FSL)."
+                },
+                {
+                    "id": "q7",
+                    "question": "What if the child is too traumatized for an immediate exam?",
+                    "answer": "The doctor must wait until the child is stabilized. The exam should be done with \"minimal trauma,\" stopping if the child becomes excessively distressed."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is the medical report shared with the accused?",
+                    "answer": "The accused’s lawyer gets a copy as part of the \"charge sheet\" to prepare a defense, but the child's identity must still be protected in public records."
+                },
+                {
+                    "id": "q9",
+                    "question": "Who pays for the medical examination?",
+                    "answer": "The State Government bears all costs. The hospital cannot charge the victim or their family for any POCSO-related medical or forensic tests."
+                },
+                {
+                    "id": "q10",
+                    "question": "Can a private hospital refuse a POCSO case?",
+                    "answer": "No. All registered medical practitioners and hospitals are legally bound to provide immediate first aid and medical treatment to a POCSO victim."
+                },
+                {
+                    "id": "q11",
+                    "question": "How is the age of the child determined medically?",
+                    "answer": "If there is no birth certificate or school record, an \"Ossification Test\" (X-ray of bones) is conducted to estimate the child's age."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if the child needs \"Emergency Contraception\"?",
+                    "answer": "The doctor must provide emergency contraception and PEP (Post-Exposure Prophylaxis for HIV) immediately as part of the emergency medical care."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is \"Photography\" of injuries allowed during the exam?",
+                    "answer": "Yes, but only with consent and for the purpose of evidence. These photos are kept in a sealed cover and are part of the confidential court record."
+                },
+                {
+                    "id": "q14",
+                    "question": "How long should the medical report take?",
+                    "answer": "The exam should be done immediately, and the report should be finalized and sent to the police as soon as the tests are completed."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is \"Secondary Victimization\" in medical settings?",
+                    "answer": "This happens when hospital staff ask insensitive questions or make the child wait in public areas. Hospitals must have a protocol to move POCSO victims to a private area immediately."
+                }
+            ]
+        },
+        {
+            "id": "special_courts_and_trial",
+            "title": "Special Courts & Trial",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the timeline for completing a POCSO trial?",
+                    "answer": "The Act stipulates that the evidence of the child should be recorded within 30 days of the court taking cognizance, and the entire trial should ideally be completed within one year from that date."
+                },
+                {
+                    "id": "q2",
+                    "question": "What does an \"In-Camera\" trial mean?",
+                    "answer": "This means the trial is held in private. Only the judge, the lawyers, the parties, and the person the child trusts are allowed in the room. The public and media are strictly excluded to protect the child's privacy."
+                },
+                {
+                    "id": "q3",
+                    "question": "How does the court ensure the child doesn't see the accused?",
+                    "answer": "Courts use \"Vulnerable Witness Deposition Complexes\" which have separate entry/exit points and a glass screen or curtain so the child can see the judge but not the accused."
+                },
+                {
+                    "id": "q4",
+                    "question": "Can the judge talk to the child directly?",
+                    "answer": "Yes. Judges often talk to the child in their \"Chambers\" or in a less formal setting to make them comfortable before the actual testimony begins."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is the \"Cross-Examination\" process in POCSO?",
+                    "answer": "The accused's lawyer cannot shout at or intimidate the child. They must give their questions to the Judge, who then asks the child the questions in a simplified, non-threatening way."
+                },
+                {
+                    "id": "q6",
+                    "question": "Is the child’s \"Character\" relevant in the trial?",
+                    "answer": "No. Just like in POSH, the child's past behavior or perceived \"character\" is entirely irrelevant to whether an offence was committed."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is \"Interim Compensation\"?",
+                    "answer": "Even before the trial ends, the Special Court can order the State to pay interim compensation to the child for immediate needs like medical bills or counseling."
+                },
+                {
+                    "id": "q8",
+                    "question": "Can the media report on the trial?",
+                    "answer": "They can report that a trial is happening, but they cannot publish any details that reveal the identity of the child or the child's family."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is the \"Presumption of Guilt\" (Section 29)?",
+                    "answer": "This is a powerful legal tool. In POCSO, if a person is prosecuted for certain offences, the court \"presumes\" the person is guilty, and it is up to the accused to prove they are innocent."
+                },
+                {
+                    "id": "q10",
+                    "question": "Who is the \"Special Public Prosecutor\"?",
+                    "answer": "This is a lawyer appointed by the government who has at least 7 years of experience and is specifically tasked with fighting the case on behalf of the child."
+                },
+                {
+                    "id": "q11",
+                    "question": "What happens if the child is \"Hostile\"?",
+                    "answer": "If a child changes their statement due to fear, the prosecutor can ask the court to rely on their previous recorded statement given to a magistrate."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can the trial be held via Video Link?",
+                    "answer": "Yes. If the child is in a different city or too traumatized to come to court, their testimony can be recorded via a secure video link."
+                },
+                {
+                    "id": "q13",
+                    "question": "Are there \"Breaks\" during the child's testimony?",
+                    "answer": "Yes. The judge must ensure the child is not exhausted and can grant frequent breaks for water, food, or rest."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the \"Victim Compensation Scheme\"?",
+                    "answer": "Every state has a fund (often called the Nirbhaya Fund or State Compensation Scheme) from which the court awards money to the victim for rehabilitation."
+                },
+                {
+                    "id": "q15",
+                    "question": "Does the child have to testify multiple times?",
+                    "answer": "The court tries to ensure the child only has to testify once to avoid \"re-traumatization.\""
+                },
+                {
+                    "id": "q16",
+                    "question": "What is the punishment for \"Abetment\" (Section 16)?",
+                    "answer": "Anyone who helps, encourages, or conspires to commit a POCSO offence is punished with the same punishment as the main perpetrator."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can the accused get \"Anticipatory Bail\"?",
+                    "answer": "In many states, courts are extremely hesitant to grant anticipatory bail in POCSO cases due to the risk of the accused influencing the child or the family."
+                },
+                {
+                    "id": "q18",
+                    "question": "What is the \"Victim Impact Statement\"?",
+                    "answer": "Before sentencing, the court may consider a statement about how the crime has affected the child’s life, which helps in deciding the compensation and severity of the sentence."
+                },
+                {
+                    "id": "q19",
+                    "question": "What happens if the trial takes longer than one year?",
+                    "answer": "The judge must record the reasons for the delay in writing. Higher courts monitor these delays to ensure speedier justice."
+                },
+                {
+                    "id": "q20",
+                    "question": "Is there an appeal process?",
+                    "answer": "Yes. If either the state or the accused is unhappy with the Special Court's verdict, they can appeal to the High Court within the prescribed time limit."
+                }
+            ]
+        },
+        {
+            "id": "institutional_safeguards",
+            "title": "Institutional Safeguards",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Are schools required to do background checks on bus drivers and janitors?",
+                    "answer": "Yes. POCSO Rules 2020 mandate that any institution housing or in regular contact with children must perform periodic police verification and background checks on all staff, including non-teaching and contractual staff."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is the POCSO e-Box?",
+                    "answer": "It is an online complaint management system developed by the NCPCR for easy and direct reporting of sexual offences against children, designed for kids who may be more comfortable with digital reporting than talking to an adult."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is a \"Child Protection Policy\" (CPP), and is it mandatory?",
+                    "answer": "A Child Protection Policy is a formal document that outlines how an organization will keep children safe and respond to concerns of abuse. Under the POCSO Rules 2020, it is mandatory for all institutions (schools, sports clubs, NGOs) to have a written CPP that is shared with staff, parents, and students."
+                },
+                {
+                    "id": "q4",
+                    "question": "How should an institution handle a \"False Complaint\" made with malicious intent?",
+                    "answer": "If the Special Court determines that a complaint was filed with the specific intent to humiliate, blackmail, or threaten someone (Section 22), the court can order the complainant to undergo punishment. However, the institution must be extremely careful; a \"lack of evidence\" is not the same as a \"false complaint,\" and the benefit of the doubt always rests with the child unless malice is proven."
+                },
+                {
+                    "id": "q5",
+                    "question": "What are the requirements for CCTV surveillance in schools under POCSO?",
+                    "answer": "While not explicitly in the Act, various state guidelines and the POCSO Rules suggest that CCTVs should cover blind spots (corridors, playgrounds, entry/exit points). However, they must never be placed in private areas like toilets or changing rooms, as that would constitute an offence under the Act itself."
+                },
+                {
+                    "id": "q6",
+                    "question": "What is \"Peer-on-Peer\" abuse, and is the institution responsible?",
+                    "answer": "This refers to sexual abuse where both the victim and the perpetrator are children (students). The institution is responsible for reporting the incident immediately and ensuring both children are handled according to the Juvenile Justice Act, rather than treating it as a simple \"disciplinary\" matter."
+                },
+                {
+                    "id": "q7",
+                    "question": "Should schools conduct \"Sex Education\" or \"Personal Safety\" workshops?",
+                    "answer": "Yes. Section 43 of the Act mandates the Central and State Governments (and by extension, educational institutions) to create awareness about the Act. This includes teaching children about \"Good Touch/Bad Touch,\" their right to say no, and how to use helplines like 1098."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is the protocol for staff-student interaction on social media?",
+                    "answer": "Institutional safeguards usually prohibit staff from having private digital interactions with students. All communication should be through official channels. Any \"grooming\" behavior—such as sending private messages or inappropriate memes—must be reported as potential sexual harassment under Section 11."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is a \"Safe Recruitment\" process?",
+                    "answer": "It involves more than just a resume check. It includes mandatory police verification, checking references from previous employers specifically regarding conduct with children, and conducting interviews that assess the candidate's understanding of child boundaries and safety."
+                },
+                {
+                    "id": "q10",
+                    "question": "How often should an institution's staff undergo POCSO training?",
+                    "answer": "Training should be an annual requirement. Since laws and digital threats (like AI deepfakes) evolve, staff need regular refreshers on identifying signs of abuse, reporting protocols, and their legal liabilities under Section 21."
+                },
+                {
+                    "id": "q11",
+                    "question": "What is the role of the \"School Counselor\" in a POCSO case?",
+                    "answer": "The counselor is often the first point of disclosure. Their role is to provide emotional \"First Aid,\" document the child's statement exactly as told without leading questions, and immediately alert the head of the institution to begin the mandatory reporting process."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can a school be held liable for abuse occurring on a school bus?",
+                    "answer": "Yes. The school’s \"duty of care\" extends to transportation provided by them. Failure to ensure a female attendant is on the bus or failure to vet the driver can result in the institution being charged with \"Aggravated\" offences under Section 5 or 9."
+                },
+                {
+                    "id": "q13",
+                    "question": "What are \"Blind Spots\" in an institution?",
+                    "answer": "These are physical areas (unlocked storerooms, abandoned labs, stairwells) or systemic gaps (lack of supervision during recess) where abuse is likely to occur. Safeguards involve identifying and eliminating these through better lighting, patrols, or technical monitoring."
+                },
+                {
+                    "id": "q14",
+                    "question": "Is an \"Internal Inquiry\" enough when an abuse is reported?",
+                    "answer": "No. An internal inquiry is for administrative purposes only. It cannot replace a police report. Under Section 19, the institution must report to the police regardless of any internal findings. Suppression is a criminal offence."
+                },
+                {
+                    "id": "q15",
+                    "question": "How should an institution handle the \"Privacy\" of a victim?",
+                    "answer": "The institution must ensure that the child's name, photograph, or any details (like grade or section) that could identify them are never leaked to the media, other parents, or staff members who are not directly involved in the case."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is \"Self-Harm\" in a POCSO context?",
+                    "answer": "Often, children who are being abused may engage in self-harm. Institutional staff must be trained to recognize this as a potential symptom of trauma and initiate a sensitive investigation."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is the \"Whistleblower Protection\" within an institution?",
+                    "answer": "A staff member who reports a colleague or a senior for abuse is protected by law. The institution cannot terminate or victimize them for fulfilling their legal duty under Section 19."
+                },
+                {
+                    "id": "q18",
+                    "question": "Does POCSO apply to residential hostels?",
+                    "answer": "Yes, and the standards are even higher. Hostels are considered a \"Shared Household\" or a position of absolute trust, making any offence there \"Aggravated.\""
+                },
+                {
+                    "id": "q19",
+                    "question": "What is the \"Two-Adult Rule\"?",
+                    "answer": "A common safeguard where no adult is allowed to be alone with a child in a closed room. There must always be another adult present or the door must remain open with a clear line of sight."
+                },
+                {
+                    "id": "q20",
+                    "question": "How should an institution respond to \"Gossip\" or rumors?",
+                    "answer": "They should treat rumors as a trigger for a \"preliminary fact-finding.\" If there is any shadow of apprehension, they must move toward the mandatory reporting phase."
+                },
+                {
+                    "id": "q21",
+                    "question": "What is the \"Staff Code of Conduct\"?",
+                    "answer": "A set of rules that clearly defines prohibited behaviors, such as giving personal gifts to students, taking students home, or physical contact that is not professionally necessary."
+                },
+                {
+                    "id": "q22",
+                    "question": "How is the \"Annual Report\" for POCSO compliance filed?",
+                    "answer": "Schools and institutions usually submit a compliance report to the District Education Officer or the local CWC, confirming that they have conducted training and followed hiring safeguards."
+                },
+                {
+                    "id": "q23",
+                    "question": "What happens if the Head of the Institution is the accused?",
+                    "answer": "The reporter should bypass the institution and go directly to the SJPU (Police) or the CWC. The law ensures that no one is \"above the law,\" regardless of their rank."
+                },
+                {
+                    "id": "q24",
+                    "question": "Can an institution be sued for \"Negligence\"?",
+                    "answer": "Yes. If an institution fails to provide a safe environment or ignores previous complaints against an employee who then goes on to abuse a child, they can face civil and criminal liability for negligence."
+                },
+                {
+                    "id": "q25",
+                    "question": "What is \"Secondary Trauma\" for staff?",
+                    "answer": "Dealing with POCSO cases is emotionally draining. Institutional safeguards should also include mental health support for the staff members who handle these cases to prevent burnout and ensure they remain objective."
+                }
+            ]
+        }
+    ]
+}

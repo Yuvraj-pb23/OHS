@@ -1,0 +1,903 @@
+{
+    "topic": "IC Operations & Legal Nuances (POSH Act)",
+    "subtopics": [
+        {
+            "id": "composition_and_legal_status",
+            "title": "Composition & Legal Status",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the legal status of the IC during an inquiry?",
+                    "answer": "The IC is a quasi-judicial body, meaning it has the powers of a Civil Court under the Code of Civil Procedure (1908) specifically for summoning witnesses and discovering documents."
+                },
+                {
+                    "id": "q2",
+                    "question": "What is the mandatory composition of the IC?",
+                    "answer": "It must have a Presiding Officer (senior-level woman employee), at least two members from among employees (preferably committed to the cause of women), and one External Member."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is the \"Women's Representation\" requirement?",
+                    "answer": "At least one-half (50%) of the total members nominated to the IC must be women."
+                },
+                {
+                    "id": "q4",
+                    "question": "How long is the term of an IC member?",
+                    "answer": "Members are appointed for a period not exceeding three years from the date of their nomination."
+                },
+                {
+                    "id": "q5",
+                    "question": "Under what conditions must a member be removed from the IC?",
+                    "answer": "If they disclose confidential information, are convicted of an offense, are found guilty in disciplinary proceedings, or have abused their position."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can the IC initiate an inquiry without a written complaint?",
+                    "answer": "No. The Act requires a written complaint. However, the IC is legally mandated to provide \"all reasonable assistance\" to the woman to put her complaint in writing if she is unable to do so."
+                },
+                {
+                    "id": "q7",
+                    "question": "What does \"Quasi-Judicial\" power actually allow the IC to do?",
+                    "answer": "It allows the IC to summon any person, enforce their attendance, examine them under oath, and require the discovery and production of documents."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is the IC's recommendation binding on the employer?",
+                    "answer": "Yes. The employer is legally obligated to act upon the recommendations of the IC within 60 days of receipt."
+                },
+                {
+                    "id": "q9",
+                    "question": "What happens if the Presiding Officer is the one accused?",
+                    "answer": "The inquiry cannot be handled by that IC. It must be referred to the Local Committee (LC) or a specially constituted committee to avoid a conflict of interest."
+                },
+                {
+                    "id": "q10",
+                    "question": "Can an IC member be a relative of the Respondent or Complainant?",
+                    "answer": "No. This violates the principle of \"nemo judex in causa sua\" (no one should be a judge in their own cause)."
+                },
+                {
+                    "id": "q11",
+                    "question": "What is the penalty for an employer failing to constitute an IC?",
+                    "answer": "A fine of up to ₹50,000, and repeated offenses can lead to the cancellation of business licenses or double the fine."
+                },
+                {
+                    "id": "q12",
+                    "question": "Can the IC handle cases involving male complainants?",
+                    "answer": "The POSH Act is gender-specific to women. However, a company’s internal \"Gender Neutral\" policy may task the IC with such cases, but they would follow service rules rather than the POSH Act."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is an IC required for every branch of a company?",
+                    "answer": "Yes, an IC must be constituted at all administrative units or offices of a workplace."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is the definition of \"Member-Secretary\"?",
+                    "answer": "While not explicitly mandated by the Act, most ICs designate a member to handle the scheduling, minutes, and administrative flow of the inquiry."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the difference between an IC and a Disciplinary Committee?",
+                    "answer": "The IC is a specialized statutory body with civil court powers specifically for sexual harassment, whereas a Disciplinary Committee handles general misconduct."
+                },
+                {
+                    "id": "q16",
+                    "question": "Can a person who is not an employee be a member?",
+                    "answer": "Only the External Member is from outside the organization. All other members must be employees."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is the \"Seniority\" requirement for the Presiding Officer?",
+                    "answer": "She must be a woman employed at a senior level. If a senior woman is not available, she can be nominated from other offices or administrative units."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can the IC grant an extension to their own term?",
+                    "answer": "No. The three-year limit is a statutory cap. New members must be nominated to ensure fresh perspectives and prevent power concentration."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is the role of the IC in \"Prevention\"?",
+                    "answer": "Beyond inquiries, the IC is responsible for organizing workshops, awareness programs, and creating a safe environment."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can an IC member resign?",
+                    "answer": "Yes, a member may resign by giving written notice to the employer, who must then fill the vacancy following the same composition rules."
+                }
+            ]
+        },
+        {
+            "id": "the_external_member",
+            "title": "The External Member",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "Why is an External Member mandatory?",
+                    "answer": "To ensure an outside perspective, prevent internal pressure/bias, and provide expertise in gender issues or legal matters."
+                },
+                {
+                    "id": "q2",
+                    "question": "What are the qualifications for an External Member?",
+                    "answer": "They must be from an NGO or association committed to the cause of women, or a person familiar with issues relating to sexual harassment."
+                },
+                {
+                    "id": "q3",
+                    "question": "How does the External Member prevent \"Conflict of Interest\"?",
+                    "answer": "They act as a watchdog to ensure that senior management does not influence the IC to protect a \"star performer\" or a high-ranking executive."
+                },
+                {
+                    "id": "q4",
+                    "question": "Can an External Member be the company's regular Legal Counsel?",
+                    "answer": "Generally no, as a regular paid counsel may have a financial conflict of interest that compromises their independence."
+                },
+                {
+                    "id": "q5",
+                    "question": "Is the External Member paid for their services?",
+                    "answer": "Yes, the Act specifies that the External Member is entitled to an allowance for holding the proceedings, as prescribed by the employer."
+                },
+                {
+                    "id": "q6",
+                    "question": "Does the External Member have a vote in the final decision?",
+                    "answer": "Yes, they have equal standing with the other members in the decision-making process."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can the External Member be changed mid-inquiry?",
+                    "answer": "Only under extreme circumstances (death, resignation, or disqualification). Changing them mid-way without cause can be grounds for an appeal."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is the role of the External Member in \"Conciliation\"?",
+                    "answer": "They ensure that the Complainant is not being coerced or pressured into a settlement by the organization."
+                },
+                {
+                    "id": "q9",
+                    "question": "How many External Members can an IC have?",
+                    "answer": "The Act requires at least one, but a company can appoint more if they choose to have a larger committee."
+                },
+                {
+                    "id": "q10",
+                    "question": "What \"Expertise\" should an External Member ideally bring?",
+                    "answer": "Knowledge of the POSH law, understanding of gender dynamics, and experience in conducting sensitive investigations."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can an External Member be a former employee of the company?",
+                    "answer": "It is discouraged because it may carry over past biases or personal relationships that hinder independence."
+                },
+                {
+                    "id": "q12",
+                    "question": "What happens if the External Member is absent for a hearing?",
+                    "answer": "The quorum for an inquiry is at least three members, including the Presiding Officer. However, it is best practice for the External Member to attend all sessions."
+                },
+                {
+                    "id": "q13",
+                    "question": "Can the External Member write the final report?",
+                    "answer": "Yes, or they can contribute significantly to ensure the reasoning is legally sound and unbiased."
+                },
+                {
+                    "id": "q14",
+                    "question": "Does the External Member protect the Respondent too?",
+                    "answer": "Yes. Their role is to ensure \"Natural Justice\" is followed for both parties, ensuring the inquiry is fair and not a \"witch hunt.\""
+                },
+                {
+                    "id": "q15",
+                    "question": "What if the internal members disagree with the External Member?",
+                    "answer": "The decision is usually by majority. If there is a tie, the Presiding Officer often has a casting vote (depending on company bylaws)."
+                }
+            ]
+        },
+        {
+            "id": "pre_inquiry_procedures",
+            "title": "Pre-Inquiry Procedures",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the timeline for filing a complaint?",
+                    "answer": "Within 3 months of the incident, or in the case of a series of incidents, within 3 months of the last incident."
+                },
+                {
+                    "id": "q2",
+                    "question": "Can the IC extend the 3-month filing limit?",
+                    "answer": "Yes, for another 3 months, if they are satisfied that the circumstances prevented the woman from filing earlier (must be recorded in writing)."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is the \"7-Day Rule\" for the Respondent?",
+                    "answer": "Within 7 working days of receiving the complaint, the IC must send a copy of the complaint to the Respondent."
+                },
+                {
+                    "id": "q4",
+                    "question": "How many copies of the complaint must the Complainant submit?",
+                    "answer": "Six copies, along with supporting documents and names/addresses of witnesses."
+                },
+                {
+                    "id": "q5",
+                    "question": "How do you define \"Workplace\" under the Act?",
+                    "answer": "It is an \"Extended Workplace\"—including office premises, company transport, off-site off-sites, client locations, and even virtual spaces (Zoom/Teams)."
+                },
+                {
+                    "id": "q6",
+                    "question": "What is \"Conciliation\"?",
+                    "answer": "A process where the IC, at the request of the Complainant, tries to resolve the matter before an inquiry. No monetary settlement is allowed in conciliation."
+                },
+                {
+                    "id": "q7",
+                    "question": "Does the IC have to offer conciliation?",
+                    "answer": "They must inform the Complainant that it is an option, but they cannot force it."
+                },
+                {
+                    "id": "q8",
+                    "question": "What if the settlement terms in conciliation are breached?",
+                    "answer": "The IC must then proceed to conduct a full inquiry into the original complaint."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is \"Interim Relief\"?",
+                    "answer": "Temporary measures during a pending inquiry, such as transferring the Respondent/Complainant or granting leave to the Complainant (up to 3 months)."
+                },
+                {
+                    "id": "q10",
+                    "question": "Can a legal heir file a complaint?",
+                    "answer": "Yes, if the woman is physically or mentally unable to file, or in the event of her death."
+                },
+                {
+                    "id": "q11",
+                    "question": "How should the IC handle an anonymous complaint?",
+                    "answer": "The POSH Act does not strictly cover anonymous complaints as they lack a \"complainant.\" However, the IC may treat it as a general grievance under service rules."
+                },
+                {
+                    "id": "q12",
+                    "question": "What is the first step when a complaint is received?",
+                    "answer": "Verify if the complaint meets the threshold of \"Sexual Harassment\" and falls under the IC’s jurisdiction."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to handle a complaint against a \"Third Party\" (e.g., a vendor)?",
+                    "answer": "The IC must still conduct the inquiry and, if found guilty, recommend the employer to take action (e.g., banning the vendor from the premises)."
+                },
+                {
+                    "id": "q14",
+                    "question": "What if the incident happened at a non-work event (e.g., a private party)?",
+                    "answer": "If the relationship between the parties is primarily professional and the incident affects the work environment, it may still fall under \"Workplace\" jurisdiction."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the \"10-Day Rule\" for the Respondent's reply?",
+                    "answer": "The Respondent must file their reply, along with a list of witnesses and documents, within 10 working days of receiving the complaint."
+                },
+                {
+                    "id": "q16",
+                    "question": "Can the IC refuse to investigate a complaint?",
+                    "answer": "Only if it is clearly not a case of sexual harassment (e.g., a purely financial dispute), but this decision must be documented and communicated clearly."
+                },
+                {
+                    "id": "q17",
+                    "question": "What if the Complainant wants to withdraw the complaint?",
+                    "answer": "The IC should explore the reasons. If there is no coercion, the case can be closed, but if the IC suspects pressure, they may continue the inquiry."
+                },
+                {
+                    "id": "q18",
+                    "question": "How does the IC handle a \"Joint Complaint\"?",
+                    "answer": "Each woman’s experience is unique. While they can be heard together, the IC should treat them as individual cases with separate findings if necessary."
+                },
+                {
+                    "id": "q19",
+                    "question": "What if the Respondent resigns during the pre-inquiry?",
+                    "answer": "The inquiry must continue. The findings may impact their final settlement, experience letter, or future background checks."
+                },
+                {
+                    "id": "q20",
+                    "question": "How is \"Mental Incapacity\" determined for filing?",
+                    "answer": "Through medical certificates or observations from qualified professionals, allowing a representative to file on her behalf."
+                },
+                {
+                    "id": "q21",
+                    "question": "Is \"Help with Writing\" a conflict of interest for the IC?",
+                    "answer": "No, it is a statutory duty. The IC must help the woman translate her oral account into a written format without adding their own bias."
+                },
+                {
+                    "id": "q22",
+                    "question": "What is the role of the \"Presiding Officer\" in the pre-inquiry?",
+                    "answer": "To ensure all statutory timelines are met and that the initial communication with both parties is professional and neutral."
+                },
+                {
+                    "id": "q23",
+                    "question": "Can the IC use \"Virtual Filing\"?",
+                    "answer": "Yes, especially in remote work settings. Emails are considered valid written complaints."
+                },
+                {
+                    "id": "q24",
+                    "question": "What is \"Jurisdictional Challenge\"?",
+                    "answer": "When the Respondent claims the IC cannot hear the case (e.g., the parties aren't employees). The IC must rule on this before proceeding."
+                },
+                {
+                    "id": "q25",
+                    "question": "What are the \"Grounds for Interim Relief\"?",
+                    "answer": "If the Complainant feels intimidated, fears tampering of evidence, or is experiencing mental distress due to the Respondent's presence."
+                }
+            ]
+        },
+        {
+            "id": "principles_of_natural_justice",
+            "title": "Principles of Natural Justice",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What are the two main pillars of Natural Justice?",
+                    "answer": "Audi Alteram Partem (Hear the other side). 2. Nemo judex in causa sua (No one should be a judge in their own cause)."
+                },
+                {
+                    "id": "q2",
+                    "question": "Does the Respondent have a right to see the evidence against them?",
+                    "answer": "Yes. They must be provided with copies of the complaint and all evidence/statements submitted by the Complainant."
+                },
+                {
+                    "id": "q3",
+                    "question": "What is a \"Bias-Free\" inquiry?",
+                    "answer": "One where the IC members have no personal interest in the outcome and have not formed an opinion before the evidence is heard."
+                },
+                {
+                    "id": "q4",
+                    "question": "Can lawyers represent the parties in an IC hearing?",
+                    "answer": "No. The Act explicitly prohibits legal practitioners from representing either party during the proceedings."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is the \"Right to Cross-Examination\"?",
+                    "answer": "The right of one party to ask questions to the other party or their witnesses to test the veracity of their statements."
+                },
+                {
+                    "id": "q6",
+                    "question": "How is cross-examination conducted in sensitive cases?",
+                    "answer": "To avoid direct confrontation, the IC may ask the parties to submit questions in writing, which the IC then asks on their behalf."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is an \"Ex-Parte\" proceeding?",
+                    "answer": "If a party fails to attend three consecutive hearings without sufficient cause, the IC can decide the case based on the available evidence."
+                },
+                {
+                    "id": "q8",
+                    "question": "How much notice must be given for an \"Ex-Parte\" order?",
+                    "answer": "The IC must give at least 15 days' written notice before terminating the proceedings or issuing an ex-parte decision."
+                },
+                {
+                    "id": "q9",
+                    "question": "Can the IC rely on \"Secret Witnesses\"?",
+                    "answer": "No. In the interest of fairness, the identity of witnesses and their statements must be known to both parties so they can respond."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is \"Speaking Order\"?",
+                    "answer": "The final report must be a \"speaking order,\" meaning it must clearly state the reasons and logic behind the findings."
+                },
+                {
+                    "id": "q11",
+                    "question": "How should the IC handle \"Hostile Witnesses\"?",
+                    "answer": "If a witness changes their story, the IC must record the deviation and evaluate which version is more credible based on other evidence."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if an IC member is a witness to the incident?",
+                    "answer": "They must recuse themselves immediately from the committee for that specific case to avoid bias."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is \"Hearsay Evidence\" allowed?",
+                    "answer": "While the IC isn't bound by the strict Evidence Act, it should prioritize direct evidence over second-hand information (rumors)."
+                },
+                {
+                    "id": "q14",
+                    "question": "Can the IC record the proceedings?",
+                    "answer": "Yes, audio or video recording is allowed with the consent of parties, but the written minutes remain the primary legal record."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is \"Standard of Proof\" in a POSH inquiry?",
+                    "answer": "\"Preponderance of Probabilities\"—meaning is it more likely than not that the incident occurred. This is lower than \"Beyond Reasonable Doubt.\""
+                },
+                {
+                    "id": "q16",
+                    "question": "Should the Complainant and Respondent be in the room together?",
+                    "answer": "It is generally avoided to prevent intimidation. They are usually heard separately."
+                },
+                {
+                    "id": "q17",
+                    "question": "What is the \"Opportunity to Rebut\"?",
+                    "answer": "If new evidence comes up against the Respondent during the inquiry, they must be given a fresh chance to explain or deny it."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can the IC ignore a witness the Respondent wants to call?",
+                    "answer": "Only if the IC records in writing that the witness is irrelevant or intended to delay the process."
+                },
+                {
+                    "id": "q19",
+                    "question": "How to handle \"Language Barriers\"?",
+                    "answer": "The IC should provide a translator or ensure a member who knows the language facilitates the process to ensure full understanding."
+                },
+                {
+                    "id": "q20",
+                    "question": "What is the \"Right to a Support Person\"?",
+                    "answer": "While lawyers aren't allowed, some policies allow a non-legal colleague or friend to accompany a party for emotional support (though they cannot speak)."
+                },
+                {
+                    "id": "q21",
+                    "question": "Why is \"Consistency\" important in Natural Justice?",
+                    "answer": "The IC must apply the same procedural rules to both the Complainant and the Respondent without favoritism."
+                },
+                {
+                    "id": "q22",
+                    "question": "Can the IC \"Search\" a Respondent's laptop?",
+                    "answer": "Yes, using their civil court powers, they can order the production of digital evidence if it is relevant to the case."
+                },
+                {
+                    "id": "q23",
+                    "question": "What happens if the IC misses a timeline?",
+                    "answer": "The inquiry remains valid, but the delay must be explained. Chronic delays can be challenged in court as a violation of natural justice."
+                },
+                {
+                    "id": "q24",
+                    "question": "What is \"Undue Influence\"?",
+                    "answer": "When a senior manager tries to sway an IC member's opinion. This must be reported as a breach of the Act."
+                },
+                {
+                    "id": "q25",
+                    "question": "Can the IC members discuss the case outside meetings?",
+                    "answer": "No. All deliberations must happen within the committee to ensure everyone is hearing the same information at the same time."
+                }
+            ]
+        },
+        {
+            "id": "evidence_and_documentation",
+            "title": "Evidence & Documentation",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What constitutes \"Evidence\" in a sexual harassment case?",
+                    "answer": "Emails, WhatsApp chats, CCTV footage, call logs, witness statements, and even the \"contemporaneous conduct\" of the parties."
+                },
+                {
+                    "id": "q2",
+                    "question": "How to handle \"WhatsApp Messages\" as evidence?",
+                    "answer": "Ensure they are printed with dates/times and verified by looking at the original device to ensure they aren't doctored."
+                },
+                {
+                    "id": "q3",
+                    "question": "What are \"Contemporaneous Records\"?",
+                    "answer": "Notes or messages the Complainant wrote to a friend or in a diary immediately after the incident, which help establish the timeline."
+                },
+                {
+                    "id": "q4",
+                    "question": "How to document \"Minutes of the Meeting\"?",
+                    "answer": "Every hearing must have detailed minutes signed by all IC members present and the parties involved (to acknowledge the statement)."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"Circumstantial Evidence\"?",
+                    "answer": "Evidence that doesn't prove the act directly but suggests it happened (e.g., the Respondent was seen leaving the room where the Complainant was crying)."
+                },
+                {
+                    "id": "q6",
+                    "question": "How to evaluate a \"He-said/She-said\" case?",
+                    "answer": "Look for consistency in statements, the behavior of parties before and after the incident, and whether there is any corroborating circumstantial evidence."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can \"Deleted Messages\" be used?",
+                    "answer": "Yes, if they can be recovered through IT forensics or if one party has already taken screenshots."
+                },
+                {
+                    "id": "q8",
+                    "question": "What is the \"Chain of Custody\" for evidence?",
+                    "answer": "A process to ensure that evidence (like a thumb drive) is not tampered with from the time it is submitted until the final report."
+                },
+                {
+                    "id": "q9",
+                    "question": "Should the IC record \"Non-Verbal Cues\"?",
+                    "answer": "Yes, the minutes can note if a party was evasive, aggressive, or visibly distressed, as this aids in credibility assessment."
+                },
+                {
+                    "id": "q10",
+                    "question": "How to handle \"Character Evidence\"?",
+                    "answer": "The past sexual history of the Complainant is strictly irrelevant and cannot be used to discredit her."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can the IC use \"Expert Testimony\"?",
+                    "answer": "Yes, for example, a forensic IT expert to verify an email or a psychologist to explain \"trauma-induced memory loss.\""
+                },
+                {
+                    "id": "q12",
+                    "question": "What is \"Documentary Evidence\"?",
+                    "answer": "Official records like swipe-in logs, travel reimbursements, or duty rosters that prove the presence of parties at a location."
+                },
+                {
+                    "id": "q13",
+                    "question": "How to handle \"Conflicting Witness Statements\"?",
+                    "answer": "The IC must weigh whose testimony is more plausible and look for \"independent\" witnesses who have no stake in the outcome."
+                },
+                {
+                    "id": "q14",
+                    "question": "Is a \"Polygraph Test\" allowed?",
+                    "answer": "No, the IC does not have the power to order lie detector tests."
+                },
+                {
+                    "id": "q15",
+                    "question": "What is the \"Burden of Proof\"?",
+                    "answer": "Initially on the Complainant to provide a prima facie case; then the Respondent must provide their defense to rebut the allegations."
+                },
+                {
+                    "id": "q16",
+                    "question": "How to document a \"Site Visit\"?",
+                    "answer": "If the IC visits the scene of the incident, they must record the layout, lighting, and visibility, and include this as a memo in the file."
+                },
+                {
+                    "id": "q17",
+                    "question": "What if the evidence is \"Highly Confidential\" (e.g., trade secrets)?",
+                    "answer": "The IC must view it in camera (privately) and ensure it is not leaked, but it cannot be ignored if it is central to the case."
+                },
+                {
+                    "id": "q18",
+                    "question": "Can \"Audio Recordings\" made without consent be used?",
+                    "answer": "In POSH cases, they are often admitted if they are relevant, though the IC should be cautious about their authenticity."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is a \"Daily Order Sheet\"?",
+                    "answer": "A log maintained by the IC recording what happened on each date of the inquiry (e.g., \"Witness A examined\", \"Hearing adjourned\")."
+                },
+                {
+                    "id": "q20",
+                    "question": "How to store IC files?",
+                    "answer": "In a locked cabinet or secure digital folder with restricted access to maintain strict confidentiality."
+                },
+                {
+                    "id": "q21",
+                    "question": "Can the IC ask for \"Medical Records\"?",
+                    "answer": "Only if relevant (e.g., to prove physical injury or mental trauma compensation) and with the Complainant’s consent."
+                },
+                {
+                    "id": "q22",
+                    "question": "How to handle \"Social Media\" posts as evidence?",
+                    "answer": "Treat them like any other digital evidence; they can show a pattern of behavior or public harassment."
+                },
+                {
+                    "id": "q23",
+                    "question": "What is \"Corroboration\"?",
+                    "answer": "Evidence that supports the main allegation (e.g., a witness who saw the Complainant looking upset immediately after a meeting)."
+                },
+                {
+                    "id": "q24",
+                    "question": "Can the IC compel a witness to speak?",
+                    "answer": "Yes, using their summons power. If an employee refuses, it can be treated as a violation of company service rules."
+                },
+                {
+                    "id": "q25",
+                    "question": "What if a party \"Refuses to Sign\" the minutes?",
+                    "answer": "The IC should record the refusal in the minutes and proceed. The refusal itself becomes a part of the record."
+                }
+            ]
+        },
+        {
+            "id": "the_inquiry_report",
+            "title": "The Inquiry Report",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the deadline for submitting the Inquiry Report?",
+                    "answer": "Within 10 days from the completion of the inquiry."
+                },
+                {
+                    "id": "q2",
+                    "question": "Who receives the Inquiry Report?",
+                    "answer": "The Employer (usually the CEO/MD or HR Head) and both the Complainant and the Respondent."
+                },
+                {
+                    "id": "q3",
+                    "question": "What are the essential components of the Report?",
+                    "answer": "Summary of allegations, Respondent’s defense, list of evidence, findings on each allegation, and recommendations for action."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the \"Reasoning Section\" of the report?",
+                    "answer": "The most crucial part where the IC explains why they believed one party over the other based on the evidence."
+                },
+                {
+                    "id": "q5",
+                    "question": "Can the IC recommend \"No Action\"?",
+                    "answer": "Yes, if the allegations are not proved."
+                },
+                {
+                    "id": "q6",
+                    "question": "How should the IC handle \"False Malicious\" complaints in the report?",
+                    "answer": "If the IC finds the complaint was made with malicious intent (not just unproved), they must recommend action against the Complainant."
+                },
+                {
+                    "id": "q7",
+                    "question": "What is the \"Anonymization\" rule for the report?",
+                    "answer": "The report shared with the employer must contain names, but any public or annual report must strictly keep names and identities confidential."
+                },
+                {
+                    "id": "q8",
+                    "question": "Can the Employer change the IC's findings?",
+                    "answer": "No. The employer cannot sit in judgment over the findings of facts. They can only question the procedure or the proportionality of the punishment."
+                },
+                {
+                    "id": "q9",
+                    "question": "What if the IC is divided (2 vs 1)?",
+                    "answer": "The majority view prevails. The dissenting member can write a \"Dissent Note\" which is attached to the final report."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is a \"Finding of Fact\"?",
+                    "answer": "A clear statement by the IC, such as: \"We find that the Respondent did send the suggestive text message on [Date].\""
+                },
+                {
+                    "id": "q11",
+                    "question": "How long should the IC keep the case records?",
+                    "answer": "While the Act is silent, it is best practice to keep them for at least 8-10 years to cover the duration of potential appeals or civil suits."
+                },
+                {
+                    "id": "q12",
+                    "question": "What language should the report be in?",
+                    "answer": "Usually English or the official language of the workplace, but it should be translated if one party does not understand the original language."
+                },
+                {
+                    "id": "q13",
+                    "question": "Can the IC recommend \"Systemic Changes\" in the report?",
+                    "answer": "Yes, such as improving lighting in the parking lot or sensitivity training for a specific department."
+                },
+                {
+                    "id": "q14",
+                    "question": "How to handle \"Multiple Allegations\" in one report?",
+                    "answer": "The IC must give a finding on each individual incident mentioned in the complaint."
+                },
+                {
+                    "id": "q15",
+                    "question": "Is the report \"Legally Admissible\" in court?",
+                    "answer": "Yes, the IC report is the primary document in any subsequent appeal or High Court challenge."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is the \"Conclusion\" vs. \"Recommendation\"?",
+                    "answer": "The Conclusion is whether the act happened (Guilty/Not Guilty). The Recommendation is the punishment (Warning/Termination)."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can the Respondent appeal the Report?",
+                    "answer": "Yes, within 90 days of the recommendation being communicated."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the Employer ignores the 10-day submission?",
+                    "answer": "The IC should send a formal reminder, as the liability for non-implementation falls on the employer."
+                },
+                {
+                    "id": "q19",
+                    "question": "What is \"Strict Confidentiality\" of the report?",
+                    "answer": "The contents of the report, including the identity of the parties, cannot be published or communicated to the media."
+                },
+                {
+                    "id": "q20",
+                    "question": "Can the IC recommend a \"Transfer\" as a final remedy?",
+                    "answer": "Yes, to ensure the parties do not have to work together in the future."
+                }
+            ]
+        },
+        {
+            "id": "punishments_and_remedies",
+            "title": "Punishments & Remedies",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What are the types of \"Minor\" punishments?",
+                    "answer": "Written apology, warning, reprimand, or withholding of a promotion/increment."
+                },
+                {
+                    "id": "q2",
+                    "question": "What are \"Major\" punishments?",
+                    "answer": "Termination of service, suspension, or counseling."
+                },
+                {
+                    "id": "q3",
+                    "question": "How does the IC determine \"Compensation\"?",
+                    "answer": "Based on the mental trauma, pain, suffering, loss in career opportunity, and the income/financial status of the Respondent."
+                },
+                {
+                    "id": "q4",
+                    "question": "Can compensation be deducted from the Respondent’s salary?",
+                    "answer": "Yes. If the Respondent fails to pay, it can be recovered as an arrear of land revenue through the Local Committee."
+                },
+                {
+                    "id": "q5",
+                    "question": "What is \"Proportionality\"?",
+                    "answer": "The punishment must fit the crime. A verbal joke might merit a warning, while physical assault merits immediate termination."
+                },
+                {
+                    "id": "q6",
+                    "question": "Can the IC recommend \"Community Service\"?",
+                    "answer": "No. The Act specifies punishments under service rules or specific disciplinary actions; community service is not a statutory POSH remedy."
+                },
+                {
+                    "id": "q7",
+                    "question": "How to handle a Respondent who is a \"Third Party\" (Contractor)?",
+                    "answer": "The IC can recommend termination of their contract or blacklisting them from the company premises."
+                },
+                {
+                    "id": "q8",
+                    "question": "Is \"Apology\" enough for serious harassment?",
+                    "answer": "Rarely. For persistent or severe harassment, a mere apology is seen as a \"slap on the wrist\" and may be legally challenged."
+                },
+                {
+                    "id": "q9",
+                    "question": "Can the IC recommend \"Criminal Action\"?",
+                    "answer": "Yes, the IC must inform the woman that she has a right to file an FIR under the IPC/BNS, and provide support if she chooses to do so."
+                },
+                {
+                    "id": "q10",
+                    "question": "What is \"Impact on Career\" in compensation?",
+                    "answer": "If the harassment forced the woman to resign or miss a promotion, the compensation should reflect that financial loss."
+                },
+                {
+                    "id": "q11",
+                    "question": "Can the IC recommend \"Sensitivity Training\" for the whole team?",
+                    "answer": "Yes, as a remedial measure to prevent future incidents."
+                },
+                {
+                    "id": "q12",
+                    "question": "What if the Respondent is a \"Non-Employee\" (Visitor)?",
+                    "answer": "The IC can recommend that the employer files a police complaint or issues a \"No-Entry\" order for the individual."
+                },
+                {
+                    "id": "q13",
+                    "question": "Is \"Loss of Pay\" during suspension a punishment?",
+                    "answer": "Suspension during inquiry is interim. If found guilty, the suspension period can be treated as \"Leave without pay\" as part of the punishment."
+                },
+                {
+                    "id": "q14",
+                    "question": "What is \"Mental Trauma\" evidence for compensation?",
+                    "answer": "Prescriptions for therapy, leave taken due to stress, or witness accounts of the woman's altered state of mind."
+                },
+                {
+                    "id": "q15",
+                    "question": "Can the IC recommend \"Legal Costs\" be paid to the Complainant?",
+                    "answer": "The Act doesn't explicitly mention legal costs, but they can be factored into the \"pain and suffering\" component of compensation."
+                },
+                {
+                    "id": "q16",
+                    "question": "How to handle \"Retaliation\" as a separate offense?",
+                    "answer": "If the Respondent retaliates against the Complainant for filing, the IC can recommend a harsher punishment for the original act."
+                },
+                {
+                    "id": "q17",
+                    "question": "Can the IC recommend \"Forfeiture of Gratuity\"?",
+                    "answer": "Only if allowed under the company’s specific service rules and for \"gross misconduct\" like sexual harassment."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the Respondent has \"No Money\" to pay compensation?",
+                    "answer": "The IC can recommend it be recovered through the District Officer as an arrear of land revenue."
+                },
+                {
+                    "id": "q19",
+                    "question": "Can the IC recommend \"Change of Shift\"?",
+                    "answer": "Yes, as a remedy to ensure the Complainant feels safe at work."
+                },
+                {
+                    "id": "q20",
+                    "question": "What is the goal of \"Remedies\"?",
+                    "answer": "To provide justice to the victim, punish the perpetrator, and deter others from committing similar acts."
+                }
+            ]
+        },
+        {
+            "id": "post_inquiry_and_compliance",
+            "title": "Post-Inquiry & Compliance",
+            "questions": [
+                {
+                    "id": "q1",
+                    "question": "What is the \"60-Day Rule\" for employers?",
+                    "answer": "The employer must implement the IC's recommendations within 60 days of receiving the report."
+                },
+                {
+                    "id": "q2",
+                    "question": "Who prepares the IC \"Annual Report\"?",
+                    "answer": "The IC prepares it and submits it to the Employer and the District Officer (DO)."
+                },
+                {
+                    "id": "q3",
+                    "question": "What must the Annual Report contain?",
+                    "answer": "Number of complaints received, number of cases disposed of, cases pending for more than 90 days, and number of awareness workshops held."
+                },
+                {
+                    "id": "q4",
+                    "question": "What is the \"District Officer\" (DO)?",
+                    "answer": "A government official (usually a District Magistrate or Collector) who monitors POSH compliance at the district level."
+                },
+                {
+                    "id": "q5",
+                    "question": "Where can an appeal be filed?",
+                    "answer": "In the Court or Tribunal as per the service rules, or the High Court if no specific tribunal exists."
+                },
+                {
+                    "id": "q6",
+                    "question": "What is the timeline for an Appeal?",
+                    "answer": "90 days from the date of the recommendation."
+                },
+                {
+                    "id": "q7",
+                    "question": "Can the IC be sued for their decision?",
+                    "answer": "No, provided they acted in \"good faith.\" The Act provides immunity to IC members for actions taken in the discharge of their duties."
+                },
+                {
+                    "id": "q8",
+                    "question": "How to track \"Implementation\"?",
+                    "answer": "The IC should follow up with HR after 60 days to ensure the punishment was carried out and documented in the Respondent’s file."
+                },
+                {
+                    "id": "q9",
+                    "question": "What is the \"Penalty for Leakage\" of information?",
+                    "answer": "The employer can take disciplinary action against anyone who leaks confidential IC information (usually a fine or as per service rules)."
+                },
+                {
+                    "id": "q10",
+                    "question": "Is the IC responsible for \"Monitoring\" the parties post-inquiry?",
+                    "answer": "Yes, to ensure there is no victimization of the Complainant or witnesses after the case is closed."
+                },
+                {
+                    "id": "q11",
+                    "question": "What happens to the IC if the company is sold/merged?",
+                    "answer": "The new management inherits the legal liabilities and must constitute its own IC or adopt the existing one."
+                },
+                {
+                    "id": "q12",
+                    "question": "How often should \"Awareness Sessions\" be held?",
+                    "answer": "The law says \"regularly,\" but best practice is at least once a year for all employees and separate training for IC members."
+                },
+                {
+                    "id": "q13",
+                    "question": "Can the Complainant appeal for \"Insufficient Punishment\"?",
+                    "answer": "Yes, if she feels the remedy does not match the severity of the act."
+                },
+                {
+                    "id": "q14",
+                    "question": "What if the DO finds the Annual Report unsatisfactory?",
+                    "answer": "They can order an inspection of company records and impose fines for non-compliance."
+                },
+                {
+                    "id": "q15",
+                    "question": "Can the IC recommend \"Police Help\" for implementation?",
+                    "answer": "Usually, the employer handles implementation, but for physical safety, they may involve local law enforcement."
+                },
+                {
+                    "id": "q16",
+                    "question": "What is \"Victimization Check\"?",
+                    "answer": "A follow-up meeting with the Complainant 3-6 months after the inquiry to ensure she is not facing any professional backlash."
+                },
+                {
+                    "id": "q17",
+                    "question": "Does the IC disband after a report is submitted?",
+                    "answer": "No, the IC is a permanent standing committee. They move on to the next case or focus on prevention."
+                },
+                {
+                    "id": "q18",
+                    "question": "What if the Employer only implements \"Half\" of the recommendation?",
+                    "answer": "This is a violation of the Act. The IC (especially the External Member) should record this as a non-compliance."
+                },
+                {
+                    "id": "q19",
+                    "question": "Can the IC report be shared with a \"New Employer\"?",
+                    "answer": "Only through a formal background check process if relevant, but the details remain strictly confidential."
+                },
+                {
+                    "id": "q20",
+                    "question": "Why is \"Documentation\" the most important post-inquiry step?",
+                    "answer": "Because in case of a court challenge, the quality of the IC’s records is the only thing that can prove the inquiry was fair and legal."
+                }
+            ]
+        }
+    ]
+}

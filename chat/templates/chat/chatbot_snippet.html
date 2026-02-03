@@ -1,0 +1,64 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=11" />
+<div class="botdiv">
+
+  <div id="chat-wrapper">
+    <!-- Bubble Removed as requested -->
+    <div id="chat-icon"><img src="{% static 'images/logo_v2.jpg' %}" alt="Chat Icon" class="chat-icon-logo"></div>
+  </div>
+
+  <div id="chatbot">
+    <div class="chat-header">
+      <div class="header-content">
+        <img src="{% static 'images/logo_v2.jpg' %}" alt="OHS AI Logo" class="chat-avatar">
+        <div class="chat-title">OHS AI</div>
+        <div class="chat-subtitle">Your AI assistant</div>
+        <button class="learn-more-btn">Learn More</button>
+      </div>
+
+      <div class="header-buttons">
+        <button class="header-action-btn" id="resize-chat" title="Resize Chat">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+        </button>
+        <button class="header-action-btn" id="close-chat" title="Close Chat">×</button>
+      </div>
+    </div>
+
+    <div id="fixed-actions">
+      <!-- Fixed buttons will be generated here by JavaScript -->
+    </div>
+
+    <div class="chat-body" id="chat-body">
+      <!-- Chat messages will appear here -->
+    </div>
+
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Type and press Enter" />
+      <button class="input-action-btn" id="send-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div id="imageModal" class="image-modal-overlay">
+  <span class="image-modal-close">&times;</span>
+  <div class="image-modal-container">
+    <div class="image-modal-main-content">
+      <!-- Left Side: Text/Answer Area -->
+      <div class="image-modal-text-area" id="modalLeftText">
+        <!-- Content injected via JS -->
+      </div>
+      <!-- Right Side: Questions/Options -->
+      <div id="image-modal-caption"></div>
+    </div>
+    <!-- Gallery Removed -->
+  </div>
+</div>

@@ -1,0 +1,345 @@
+[
+  {
+    "instruction": "Define sexual harassment in a professional workplace context.",
+    "input": "",
+    "output": "Sexual harassment refers to any unwelcome act, behavior, or conduct of a sexual nature that violates the dignity of an individual or creates an intimidating, hostile, or uncomfortable work environment. Such behavior may be verbal, non-verbal, physical, written, or digital. The key element is that the conduct is unwelcome, meaning it is not invited or reciprocated. It can include inappropriate physical contact, sexually suggestive remarks, requests for sexual favors, or displaying offensive material. The impact on the aggrieved person is more relevant than the intention of the perpetrator."
+  },
+  {
+    "instruction": "Explain the scope of a POSH policy regarding workplace boundaries.",
+    "input": "",
+    "output": "The POSH policy extends beyond the physical office space to include all work-related activities such as meetings, training, conferences, business travel, and virtual interactions. Digital communication channels like emails, messaging platforms, and virtual meetings are also included. The policy remains applicable during work-related social events and any location where work-related communication occurs. This broad scope ensures protection in all professional contexts, not just within office premises."
+  },
+  {
+    "instruction": "Who does the POSH policy apply to within an organization?",
+    "input": "",
+    "output": "The policy applies to every individual interacting with the workplace ecosystem, regardless of seniority, gender, or employment status. This includes full-time, part-time, temporary, and contractual employees, as well as interns, trainees, and apprentices. Additionally, it covers consultants, vendors, service providers, and third parties, including visitors and clients, when their conduct affects individuals at the workplace."
+  },
+  {
+    "instruction": "How is 'Workplace' defined in both physical and virtual terms under POSH?",
+    "input": "",
+    "output": "A workplace includes any location where work-related activities occur, such as offices, branches, factories, and project sites. It also encompasses virtual environments, including online meetings, email, and internal messaging platforms. Conduct in these virtual spaces is held to the same standards as physical workplaces. This also includes work-related travel and social events connected to professional responsibilities."
+  },
+  {
+    "instruction": "What are the fundamental rights of an aggrieved person under POSH?",
+    "input": "",
+    "output": "An aggrieved person has the right to a safe, dignified work environment and the right to raise a complaint without fear of retaliation. They are entitled to sensitivity, fairness, and confidentiality. Rights include being informed of complaint procedures, presenting their account and evidence, receiving a fair hearing, and seeking interim relief. Their dignity and privacy must be protected at all stages."
+  },
+  {
+    "instruction": "What are the core responsibilities of employees in maintaining a harassment-free workplace?",
+    "input": "",
+    "output": "Employees must maintain respectful and professional behavior, refraining from conduct that may be perceived as unwelcome or offensive. They must comply with the POSH policy, discourage inappropriate behavior, and support affected colleagues. Employees are responsible for using established reporting mechanisms and maintaining strict confidentiality regarding inquiry processes or sensitive information."
+  },
+  {
+    "instruction": "Outline the responsibilities of an organization regarding POSH compliance.",
+    "input": "",
+    "output": "The organization must provide a safe environment by communicating a clear POSH policy, constituting an Internal Committee (IC), and ensuring access to redressal mechanisms. It is responsible for handling complaints promptly and fairly, providing resources and training, and protecting individuals from retaliation. The organization must also take appropriate action based on inquiry findings."
+  },
+  {
+    "instruction": "Describe the composition requirements for an Internal Committee (IC).",
+    "input": "",
+    "output": "The Internal Committee must be composed to ensure fairness, neutrality, and competence. It typically includes members with relevant experience, integrity, and an understanding of workplace issues. The composition should ensure diversity and impartiality to build employee trust, and all members must be trained to handle complaints with sensitivity and procedural fairness. According to legal requirements, at least half of the total members must be women, and the committee must include at least one 'External Member' from an NGO or an association committed to the cause of women."
+  },
+  {
+    "instruction": "What are the roles and powers of the Internal Committee (IC)?",
+    "input": "",
+    "output": "The IC is responsible for receiving, examining, and inquiring into sexual harassment complaints in an impartial and confidential manner. It has the power to gather information, hear both parties, and review evidence. The IC may recommend interim measures and provide conclusions based on findings. It acts as an inquiry body rather than a final disciplinary authority."
+  },
+  {
+    "instruction": "Explain the process for filing a POSH complaint.",
+    "input": "",
+    "output": "An aggrieved person may submit a written complaint to the Internal Committee, detailing the incident. The process is designed to be accessible and sensitive; assistance can be provided to document the complaint if necessary. Once submitted, the IC acknowledges receipt and initiates a structured inquiry process according to defined procedures. The complaint should generally be submitted within three months of the incident."
+  },
+  {
+    "instruction": "Describe the standard inquiry procedure for a POSH complaint.",
+    "input": "",
+    "output": "The inquiry is a structured, impartial process where both parties can present their case. The IC examines facts, reviews evidence, and records statements while prioritizing dignity and confidentiality. The process focuses on fact-finding rather than fault-finding and results in reasoned conclusions based on available information."
+  },
+  {
+    "instruction": "How do the principles of natural justice apply to POSH inquiries?",
+    "input": "",
+    "output": "Natural justice ensures a fair and unbiased process. Key principles include the right of both parties to be heard and the requirement that decisions be based on evidence and reasoned analysis rather than assumptions. Adhering to these principles ensures the outcome is transparent, just, and defensible."
+  },
+  {
+    "instruction": "What are the confidentiality requirements for handling POSH complaints?",
+    "input": "",
+    "output": "Confidentiality is mandatory; the identities of individuals, details of the complaint, and inquiry proceedings must be protected from unauthorized disclosure. This protects the privacy and well-being of all parties and encourages reporting by creating a safe environment. Any breach of confidentiality is considered a violation of the process integrity."
+  },
+  {
+    "instruction": "How does an organization protect individuals against retaliation?",
+    "input": "",
+    "output": "The organization must ensure that no individual faces adverse consequences, such as discrimination or unfavorable treatment, for filing or supporting a complaint. Protection is maintained during and after the inquiry. Treating retaliation as a serious concern is essential for maintaining trust in the reporting mechanism."
+  },
+  {
+    "instruction": "How are false or malicious complaints handled under POSH?",
+    "input": "",
+    "output": "The policy distinguishes between unsubstantiated complaints and those made with deliberate intent to mislead or harm. While genuine reporting is encouraged, malicious complaints are addressed to prevent misuse of the system. Importantly, a lack of evidence does not automatically qualify a complaint as malicious."
+  },
+  {
+    "instruction": "Define the legal term 'child' as per child protection laws.",
+    "input": "",
+    "output": "A child is any individual who has not completed eighteen years of age. This definition is absolute and does not change based on the individual's maturity, social status, or perceived consent. All persons under 18 are entitled to special protection from exploitation and harm across all environments, including digital spaces."
+  },
+  {
+    "instruction": "Explain the mandatory reporting requirement under the POCSO Act (Section 19).",
+    "input": "",
+    "output": "Under Section 19 of the POCSO Act, any person—including professionals like doctors and teachers—who knows or suspects child abuse is legally mandated to report it to the Special Juvenile Police Unit (SJPU) or the local police. Failure to report such an offence is a punishable crime that can lead to a jail term of up to 6 months or a fine."
+  },
+  {
+    "instruction": "Define mental health within a workplace context and explain its significance.",
+    "input": "",
+    "output": "Mental health refers to an individual's emotional, psychological, and social well-being, influencing how they think, feel, and cope with everyday work situations. It is not merely the absence of illness but includes the ability to manage stress and maintain productive relationships. In the workplace, it is essential for sustaining productivity, engagement, and morale."
+  },
+  {
+    "instruction": "What are common workplace factors that contribute to employee stress?",
+    "input": "",
+    "output": "Workplace stress often arises from excessive workloads, unrealistic deadlines, a lack of role clarity, or insufficient resources. Interpersonal issues such as poor communication, lack of recognition, and unresolved conflicts also contribute to stress. Additionally, organizational changes like restructuring or leadership transitions can increase stress levels."
+  },
+  {
+    "instruction": "What are the limitations of an organization's role in supporting employee mental health?",
+    "input": "",
+    "output": "Organizational support has defined limits; organizations do not provide medical diagnoses, treatment, or therapy. Their responsibility is focused on workplace-related assistance, raising awareness, and referring employees to appropriate external healthcare resources. While they must create conditions that minimize unnecessary stress, they do not replace professional healthcare services."
+  },
+  {
+    "instruction": "If an intern is under 18 and faces harassment, is it handled under POSH or POCSO?",
+    "input": "Mixed Topic: POSH vs POCSO for minors.",
+    "output": "It is handled under both. The POSH policy provides the workplace redressal mechanism, while the POCSO Act provides the criminal legal framework. Because the intern is a 'child' (under 18) legally, there is a mandatory reporting obligation to the police under POCSO, regardless of the internal IC inquiry. The organization must prioritize the safety of the minor and follow both legal protocols."
+  },
+  {
+    "instruction": "Can the Internal Committee suggest mental health support for a respondent during an inquiry?",
+    "input": "Mixed Topic: IC roles and Mental Health.",
+    "output": "Yes. While the IC's primary role is fact-finding, they can recommend that the organization provide neutral support resources, such as counseling or stress management, to both the complainant and the respondent. This ensures the inquiry process remains humane and minimizes the psychological toll on all parties involved without biasing the final decision."
+  },
+  {
+    "instruction": "How does poor mental health in a team lead to potential POSH violations?",
+    "input": "Mixed Topic: Mental Health and Prevention.",
+    "output": "High stress, burnout, and a toxic culture often lead to a breakdown in professional boundaries. When mental well-being is ignored, interpersonal conflicts can escalate, and the likelihood of inappropriate 'unwelcome' behavior increases. A proactive mental health strategy acts as a preventive layer for POSH by maintaining a respectful and emotionally regulated workplace."
+  },
+  {
+    "instruction": "What happens if a POSH incident also involves a criminal act like physical assault?",
+    "input": "Mixed Topic: POSH and Criminal Law.",
+    "output": "The POSH inquiry is an administrative process and can run parallel to a criminal investigation. The aggrieved person has the right to file a separate police complaint (FIR) under the Indian Penal Code. The organization is required to provide assistance if the victim chooses to pursue criminal proceedings, while the IC continues its internal investigation for workplace-level action."
+  },
+  {
+    "instruction": "Does an employee have to tell their boss if they are struggling with their mental health?",
+    "input": "",
+    "output": "No. While employees are encouraged to communicate concerns early if challenges affect their work, they are not required to disclose personal mental health details. Seeking help through established channels is a proactive step that should be treated with discretion and strictly protected from unnecessary disclosure. Access to such information is limited to those with a legitimate need to know."
+  },
+  {
+    "instruction": "Does an organization with only male employees still need a POSH policy and an Internal Committee?",
+    "input": "Common organizational FAQ.",
+    "output": "Yes. Every organization with 10 or more employees, regardless of gender composition, is legally required to have a POSH policy and a functional Internal Committee (IC). This ensures that even if there are currently no female employees, the organization is prepared to protect visitors, vendors, or future female staff who interact with the workplace ecosystem."
+  },
+  {
+    "instruction": "Can a man file a POSH complaint if he is harassed by a male or female colleague?",
+    "input": "Gender-neutrality FAQ.",
+    "output": "The POSH Act of 2013 specifically protects women. However, many progressive organizations choose to implement a gender-neutral POSH policy. If your organization's policy is gender-neutral, a man can file a complaint with the IC. If the policy is not gender-neutral, the man can still seek redressal through the company's General Code of Conduct or human resources disciplinary procedures."
+  },
+  {
+    "instruction": "If a colleague sends inappropriate sexual messages on a private WhatsApp group after work hours, is it covered under POSH?",
+    "input": "Digital/Virtual workplace FAQ.",
+    "output": "Yes. The 'workplace' is defined broadly and includes any interaction arising out of the working relationship. Since the individuals are colleagues and the conduct impacts the professional environment, inappropriate digital communication after hours is considered a workplace issue. The timing or the fact that it occurred on a private platform does not exempt it from POSH scrutiny."
+  },
+  {
+    "instruction": "Can a former employee file a POSH complaint for an incident that happened before they resigned?",
+    "input": "Former employee rights FAQ.",
+    "output": "Yes, a former employee can file a complaint within three months of the last incident of harassment. The termination of employment does not take away the person's right to seek justice for incidents that occurred during their tenure, provided the timeline for filing (usually 90 days) is respected."
+  },
+  {
+    "instruction": "What should the Internal Committee do if the person accused (respondent) is not fit to participate due to a mental health crisis?",
+    "input": "Intersection of IC and Mental Health FAQ.",
+    "output": "Natural justice requires that both parties have a fair chance to present their case. If the respondent provides medical evidence of a mental health crisis, the IC may pause proceedings for a reasonable period. However, the IC must ensure this is not used as a delay tactic and should balance the need for sensitivity with the legal requirement to complete the inquiry within 90 days."
+  },
+  {
+    "instruction": "Is there a time limit for reporting an offense under the POCSO Act?",
+    "input": "POCSO legal timeline FAQ.",
+    "output": "No. Unlike POSH, which generally has a three-month filing window, there is no time limit for reporting an offense under the POCSO Act. A victim can report child sexual abuse years after it occurred. The law recognizes that it takes time for victims to process trauma and feel safe enough to come forward."
+  },
+  {
+    "instruction": "Are organizations allowed to have more than one Internal Committee (IC)?",
+    "input": "Administrative/Compliance FAQ.",
+    "output": "Yes. If an organization has multiple administrative units or offices located at different places (e.g., different cities or branches), it must constitute an Internal Committee at all such administrative units or offices to ensure accessible redressal for all employees."
+  },
+  {
+    "instruction": "What happens if an Internal Committee member is found to be biased or has a conflict of interest?",
+    "input": "IC integrity FAQ.",
+    "output": "An IC member must be neutral. If a member has a personal connection to either party or has expressed biased views (e.g., victim-blaming), they must recuse themselves. If bias is discovered later, the entire inquiry process may be invalidated, and the organization could face legal penalties for failing to provide a fair hearing."
+  },
+  {
+    "instruction": "Does an employee need to provide a medical note for a mental health-related leave of absence?",
+    "input": "Mental Health and HR policy FAQ.",
+    "output": "Generally, yes. To verify the need for leave and determine appropriate workplace accommodations upon return, organizations typically require a note from a qualified medical professional (like a psychiatrist or licensed therapist). This documentation helps the employer understand the expected duration and any specific support the employee may need without requiring the disclosure of sensitive personal therapy details."
+  },
+  {
+    "instruction": "Can the Internal Committee take action if a complaint is filed by a visitor against a third-party vendor on the office premises?",
+    "input": "Mixed scenario: Third-party involvement FAQ.",
+    "output": "Yes. The organization is responsible for providing a safe environment for everyone 'directly or indirectly connected' to the workplace. While the IC's primary power is over its own employees, it must still investigate the incident, provide support to the visitor, and take action—such as barring the vendor from the premises—to ensure safety."
+  },
+  {
+    "instruction": "Does an organization with only male employees still need a POSH policy and an Internal Committee?",
+    "input": "Common organizational FAQ.",
+    "output": "Yes. Every organization with 10 or more employees, regardless of gender composition, is legally required to have a POSH policy and a functional Internal Committee (IC). This ensures that even if there are currently no female employees, the organization is prepared to protect visitors, vendors, or future female staff who interact with the workplace ecosystem."
+  },
+  {
+    "instruction": "Can a man file a POSH complaint if he is harassed by a male or female colleague?",
+    "input": "Gender-neutrality FAQ.",
+    "output": "The POSH Act of 2013 specifically protects women. However, many progressive organizations choose to implement a gender-neutral POSH policy. If your organization's policy is gender-neutral, a man can file a complaint with the IC. If the policy is not gender-neutral, the man can still seek redressal through the company's General Code of Conduct or human resources disciplinary procedures."
+  },
+  {
+    "instruction": "If a colleague sends inappropriate sexual messages on a private WhatsApp group after work hours, is it covered under POSH?",
+    "input": "Digital/Virtual workplace FAQ.",
+    "output": "Yes. The 'workplace' is defined broadly and includes any interaction arising out of the working relationship. Since the individuals are colleagues and the conduct impacts the professional environment, inappropriate digital communication after hours is considered a workplace issue. The timing or the fact that it occurred on a private platform does not exempt it from POSH scrutiny."
+  },
+  {
+    "instruction": "Can a former employee file a POSH complaint for an incident that happened before they resigned?",
+    "input": "Former employee rights FAQ.",
+    "output": "Yes, a former employee can file a complaint within three months of the last incident of harassment. The termination of employment does not take away the person's right to seek justice for incidents that occurred during their tenure, provided the timeline for filing (usually 90 days) is respected."
+  },
+  {
+    "instruction": "What should the Internal Committee do if the person accused (respondent) is not fit to participate due to a mental health crisis?",
+    "input": "Intersection of IC and Mental Health FAQ.",
+    "output": "Natural justice requires that both parties have a fair chance to present their case. If the respondent provides medical evidence of a mental health crisis, the IC may pause proceedings for a reasonable period. However, the IC must ensure this is not used as a delay tactic and should balance the need for sensitivity with the legal requirement to complete the inquiry within 90 days."
+  },
+  {
+    "instruction": "Is there a time limit for reporting an offense under the POCSO Act?",
+    "input": "POCSO legal timeline FAQ.",
+    "output": "No. Unlike POSH, which generally has a three-month filing window, there is no time limit for reporting an offense under the POCSO Act. A victim can report child sexual abuse years after it occurred. The law recognizes that it takes time for victims to process trauma and feel safe enough to come forward."
+  },
+  {
+    "instruction": "Are organizations allowed to have more than one Internal Committee (IC)?",
+    "input": "Administrative/Compliance FAQ.",
+    "output": "Yes. If an organization has multiple administrative units or offices located at different places (e.g., different cities or branches), it must constitute an Internal Committee at all such administrative units or offices to ensure accessible redressal for all employees."
+  },
+  {
+    "instruction": "What happens if an Internal Committee member is found to be biased or has a conflict of interest?",
+    "input": "IC integrity FAQ.",
+    "output": "An IC member must be neutral. If a member has a personal connection to either party or has expressed biased views (e.g., victim-blaming), they must recuse themselves. If bias is discovered later, the entire inquiry process may be invalidated, and the organization could face legal penalties for failing to provide a fair hearing."
+  },
+  {
+    "instruction": "Does an employee need to provide a medical note for a mental health-related leave of absence?",
+    "input": "Mental Health and HR policy FAQ.",
+    "output": "Generally, yes. To verify the need for leave and determine appropriate workplace accommodations upon return, organizations typically require a note from a qualified medical professional (like a psychiatrist or licensed therapist). This documentation helps the employer understand the expected duration and any specific support the employee may need without requiring the disclosure of sensitive personal therapy details."
+  },
+  {
+    "instruction": "Can the Internal Committee take action if a complaint is filed by a visitor against a third-party vendor on the office premises?",
+    "input": "Mixed scenario: Third-party involvement FAQ.",
+    "output": "Yes. The organization is responsible for providing a safe environment for everyone 'directly or indirectly connected' to the workplace. While the IC's primary power is over its own employees, it must still investigate the incident, provide support to the visitor, and take action—such as barring the vendor from the premises—to ensure safety."
+  },
+  {
+    "instruction": "What is the primary purpose of the POSH Act?",
+    "input": "",
+    "output": "The POSH Act aims to provide protection against sexual harassment of women at the workplace and for the prevention and redressal of complaints of sexual harassment and for matters connected therewith. It ensures that every woman, regardless of her employment status, has the right to a safe and dignified work environment."
+  },
+  {
+    "instruction": "Define 'Sexual Harassment' as per the legal framework.",
+    "input": "",
+    "output": "Sexual harassment includes any one or more of the following unwelcome acts or behavior: physical contact and advances; a demand or request for sexual favors; making sexually colored remarks; showing pornography; or any other unwelcome physical, verbal, or non-verbal conduct of a sexual nature."
+  },
+  {
+    "instruction": "What is an Internal Committee (IC) and why is it mandatory?",
+    "output": "The Internal Committee (IC) is a dedicated body within an organization responsible for receiving and redressing complaints of sexual harassment. It is mandatory for every workplace employing ten or more workers to constitute this committee to ensure a fair and neutral inquiry process."
+  },
+  {
+    "instruction": "Who is considered a 'Child' under the POCSO Act?",
+    "output": "Under the POCSO Act, a child is defined as any person below the age of 18 years. The law provides a protective framework for children against offenses of sexual assault, sexual harassment, and pornography, prioritizing the best interests of the child at every stage."
+  },
+  {
+    "instruction": "What does 'Mental Health' encompass in a professional setting?",
+    "output": "Mental health in the workplace refers to an employee's emotional, psychological, and social well-being. It affects how employees handle stress, relate to others, and make professional choices. A healthy workplace acknowledges that mental health is as important as physical health for overall productivity and morale."
+  },
+  {
+    "instruction": "What are the three core pillars of the OHS focus areas?",
+    "output": "The OHS resource center focuses on three primary pillars: 1. POSH (Prevention of Sexual Harassment), 2. POCSO (Protection of Children from Sexual Offences), and 3. Mental Health & Communication Training. It serves as a knowledge hub for building safer and more inclusive environments."
+  },
+  {
+    "instruction": "What is the composition requirement for an Internal Committee?",
+    "output": "An IC must consist of a Presiding Officer (a woman employed at a senior level), at least two members from amongst employees committed to the cause of women or having experience in social work/legal knowledge, and one external member from an NGO or association committed to the cause of women. At least half of the total members must be women."
+  },
+  {
+    "instruction": "Is an employer required to report POCSO-related incidents to the police?",
+    "output": "Yes. Under Section 19 of the POCSO Act, any person who has apprehension that an offense under the Act has been committed has a legal obligation to report it to the Special Juvenile Police Unit or the local police. Failure to report is a punishable offense."
+  },
+  {
+    "instruction": "How can an organization support an employee dealing with burnout or high stress?",
+    "output": "Organizations can support employees by fostering open communication, providing access to Employee Assistance Programs (EAPs), encouraging regular breaks, and training managers to recognize signs of distress. The goal is to provide workplace-related assistance and referrals to professional healthcare without overstepping into medical diagnosis."
+  },
+  {
+    "instruction": "What is the timeline for an IC to complete a POSH inquiry?",
+    "output": "The Internal Committee must complete the inquiry into a complaint within a period of 90 days from the date the complaint was received. Once the inquiry is completed, the IC has 10 days to provide the report of its findings to the employer."
+  },
+  {
+    "question": "Who are the key leaders and experts behind the OHS team?",
+    "answer": "The OHS team is composed of nationally recognized leaders, legal experts, and HR veterans. Key members include Prerna Kalra, a D&I leader who has trained over 10,000 professionals; Pooja Pande, a legal expert specializing in POSH; Vasundhra Kaul, a corporate HR professional with 15 years of experience; Shradha Sinha, a retired Air Force Officer; Anita, a certified POSH trainer; and Captain Rajni Pathania Sareen, an ex-Army Officer."
+  },
+  {
+    "question": "What is the specialized focus of the OHS (Open Hand Solutions) platform?",
+    "answer": "OHS operates as a knowledge hub and resource center providing curated articles, compliance guides, and safety updates for individuals and organizations. It focuses on POSH (Prevention of Sexual Harassment), POCSO (Protection of Children from Sexual Offences), and Mental Health & Communication training."
+  },
+  {
+    "question": "Does the OHS platform offer digital tools for compliance and training?",
+    "answer": "Yes, the platform features interactive training modules and an OHS AI Chatbot to assist with compliance and information gathering. It also provides compliance dashboards specifically designed for companies and schools."
+  },
+  {
+    "question": "What languages are the OHS training modules available in?",
+    "answer": "The interactive training modules offered by OHS are available in both English and Hindi to ensure broad accessibility and effective sensitization."
+  },
+  {
+    "question": "What are the specific training objectives for POSH sensitization?",
+    "answer": "The objectives are to help employees recognize verbal, physical, visual, and online harassment. Organizationally, this reduces legal liabilities, boosts employee trust, and fosters a culture of diversity and equality."
+  },
+  {
+    "question": "What constitutes an 'Aggravated Penetrative Sexual Assault' under the POCSO Act?",
+    "answer": "This occurs when the offender is in a position of trust, such as a teacher, police officer, or relative, or if the assault results in severe injury to the child. Under the 2019 Amendment, the punishment can include the death penalty."
+  },
+  {
+    "question": "How does OHS address Psychological Safety through communication training?",
+    "answer": "OHS invests in communication programs focusing on active listening, constructive feedback, and conflict resolution. These skills create a foundation for psychological safety, accountability, and improved team morale."
+  },
+  {
+    "question": "What is the primary function of the OHS website?",
+    "answer": "The OHS website, known as Open Hand Solutions, serves as a Knowledge Hub and Resource Center specializing in workplace safety and legal compliance. It provides curated articles, legal documents, and compliance guides specifically for the POSH and POCSO Acts."
+  },
+  {
+    "question": "What digital tools and tracking features are available on the OHS platform?",
+    "answer": "The platform features an OHS AI Chatbot for immediate guidance and specific Dashboards for companies and schools. These dashboards allow organizations to track employee training progress, total watch time, and assessment scores."
+  },
+  {
+    "question": "In what languages are the OHS interactive training modules provided?",
+    "answer": "To ensure broad accessibility and effective sensitization across different demographics, OHS offers its interactive training modules in both English and Hindi."
+  },
+  {
+    "question": "Where is the OHS organization physically located?",
+    "answer": "The OHS team and website operations are based out of Sector-13, Chandigarh, and Sector-79, Mohali."
+  },
+  {
+    "question": "What are the primary training and sensitization objectives of the OHS website?",
+    "answer": "The site aims to help employees recognize verbal, physical, visual, and online harassment. Its organizational goals include reducing legal risks and liabilities, boosting employee trust, and fostering a culture of diversity and equality."
+  },
+  {
+    "question": "How does the OHS website support organizations regarding POCSO compliance?",
+    "answer": "The platform acts as a resource center for curated articles and compliance guides to help build safer environments for children. It provides an FAQ context for individuals, trainers, and organizations to stay updated on safety and legal requirements."
+  },
+  {
+    "question": "What is the primary function of the OHS website?",
+    "answer": "The OHS website, known as Open Hand Solutions, serves as a Knowledge Hub and Resource Center specializing in workplace safety and legal compliance. It provides curated articles, legal documents, and compliance guides specifically for the POSH and POCSO Acts."
+  },
+  {
+    "question": "What digital tools and tracking features are available on the OHS platform?",
+    "answer": "The platform features an OHS AI Chatbot for immediate guidance and specific Dashboards for companies and schools. These dashboards allow organizations to track employee training progress, total watch time, and assessment scores."
+  },
+  {
+    "question": "In what languages are the OHS interactive training modules provided?",
+    "answer": "To ensure broad accessibility and effective sensitization across different demographics, OHS offers its interactive training modules in both English and Hindi."
+  },
+  {
+    "question": "Where is the OHS organization physically located?",
+    "answer": "The OHS team and website operations are based out of Sector-13, Chandigarh, and Sector-79, Mohali."
+  },
+  {
+    "question": "What are the primary training and sensitization objectives of the OHS website?",
+    "answer": "The site aims to help employees recognize verbal, physical, visual, and online harassment. Its organizational goals include reducing legal risks and liabilities, boosting employee trust, and fostering a culture of diversity and equality."
+  },
+  {
+    "question": "How does the OHS website support organizations regarding POCSO compliance?",
+    "answer": "The platform acts as a resource center for curated articles and compliance guides to help build safer environments for children. It provides an FAQ context for individuals, trainers, and organizations to stay updated on safety and legal requirements."
+  }
+]

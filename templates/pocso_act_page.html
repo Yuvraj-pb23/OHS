@@ -283,8 +283,16 @@
 
     // --- DATA (KEPT YOUR ORIGINAL IDs AND PATHS) ---
     const modules = [
-        { id: 0, title: "1. Understanding POCSO", status: "pending", watched: 0, thumb: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
-        { id: 1, title: "2. Mandatory Reporting", status: "locked", watched: 0, thumb: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/movie.mp4" }
+        {% for m in video_modules %}
+        { 
+            id: {{ m.id }}, 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            watched: 0, 
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}", 
+            src: "{{ m.src }}" 
+        },
+        {% endfor %}
     ];
 
     const ppts = [
@@ -315,8 +323,84 @@
     let quizSeconds = 600; 
     let quizTimerInterval;
     const player = document.getElementById('mainPlayer');
+    // Initialize from DB (minutes converted to seconds)
+    // Django passes 'total_minutes_watched', we start from there.
+    let totalSecondsWatched = {{ total_seconds_watched|default:0 }}; 
+    let sessionSeconds = 0;
+    
+    // Quiz Variables
+    let practiceQuestions = [];
+    let currentPracticeIndex = 0;
 
-    // --- TAB & SWITCH LOGIC ---
+    // --- API INTEGRATION ---
+    async function markComplete(id) {
+        if (id === undefined || id === null) return;
+        try {
+            await fetch(`/ajax/mod-complete/${id}/`, { 
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log("Progress saved for module:", id);
+        } catch (e) {
+            console.error("Error saving progress:", e);
+        }
+    }
+
+    // --- HEARTBEAT FOR TIME TRACKING ---
+    let lastTime = Date.now();
+    setInterval(async () => {
+        const now = Date.now();
+        const deltaSeconds = Math.floor((now - lastTime) / 1000);
+        lastTime = now;
+
+        const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
+        const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; // PPT or Quiz
+
+        if ((isVideoPlaying || isPPTOpen) && deltaSeconds > 0) {
+             try {
+                // Modified to include credentials and better logging
+                const res = await fetch(`/ajax/update-watch-time/`, { 
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify({ seconds: deltaSeconds }),
+                    credentials: 'same-origin'
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                     // Log occasionally or on first success to verify
+                     // console.log("Time updated +", deltaSeconds, "s. Total Min:", data.total_minutes);
+                } else {
+                    console.error("Failed to update time. Status:", res.status);
+                }
+             } catch (e) {
+                 console.error("Error updating time:", e);
+             }
+        }
+    }, 5000); // 5 seconds
+
+    function logout() {
+        if(confirm("Are you sure you want to logout?")) {
+            window.location.href = "{% url 'logout' %}";
+        }
+    }
+
+    // --- 3. NAVIGATION & TABS ---
+    function showView(v) {
+        document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
+        document.getElementById('certificate-view').style.display = v === 'certificate' ? 'block' : 'none';
+        
+        document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
+        document.getElementById('nav-cert').classList.toggle('active', v === 'certificate');
+        
+        if(v === 'certificate') renderCert();
+    }
+
     function switchTab(type) {
         document.getElementById('tab-vids').classList.toggle('active', type === 'vids');
         document.getElementById('tab-ppts').classList.toggle('active', type === 'ppts');
@@ -385,7 +469,7 @@
 
     function triggerResourceAction() {
         const res = ppts[currentPPTIdx];
-        const modal = document.getElementById('pptModal');
+        
         modal.style.display = 'flex';
         
         if(res.type === 'quiz') {
@@ -454,7 +538,12 @@
             clearInterval(quizTimerInterval);
             document.getElementById('pq-game-area').style.display = 'none';
             document.getElementById('pq-result-area').style.display = 'block';
-            markResourceComplete(1);
+            
+            // Mark Complete
+            ppts[currentPPTIdx].status = 'complete';
+            markComplete(ppts[currentPPTIdx].id); // API
+            renderPPTList();
+            updateTotalStats();
         }
     }
 
@@ -485,6 +574,10 @@
     }, 1000);
 
     function updateTotalStats() {
+        // Safe check 
+        const displaySeconds = totalSecondsWatched + sessionSeconds;
+        document.getElementById('watch-time-display').innerText = `${Math.floor(displaySeconds / 60)}:${Math.floor(displaySeconds % 60).toString().padStart(2, '0')}`;
+        
         const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
         const perc = Math.round((done / 4) * 100);
         document.getElementById('perc-text').innerText = perc + "%";
