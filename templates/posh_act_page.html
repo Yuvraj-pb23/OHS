@@ -253,8 +253,14 @@
         </div>
 
         <div id="certificate-view" style="display: none;">
-            <h1 style="color: white;">Your Certificate</h1>
-            <div class="section-card" id="cert-status-container"></div>
+            <h1 style="color: white; margin-bottom: 20px;">🎉 Congratulations!</h1>
+            <div class="section-card" id="cert-status-container" style="text-align: center; padding: 40px;">
+                <h2>You have successfully completed the POSH Training.</h2>
+                <p style="margin: 20px 0; color: #555;">Your certificate is ready for download.</p>
+                <a href="{% url 'download_certificate' 'POSH' %}" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.2rem; text-decoration: none; display: inline-block; background-color: #27ae60; color: white; border-radius: 5px;">
+                    Download Certificate
+                </a>
+            </div>
         </div>
     </main>
 </div>
@@ -263,17 +269,35 @@
     const player = document.getElementById('mainPlayer');
     let currentIdx = 0;
     let currentPPTIdx = 0;
-    let totalActivitySeconds = 0;
+    // UPDATED: Initialize with value from backend
+    let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
+    let unsavedSeconds = 0;
     let furthestTime = 0;
 
     const modules = [
-        { id: 0, title: "1. Intro to POSH", status: "pending", thumb: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/mov_bbb.mp4" },
-        { id: 1, title: "2. Workplace", status: "locked", thumb: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=600", src: "https://www.w3schools.com/html/movie.mp4" }
+        {% for m in video_modules %}
+        { 
+            id: {{ m.id }}, 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            // UPDATED: Use a nice default image if none exists
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600' }}", 
+            src: "{{ m.src }}" 
+        },
+        {% endfor %}
     ];
 
     const ppts = [
-        { id: 0, type: 'slide', title: "Legal Framework", status: "locked", thumb: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600", url: "https://docs.google.com/presentation/d/1Ta77aFMjK3740YnwQMlkIbXP529PzWt_/embed" },
-        { id: 1, type: 'quiz', title: "Practice Quiz", status: "locked", thumb: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600", url: "" }
+        {% for m in ppt_modules %}
+        { 
+            id: {{ m.id }}, 
+            type: 'slide', 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600' }}", 
+            url: "{{ m.url }}" 
+        },
+        {% endfor %}
     ];
 
     const questionBank = [
@@ -281,6 +305,23 @@
         { question: "What does POSH stand for?", options: ["Prevention of Sexual Harm", "Protection of Safety at Home", "Prevention, Prohibition and Redressal of Sexual Harassment", "Public Order and Safety Handling"], answer: 2 },
         { question: "Organizations with how many employees must form an IC?", options: ["5", "8", "10", "20"], answer: 2 }
     ];
+    
+    // --- DATA SAVING ---
+    function markComplete(moduleId) {
+        fetch(`/ajax/mod-complete/${moduleId}/`, {
+            method: 'POST',
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        })
+        .then(r => r.json())
+        .then(d => {
+            if(d.status === 'success') {
+                console.log(`Module ${moduleId} saved.`);
+                // OPTIONAL: Toast notification
+                // alert("Progress Saved!"); 
+            }
+        })
+        .catch(e => console.error("Save failed", e));
+    }
 
     // --- LOGIC: SWITCHING TABS & WINDOWS ---
     function switchTab(type) {
@@ -399,9 +440,13 @@
         if (player.currentTime > furthestTime + 1.5) player.currentTime = furthestTime;
         else if (player.currentTime > furthestTime) furthestTime = player.currentTime;
         if (player.currentTime > player.duration * 0.95 && modules[currentIdx].status !== 'complete') {
+            console.log(`Video ${currentIdx} finished.`);
             modules[currentIdx].status = 'complete';
+            markComplete(modules[currentIdx].id); // Missing backend save call added
+            
             if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
             else if(ppts[0]) ppts[0].status = 'pending';
+            
             renderModules(); renderPPTList(); updateTotalStats();
         }
     };
@@ -415,6 +460,8 @@
             document.getElementById('ppt-timer-badge').innerText = `Time: ${viewed}s`;
             if (viewed >= 10 && ppts[currentPPTIdx].status !== 'complete') {
                 ppts[currentPPTIdx].status = 'complete';
+                markComplete(ppts[currentPPTIdx].id); // Missing backend save call added
+                
                 if(ppts[currentPPTIdx+1]) ppts[currentPPTIdx+1].status = 'pending';
                 renderPPTList(); updateTotalStats();
             }
@@ -427,6 +474,10 @@
         const perc = Math.round((done / total) * 100) || 0;
         document.getElementById('perc-text').innerText = perc + "%";
         document.getElementById('perc-bar').style.width = perc + "%";
+        
+        if (perc >= 100) {
+            document.getElementById('cert-btn-container').style.display = 'block';
+        }
         updateChart();
     }
 
@@ -460,6 +511,13 @@
         renderModules(); 
         playVideo(0);
         updateTotalStats(); 
+        
+        // FORCE INITIAL DISPLAY
+        const h = Math.floor(totalActivitySeconds / 3600);
+        const m = Math.floor((totalActivitySeconds % 3600) / 60);
+        const s = totalActivitySeconds % 60;
+        document.getElementById('watch-time-display').innerText = 
+            `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
     };
 </script>
 </body>

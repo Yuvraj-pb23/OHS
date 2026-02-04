@@ -30,6 +30,7 @@ from .models import (
 
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
+from .utils import generate_certificate
 
 
 # --- 1. LOGIN REDIRECT LOGIC ---
@@ -405,7 +406,8 @@ def posh_act_page(request):
     ppt_list = []
 
     # Process Videos Sequence
-    video_modules = [m for m in modules if not m.ppt_file]
+    # UPDATED: Include if it has a video_file (priority), regardless of PPT presence
+    video_modules = [m for m in modules if m.video_file]
     previous_completed = True
     for mod in video_modules:
         is_completed = progress_map.get(mod.id, False)
@@ -425,7 +427,8 @@ def posh_act_page(request):
         previous_completed = is_completed
 
     # Process PPT Sequence
-    ppt_modules = [m for m in modules if m.ppt_file]
+    # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
+    ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
     previous_completed = True
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
@@ -478,7 +481,7 @@ def posh_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        "chart_data": json.dumps(chart_data),
+        # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,  # Passed to frontend
     }
 
@@ -503,6 +506,7 @@ def update_watch_time(request):
             activity, created = DailyActivity.objects.get_or_create(
                 user=request.user, date=today
             )
+
 
             # Add delta
             activity.seconds_watched += seconds_delta
@@ -1150,3 +1154,34 @@ def superuser_dashboard(request):
 def custom_logout(request):
     logout(request)
     return redirect("home")
+
+def download_certificate(request, course_type="POSH"):
+    if not request.user.is_authenticated:
+        return redirect("login")
+
+    # 1. Check Completion
+    # Re-using logic from posh_act_page roughly
+    # In a real app, maybe extract this check to a helper
+    if course_type == "POSH":
+        modules = TrainingModule.objects.filter(module_type="POSH")
+        total = modules.count()
+        # Count COMPLETED modules for this user
+        completed = ModuleProgress.objects.filter(user=request.user, module__in=modules, is_completed=True).count()
+        
+        # Strict check: Must be 100% complete
+        if total == 0 or completed < total:
+            messages.error(request, "You must complete all modules before downloading the certificate.")
+            return redirect("posh_act_page")
+
+    # 2. Generate PDF
+    pdf_content = generate_certificate(request.user, course_type)
+    
+    if not pdf_content:
+        messages.error(request, "Error generating certificate. Please contact support.")
+        return redirect("posh_act_page")
+
+    # 3. Serve PDF
+    response = HttpResponse(pdf_content, content_type='application/pdf')
+    filename = f"Certificate_{course_type}_{request.user.username}.pdf"
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response

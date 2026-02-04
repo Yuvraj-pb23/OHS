@@ -99,4 +99,6 @@ urlpatterns = [
     # --- SUPERUSER ---
     path('superuser/dashboard/', views.superuser_dashboard, name='superuser_dashboard'),
     path('admin/', admin.site.urls),
+    # Certificate
+    path('certificate/<str:course_type>/', views.download_certificate, name='download_certificate'),
 ]
