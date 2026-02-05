@@ -260,15 +260,19 @@
 
             <div class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px;">
                 <div class="section-card"><h3>Activity Health</h3><div style="height: 200px;"><canvas id="statusChart"></canvas></div></div>
-                <div class="section-card" style="text-align: center;"><h3>Study Time</h3><h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">00:00</h1></div>
+                <div class="section-card" style="text-align: center;"><h3>Study Time</h3><h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">{{ formatted_total_time|default:"00:00" }}</h1></div>
                 <div class="section-card"><h3>Completion</h3><h2 id="perc-text">0%</h2><div style="width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden;"><div id="perc-bar" style="width: 0%; height: 100%; background: var(--complete); transition: 1s;"></div></div></div>
             </div>
         </div>
 
         <div id="certificate-view" style="display: none;">
-            <h1 style="color: white;">Course Certification</h1>
-            <div class="section-card" id="cert-container" style="text-align: center; padding: 50px;">
-                <!-- Certificate Status rendered by JS -->
+            <h1 style="color: white; margin-bottom: 20px;">🎉 Congratulations!</h1>
+            <div class="section-card" id="cert-status-container" style="text-align: center; padding: 40px;">
+                <h2>You have successfully completed the POCSO Training.</h2>
+                <p style="margin: 20px 0; color: #555;">Your certificate is ready for download.</p>
+                <a href="{% url 'download_certificate' 'POCSO' %}" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.2rem; text-decoration: none; display: inline-block; background-color: #27ae60; color: white; border-radius: 5px;">
+                    Download Certificate
+                </a>
             </div>
         </div>
     </main>
@@ -288,16 +292,23 @@
             id: {{ m.id }}, 
             title: "{{ m.title|escapejs }}", 
             status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
-            watched: 0, 
             thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}", 
-            src: "{{ m.src }}" 
+            src: "{{ m.src|escapejs }}" 
         },
         {% endfor %}
     ];
 
     const ppts = [
-        { id: 0, type: 'slide', title: "Child Protection Policy", status: "locked", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=600", url: "https://docs.google.com/presentation/d/1Ta77aFMjK3740YnwQMlkIbXP529PzWt_/embed" },
-        { id: 1, type: 'quiz', title: "Practice Quiz", status: "locked", viewedTime: 0, thumb: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=600", url: "" }
+        {% for m in ppt_modules %}
+        { 
+            id: {{ m.id }}, 
+            title: "{{ m.title|escapejs }}", 
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=600' }}", 
+            src: "{{ m.src|escapejs }}",
+            url: "{{ m.url|escapejs }}"
+        },
+        {% endfor %}
     ];
 
     // --- 15 POCSO PRACTICE QUESTIONS ---
@@ -319,13 +330,10 @@
         { question: "POCSO was enacted in which year?", options: ["2010", "2011", "2012", "2013"], answer: 2 }
     ];
 
-    let totalActivitySeconds = 0;
     let quizSeconds = 600; 
     let quizTimerInterval;
     const player = document.getElementById('mainPlayer');
-    // Initialize from DB (minutes converted to seconds)
-    // Django passes 'total_minutes_watched', we start from there.
-    let totalSecondsWatched = {{ total_seconds_watched|default:0 }}; 
+    let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
     let sessionSeconds = 0;
     
     // Quiz Variables
@@ -446,13 +454,18 @@
         updateChart();
     }
 
+    // --- PLAYER & RESOURCE CONTROLS ---
     function playVideo(idx) {
         currentIdx = idx;
-        player.pause(); player.style.display = 'none';
+        const mod = modules[idx];
+        player.pause();
+        player.style.display = 'none';
         document.getElementById('video-cover').style.display = 'flex';
-        document.getElementById('video-cover').style.backgroundImage = `url('${modules[idx].thumb}')`;
-        document.getElementById('cover-title').innerText = modules[idx].title;
-        player.src = modules[idx].src;
+        document.getElementById('video-cover').style.backgroundImage = `url('${mod.thumb}')`;
+        document.getElementById('cover-title').innerText = mod.title;
+        player.src = mod.src;
+        player.load(); // Force reset
+        player.currentTime = 0;
     }
 
     function startVideo() {
@@ -469,10 +482,11 @@
 
     function triggerResourceAction() {
         const res = ppts[currentPPTIdx];
+        if (res.status === 'locked') return alert("This resource is locked!");
         
-        modal.style.display = 'flex';
+        document.getElementById('pptModal').style.display = 'flex';
         
-        if(res.type === 'quiz') {
+        if(res.title.toLowerCase().includes('quiz')) {
             document.getElementById('pptFrame').style.display = 'none';
             document.getElementById('practiceQuizContainer').style.display = 'block';
             document.getElementById('quiz-timer-box').style.display = 'block';
@@ -482,7 +496,12 @@
             document.getElementById('quiz-timer-box').style.display = 'none';
             document.getElementById('pptFrame').style.display = 'block';
             document.getElementById('pptFrame').src = res.url;
-            setTimeout(() => markResourceComplete(0), 10000); 
+            
+            // Auto-complete simple resources after 10s
+            // Only if not already complete
+            if(res.status !== 'complete'){
+                setTimeout(() => markResourceComplete(currentPPTIdx), 10000); 
+            }
         }
     }
 
@@ -554,44 +573,85 @@
         renderPPTList();
     }
 
-    // --- ANALYTICS ---
+    // Unified Completion Logic
+    function handleVideoComplete() {
+        if (modules[currentIdx].status !== 'complete') {
+            modules[currentIdx].status = 'complete';
+            
+            // Optimistic UI Update
+            if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
+            else if(ppts[0]) ppts[0].status = 'pending';
+            
+            renderModules(); 
+            renderPPTList(); 
+            updateTotalStats();
+            
+            // Save to Backend
+            markComplete(modules[currentIdx].id); 
+        }
+    }
+
+    // Fallback: Standard 'ended' event
+    player.onended = handleVideoComplete;
+
     player.ontimeupdate = () => {
-        if(player.currentTime > player.duration * 0.95) {
-            modules[0].status = 'complete';
-            modules[1].status = 'pending';
-            ppts[0].status = 'pending';
-            renderModules(); renderPPTList(); updateTotalStats();
+        if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
+        player.lastTime = player.currentTime;
+        
+        // Duration Check Fallback
+        if (player.duration > 0) {
+            const thresh = player.duration * 0.95;
+            if (player.currentTime > thresh) {
+                 handleVideoComplete();
+            }
         }
     };
 
     setInterval(() => {
         if(!document.hidden && (!player.paused || document.getElementById('pptModal').style.display === 'flex')) {
             totalActivitySeconds++;
-            let m = Math.floor(totalActivitySeconds/60).toString().padStart(2, '0');
-            let s = (totalActivitySeconds%60).toString().padStart(2, '0');
-            document.getElementById('watch-time-display').innerText = `${m}:${s}`;
+            // Note: We don't update #watch-time-display here anymore to specific text, 
+            // but we could. For now relying on formatted_total_time on load, 
+            // and maybe update it dynamically? 
+            // Better to update it dynamically consistent with POSH logic:
+            
+            let displaySeconds = totalActivitySeconds;
+            let m = Math.floor(displaySeconds/60).toString().padStart(2, '0');
+            let s = (displaySeconds%60).toString().padStart(2, '0');
+            // Wait, POSH uses H:M:S logic in backend string, but client side increment might vary.
+            // Let's keep a simple HH:MM:SS update here
+            
+            const h = Math.floor(displaySeconds / 3600);
+            const m_ = Math.floor((displaySeconds % 3600) / 60);
+            const s_ = displaySeconds % 60;
+            document.getElementById('watch-time-display').innerText = 
+                `${h>0?h+':':''}${m_<10?'0'+m_:m_}:${s_<10?'0'+s_:s_}`;
         }
     }, 1000);
 
     function updateTotalStats() {
-        // Safe check 
-        const displaySeconds = totalSecondsWatched + sessionSeconds;
-        document.getElementById('watch-time-display').innerText = `${Math.floor(displaySeconds / 60)}:${Math.floor(displaySeconds % 60).toString().padStart(2, '0')}`;
-        
         const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
-        const perc = Math.round((done / 4) * 100);
+        const total = modules.length + ppts.length;
+        const perc = Math.round((done / total) * 100) || 0;
+        
         document.getElementById('perc-text').innerText = perc + "%";
         document.getElementById('perc-bar').style.width = perc + "%";
+        
         updateChart();
-        renderCert();
+        
+        // Certificate Logic
+        const container = document.getElementById('cert-status-container');
+        const certView = document.getElementById('certificate-view');
+        
+        if (perc >= 100) {
+            certView.style.display = 'block';
+        } else {
+            certView.style.display = 'none';
+        }
     }
 
-    function renderCert() {
-        const container = document.getElementById('cert-container');
-        const allDone = modules.every(m => m.status === 'complete') && ppts.every(p => p.status === 'complete');
-        container.innerHTML = allDone ? 
-            `<h2>🏆 Completed!</h2><p>You can now take the final assessment.</p>` : 
-            `<h2>🔒 Locked</h2><p>Complete all modules to unlock.</p>`;
+    function renderCert() { 
+        // Deprecated by updateTotalStats logic above
     }
 
     function updateChart() {
@@ -609,7 +669,20 @@
 
     function handleLogout() { if(confirm("Logout?")) window.location.href = "{% url 'logout' %}"; }
 
-    window.onload = () => { renderModules(); updateTotalStats(); };
+    window.onload = () => { 
+        renderModules(); 
+        updateTotalStats(); 
+        playVideo(0); 
+        
+        // FORCE INITIAL DISPLAY
+        // Explicitly set the time using JS to handle any mismatch
+        const h = Math.floor(totalActivitySeconds / 3600);
+        const m = Math.floor((totalActivitySeconds % 3600) / 60);
+        const s = totalActivitySeconds % 60;
+        const timeStr = `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+        const disp = document.getElementById('watch-time-display');
+        if(disp) disp.innerText = timeStr;
+    };
 </script>
 </body>
 </html>

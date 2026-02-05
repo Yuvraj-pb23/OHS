@@ -481,8 +481,10 @@ def posh_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
+        "chart_data": json.dumps(chart_data),
         # Remove duplicate key if present
-        "total_seconds_watched": total_seconds_watched,  # Passed to frontend
+        "total_seconds_watched": total_seconds_watched,
+        "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
     }
 
     return render(request, "posh_act_page.html", context)
@@ -599,33 +601,31 @@ def pocso_act_page(request):
             "title": mod.title,
             "is_completed": is_completed,
             "is_locked": is_locked,
-            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "thumb": mod.thumbnail.url if mod.thumbnail else None,
             "src": mod.video_file.url if mod.video_file else "",
-            "url": "",
-            "duration": mod.duration_seconds,
         }
         video_list.append(item)
-        previous_completed = is_completed
 
-    # Process PPT Sequence
-    ppt_modules = [m for m in modules if m.ppt_file]
-    previous_completed = True
+        if not is_completed:
+            previous_completed = False
+
+    # Process PPTs Sequence
+    ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
-        is_locked = not previous_completed
+        is_locked = not previous_completed 
 
         item = {
             "id": mod.id,
             "title": mod.title,
             "is_completed": is_completed,
             "is_locked": is_locked,
-            "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": "",
-            "url": mod.ppt_file.url if mod.ppt_file else "",
-            "duration": mod.duration_seconds,
+            "thumb": mod.thumbnail.url if mod.thumbnail else None,
+            "src": mod.ppt_file.url if mod.ppt_file else "",
         }
         ppt_list.append(item)
-        previous_completed = is_completed
+        if not is_completed:
+            previous_completed = False
 
     # 5. Daily Activity Stats for Chart (Last 7 days)
     today = timezone.now().date()
@@ -644,6 +644,7 @@ def pocso_act_page(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+    formatted_total_time = f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}"
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
@@ -661,11 +662,11 @@ def pocso_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        "chart_data": json.dumps(chart_data),
-        "total_seconds_watched": total_seconds_watched,  # Passed to frontend
-        # Pass a flag to template to disable/enable final assessment
+        "total_seconds_watched": total_seconds_watched,
+        "formatted_total_time": formatted_total_time,
         "is_assessment_unlocked": percent_complete == 100,
     }
+
     return render(request, "pocso_act_page.html", context)
 
 
