@@ -161,11 +161,7 @@
         .pq-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
         .pq-btn.disabled { cursor: default; pointer-events: none; }
 
-        #quiz-timer-box {
-            position: absolute; right: 80px; top: 20px;
-            background: #ff4757; color: white; padding: 5px 20px;
-            border-radius: 20px; font-weight: bold; z-index: 1200;
-        }
+
 
         #presence-indicator {
             position: fixed; bottom: 20px; right: 20px;
@@ -184,14 +180,17 @@
     <div class="ppt-content">
         <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 1300; font-size: 24px;">&times;</button>
         
-        <!-- Timer UI -->
-        <div id="quiz-timer-box" style="display:none;">Time Left: <span id="quiz-time">10:00</span></div>
+
         <div id="ppt-timer-badge" style="position: absolute; left: 20px; top: 10px; background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; z-index: 1100; display: none;">Time: 0s</div>
 
         <iframe id="pptFrame" src="" style="width: 100%; height: 100%; border: none; display: none;"></iframe>
 
         <div id="practiceQuizContainer" class="practice-quiz-container" style="display: none;">
             <h2 style="text-align: center; margin-bottom: 30px;">POCSO Practice Assessment</h2>
+            
+            <div id="quiz-timer-box" style="text-align:center; font-size:1.5rem; font-weight:700; color:#dc3545; margin-bottom:20px; display:none;">
+                Time Left: <span id="quiz-time">10:00</span>
+            </div>
             <div id="pq-game-area">
                 <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #666;">
                     <span id="pq-counter">Question 1/15</span>
@@ -568,6 +567,7 @@
 
     function markResourceComplete(idx) {
         ppts[idx].status = 'complete';
+        markComplete(ppts[idx].id); // MISSING API CALL ADDED
         if(ppts[idx+1]) ppts[idx+1].status = 'pending';
         updateTotalStats();
         renderPPTList();

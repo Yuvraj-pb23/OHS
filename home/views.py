@@ -255,6 +255,20 @@ def company_dashboard(request):
             ).values_list("module_id", flat=True)
         )
 
+        # Split modules for calculation
+        # Note: all_modules is already filtered by training_type
+        vid_mods = [m for m in all_modules if m.video_file] 
+        ppt_mods = [m for m in all_modules if m.ppt_file and not m.video_file]
+
+        total_vid_count = len(vid_mods)
+        total_ppt_count = len(ppt_mods)
+
+        completed_vid_count = sum(1 for m in vid_mods if m.id in user_progress_map)
+        completed_ppt_count = sum(1 for m in ppt_mods if m.id in user_progress_map)
+
+        mem.video_percent = int((completed_vid_count / total_vid_count) * 100) if total_vid_count > 0 else 0
+        mem.ppt_percent = int((completed_ppt_count / total_ppt_count) * 100) if total_ppt_count > 0 else 0
+
         for mod in all_modules:
             is_done = mod.id in user_progress_map
             item = {
@@ -263,11 +277,11 @@ def company_dashboard(request):
                 "duration": mod.duration_seconds,
                 "thumbnail_url": mod.thumbnail.url if mod.thumbnail else "",
                 "ppt_url": mod.ppt_file.url if mod.ppt_file else "",
-                "is_ppt": bool(mod.ppt_file),
+                "is_ppt": bool(mod.ppt_file and not mod.video_file), # Strict check
             }
             mem_modules_status.append(item)
 
-        mem.modules_status = mem_modules_status  # Kept for backward compat if needed, or just specific lists
+        mem.modules_status = mem_modules_status 
         mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"]]
         mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"]]
 
@@ -611,6 +625,21 @@ def pocso_act_page(request):
 
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    
+    # [NEW] Inject POSH Act PDF for Reference (as requested)
+    posh_pdf_mod = TrainingModule.objects.filter(module_type="POSH", ppt_file__isnull=False).exclude(video_file__isnull=False).order_by('order').first()
+    if posh_pdf_mod:
+        item = {
+            "id": posh_pdf_mod.id,
+            "title": f"Reference: {posh_pdf_mod.title}",
+            "is_completed": False, # Just a reference, no tracking here needed
+            "is_locked": False, 
+            "thumb": posh_pdf_mod.thumbnail.url if posh_pdf_mod.thumbnail else None,
+            "src": "",
+            "url": posh_pdf_mod.ppt_file.url,
+        }
+        ppt_list.append(item) # Add to end or start? User said "show... when i open ppt". List is safer.
+
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
         is_locked = not previous_completed 
@@ -622,6 +651,7 @@ def pocso_act_page(request):
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else None,
             "src": mod.ppt_file.url if mod.ppt_file else "",
+            "url": mod.ppt_file.url if mod.ppt_file else "",
         }
         ppt_list.append(item)
         if not is_completed:

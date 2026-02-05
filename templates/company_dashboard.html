@@ -656,7 +656,7 @@
                       <div class="chart-container">
                         <canvas
                           id="pie-vids-{{ member.id }}"
-                          data-percent="{{ member.percent_complete }}"
+                          data-percent="{{ member.video_percent }}"
                         ></canvas>
                       </div>
                     </div>
@@ -664,8 +664,8 @@
                     <!-- Video Time -->
                     <div class="mini-stat-card">
                       <h3>Watch Time</h3>
-                      <p class="time-text">02:15</p>
-                      <small class="text-muted">Total Hours</small>
+                      <p class="time-text">{{ member.total_active_time }}</p>
+                      <small class="text-muted">Total Activity</small>
                     </div>
 
                     <!-- Video Progress Bar -->
@@ -678,12 +678,12 @@
                           font-size: 1.8rem;
                         "
                       >
-                        {{ member.percent_complete }}%
+                        {{ member.video_percent }}%
                       </h2>
                       <div class="progress-track">
                         <div
                           class="progress-fill"
-                          style="width: {{ member.percent_complete }}%;"
+                          style="width: {{ member.video_percent }}%;"
                         ></div>
                       </div>
                     </div>
@@ -702,7 +702,7 @@
                         <!-- Mock data for PPT (e.g. 60%) for demonstration -->
                         <canvas
                           id="pie-ppts-{{ member.id }}"
-                          data-percent="60"
+                          data-percent="{{ member.ppt_percent }}"
                         ></canvas>
                       </div>
                     </div>
@@ -711,10 +711,10 @@
                     <div class="mini-stat-card">
                       <h3>Reading Time</h3>
                       <!-- Different color to show change -->
-                      <p class="time-text" style="color: var(--lms-pending)">
-                        00:45
+                      <p class="time-text" style="color: var(--lms-pending); font-size: 1.2rem;">
+                        (In Total)
                       </p>
-                      <small class="text-muted">Total Hours</small>
+                      <small class="text-muted">Tracked in Watch Time</small>
                     </div>
 
                     <!-- PPT Progress Bar -->
@@ -727,12 +727,12 @@
                           font-size: 1.8rem;
                         "
                       >
-                        60%
+                        {{ member.ppt_percent }}%
                       </h2>
                       <div class="progress-track">
                         <div
                           class="progress-fill"
-                          style="width: 60%; background: var(--lms-pending)"
+                          style="width: {{ member.ppt_percent }}%; background: var(--lms-pending)"
                         ></div>
                       </div>
                     </div>

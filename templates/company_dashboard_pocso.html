@@ -313,72 +313,184 @@
               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             
-            <div class="modal-body" style="padding: 20px;">
-              <div class="stats-row">
-                  <div class="mini-stat-card">
-                      <h3>Course Health</h3>
+              <div class="modal-body" style="padding: 20px;">
+                  <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+                  <div class="stats-row" id="stats-vids-{{ member.id }}">
+                    <!-- Video Pie -->
+                    <div class="mini-stat-card">
+                      <h3>Video Health</h3>
                       <div class="chart-container">
-                          <canvas id="pie-{{ member.id }}" data-percent="{{ member.percent_complete }}"></canvas>
+                        <canvas
+                          id="pie-vids-{{ member.id }}"
+                          data-percent="{{ member.video_percent }}"
+                        ></canvas>
                       </div>
-                  </div>
-                  <div class="mini-stat-card">
-                      <h3>Time Spent</h3>
-                      <p class="time-text">01:45</p>
-                      <small class="text-muted">Total Minutes</small>
-                  </div>
-                  <div class="mini-stat-card">
-                      <h3>Overall</h3>
-                      <h2 style="margin:0; color:var(--lms-primary); font-size:1.8rem;">{{ member.percent_complete }}%</h2>
+                    </div>
+
+                    <!-- Video Time -->
+                    <div class="mini-stat-card">
+                      <h3>Watch Time</h3>
+                      <p class="time-text">{{ member.total_active_time }}</p>
+                      <small class="text-muted">Total Activity</small>
+                    </div>
+
+                    <!-- Video Progress Bar -->
+                    <div class="mini-stat-card">
+                      <h3>Video Comp.</h3>
+                      <h2
+                        style="
+                          margin: 0;
+                          color: var(--lms-primary);
+                          font-size: 1.8rem;
+                        "
+                      >
+                        {{ member.video_percent }}%
+                      </h2>
                       <div class="progress-track">
-                          <div class="progress-fill" style="width: {{ member.percent_complete }}%;"></div>
+                        <div
+                          class="progress-fill"
+                          style="width: {{ member.video_percent }}%;"
+                        ></div>
                       </div>
+                    </div>
                   </div>
-              </div>
 
-              <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'vids')">Video Training</button>
-                  <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}" onclick="switchModalTab('{{ member.id }}', 'ppts')">Legal & Quiz</button>
-              </div>
-
-              <div id="content-vids-{{ member.id }}">
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>1. Understanding the POCSO Act 2012</h6>
-                          <p>Legal Definitions & Age Thresholds</p>
+                  <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
+                  <div
+                    class="stats-row"
+                    id="stats-ppts-{{ member.id }}"
+                    style="display: none"
+                  >
+                    <!-- PPT Pie -->
+                    <div class="mini-stat-card">
+                      <h3>Quiz Health</h3>
+                      <div class="chart-container">
+                        <canvas
+                          id="pie-ppts-{{ member.id }}"
+                          data-percent="{{ member.ppt_percent }}"
+                        ></canvas>
                       </div>
+                    </div>
+
+                    <!-- PPT Time -->
+                    <div class="mini-stat-card">
+                      <h3>Reading Time</h3>
+                      <!-- Different color to show change -->
+                      <p class="time-text" style="color: var(--lms-pending); font-size: 1.2rem;">
+                        (In Total)
+                      </p>
+                      <small class="text-muted">Tracked in Watch Time</small>
+                    </div>
+
+                    <!-- PPT Progress Bar -->
+                    <div class="mini-stat-card">
+                      <h3>Quiz Comp.</h3>
+                      <h2
+                        style="
+                          margin: 0;
+                          color: var(--lms-pending);
+                          font-size: 1.8rem;
+                        "
+                      >
+                        {{ member.ppt_percent }}%
+                      </h2>
+                      <div class="progress-track">
+                        <div
+                          class="progress-fill"
+                          style="width: {{ member.ppt_percent }}%; background: var(--lms-pending)"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- === TABS === -->
+                  <div class="lms-tab-header">
+                    <button
+                      class="lms-tab-btn active"
+                      id="btn-vids-{{ member.id }}"
+                      onclick="switchModalTab('{{ member.id }}', 'vids')"
+                    >
+                      Video Modules
+                    </button>
+                    <button
+                      class="lms-tab-btn"
+                      id="btn-ppts-{{ member.id }}"
+                      onclick="switchModalTab('{{ member.id }}', 'ppts')"
+                    >
+                      PPT & Quiz
+                    </button>
+                  </div>
+
+                  <!-- === CONTENT LISTS === -->
+
+                  <!-- Video List -->
+                  <div id="content-vids-{{ member.id }}">
+                    {% for mod in member.video_modules %}
+                    <div class="record-item">
+                      <div
+                        class="record-thumb"
+                        style="background-image: url('{{ mod.thumbnail_url }}');"
+                      ></div>
+                      <div class="record-info">
+                        <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                        <p>Video Lesson</p>
+                      </div>
+                      {% if mod.is_completed %}
                       <span class="lms-badge bg-complete">Completed</span>
+                      {% else %}
+                      <span class="lms-badge bg-pending">Pending</span>
+                      {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted p-2 small">
+                      No video modules assigned
+                    </div>
+                    {% endfor %}
                   </div>
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>2. Identifying Signs of Abuse</h6>
-                          <p>Behavioral & Physical Indicators</p>
+
+                  <!-- PPT List -->
+                  <div id="content-ppts-{{ member.id }}" style="display: none">
+                    {% for mod in member.ppt_modules %}
+                    <div class="record-item">
+                      <!-- Use a generic icon or thumbnail for PPT -->
+                      <div
+                        class="record-thumb"
+                        style="
+                          background-color: #ffeaa7;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        {% if 'quiz' in mod.title|lower %}
+                        <i class="bi bi-question-circle" style="font-size: 1.5rem; color: #d35400;"></i>
+                        {% else %}
+                        <i class="bi bi-file-text" style="font-size: 1.5rem; color: #d35400;"></i>
+                        {% endif %}
                       </div>
-                      <span class="lms-badge bg-pending">In Progress</span>
+                      <div class="record-info">
+                        <h6>{{ mod.title }}</h6>
+                        <p>{% if 'quiz' in mod.title|lower %}Practice Quiz{% else %}Reading Material{% endif %}</p>
+                      </div>
+                      
+                      {% if mod.is_completed %}
+                       <span class="lms-badge bg-complete">Completed</span>
+                      {% else %}
+                          <!-- In POCSO, usually unlocked if previous is done, or logic handled in view -->
+                          <!-- Reuse the 'is_locked' logic? The view calculates 'is_completed'. 
+                               We don't have explicit 'is_locked' passed in the simple list, 
+                               but usually pending implies accessible or next. 
+                               For visual congruency, just show Pending/View if not complete. -->
+                         <span class="lms-badge bg-pending">View</span>
+                      {% endif %}
+                    </div>
+                    {% empty %}
+                    <div class="text-center text-muted p-2 small">
+                      No quizzes or PPTs found
+                    </div>
+                    {% endfor %}
                   </div>
               </div>
-
-              <div id="content-ppts-{{ member.id }}" style="display: none;">
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>Mandatory Reporting Procedures</h6>
-                          <p>Reading Material</p>
-                      </div>
-                      <span class="lms-badge bg-locked">Locked</span>
-                  </div>
-                  <div class="record-item">
-                      <div class="record-thumb" style="background-image: url('https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&q=80&w=200');"></div>
-                      <div class="record-info">
-                          <h6>Final Compliance Assessment</h6>
-                          <p>Certification Quiz</p>
-                      </div>
-                      <span class="lms-badge bg-locked">Locked</span>
-                  </div>
-              </div>
-
-            </div>
           </div>
         </div>
       </div>
@@ -539,52 +651,83 @@
         });
     });
 
+    // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
     function switchModalTab(memberId, tab) {
-        const vidBtn = document.getElementById(`btn-vids-${memberId}`);
-        const pptBtn = document.getElementById(`btn-ppts-${memberId}`);
+        // Content lists
         const vidContent = document.getElementById(`content-vids-${memberId}`);
         const pptContent = document.getElementById(`content-ppts-${memberId}`);
+        // Buttons
+        const vidBtn = document.getElementById(`btn-vids-${memberId}`);
+        const pptBtn = document.getElementById(`btn-ppts-${memberId}`);
+        // Stats Rows
+        const vidStats = document.getElementById(`stats-vids-${memberId}`);
+        const pptStats = document.getElementById(`stats-ppts-${memberId}`);
         
         if (tab === 'vids') {
             vidBtn.classList.add('active');
             pptBtn.classList.remove('active');
+            
             vidContent.style.display = 'block';
             pptContent.style.display = 'none';
+
+            // Show Video Charts, Hide PPT Charts
+            vidStats.style.display = 'grid';
+            pptStats.style.display = 'none';
         } else {
             pptBtn.classList.add('active');
             vidBtn.classList.remove('active');
+            
             pptContent.style.display = 'block';
             vidContent.style.display = 'none';
+
+            // Hide Video Charts, Show PPT Charts
+            pptStats.style.display = 'grid';
+            vidStats.style.display = 'none';
         }
     }
 
+    // Helper to draw chart safely
+    function drawChart(canvasId, colorHex) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        // Clean up previous instance to prevent glitches
+        if(canvas.chartInstance) canvas.chartInstance.destroy();
+
+        const percent = parseInt(canvas.getAttribute('data-percent')) || 0;
+        const remaining = 100 - percent;
+
+        canvas.chartInstance = new Chart(canvas, {
+            type: 'doughnut',
+            data: {
+                labels: ['Done', 'Pending'],
+                datasets: [{
+                    data: [percent, remaining],
+                    backgroundColor: [colorHex, '#eee'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                animation: { duration: 1000 }
+            }
+        });
+    }
+
+    // Initialize BOTH charts when the modal opens
     document.addEventListener('shown.bs.modal', function (event) {
         const modalId = event.target.id;
         if (modalId.startsWith('userProgressModal-')) {
             const memberId = modalId.split('-')[1];
-            const canvas = document.getElementById(`pie-${memberId}`);
-            if (!canvas) return;
-            if (window[`chartPie${memberId}`]) window[`chartPie${memberId}`].destroy();
-            const percent = parseInt(canvas.getAttribute('data-percent')) || 0;
-            const remaining = 100 - percent;
-            window[`chartPie${memberId}`] = new Chart(canvas, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Done', 'Pending'],
-                    datasets: [{
-                        data: [percent, remaining],
-                        backgroundColor: ['#4e54c8', '#eee'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-                    animation: { duration: 1000 }
-                }
-            });
+            
+            // 1. Draw Video Chart (Primary Blue)
+            drawChart(`pie-vids-${memberId}`, '#4e54c8');
+            
+            // 2. Draw PPT Chart (Warning Yellow/Orange)
+            drawChart(`pie-ppts-${memberId}`, '#f1c40f'); 
         }
     });
 </script>
