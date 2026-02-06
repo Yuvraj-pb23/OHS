@@ -1,5 +1,5 @@
 1️⃣ Clone the project
-git clone <your-repo-url>
+git clone https://github.com/Yuvraj-pb23/OHS.git
 cd OHS
 
 2️⃣ Create & activate virtual environment
