@@ -433,7 +433,8 @@ def posh_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": mod.video_file.url if mod.video_file else "",
+            # UPDATED: Use new hardcoded path for demo video
+            "src": "/media/training videos/Demo video.mp4",
             "url": "",
             "duration": mod.duration_seconds,
         }
@@ -455,7 +456,8 @@ def posh_act_page(request):
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": "",
-            "url": mod.ppt_file.url if mod.ppt_file else "",
+            # UPDATED: Use new hardcoded path for PPT
+            "url": "/media/training ppt/Posh Video PPT.pptx",
             "duration": mod.duration_seconds,
         }
         ppt_list.append(item)
@@ -615,8 +617,10 @@ def pocso_act_page(request):
             "title": mod.title,
             "is_completed": is_completed,
             "is_locked": is_locked,
+            "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else None,
-            "src": mod.video_file.url if mod.video_file else "",
+            # UPDATED: Use new hardcoded path for demo video
+            "src": "/media/training videos/Demo video.mp4",
         }
         video_list.append(item)
 
@@ -636,7 +640,8 @@ def pocso_act_page(request):
             "is_locked": False, 
             "thumb": posh_pdf_mod.thumbnail.url if posh_pdf_mod.thumbnail else None,
             "src": "",
-            "url": posh_pdf_mod.ppt_file.url,
+            # UPDATED: Use new hardcoded path for PPT if referencing POSH PDF
+             "url": "/media/training ppt/Posh Video PPT.pptx", 
         }
         ppt_list.append(item) # Add to end or start? User said "show... when i open ppt". List is safer.
 
@@ -650,8 +655,10 @@ def pocso_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else None,
-            "src": mod.ppt_file.url if mod.ppt_file else "",
-            "url": mod.ppt_file.url if mod.ppt_file else "",
+            "thumb": mod.thumbnail.url if mod.thumbnail else None,
+            # UPDATED: Use new hardcoded path
+            "src": "/media/training ppt/Posh Video PPT.pptx",
+            "url": "/media/training ppt/Posh Video PPT.pptx",
         }
         ppt_list.append(item)
         if not is_completed:

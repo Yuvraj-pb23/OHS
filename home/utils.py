@@ -10,9 +10,9 @@ def generate_certificate(user, course_type="POSH"):
     """
     # 1. Determine Template Image
     if course_type == "POSH":
-        template_name = "POSH CERT.png"
+        template_name = "Certificate/POSH CERT.png"
     else:
-        template_name = "POCSO CERT.png"
+        template_name = "Certificate/POCSO CERT.png"
     
     # Construct absolute path to the image for WeasyPrint
     image_path = os.path.join(settings.MEDIA_ROOT, template_name)
