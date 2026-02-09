@@ -65,9 +65,19 @@
             text-decoration: none; color: var(--text-dark);
             margin-bottom: 10px; transition: 0.3s;
             cursor: pointer;
+            justify-content: space-between; /* To space out lock icon */
         }
         .nav-item:hover { background: rgba(78, 84, 200, 0.1); }
         .nav-item.active { background: var(--primary-gradient); color: white; }
+
+        /* NEW: Locked style for Sidebar Items */
+        .nav-item.locked-item {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #f1f2f6;
+            color: #b2bec3;
+        }
+        .nav-item.locked-item:hover { background: #f1f2f6; }
 
         .nav-item.logout {
             margin-top: auto; color: var(--danger);
@@ -86,6 +96,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             position: relative;
         }
+        /* SECURITY: Disable pointer events on video to help prevent right click menus if JS fails */
         video { width: 100%; height: 100%; object-fit: cover; }
 
         /* SECURITY: Hide video download button */
@@ -111,6 +122,15 @@
             border: none; font-weight: 700; cursor: pointer;
             margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             transition: 0.3s;
+        }
+
+        /* NEW: Disabled Button Style */
+        .btn-disabled {
+            background: #bdc3c7 !important;
+            cursor: not-allowed !important;
+            box-shadow: none !important;
+            color: #7f8c8d !important;
+            transform: none !important;
         }
 
         .tab-header { display: flex; gap: 15px; margin-bottom: 20px; }
@@ -161,8 +181,6 @@
         .pq-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
         .pq-btn.disabled { cursor: default; pointer-events: none; }
 
-
-
         #presence-indicator {
             position: fixed; bottom: 20px; right: 20px;
             background: #2ecc71; color: white; padding: 5px 15px;
@@ -177,7 +195,8 @@
 
 <!-- MODAL FOR PPT AND QUIZ -->
 <div class="ppt-modal" id="pptModal">
-    <div class="ppt-content">
+    <!-- SECURITY: Disable right click in modal -->
+    <div class="ppt-content" oncontextmenu="return false;">
         <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 1300; font-size: 24px;">&times;</button>
         
 
@@ -215,8 +234,12 @@
         <div class="nav-menu">
             <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active"><span>📊 Dashboard</span></div>
             <div onclick="showView('certificate')" id="nav-cert" class="nav-item"><span>📜 My Certificate</span></div>
-            <!-- Keep your original Django URL link -->
-            <div onclick="window.location.href='{% url 'pocso_assessment' %}'" class="nav-item"><span>📝 Final Quiz</span></div>
+            
+            <!-- CHANGED: Replaced href with Javascript check, added ID, applied locked style initially -->
+            <div id="nav-final-quiz" onclick="attemptFinalQuiz()" class="nav-item locked-item">
+                <span>📝 Final Quiz</span>
+                <span id="quiz-lock-icon">🔒</span>
+            </div>
         </div>
         <div onclick="handleLogout()" class="nav-item logout"><span>🚪 Logout</span></div>
     </aside>
@@ -232,7 +255,8 @@
                             <h2 id="cover-title">Module 1: The POCSO Act</h2>
                             <button class="btn-start" onclick="startVideo()">▶ Start Private Video</button>
                         </div>
-                        <video id="mainPlayer" controls controlsList="nodownload" style="display: none;">
+                        <!-- SECURITY: Added oncontextmenu -->
+                        <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none;">
                             <source src="/media/training videos/Demo video.mp4" type="video/mp4">
                         </video>
                     </div>
@@ -267,10 +291,12 @@
         <div id="certificate-view" style="display: none;">
             <h1 style="color: white; margin-bottom: 20px;">🎉 Congratulations!</h1>
             <div class="section-card" id="cert-status-container" style="text-align: center; padding: 40px;">
-                <h2>You have successfully completed the POCSO Training.</h2>
-                <p style="margin: 20px 0; color: #555;">Your certificate is ready for download.</p>
-                <a href="{% url 'download_certificate' 'POCSO' %}" class="btn btn-primary" style="padding: 15px 30px; font-size: 1.2rem; text-decoration: none; display: inline-block; background-color: #27ae60; color: white; border-radius: 5px;">
-                    Download Certificate
+                <h2 id="cert-title">Complete your Training</h2>
+                <p id="cert-desc" style="margin: 20px 0; color: #555;">You must complete all Videos, PPTs, and the Final Quiz to unlock your certificate.</p>
+                
+                <!-- CHANGED: Added ID, onclick validation, and disabled class -->
+                <a href="#" id="btn-cert-download" onclick="validateCertDownload(event)" class="btn btn-primary btn-start btn-disabled" style="text-decoration: none; display: inline-block;">
+                    Download Certificate 🔒
                 </a>
             </div>
         </div>
@@ -278,13 +304,15 @@
 </div>
 
 <script>
-    // --- SECURITY ---
+    // --- SECURITY: PREVENT CONTEXT MENU ---
     document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    // --- SECURITY: PREVENT KEYBOARD SHORTCUTS ---
     document.onkeydown = e => {
         if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) || (e.ctrlKey && e.keyCode == 85)) return false;
     };
 
-    // --- DATA (KEPT YOUR ORIGINAL IDs AND PATHS) ---
+    // --- DJANGO DATA INJECTION ---
     const modules = [
         {% for m in video_modules %}
         { 
@@ -309,6 +337,10 @@
         },
         {% endfor %}
     ];
+    
+    // Check if Final Quiz is completed (Passed from Django view)
+    // If context variable doesn't exist, default to false
+    const isFinalQuizDone = {% if final_quiz_completed %}true{% else %}false{% endif %};
 
     // --- 15 POCSO PRACTICE QUESTIONS ---
     const questionBank = [
@@ -380,10 +412,6 @@
                 });
                 if (res.ok) {
                     const data = await res.json();
-                     // Log occasionally or on first success to verify
-                     // console.log("Time updated +", deltaSeconds, "s. Total Min:", data.total_minutes);
-                } else {
-                    console.error("Failed to update time. Status:", res.status);
                 }
              } catch (e) {
                  console.error("Error updating time:", e);
@@ -405,7 +433,7 @@
         document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
         document.getElementById('nav-cert').classList.toggle('active', v === 'certificate');
         
-        if(v === 'certificate') renderCert();
+        if(v === 'certificate') updateTotalStats(); // Re-check cert status on view switch
     }
 
     function switchTab(type) {
@@ -425,6 +453,35 @@
         }
     }
 
+    // --- CHECK ACCESS FOR FINAL QUIZ ---
+    function attemptFinalQuiz() {
+        // Check if any video or PPT is NOT complete
+        const videosPending = modules.some(m => m.status !== 'complete');
+        const pptsPending = ppts.some(p => p.status !== 'complete');
+
+        if (videosPending || pptsPending) {
+            alert("🔒 LOCKED: You must complete all Video Modules and Legal Resources/PPTs before you can take the Final Quiz.");
+        } else {
+            // Unlock: Go to Django URL
+            window.location.href = "{% url 'pocso_assessment' %}";
+        }
+    }
+
+    // --- CHECK ACCESS FOR CERTIFICATE DOWNLOAD ---
+    function validateCertDownload(e) {
+        // Check completion
+        const videosPending = modules.some(m => m.status !== 'complete');
+        const pptsPending = ppts.some(p => p.status !== 'complete');
+        
+        if (videosPending || pptsPending || !isFinalQuizDone) {
+            e.preventDefault(); // Stop the download
+            alert("🔒 LOCKED: Certificate is unavailable. Please complete all videos, PPTs, and pass the Final Quiz.");
+        } else {
+            // Proceed with download
+            window.location.href = "{% url 'download_certificate' 'POCSO' %}";
+        }
+    }
+
     // Auto-pause when user leaves the window
     document.addEventListener('visibilitychange', () => { if (document.hidden) player.pause(); });
 
@@ -434,7 +491,15 @@
         modules.forEach((mod, i) => {
             const item = document.createElement('div');
             item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
-            item.onclick = () => { if(mod.status !== 'locked') { playVideo(i); } };
+            
+            // UPDATED: Added scrollIntoView
+            item.onclick = () => { 
+                if(mod.status !== 'locked') { 
+                    playVideo(i); 
+                    document.getElementById('video-stage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } 
+            };
+
             item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
             list.appendChild(item);
         });
@@ -446,7 +511,15 @@
         ppts.forEach((ppt, i) => {
             const item = document.createElement('div');
             item.className = `record-item ${ppt.status === 'locked' ? 'locked' : ''}`;
-            item.onclick = () => { if(ppt.status !== 'locked') selectResource(i); };
+            
+            // UPDATED: Added scrollIntoView
+            item.onclick = () => { 
+                if(ppt.status !== 'locked') { 
+                    selectResource(i); 
+                    document.getElementById('ppt-stage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                } 
+            };
+
             item.innerHTML = `<div class="thumb-box" style="background-image:url('${ppt.thumb}')"></div><div><h3>${ppt.title}</h3></div><span class="badge bg-${ppt.status}">${ppt.status}</span>`;
             list.appendChild(item);
         });
@@ -610,20 +683,10 @@
     setInterval(() => {
         if(!document.hidden && (!player.paused || document.getElementById('pptModal').style.display === 'flex')) {
             totalActivitySeconds++;
-            // Note: We don't update #watch-time-display here anymore to specific text, 
-            // but we could. For now relying on formatted_total_time on load, 
-            // and maybe update it dynamically? 
-            // Better to update it dynamically consistent with POSH logic:
             
-            let displaySeconds = totalActivitySeconds;
-            let m = Math.floor(displaySeconds/60).toString().padStart(2, '0');
-            let s = (displaySeconds%60).toString().padStart(2, '0');
-            // Wait, POSH uses H:M:S logic in backend string, but client side increment might vary.
-            // Let's keep a simple HH:MM:SS update here
-            
-            const h = Math.floor(displaySeconds / 3600);
-            const m_ = Math.floor((displaySeconds % 3600) / 60);
-            const s_ = displaySeconds % 60;
+            const h = Math.floor(totalActivitySeconds / 3600);
+            const m_ = Math.floor((totalActivitySeconds % 3600) / 60);
+            const s_ = totalActivitySeconds % 60;
             document.getElementById('watch-time-display').innerText = 
                 `${h>0?h+':':''}${m_<10?'0'+m_:m_}:${s_<10?'0'+s_:s_}`;
         }
@@ -639,12 +702,44 @@
         
         updateChart();
         
-        // Certificate Logic
-        const container = document.getElementById('cert-status-container');
-        const certView = document.getElementById('certificate-view');
+        // --- 1. HANDLE FINAL QUIZ BUTTON STATE ---
+        const quizBtn = document.getElementById('nav-final-quiz');
+        const lockIcon = document.getElementById('quiz-lock-icon');
         
         if (perc >= 100) {
+            // Unlock Quiz
+            quizBtn.classList.remove('locked-item');
+            lockIcon.style.display = 'none';
+        } else {
+            // Lock Quiz
+            quizBtn.classList.add('locked-item');
+            lockIcon.style.display = 'block';
+        }
+
+        // --- 2. HANDLE CERTIFICATE VIEW & BUTTON STATE ---
+        const certView = document.getElementById('certificate-view');
+        const certBtn = document.getElementById('btn-cert-download');
+        const certTitle = document.getElementById('cert-title');
+        const certDesc = document.getElementById('cert-desc');
+        
+        // Only show certificate section if coursework is done (videos + PPTs)
+        if (perc >= 100) {
             certView.style.display = 'block';
+            
+            // Check if Final Quiz is ALSO done
+            if (isFinalQuizDone) {
+                // Fully Unlocked
+                certBtn.classList.remove('btn-disabled');
+                certBtn.innerHTML = "Download Certificate";
+                certTitle.innerText = "You have successfully completed the POCSO Training.";
+                certDesc.innerText = "Your certificate is ready for download.";
+            } else {
+                // Partially Unlocked (Videos done, Quiz pending)
+                certBtn.classList.add('btn-disabled');
+                certBtn.innerHTML = "Pass Quiz to Download 🔒";
+                certTitle.innerText = "Almost There!";
+                certDesc.innerText = "You have finished the modules. Please pass the Final Quiz to unlock your certificate.";
+            }
         } else {
             certView.style.display = 'none';
         }

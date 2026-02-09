@@ -1,75 +1,154 @@
 {% block body %}
 {% load static %}
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
     :root {
-        --primary: #d32f2f;
-        --primary-light: #ffebee;
-        --bg-body: #f8f9fa;
+        --primary: #3498db;
+        --primary-gradient: linear-gradient(135deg, #3498db, #5dade2);
+        --primary-light: #f0f7ff;
+        --bg-body: #ebf5fb;
         --surface: #ffffff;
-        --text-main: #1f2937;
-        --text-muted: #6b7280;
-        --border-color: #e5e7eb;
-        --success: #10b981;
-        --danger: #ef4444;
-        --warning: #f59e0b;
-        --radius: 16px;
+        --text-main: #1b4f72;
+        --text-muted: #5d6d7e;
+        --border-color: #d6eaf8;
+        --success: #27ae60;
+        --danger: #e74c3c;
+        --warning: #f39c12;
+        --radius: 20px;
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); margin: 0; color: var(--text-main); }
-    .lms-container { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; max-width: 1600px; margin: 0 auto; }
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        background: linear-gradient(rgba(235, 245, 251, 0.9), rgba(174, 214, 241, 0.9)),
+                    url("https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=2000");
+        background-attachment: fixed;
+        background-size: cover;
+        margin: 0; 
+        color: var(--text-main); 
+        min-height: 100vh;
+    }
 
-    /* Sidebar */
-    .sidebar { background: var(--surface); border-right: 1px solid var(--border-color); padding: 25px; height: 100vh; position: sticky; top: 0; }
-    .nav-item { display: flex; align-items: center; padding: 14px 18px; border-radius: 12px; text-decoration: none; color: var(--text-main); font-weight: 500; margin-bottom: 8px; }
-    .nav-item.active { background-color: var(--primary); color: white; }
+    .lms-container { 
+        display: grid; 
+        grid-template-columns: 280px 1fr; 
+        min-height: 100vh; 
+        max-width: 1600px; 
+        margin: 0 auto; 
+    }
+
+    /* Sidebar - Updated to Light Blue Theme */
+    .sidebar { 
+        background: rgba(255, 255, 255, 0.95); 
+        backdrop-filter: blur(10px);
+        border-right: 1px solid var(--border-color); 
+        padding: 30px; 
+        height: 100vh; 
+        position: sticky; 
+        top: 0; 
+        box-shadow: 10px 0 30px rgba(52, 152, 219, 0.05);
+    }
+    
+    .sidebar-brand h2 {
+        color: var(--primary);
+        font-weight: 700;
+        letter-spacing: -1px;
+    }
+
+    .nav-item { 
+        display: flex; 
+        align-items: center; 
+        padding: 14px 18px; 
+        border-radius: 12px; 
+        text-decoration: none; 
+        color: var(--text-main); 
+        font-weight: 600; 
+        margin-bottom: 10px; 
+        transition: 0.3s;
+    }
+    .nav-item:hover { background: var(--primary-light); color: var(--primary); }
+    .nav-item.active { background: var(--primary-gradient); color: white; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); }
 
     /* Content Area */
     .main-content { padding: 40px; display: flex; flex-direction: column; align-items: center; }
-    .quiz-card { background: var(--surface); max-width: 850px; width: 100%; padding: 40px; border-radius: var(--radius); box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid var(--border-color); position: relative; }
+    
+    .quiz-card { 
+        background: var(--surface); 
+        max-width: 850px; 
+        width: 100%; 
+        padding: 45px; 
+        border-radius: var(--radius); 
+        box-shadow: 0 15px 35px rgba(52, 152, 219, 0.1); 
+        border: 1px solid var(--border-color); 
+        position: relative; 
+    }
 
     /* Timer Badge */
     .timer-badge {
         position: absolute;
         top: 25px;
         right: 40px;
-        background: var(--bg-body);
-        padding: 8px 15px;
+        background: var(--primary-light);
+        padding: 8px 20px;
         border-radius: 30px;
         font-weight: 700;
         display: flex;
         align-items: center;
         gap: 8px;
-        border: 2px solid var(--border-color);
-        min-width: 80px;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        min-width: 90px;
         justify-content: center;
     }
-    .timer-low { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    .timer-low { color: var(--danger); border-color: var(--danger); background: #fdedec; animation: pulse 1s infinite; }
+    
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
 
     /* Question UI */
-    .progress-bar { height: 8px; background: #eee; border-radius: 10px; margin-bottom: 25px; overflow: hidden; }
-    .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
-    .option-card { padding: 15px 20px; border: 2px solid var(--border-color); border-radius: 12px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
-    .option-card:hover { border-color: var(--primary); background: var(--primary-light); }
-    .option-card.selected { background: var(--primary); color: white; border-color: var(--primary); }
+    .progress-bar { height: 10px; background: #ebf5fb; border-radius: 10px; margin-bottom: 30px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--primary-gradient); width: 0%; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    
+    .option-card { 
+        padding: 18px 25px; 
+        border: 2px solid #edf2f7; 
+        border-radius: 15px; 
+        margin-bottom: 15px; 
+        cursor: pointer; 
+        transition: 0.2s all; 
+        font-weight: 500; 
+        color: var(--text-main);
+    }
+    .option-card:hover { 
+        border-color: var(--primary); 
+        background: var(--primary-light); 
+        transform: translateX(5px);
+    }
+    .option-card.selected { 
+        background: var(--primary-gradient); 
+        color: white; 
+        border-color: var(--primary); 
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2);
+    }
 
-    /* Review UI */
+    /* Result UI */
     .review-item { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; }
-    .review-correct { border-left: 5px solid var(--success); background: #f0fdf4; }
-    .review-wrong { border-left: 5px solid var(--danger); background: #fef2f2; }
-    .review-timeout { border-left: 5px solid var(--warning); background: #fffbeb; }
+    .review-correct { border-left: 6px solid var(--success); background: #f0fdf4; }
+    .review-wrong { border-left: 6px solid var(--danger); background: #fef2f2; }
+    .review-timeout { border-left: 6px solid var(--warning); background: #fffbeb; }
 
-    .badge { padding: 4px 10px; border-radius: 5px; font-size: 0.75rem; font-weight: bold; }
-    .badge-success { background: var(--success); color: white; }
-    .badge-danger { background: var(--danger); color: white; }
-    .badge-warning { background: var(--warning); color: white; }
+    .badge { padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; }
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-danger { background: #f8d7da; color: #721c24; }
+    .badge-warning { background: #fff3cd; color: #856404; }
 
-    .btn { padding: 12px 30px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-outline { border: 1px solid var(--primary); color: var(--primary); background: transparent; }
+    .btn { padding: 14px 35px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Poppins'; }
+    .btn-primary { background: var(--primary-gradient); color: white; box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3); }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4); }
+    .btn-primary:disabled { background: #bdc3c7; cursor: not-allowed; }
+    
+    .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+    .btn-outline:hover { background: var(--primary); color: white; }
 
     @media (max-width: 1024px) { .lms-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
 </style>
@@ -77,12 +156,12 @@
 <div class="lms-container">
     <aside class="sidebar">
         <div class="sidebar-brand" style="margin-bottom:40px;">
-            <h2 style="color:var(--primary); margin:0;">POCSO 2012</h2>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Adaptive Assessment</p>
+            <h2 style="margin:0;">POCSO 2012</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem; font-weight: 500;">Final Certification Exam</p>
         </div>
         <nav>
             <a href="#" class="nav-item active">📝 Final Test</a>
-            <a href="javascript:history.back()" class="nav-item">⬅ Exit</a>
+            <a href="javascript:history.back()" class="nav-item">⬅ Exit Training</a>
         </nav>
     </aside>
 
@@ -94,30 +173,32 @@
             </div>
 
             <div class="progress-bar"><div class="progress-fill" id="pg-fill"></div></div>
-            <span id="q-counter" style="color:var(--primary); font-weight:bold; font-size:0.8rem; text-transform:uppercase;"></span>
-            <h2 id="q-text" style="margin-top:10px; padding-right: 100px;">Loading Question...</h2>
+            <span id="q-counter" style="color:var(--primary); font-weight:700; font-size:0.85rem; text-transform:uppercase; letter-spacing: 1px;"></span>
+            <h2 id="q-text" style="margin-top:10px; padding-right: 110px; line-height: 1.4;">Loading Question...</h2>
+            
             <div id="options-container" style="margin-top:25px;"></div>
+            
             <div style="margin-top:30px; display:flex; justify-content:flex-end;">
-                <button class="btn btn-primary" id="next-btn" disabled onclick="handleNext()">Next Question</button>
+                <button class="btn btn-primary" id="next-btn" disabled onclick="handleNext()">Next Question ➜</button>
             </div>
         </div>
 
         <!-- 2. Result Section -->
         <div class="quiz-card" id="result-section" style="display:none; text-align:center;">
-            <h1>Quiz Results</h1>
-            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="final-score">0/20</div>
-            <p id="result-msg" style="margin-bottom:30px;"></p>
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn btn-primary" onclick="showReview()">Review Answers</button>
-                <button class="btn btn-outline" onclick="location.reload()">Try New Set</button>
+            <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Assessment Result</h1>
+            <div style="font-size:4rem; font-weight:800; color:var(--primary); margin:10px 0;" id="final-score">0/20</div>
+            <p id="result-msg" style="margin-bottom:30px; font-size: 1.2rem; font-weight: 500;"></p>
+            <div style="display:flex; gap:15px; justify-content:center;">
+                <button class="btn btn-primary" onclick="showReview()">Review My Answers</button>
+                <button class="btn btn-outline" onclick="location.reload()">Retry Assessment</button>
             </div>
         </div>
 
         <!-- 3. Review Section -->
         <div class="quiz-card" id="review-section" style="display:none;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h2>Answer Review</h2>
-                <button class="btn btn-outline" onclick="location.reload()">Back to Home</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <h2 style="margin:0;">Answer Review</h2>
+                <button class="btn btn-outline" onclick="location.reload()">Back to Dashboard</button>
             </div>
             <div id="review-container"></div>
         </div>
@@ -125,6 +206,7 @@
 </div>
 
 <script>
+    // [KEEP ORIGINAL QUESTION DATA AND LOGIC INTACT]
     const allQuestions = [
         { q: "POCSO stands for Protection of Children from _______ Offences Act.", a: ["Social", "Sexual", "Systemic", "Serious"], c: 1 },
         { q: "The POCSO Act was enacted in which year?", a: ["2010", "2012", "2015", "2018"], c: 1 },
@@ -190,16 +272,10 @@
         timer = setInterval(() => {
             timeLeft--;
             document.getElementById('timer-seconds').innerText = timeLeft;
-            
-            if (timeLeft <= 10) {
-                document.getElementById('timer-box').classList.add('timer-low');
-            }
-            
+            if (timeLeft <= 10) document.getElementById('timer-box').classList.add('timer-low');
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                if (selected === null) {
-                    selected = -1; // -1 indicates Timed Out
-                }
+                if (selected === null) selected = -1;
                 handleNext();
             }
         }, 1000);
@@ -228,18 +304,15 @@
             };
             container.appendChild(div);
         });
-
         startTimer();
     }
 
     function handleNext() {
         clearInterval(timer);
         userAnswers.push(selected);
-        
         if (selected !== null && selected !== -1) {
             if (selected === selectedQuestions[currentIdx].c) score++;
         }
-        
         currentIdx++;
         if (currentIdx < 20) loadQuestion();
         else showResult();
@@ -255,7 +328,7 @@
             msg.innerText = "Congratulations! You have passed the POCSO Assessment.";
             msg.style.color = "var(--success)";
         } else {
-            msg.innerText = "You did not reach the passing score (70%). Please review and try again.";
+            msg.innerText = "Assessment Incomplete. You need 70% (14/20) to pass.";
             msg.style.color = "var(--danger)";
         }
     }
@@ -263,7 +336,6 @@
     function showReview() {
         document.getElementById('result-section').style.display = 'none';
         document.getElementById('review-section').style.display = 'block';
-        
         const container = document.getElementById('review-container');
         container.innerHTML = '';
 
@@ -277,21 +349,16 @@
             let badgeText = '✗ Incorrect';
 
             if (isCorrect) {
-                reviewClass = 'review-correct';
-                badgeClass = 'badge-success';
-                badgeText = '✓ Correct';
+                reviewClass = 'review-correct'; badgeClass = 'badge-success'; badgeText = '✓ Correct';
             } else if (isTimedOut) {
-                reviewClass = 'review-timeout';
-                badgeClass = 'badge-warning';
-                badgeText = '⌛ Timed Out';
+                reviewClass = 'review-timeout'; badgeClass = 'badge-warning'; badgeText = '⌛ Timed Out';
             }
 
             const div = document.createElement('div');
             div.className = `review-item ${reviewClass}`;
-            
             div.innerHTML = `
                 <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <strong style="display:block; margin-bottom:10px;">Q${i+1}: ${q.q}</strong>
+                    <strong style="display:block; margin-bottom:10px; color:var(--text-main);">Q${i+1}: ${q.q}</strong>
                     <span class="badge ${badgeClass}">${badgeText}</span>
                 </div>
                 <p style="margin:5px 0; font-size:0.9rem;">
