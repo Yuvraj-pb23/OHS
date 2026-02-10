@@ -1223,3 +1223,10 @@ def download_certificate(request, course_type="POSH"):
     filename = f"Certificate_{course_type}_{request.user.username}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
+
+# In your Django Form
+def clean_phone(self):
+    phone = self.cleaned_data.get('phone')
+    if not phone.isdigit() or len(phone) != 10:
+        raise forms.ValidationError("Invalid phone number")
+    return phone

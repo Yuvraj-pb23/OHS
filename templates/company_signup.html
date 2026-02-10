@@ -3,57 +3,256 @@
 
 {% block body %}
 <style>
-    .sub-container { max-width: 600px; margin: 50px auto; padding: 40px; background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    .sub-container { 
+        max-width: 600px; 
+        margin: 50px auto; 
+        padding: 40px; 
+        background: white; 
+        border-radius: 15px; 
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+    }
     .form-header { text-align: center; margin-bottom: 30px; }
     .form-header h2 { color: #26a69a; font-weight: 800; } /* Teal for Company */
-    .form-group { margin-bottom: 15px; }
-    .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
-    .btn-company { width: 100%; padding: 15px; background: linear-gradient(135deg, #26a69a, #00897b); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+    .form-header p { color: #666; font-size: 1.1rem; }
+    
+    .form-group { margin-bottom: 20px; position: relative; }
+    .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
+
+    .form-control { 
+        width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; 
+        box-sizing: border-box; transition: border-color 0.3s ease;
+    }
+
+    /* Validation Feedback Styles */
+    .form-control.valid {
+        border-color: #26a69a; /* Teal/Green */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2326a69a' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 10px center;
+    }
+    .form-control.invalid {
+        border-color: #c62828; /* Red */
+    }
+
+    .error-msg {
+        color: #c62828;
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: none; /* Hidden by default */
+    }
+
+    .btn-company { 
+        width: 100%; padding: 15px; 
+        background: linear-gradient(135deg, #26a69a, #00897b); 
+        color: white; border: none; border-radius: 8px; 
+        font-weight: bold; font-size: 1.1rem; cursor: pointer; 
+        transition: opacity 0.3s, transform 0.2s;
+        opacity: 1;
+    }
+    .btn-company:disabled {
+        background: #b0bec5; /* Grey */
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+    .btn-company:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+    }
+    
+    .section-title {
+        margin-bottom: 15px; 
+        color: #555; 
+        border-left: 4px solid #26a69a; 
+        padding-left: 10px;
+        font-size: 1.1rem;
+    }
 </style>
 
 <div class="sub-container">
     <div class="form-header">
         <h2>Corporate Registration</h2>
-        <p>Plan: {{ plan_type }}</p>
+        <p>Selected Plan: <strong>{{ plan_type }}</strong></p>
     </div>
 
     {% if messages %}
         {% for message in messages %}
-            <div style="padding:10px; background:#ffebee; color:#c62828; margin-bottom:15px; border-radius:5px;">{{ message }}</div>
+            <div style="padding:10px; background:#ffebee; color:#c62828; margin-bottom:15px; border-radius:5px; border: 1px solid #ffcdd2;">{{ message }}</div>
         {% endfor %}
     {% endif %}
 
-    <form method="POST">
+    <form method="POST" id="companyForm" novalidate>
         {% csrf_token %}
+        
         <!-- Organization Details -->
-        <h4 style="margin-bottom:15px; color:#555;">Organization Details</h4>
+        <h4 class="section-title">Organization Details</h4>
+        
         <div class="form-group">
-            <label>Company / School Name</label>
-            <input type="text" name="company_name" class="form-control" required placeholder="e.g. Acme Corp">
-        </div>
-        <div class="form-group">
-            <label>Number of Employees (Approx)</label>
-            <input type="number" name="seats" class="form-control" required value="10">
+            <label class="form-label">Company / School Name</label>
+            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="e.g. Acme Corp Inc.">
+            <div class="error-msg">Name can contain letters, numbers, spaces, and: . , & -</div>
         </div>
 
-        <hr style="margin: 20px 0; border:0; border-top:1px solid #eee;">
+        <div class="form-group">
+            <label class="form-label">Number of Employees (Seats)</label>
+            <!-- Added min="1" and protection against negative numbers via JS -->
+            <input type="number" name="seats" id="seats" class="form-control" value="10" min="1">
+            <div class="error-msg">Must be a valid number (minimum 1).</div>
+        </div>
+
+        <hr style="margin: 25px 0; border:0; border-top:1px dashed #ddd;">
 
         <!-- Admin Details -->
-        <h4 style="margin-bottom:15px; color:#555;">Admin Account</h4>
+        <h4 class="section-title">Admin Account Setup</h4>
+        
         <div class="form-group">
-            <label>Admin Full Name</label>
-            <input type="text" name="fullname" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Admin Email</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <label class="form-label">Admin Full Name</label>
+            <input type="text" name="fullname" id="fullname" class="form-control" placeholder="Jane Director">
+            <div class="error-msg">Please enter a valid full name (letters only).</div>
         </div>
 
-        <button type="submit" class="btn-company">Create Organization Account</button>
+        <div class="form-group">
+            <label class="form-label">Admin Email</label>
+            <input type="email" name="email" id="email" class="form-control" placeholder="admin@company.com">
+            <div class="error-msg">Please enter a valid business email address.</div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Create Password</label>
+            <input type="password" name="password" id="password" class="form-control" placeholder="********">
+            <div class="error-msg">Password must be 8+ chars, with number & symbol (@$!%*?&).</div>
+        </div>
+        
+        <!-- NEW FIELD: Confirm Password -->
+        <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input type="password" id="confirm_password" class="form-control" placeholder="********">
+            <div class="error-msg">Passwords do not match.</div>
+        </div>
+
+        <button type="submit" class="btn-company" id="submitBtn" disabled>Create Organization Account</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Regex Definitions
+        const patterns = {
+            // Company: Allows letters, numbers, spaces, and business punctuation (.,&-)
+            company_name: /^[a-zA-Z0-9\s\.\,\&\-]{2,100}$/, 
+            // Seats: Positive integer, no leading zeros unless it's just '0' (but we require min 1)
+            seats: /^[1-9][0-9]*$/,
+            // Fullname: Standard letters/spaces
+            fullname: /^[a-zA-Z\s]{3,50}$/,
+            // Email: Standard email
+            email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+            // Password: Min 8, 1 letter, 1 number, 1 special char
+            password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        };
+
+        // Validate Individual Field
+        function validateField(field, regex) {
+            const value = field.value.trim();
+            const errorMsg = field.nextElementSibling;
+
+            // Special handling for seats to ensure it's not empty
+            if (field.id === 'seats' && value === "") {
+                field.classList.add('invalid');
+                errorMsg.style.display = 'block';
+                return false;
+            }
+
+            if (regex.test(value)) {
+                field.classList.remove('invalid');
+                field.classList.add('valid');
+                errorMsg.style.display = 'none';
+                return true;
+            } else {
+                field.classList.remove('valid');
+                field.classList.add('invalid');
+                errorMsg.style.display = 'block';
+                return false;
+            }
+        }
+
+        // Validate Password Match
+        function validateMatch() {
+            const pass = document.getElementById('password');
+            const confirm = document.getElementById('confirm_password');
+            const errorMsg = confirm.nextElementSibling;
+
+            if (confirm.value === "") return false;
+
+            if (pass.value === confirm.value && pass.value !== "") {
+                confirm.classList.remove('invalid');
+                confirm.classList.add('valid');
+                errorMsg.style.display = 'none';
+                return true;
+            } else {
+                confirm.classList.remove('valid');
+                confirm.classList.add('invalid');
+                errorMsg.style.display = 'block';
+                return false;
+            }
+        }
+
+        // Check Whole Form Validity
+        function checkFormValidity() {
+            const company = document.getElementById('company_name');
+            const seats = document.getElementById('seats');
+            const fullname = document.getElementById('fullname');
+            const email = document.getElementById('email');
+            const pass = document.getElementById('password');
+            const confirm = document.getElementById('confirm_password');
+
+            const isCompanyValid = patterns.company_name.test(company.value.trim());
+            const isSeatsValid = patterns.seats.test(seats.value.trim());
+            const isNameValid = patterns.fullname.test(fullname.value.trim());
+            const isEmailValid = patterns.email.test(email.value.trim());
+            const isPassValid = patterns.password.test(pass.value);
+            const isMatchValid = (pass.value === confirm.value && confirm.value !== "");
+
+            if (isCompanyValid && isSeatsValid && isNameValid && isEmailValid && isPassValid && isMatchValid) {
+                submitBtn.disabled = false;
+            } else {
+                submitBtn.disabled = true;
+            }
+        }
+
+        // Event Listeners
+        const inputs = document.querySelectorAll('.form-control');
+        
+        inputs.forEach(input => {
+            input.addEventListener('keyup', (e) => {
+                const id = e.target.id;
+
+                if (id === 'company_name') validateField(e.target, patterns.company_name);
+                if (id === 'seats') validateField(e.target, patterns.seats);
+                if (id === 'fullname') validateField(e.target, patterns.fullname);
+                if (id === 'email') validateField(e.target, patterns.email);
+                
+                if (id === 'password') {
+                    validateField(e.target, patterns.password);
+                    validateMatch(); // Re-check confirm box if main password changes
+                }
+                if (id === 'confirm_password') validateMatch();
+
+                checkFormValidity();
+            });
+
+            // Trigger validation for 'seats' specifically on change (for number spinner usage)
+            if(input.type === 'number') {
+                input.addEventListener('change', (e) => {
+                     validateField(e.target, patterns.seats);
+                     checkFormValidity();
+                });
+            }
+        });
+        
+        // Initial check (in case browser auto-fills or default value of 10 exists)
+        // We validate seats immediately because it has a default value
+        validateField(document.getElementById('seats'), patterns.seats);
+    });
+</script>
 {% endblock %}
