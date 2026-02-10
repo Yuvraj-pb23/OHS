@@ -21,7 +21,6 @@
             --highlight: #00f2fe;
         }
 
-        /* Ensure wrapper doesn't break layout */
         .posh-c-wrapper {
             margin: 0;
             padding: 0;
@@ -32,18 +31,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Update to use Static for Django */
             background: url("{% static 'img/footer-logo.png' %}") no-repeat center center;
             background-size: contain;
             position: relative;
         }
 
-        /* Dark Overlay for readability */
         .posh-c-wrapper::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(10, 25, 47, 0.85); /* Slightly darker for better contrast */
+            background: rgba(10, 25, 47, 0.85);
             backdrop-filter: blur(4px);
             z-index: 0;
         }
@@ -51,7 +48,7 @@
         /* --- GLASS CARD --- */
         .glass-card {
             position: relative;
-            z-index: 1; /* Sit above overlay */
+            z-index: 1;
             width: 450px;
             padding: 40px;
             border-radius: 24px;
@@ -62,6 +59,33 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             color: white;
             transition: transform 0.3s ease;
+        }
+
+        /* --- BACK BUTTON STYLE --- */
+        .back-nav {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+
+        .back-nav:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-3px);
+            color: var(--highlight);
         }
 
         /* --- HEADERS --- */
@@ -88,12 +112,6 @@
             margin-bottom: 15px;
         }
 
-        .input-group label {
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        /* Styled Number Input */
         .num-input {
             width: 100px;
             padding: 8px;
@@ -107,9 +125,6 @@
             outline: none;
         }
         
-        .num-input::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-        /* Custom Range Slider */
         .range-slider {
             -webkit-appearance: none;
             width: 100%;
@@ -128,23 +143,13 @@
             background: var(--highlight);
             cursor: pointer;
             box-shadow: 0 0 10px rgba(0, 242, 254, 0.7);
-            transition: transform 0.2s;
         }
 
-        .range-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        /* --- PRICING DISPLAY --- */
         .total-price {
             text-align: center;
             margin-top: 15px;
         }
         
-        .calculation-text {
-            font-size: 0.85rem;
-            opacity: 0.6;
-            margin-bottom: 5px;
-        }
-
         .price-display {
             font-size: 3rem;
             font-weight: 700;
@@ -154,18 +159,13 @@
         }
 
         .price-display span { font-size: 1.5rem; vertical-align: top; }
-        
-        .duration { font-size: 0.9rem; opacity: 0.7; margin-top: 5px; display: block;}
 
-        /* --- FEATURES --- */
         .features {
             margin: 25px 0;
             border-top: 1px solid var(--glass-border);
             padding-top: 20px;
         }
 
-        .features ul { list-style: none; padding: 0; }
-        
         .features li {
             margin-bottom: 12px;
             font-size: 0.9rem;
@@ -181,7 +181,6 @@
             text-align: center;
         }
 
-        /* --- BUTTON --- */
         .btn-buy {
             width: 100%;
             padding: 16px;
@@ -206,11 +205,15 @@
             background: var(--highlight);
             color: #000;
         }
-
     </style>
 
     <div class="posh-c-wrapper">
         <div class="glass-card">
+            <!-- BACK BUTTON -->
+            <a href="javascript:history.back()" class="back-nav" title="Go Back">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
             <div class="header">
                 <h2>Corporate POSH Plan</h2>
                 <p>Prevention of Sexual Harassment Training</p>
@@ -242,7 +245,6 @@
                 </ul>
             </div>
 
-            <!-- BUTTON: Triggers JS function -->
             <button class="btn-buy" onclick="proceedToCheckout()">
                 Get Started Now
             </button>
@@ -250,7 +252,6 @@
     </div>
 
     <script>
-        // 1. DOM Elements
         const rangeInput = document.getElementById('rangeInput');
         const numInput = document.getElementById('numInput');
         const finalPrice = document.getElementById('finalPrice');
@@ -258,12 +259,10 @@
 
         const COST_PER_EMPLOYEE = 1000;
 
-        // 2. Format Currency
         const formatCurrency = (num) => {
             return new Intl.NumberFormat('en-IN').format(num);
         };
 
-        // 3. Update UI
         function updateCalculator(val) {
             let count = parseInt(val);
             if (!count || count < 1) count = 1;
@@ -276,25 +275,17 @@
             mathText.innerText = `${count} employees x ₹${formatCurrency(COST_PER_EMPLOYEE)}`;
         }
 
-        // 4. Listeners
         rangeInput.addEventListener('input', (e) => updateCalculator(e.target.value));
         numInput.addEventListener('input', (e) => updateCalculator(e.target.value));
 
-        // Initialize
         updateCalculator(10);
 
-        // 5. PROCEED TO CHECKOUT FUNCTION
         function proceedToCheckout() {
-            // Get current seat count
             const seats = document.getElementById('numInput').value;
-            
-            // Django URL for the Company Subscription View
-            // 'POSH Act' matches the plan_type in your urls.py
             const baseUrl = "{% url 'company_subscription' 'POSH Act' %}";
-            
-            // Redirect with the seat count as a parameter
             window.location.href = `${baseUrl}?seats=${seats}`;
         }
     </script>
+</body>
 </html>
 {% endblock body %}

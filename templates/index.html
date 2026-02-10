@@ -1,3 +1,5 @@
+--- START OF FILE Paste February 10, 2026 - 4:04PM ---
+
 {%extends 'base.html'%} {%block body %} {% load static %}
 <!DOCTYPE html>
 <html lang="en">
@@ -20,19 +22,8 @@
        0. IMAGE PROTECTION STYLES (ADDED)
        ========================================= */
     img {
-      /* Prevent dragging the image */
-      -webkit-user-drag: none;
-      -khtml-user-drag: none;
-      -moz-user-drag: none;
-      -o-user-drag: none;
-      
-      /* Prevent selecting the image (highlighting) */
-      user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      
-      /* Optional: prevents touch-and-hold context menu on mobile */
+      -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none;
+      user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;
       -webkit-touch-callout: none; 
     }
 
@@ -176,16 +167,9 @@
       padding-top: 80px; padding-bottom: 80px; position: relative; z-index: 1;
     }
     
-    /* === MOBILE BACKGROUND SWAP === */
     @media (max-width: 992px) {
         .why-choose-us-section {
-            /* 
-               Replaces the image with a Professional Dark Gradient on Mobile 
-               so the content is always readable and "posh/pocso" doesn't get cut off.
-            */
             background-image: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%) !important;
-            
-            /* Reset properties for mobile */
             background-attachment: scroll !important; 
             background-size: cover !important; 
             background-position: center !important;
@@ -323,10 +307,10 @@
     }
 
     /* =========================================================
-       UPDATED: 3D COSMIC WORKFLOW CHART (COMPACT SPACING)
+       UPDATED: 3D COSMIC WORKFLOW CHART (FIXED SIZE & CLIPPING)
        ========================================================= */
     #globe-workflow {
-        padding: 30px 0 80px; /* Reduced top padding */
+        padding: 40px 0 150px; /* INCREASED BOTTOM PADDING TO CATCH PLANETS */
         background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
         overflow: hidden; position: relative; color: white;
     }
@@ -343,12 +327,12 @@
         100% { transform: translateY(-100px); }
     }
 
-    /* 3D Scene Container - REDUCED HEIGHT & ADDED NEGATIVE MARGIN */
+    /* 3D Scene Container - INCREASED HEIGHT */
     .galaxy-scene {
         position: relative; 
         width: 100%; 
-        height: 650px; /* Was 900px - Reduced to remove empty space */
-        margin-top: -50px; /* Pulls the globe closer to the text */
+        height: 850px; /* RESTORED TO LARGE HEIGHT */
+        margin-top: -60px; /* PULLS THE WHOLE SYSTEM UP */
         perspective: 1200px; 
         display: flex; 
         justify-content: center; 
@@ -356,9 +340,10 @@
         z-index: 2;
     }
 
-    /* The Tilted Orbit Ring */
+    /* The Tilted Orbit Ring - RESTORED SIZE */
     .orbit-system {
-        position: relative; width: 800px; height: 800px;
+        position: relative; 
+        width: 800px; height: 800px; /* RESTORED TO ORIGINAL LARGE SIZE */
         transform-style: preserve-3d; transform: rotateX(60deg); 
         animation: orbitSpin 30s linear infinite;
     }
@@ -379,35 +364,26 @@
        ========================================= */
     .sun-core {
         position: absolute; top: 50%; left: 50%;
-        width: 140px; height: 140px; /* Reduced Size */
+        width: 140px; height: 140px; 
         border-radius: 50%;
-        
-        /* 1. Deep 3D Sphere Look */
         background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 1) 0%, rgba(14, 165, 233, 1) 40%, rgba(2, 6, 23, 1) 90%);
-
-        /* 2. Intense Glowing Atmosphere */
         box-shadow: 
             inset -10px -10px 30px rgba(0,0,0,0.8),
             0 0 25px rgba(14, 165, 233, 0.8),
             0 0 70px rgba(14, 165, 233, 0.4);
 
         display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-        
-        /* 3. Counter-rotate */
         transform-origin: center center;
         animation: sunStability 30s linear infinite;
-        
         z-index: 20; border: 1px solid rgba(255,255,255,0.2);
     }
 
-    /* Inner Rotating Ring (Dashed) */
     .sun-core::before {
         content: ''; position: absolute; inset: -15px; border-radius: 50%;
         border: 2px dashed rgba(14, 165, 233, 0.5);
         animation: spinRingReverse 12s linear infinite; pointer-events: none;
     }
 
-    /* Outer Rotating Ring (Solid) */
     .sun-core::after {
         content: ''; position: absolute; inset: -25px; border-radius: 50%;
         border: 2px solid transparent; border-top-color: #38bdf8; border-bottom-color: #38bdf8;
@@ -425,21 +401,20 @@
         text-transform: uppercase; margin-top: 2px; z-index: 5;
     }
 
-    /* The Wrapper for Planets - UPDATED FOR 7 ITEMS */
+    /* The Wrapper for Planets - RESTORED RADIUS */
     .planet-wrapper {
         position: absolute; top: 50%; left: 50%; width: 60px; height: 60px;
         transform-style: preserve-3d;
-        /* Position logic handled inline via --i, updated for 7 items */
+        /* Radius restored to -400px so it matches original big size */
         transform: 
             rotateZ(calc(360deg / 7 * var(--i))) 
-            translateY(-400px) /* SCALED RADIUS */
+            translateY(-400px) 
             rotateZ(calc(-360deg / 7 * var(--i))); 
     }
 
     /* The Actual Planet Content */
     .planet-card {
         width: 160px; display: flex; flex-direction: column; align-items: center; text-align: center;
-        /* Fix: RotateZ then RotateX */
         animation: planetCounterSpin 30s linear infinite; transition: transform 0.3s; cursor: pointer;
     }
     

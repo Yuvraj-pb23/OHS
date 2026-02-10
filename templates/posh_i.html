@@ -21,7 +21,6 @@
             --highlight: #00f2fe;
         }
 
-        /* Ensure wrapper doesn't break layout */
         .posh-i-wrapper {
             margin: 0;
             padding: 0;
@@ -37,20 +36,18 @@
             position: relative;
         }
 
-        /* Dark Overlay for readability */
         .posh-i-wrapper::before {
             content: '';
             position: absolute;
             inset: 0;
             background: rgba(10, 25, 47, 0.85);
             backdrop-filter: blur(4px);
-            
         }
 
         /* --- GLASS CARD --- */
         .glass-card {
             position: relative;
-            z-index: 1; /* Sit above overlay */
+            z-index: 1;
             width: 450px;
             padding: 40px;
             border-radius: 24px;
@@ -61,6 +58,33 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             color: white;
             transition: transform 0.3s ease;
+        }
+
+        /* --- BACK BUTTON STYLE --- */
+        .back-nav {
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+
+        .back-nav:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-3px);
+            color: var(--highlight);
         }
 
         /* --- HEADERS --- */
@@ -143,11 +167,15 @@
             background: var(--highlight);
             color: #000;
         }
-
     </style>
 
     <div class="posh-i-wrapper">
         <div class="glass-card">
+            <!-- BACK BUTTON -->
+            <a href="javascript:history.back()" class="back-nav" title="Go Back">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+
             <div class="header">
                 <h2>Individual POSH Plan</h2>
                 <p>Comprehensive Sexual Harassment Awareness</p>
@@ -176,5 +204,6 @@
             </a>
         </div>
     </div>
+</body>
 </html>
 {% endblock body %}
