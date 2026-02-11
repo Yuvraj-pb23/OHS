@@ -102,4 +102,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # Certificate
     path('certificate/<str:course_type>/', views.download_certificate, name='download_certificate'),
+    path('402/', views.custom_402, name='402'),
 ]

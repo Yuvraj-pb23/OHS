@@ -1281,3 +1281,12 @@ def clean_phone(self):
 
 def custom_404(request, exception):
     return render(request, 'hh.html', status=404)
+
+def custom_403(request, exception):
+    return render(request, 'hh.html', status=403)
+
+def custom_500(request):
+    return render(request, 'hh.html', status=500)
+
+def custom_402(request, exception=None):
+    return render(request, 'hh.html', status=402)
