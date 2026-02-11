@@ -56,6 +56,7 @@ urlpatterns = [
     # --- AJAX API for Training ---
     path("ajax/update-watch-time/", views.update_watch_time, name="update_watch_time"),
     path("ajax/mod-complete/<int:module_id>/", views.mod_complete, name="mod_complete"),
+    path("ajax/submit-assessment/", views.submit_assessment, name="submit_assessment"),
 
     # --- SUBSCRIPTION FLOWS ---
     path(

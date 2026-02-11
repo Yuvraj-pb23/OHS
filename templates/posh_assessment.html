@@ -7,7 +7,7 @@
 <style>
     :root {
         --primary: #6200ea;
-        --primary-light: #ede7f6; 
+        --primary-light: #ede7f6;
         --primary-hover: #5a00d6;
         --bg-body: #f8f9fa;
         --surface: #ffffff;
@@ -21,17 +21,65 @@
         --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
     }
 
-    body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); margin: 0; color: var(--text-main); }
-    .lms-container { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; max-width: 1600px; margin: 0 auto; }
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-body);
+        margin: 0;
+        color: var(--text-main);
+    }
+
+    .lms-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
 
     /* Sidebar */
-    .sidebar { background: var(--surface); border-right: 1px solid var(--border-color); padding: 25px; height: 100vh; position: sticky; top: 0; }
-    .nav-item { display: flex; align-items: center; padding: 14px 18px; border-radius: 12px; text-decoration: none; color: var(--text-main); font-weight: 500; margin-bottom: 8px; }
-    .nav-item.active { background-color: var(--primary); color: white; }
+    .sidebar {
+        background: var(--surface);
+        border-right: 1px solid var(--border-color);
+        padding: 25px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .nav-item.active {
+        background-color: var(--primary);
+        color: white;
+    }
 
     /* Main Content */
-    .main-content { padding: 40px; display: flex; flex-direction: column; align-items: center; }
-    .quiz-card { background: var(--surface); max-width: 850px; width: 100%; padding: 40px; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid var(--border-color); position: relative; }
+    .main-content {
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quiz-card {
+        background: var(--surface);
+        max-width: 850px;
+        width: 100%;
+        padding: 40px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        position: relative;
+    }
 
     /* Timer Style */
     .timer-badge {
@@ -49,38 +97,144 @@
         min-width: 80px;
         justify-content: center;
     }
-    .timer-low { color: var(--danger); border-color: var(--danger); animation: pulse 1s infinite; }
 
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
+    .timer-low {
+        color: var(--danger);
+        border-color: var(--danger);
+        animation: pulse 1s infinite;
     }
 
-    .progress-container { width: 100%; background-color: #e5e7eb; border-radius: 10px; height: 8px; margin-bottom: 30px; }
-    .progress-bar { height: 100%; background-color: var(--primary); border-radius: 10px; transition: width 0.3s ease; }
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
 
-    .options-grid { display: grid; gap: 12px; margin-top: 20px; }
-    .option-card { padding: 15px 20px; border: 2px solid var(--border-color); border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; }
-    .option-card:hover { border-color: var(--primary); background-color: var(--primary-light); }
-    .option-card.selected { border-color: var(--primary); background-color: var(--primary); color: white; }
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .progress-container {
+        width: 100%;
+        background-color: #e5e7eb;
+        border-radius: 10px;
+        height: 8px;
+        margin-bottom: 30px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: var(--primary);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+
+    .options-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .option-card {
+        padding: 15px 20px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-weight: 500;
+    }
+
+    .option-card:hover {
+        border-color: var(--primary);
+        background-color: var(--primary-light);
+    }
+
+    .option-card.selected {
+        border-color: var(--primary);
+        background-color: var(--primary);
+        color: white;
+    }
 
     /* Review Styles */
-    .review-section { margin-top: 40px; width: 100%; display: none; }
-    .review-item { padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px; background: white; }
-    .review-item.correct-border { border-left: 6px solid var(--success); }
-    .review-item.wrong-border { border-left: 6px solid var(--danger); }
-    
-    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-bottom: 10px; }
-    .bg-success-light { background: #d1fae5; color: #065f46; }
-    .bg-danger-light { background: #fee2e2; color: #991b1b; }
-    .bg-warning-light { background: #fef3c7; color: #92400e; }
+    .review-section {
+        margin-top: 40px;
+        width: 100%;
+        display: none;
+    }
 
-    .btn { padding: 12px 30px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-outline { border: 2px solid var(--primary); color: var(--primary); background: transparent; }
+    .review-item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 15px;
+        background: white;
+    }
 
-    @media (max-width: 1024px) { .lms-container { grid-template-columns: 1fr; } .sidebar { display: none; } }
+    .review-item.correct-border {
+        border-left: 6px solid var(--success);
+    }
+
+    .review-item.wrong-border {
+        border-left: 6px solid var(--danger);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .bg-success-light {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .bg-danger-light {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .bg-warning-light {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: transparent;
+    }
+
+    @media (max-width: 1024px) {
+        .lms-container {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            display: none;
+        }
+    }
 </style>
 
 <div class="lms-container">
@@ -103,8 +257,11 @@
                 ⏱ <span id="timer-seconds">30</span>s
             </div>
 
-            <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-            <span id="q-counter" style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem;"></span>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span id="q-counter"
+                style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem;"></span>
             <h2 id="question-text" style="margin-top:10px; padding-right: 100px;"></h2>
             <div class="options-grid" id="options-container"></div>
             <div style="margin-top:30px; display:flex; justify-content:flex-end;">
@@ -115,7 +272,8 @@
         <!-- Results UI -->
         <div class="quiz-card" id="results-ui" style="display:none; text-align:center;">
             <h1>Results</h1>
-            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/20</div>
+            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/20
+            </div>
             <p id="result-message" style="font-size: 1.1rem; margin-bottom: 30px;"></p>
             <div style="display:flex; gap:15px; justify-content:center;">
                 <button class="btn btn-primary" onclick="location.reload()">Retry Test</button>
@@ -127,7 +285,8 @@
         <div class="review-section" id="review-ui">
             <h2 style="margin-bottom:20px;">Review Answers</h2>
             <div id="review-container"></div>
-            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="location.reload()">Close Review</button>
+            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="location.reload()">Close
+                Review</button>
         </div>
     </main>
 </div>
@@ -194,16 +353,16 @@
         timeLeft = 30;
         document.getElementById('timer-seconds').innerText = timeLeft;
         document.getElementById('timer-box').classList.remove('timer-low');
-        
+
         clearInterval(timer);
         timer = setInterval(() => {
             timeLeft--;
             document.getElementById('timer-seconds').innerText = timeLeft;
-            
+
             if (timeLeft <= 10) {
                 document.getElementById('timer-box').classList.add('timer-low');
             }
-            
+
             if (timeLeft <= 0) {
                 clearInterval(timer);
                 if (userSelections[currentIdx] === undefined) {
@@ -219,10 +378,10 @@
         document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of 20`;
         document.getElementById('question-text').innerText = qData.q;
         document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 20) * 100}%`;
-        
+
         const container = document.getElementById('options-container');
         container.innerHTML = '';
-        
+
         qData.a.forEach((opt, i) => {
             const div = document.createElement('div');
             div.className = 'option-card';
@@ -235,17 +394,17 @@
             };
             container.appendChild(div);
         });
-        
+
         document.getElementById('next-btn').disabled = true;
         startTimer();
     }
 
     function handleNext() {
         clearInterval(timer);
-        
+
         // If they click next without selecting, or it timed out
         if (userSelections[currentIdx] === undefined) {
-            userSelections[currentIdx] = -1; 
+            userSelections[currentIdx] = -1;
         }
 
         if (userSelections[currentIdx] === activeQuestions[currentIdx].c) {
@@ -265,13 +424,32 @@
         document.getElementById('results-ui').style.display = 'block';
         document.getElementById('score-display').innerText = `${score}/20`;
         const msg = document.getElementById('result-message');
-        if(score >= 14) {
+
+        const passed = score >= 14;
+
+        if (passed) {
             msg.innerText = "Congratulations! You passed.";
             msg.style.color = "var(--success)";
         } else {
             msg.innerText = "You did not pass. 70% required.";
             msg.style.color = "var(--danger)";
         }
+
+        // SAVE TO BACKEND
+        fetch('/ajax/submit-assessment/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                type: 'POSH',
+                score: score,
+                passed: passed
+            })
+        }).then(res => res.json())
+            .then(data => console.log("Result saved:", data))
+            .catch(err => console.error("Error saving result:", err));
     }
 
     function generateReview() {
@@ -279,15 +457,15 @@
         document.getElementById('review-ui').style.display = 'block';
         const container = document.getElementById('review-container');
         container.innerHTML = '';
-        
+
         activeQuestions.forEach((q, i) => {
             const userPick = userSelections[i];
             const isCorrect = userPick === q.c;
             const isTimedOut = userPick === -1;
-            
+
             const item = document.createElement('div');
             item.className = `review-item ${isCorrect ? 'correct-border' : 'wrong-border'}`;
-            
+
             let statusBadge = `<div class="status-badge bg-success-light">✓ Correct</div>`;
             if (isTimedOut) {
                 statusBadge = `<div class="status-badge bg-warning-light">⌛ Timed Out</div>`;
@@ -297,7 +475,7 @@
 
             item.innerHTML = `
                 ${statusBadge}
-                <h3 style="margin:0 0 10px 0;">${i+1}. ${q.q}</h3>
+                <h3 style="margin:0 0 10px 0;">${i + 1}. ${q.q}</h3>
                 <p><strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}</p>
                 ${!isCorrect ? `<p style="color:var(--success)"><strong>Correct Answer:</strong> ${q.a[q.c]}</p>` : ''}
             `;

@@ -324,13 +324,31 @@
         document.getElementById('final-score').innerText = `${score}/20`;
         
         const msg = document.getElementById('result-msg');
-        if (score >= 14) {
+        const passed = score >= 14;
+
+        if (passed) {
             msg.innerText = "Congratulations! You have passed the POCSO Assessment.";
             msg.style.color = "var(--success)";
         } else {
             msg.innerText = "Assessment Incomplete. You need 70% (14/20) to pass.";
             msg.style.color = "var(--danger)";
         }
+
+        // SAVE TO BACKEND
+        fetch('/ajax/submit-assessment/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({
+                type: 'POCSO',
+                score: score,
+                passed: passed
+            })
+        }).then(res => res.json())
+          .then(data => console.log("Result saved:", data))
+          .catch(err => console.error("Error saving result:", err));
     }
 
     function showReview() {

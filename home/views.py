@@ -26,6 +26,7 @@ from .models import (
     TrainingModule,
     ModuleProgress,
     DailyActivity,
+    AssessmentProgress,
 )
 
 # Ensure this file exists in your app or adjust import accordingly
@@ -501,6 +502,7 @@ def posh_act_page(request):
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
+        "is_final_quiz_passed": AssessmentProgress.objects.filter(user=user, assessment_type="POSH", is_passed=True).exists(),
     }
 
     return render(request, "posh_act_page.html", context)
@@ -567,7 +569,30 @@ def mod_complete(request, module_id):
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error"}, status=400)
+    return JsonResponse({"status": "error"}, status=400)
 
+
+@csrf_exempt
+@login_required
+def submit_assessment(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            assessment_type = data.get("type", "POSH")  # POSH or POCSO
+            score = int(data.get("score", 0))
+            passed = bool(data.get("passed", False))
+
+            progress, created = AssessmentProgress.objects.get_or_create(
+                user=request.user, assessment_type=assessment_type
+            )
+            progress.score = score
+            progress.is_passed = passed
+            progress.save()
+
+            return JsonResponse({"status": "success", "message": "Result saved"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
 
 @login_required(login_url="login")
 def pocso_act_page(request):
@@ -702,6 +727,7 @@ def pocso_act_page(request):
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": formatted_total_time,
         "is_assessment_unlocked": percent_complete == 100,
+        "final_quiz_completed": AssessmentProgress.objects.filter(user=user, assessment_type="POCSO", is_passed=True).exists(),
     }
 
     return render(request, "pocso_act_page.html", context)
@@ -1210,6 +1236,28 @@ def download_certificate(request, course_type="POSH"):
         if total == 0 or completed < total:
             messages.error(request, "You must complete all modules before downloading the certificate.")
             return redirect("posh_act_page")
+
+
+        # CHECK FINAL ASSESSMENT (NEW)
+        has_passed_assessment = AssessmentProgress.objects.filter(user=request.user, assessment_type="POSH", is_passed=True).exists()
+        if not has_passed_assessment:
+            messages.error(request, "You must pass the Final Quiz to download the certificate.")
+            return redirect("posh_act_page")
+
+    elif course_type == "POCSO":
+        # Check POCSO completion
+        modules = TrainingModule.objects.filter(module_type="POCSO")
+        total = modules.count()
+        completed = ModuleProgress.objects.filter(user=request.user, module__in=modules, is_completed=True).count()
+        
+        if total == 0 or completed < total:
+             messages.error(request, "You must complete all modules before downloading the certificate.")
+             return redirect("pocso_act_page")
+
+        has_passed_assessment = AssessmentProgress.objects.filter(user=request.user, assessment_type="POCSO", is_passed=True).exists()
+        if not has_passed_assessment:
+            messages.error(request, "You must pass the Final Quiz to download the certificate.")
+            return redirect("pocso_act_page")
 
     # 2. Generate PDF
     pdf_content = generate_certificate(request.user, course_type)

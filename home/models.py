@@ -192,3 +192,22 @@ class DailyActivity(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.date} - {self.minutes_watched} min"
+
+
+# 11. Assessment Progress (Final Quiz)
+class AssessmentProgress(models.Model):
+    ASSESSMENT_TYPES = (
+        ("POSH", "POSH Act"),
+        ("POCSO", "POCSO Act"),
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="assessment_progress")
+    assessment_type = models.CharField(max_length=10, choices=ASSESSMENT_TYPES)
+    is_passed = models.BooleanField(default=False)
+    score = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "assessment_type")
+
+    def __str__(self):
+        return f"{self.user.username} - {self.assessment_type} - {'Passed' if self.is_passed else 'Failed'}"
