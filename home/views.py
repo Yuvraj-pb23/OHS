@@ -1278,3 +1278,6 @@ def clean_phone(self):
     if not phone.isdigit() or len(phone) != 10:
         raise forms.ValidationError("Invalid phone number")
     return phone
+
+def custom_404(request, exception):
+    return render(request, 'hh.html', status=404)

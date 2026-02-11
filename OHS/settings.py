@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-jf_-mlc346oc3-uzri+_p)xul%)y-6&j2h&(cr57cf0sdaownw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*', '127.0.0.1']
 
 
 # Application definition
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -73,6 +74,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'OHS.wsgi.application'
+NPM_BIN_PATH = r"/usr/bin/npm"
+#"C:/Program Files/nodejs/npm.cmd"  --for windows--
+
 
 
 # Database
@@ -152,3 +156,11 @@ AUTHENTICATION_BACKENDS = [
     'home.backends.EmailOrUsernameModelBackend', 
     'django.contrib.auth.backends.ModelBackend', 
 ]
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # Without manifest
+    },
+}

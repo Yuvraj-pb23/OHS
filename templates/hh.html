@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 – Page Not Found</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      overflow: hidden;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 50px 40px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      animation: float 4s ease-in-out infinite;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    h1 {
+      font-size: 120px;
+      font-weight: 700;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 15px;
+      opacity: 0.85;
+      margin-bottom: 30px;
+    }
+
+    a {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 30px;
+      background: linear-gradient(45deg, #00c6ff, #0072ff);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      transition: 0.3s ease;
+    }
+
+    a:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px rgba(0, 114, 255, 0.5);
+    }
+
+    .glow {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: #00c6ff;
+      filter: blur(120px);
+      opacity: 0.35;
+      top: -50px;
+      left: -50px;
+    }
+
+    .glow.two {
+      background: #0072ff;
+      top: auto;
+      left: auto;
+      bottom: -60px;
+      right: -60px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow"></div>
+  <div class="glow two"></div>
+
+  <div class="card">
+    
+    <h2>Oops! Page Not Found</h2>
+    <p>The page you’re looking for doesn’t exist or has been moved.</p>
+    <a href="/">Back to Home</a>
+  </div>
+
+</body>
+</html>
