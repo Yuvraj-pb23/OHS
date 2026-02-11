@@ -11,8 +11,32 @@
         border-radius: 15px; 
         box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
     }
+
+    /* --- BACK LINK STYLE --- */
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        text-decoration: none;
+        color: #777;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .back-link i {
+        margin-right: 8px;
+        font-size: 0.8rem;
+    }
+
+    .back-link:hover {
+        color: #26a69a; /* Matching teal theme */
+        transform: translateX(-3px);
+    }
+
+    /* --- EXISTING STYLES --- */
     .form-header { text-align: center; margin-bottom: 30px; }
-    .form-header h2 { color: #26a69a; font-weight: 800; } /* Teal for Company */
+    .form-header h2 { color: #26a69a; font-weight: 800; }
     .form-header p { color: #666; font-size: 1.1rem; }
     
     .form-group { margin-bottom: 20px; position: relative; }
@@ -23,23 +47,15 @@
         box-sizing: border-box; transition: border-color 0.3s ease;
     }
 
-    /* Validation Feedback Styles */
     .form-control.valid {
-        border-color: #26a69a; /* Teal/Green */
+        border-color: #26a69a;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2326a69a' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
         background-position: right 10px center;
     }
-    .form-control.invalid {
-        border-color: #c62828; /* Red */
-    }
+    .form-control.invalid { border-color: #c62828; }
 
-    .error-msg {
-        color: #c62828;
-        font-size: 0.85rem;
-        margin-top: 5px;
-        display: none; /* Hidden by default */
-    }
+    .error-msg { color: #c62828; font-size: 0.85rem; margin-top: 5px; display: none; }
 
     .btn-company { 
         width: 100%; padding: 15px; 
@@ -47,13 +63,8 @@
         color: white; border: none; border-radius: 8px; 
         font-weight: bold; font-size: 1.1rem; cursor: pointer; 
         transition: opacity 0.3s, transform 0.2s;
-        opacity: 1;
     }
-    .btn-company:disabled {
-        background: #b0bec5; /* Grey */
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
+    .btn-company:disabled { background: #b0bec5; cursor: not-allowed; opacity: 0.7; }
     .btn-company:hover:not(:disabled) {
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
@@ -69,6 +80,11 @@
 </style>
 
 <div class="sub-container">
+    <!-- PREVIOUS PAGE LINK -->
+    <a href="javascript:history.back()" class="back-link">
+        <i class="fa-solid fa-chevron-left"></i> Back to Plan Details
+    </a>
+
     <div class="form-header">
         <h2>Corporate Registration</h2>
         <p>Selected Plan: <strong>{{ plan_type }}</strong></p>
@@ -83,7 +99,6 @@
     <form method="POST" id="companyForm" novalidate>
         {% csrf_token %}
         
-        <!-- Organization Details -->
         <h4 class="section-title">Organization Details</h4>
         
         <div class="form-group">
@@ -94,14 +109,12 @@
 
         <div class="form-group">
             <label class="form-label">Number of Employees (Seats)</label>
-            <!-- Added min="1" and protection against negative numbers via JS -->
             <input type="number" name="seats" id="seats" class="form-control" value="10" min="1">
             <div class="error-msg">Must be a valid number (minimum 1).</div>
         </div>
 
         <hr style="margin: 25px 0; border:0; border-top:1px dashed #ddd;">
 
-        <!-- Admin Details -->
         <h4 class="section-title">Admin Account Setup</h4>
         
         <div class="form-group">
@@ -122,7 +135,6 @@
             <div class="error-msg">Password must be 8+ chars, with number & symbol (@$!%*?&).</div>
         </div>
         
-        <!-- NEW FIELD: Confirm Password -->
         <div class="form-group">
             <label class="form-label">Confirm Password</label>
             <input type="password" id="confirm_password" class="form-control" placeholder="********">
@@ -134,34 +146,21 @@
 </div>
 
 <script>
+    // ... (All existing validation script logic remains the same)
     document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = document.getElementById('submitBtn');
-
-        // Regex Definitions
         const patterns = {
-            // Company: Allows letters, numbers, spaces, and business punctuation (.,&-)
             company_name: /^[a-zA-Z0-9\s\.\,\&\-]{2,100}$/, 
-            // Seats: Positive integer, no leading zeros unless it's just '0' (but we require min 1)
             seats: /^[1-9][0-9]*$/,
-            // Fullname: Standard letters/spaces
             fullname: /^[a-zA-Z\s]{3,50}$/,
-            // Email: Standard email
             email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-            // Password: Min 8, 1 letter, 1 number, 1 special char
             password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
         };
 
-        // Validate Individual Field
         function validateField(field, regex) {
             const value = field.value.trim();
             const errorMsg = field.nextElementSibling;
-
-            // Special handling for seats to ensure it's not empty
-            if (field.id === 'seats' && value === "") {
-                field.classList.add('invalid');
-                errorMsg.style.display = 'block';
-                return false;
-            }
+            if (field.id === 'seats' && value === "") return false;
 
             if (regex.test(value)) {
                 field.classList.remove('invalid');
@@ -176,12 +175,10 @@
             }
         }
 
-        // Validate Password Match
         function validateMatch() {
             const pass = document.getElementById('password');
             const confirm = document.getElementById('confirm_password');
             const errorMsg = confirm.nextElementSibling;
-
             if (confirm.value === "") return false;
 
             if (pass.value === confirm.value && pass.value !== "") {
@@ -197,51 +194,29 @@
             }
         }
 
-        // Check Whole Form Validity
         function checkFormValidity() {
-            const company = document.getElementById('company_name');
-            const seats = document.getElementById('seats');
-            const fullname = document.getElementById('fullname');
-            const email = document.getElementById('email');
-            const pass = document.getElementById('password');
-            const confirm = document.getElementById('confirm_password');
+            const isCompanyValid = patterns.company_name.test(document.getElementById('company_name').value.trim());
+            const isSeatsValid = patterns.seats.test(document.getElementById('seats').value.trim());
+            const isNameValid = patterns.fullname.test(document.getElementById('fullname').value.trim());
+            const isEmailValid = patterns.email.test(document.getElementById('email').value.trim());
+            const isPassValid = patterns.password.test(document.getElementById('password').value);
+            const isMatchValid = (document.getElementById('password').value === document.getElementById('confirm_password').value && document.getElementById('confirm_password').value !== "");
 
-            const isCompanyValid = patterns.company_name.test(company.value.trim());
-            const isSeatsValid = patterns.seats.test(seats.value.trim());
-            const isNameValid = patterns.fullname.test(fullname.value.trim());
-            const isEmailValid = patterns.email.test(email.value.trim());
-            const isPassValid = patterns.password.test(pass.value);
-            const isMatchValid = (pass.value === confirm.value && confirm.value !== "");
-
-            if (isCompanyValid && isSeatsValid && isNameValid && isEmailValid && isPassValid && isMatchValid) {
-                submitBtn.disabled = false;
-            } else {
-                submitBtn.disabled = true;
-            }
+            submitBtn.disabled = !(isCompanyValid && isSeatsValid && isNameValid && isEmailValid && isPassValid && isMatchValid);
         }
 
-        // Event Listeners
         const inputs = document.querySelectorAll('.form-control');
-        
         inputs.forEach(input => {
             input.addEventListener('keyup', (e) => {
                 const id = e.target.id;
-
                 if (id === 'company_name') validateField(e.target, patterns.company_name);
                 if (id === 'seats') validateField(e.target, patterns.seats);
                 if (id === 'fullname') validateField(e.target, patterns.fullname);
                 if (id === 'email') validateField(e.target, patterns.email);
-                
-                if (id === 'password') {
-                    validateField(e.target, patterns.password);
-                    validateMatch(); // Re-check confirm box if main password changes
-                }
+                if (id === 'password') { validateField(e.target, patterns.password); validateMatch(); }
                 if (id === 'confirm_password') validateMatch();
-
                 checkFormValidity();
             });
-
-            // Trigger validation for 'seats' specifically on change (for number spinner usage)
             if(input.type === 'number') {
                 input.addEventListener('change', (e) => {
                      validateField(e.target, patterns.seats);
@@ -249,9 +224,6 @@
                 });
             }
         });
-        
-        // Initial check (in case browser auto-fills or default value of 10 exists)
-        // We validate seats immediately because it has a default value
         validateField(document.getElementById('seats'), patterns.seats);
     });
 </script>
