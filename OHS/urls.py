@@ -31,9 +31,13 @@ urlpatterns = [
 
 from django.conf import settings
 from django.conf.urls.static import static
+from django.urls import re_path
+from django.views.static import serve
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Always serve media files in this environment, even when DEBUG is False
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
 
 handler404 = 'home.views.custom_404'
 handler403 = 'home.views.custom_403'
