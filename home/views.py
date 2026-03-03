@@ -435,8 +435,7 @@ def posh_act_page(request):
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             # UPDATED: Use new hardcoded path for demo video
-            "src": "/media/training videos/Demo video.mp4",
-            "url": "",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
         video_list.append(item)
@@ -458,7 +457,7 @@ def posh_act_page(request):
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": "",
             # UPDATED: Use new hardcoded path for PPT
-            "url": "/media/training ppt/Posh Video PPT.pptx",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
         ppt_list.append(item)
