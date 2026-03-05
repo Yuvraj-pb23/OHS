@@ -442,8 +442,9 @@ def posh_act_page(request):
         previous_completed = is_completed
 
     # Process PPT Sequence
-    # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    
+    # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
@@ -641,15 +642,14 @@ def pocso_act_page(request):
             "title": mod.title,
             "is_completed": is_completed,
             "is_locked": is_locked,
-            "is_locked": is_locked,
-            "thumb": mod.thumbnail.url if mod.thumbnail else None,
-            # UPDATED: Use new hardcoded path for demo video
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": "/media/training videos/Demo video.mp4",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+            "duration": mod.duration_seconds,
         }
         video_list.append(item)
+        previous_completed = is_completed
 
-        if not is_completed:
-            previous_completed = False
 
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
@@ -665,7 +665,7 @@ def pocso_act_page(request):
             "thumb": posh_pdf_mod.thumbnail.url if posh_pdf_mod.thumbnail else None,
             "src": "",
             # UPDATED: Use new hardcoded path for PPT if referencing POSH PDF
-             "url": "/media/training ppt/Posh Video PPT.pptx", 
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
         }
         ppt_list.append(item) # Add to end or start? User said "show... when i open ppt". List is safer.
 
@@ -682,7 +682,7 @@ def pocso_act_page(request):
             "thumb": mod.thumbnail.url if mod.thumbnail else None,
             # UPDATED: Use new hardcoded path
             "src": "/media/training ppt/Posh Video PPT.pptx",
-            "url": "/media/training ppt/Posh Video PPT.pptx",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
         }
         ppt_list.append(item)
         if not is_completed:
