@@ -406,8 +406,6 @@
             <div class="nav-menu">
                 <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active"><span>📊 Dashboard</span>
                 </div>
-                <div onclick="showView('certificate')" id="nav-cert" class="nav-item"><span>📜 My Certificate</span>
-                </div>
 
                 <!-- CHANGED: Replaced href with Javascript check, added ID, applied locked style initially -->
                 <div id="nav-final-quiz" onclick="attemptFinalQuiz()" class="nav-item locked-item">
@@ -484,22 +482,6 @@
                     </div>
                 </div>
             </div>
-
-            <div id="certificate-view" style="display: none;">
-                <h1 style="color: white; margin-bottom: 20px;">🎉 Congratulations!</h1>
-                <div class="section-card" id="cert-status-container" style="text-align: center; padding: 40px;">
-                    <h2 id="cert-title">Complete your Training</h2>
-                    <p id="cert-desc" style="margin: 20px 0; color: #555;">You must complete all Videos, PPTs, and the
-                        Final Quiz to unlock your certificate.</p>
-
-                    <!-- CHANGED: Added ID, onclick validation, and disabled class -->
-                    <a href="#" id="btn-cert-download" onclick="validateCertDownload(event)"
-                        class="btn btn-primary btn-start btn-disabled"
-                        style="text-decoration: none; display: inline-block;">
-                        Download Certificate 🔒
-                    </a>
-                </div>
-            </div>
         </main>
     </div>
 
@@ -519,6 +501,7 @@
             id: {{ m.id }},
             title: "{{ m.title|escapejs }}",
                 status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
+                    backendSaved: {% if m.is_completed %}true{% else %}false{% endif %},
                     thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}",
                         src: "{{ m.src }}"
         },
@@ -569,6 +552,7 @@
         const player = document.getElementById('mainPlayer');
         let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
         let sessionSeconds = 0;
+        let currentIdx = 0;
         let currentPPTIdx = 0;
 
         // Quiz Variables
@@ -642,18 +626,14 @@
         // --- 3. NAVIGATION & TABS ---
         function showView(v) {
             document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
-            document.getElementById('certificate-view').style.display = v === 'certificate' ? 'block' : 'none';
 
             document.getElementById('nav-dash').classList.toggle('active', v === 'dashboard');
-            document.getElementById('nav-cert').classList.toggle('active', v === 'certificate');
 
             if (v === 'dashboard') {
                 // Re-render modules and PPTs to refresh the UI state
                 renderModules();
                 renderPPTList();
                 updateTotalStats();
-            } else if (v === 'certificate') {
-                updateTotalStats(); // Re-check cert status on view switch
             }
         }
 
@@ -685,21 +665,6 @@
             } else {
                 // Unlock: Go to Django URL
                 window.location.href = "{% url 'pocso_assessment' %}";
-            }
-        }
-
-        // --- CHECK ACCESS FOR CERTIFICATE DOWNLOAD ---
-        function validateCertDownload(e) {
-            // Check completion
-            const videosPending = modules.some(m => m.status !== 'complete');
-            const pptsPending = ppts.some(p => p.status !== 'complete');
-
-            if (videosPending || pptsPending || !isFinalQuizDone) {
-                e.preventDefault(); // Stop the download
-                alert("🔒 LOCKED: Certificate is unavailable. Please complete all videos, PPTs, and pass the Final Quiz.");
-            } else {
-                // Proceed with download
-                window.location.href = "{% url 'download_certificate' 'POCSO' %}";
             }
         }
 
@@ -893,24 +858,47 @@
 
         // Unified Completion Logic
         function handleVideoComplete() {
-            if (modules[currentIdx].status !== 'complete') {
-                modules[currentIdx].status = 'complete';
+            console.log('handleVideoComplete called, currentIdx:', currentIdx);
+            console.log('modules array:', modules);
+            console.log('Current module:', modules[currentIdx]);
+            
+            if (modules[currentIdx]) {
+                const wasComplete = modules[currentIdx].status === 'complete';
+                const backendNotified = modules[currentIdx].backendSaved || false;
+                
+                console.log('Module status:', modules[currentIdx].status, 'Backend notified:', backendNotified);
+                
+                if (!wasComplete) {
+                    console.log('Marking module complete in UI');
+                    modules[currentIdx].status = 'complete';
 
-                // Optimistic UI Update
-                if (modules[currentIdx + 1]) modules[currentIdx + 1].status = 'pending';
-                else if (ppts[0]) ppts[0].status = 'pending';
+                    // Optimistic UI Update
+                    if (modules[currentIdx + 1]) modules[currentIdx + 1].status = 'pending';
+                    else if (ppts[0]) ppts[0].status = 'pending';
 
-                renderModules();
-                renderPPTList();
-                updateTotalStats();
-
-                // Save to Backend
-                markComplete(modules[currentIdx].id);
+                    renderModules();
+                    renderPPTList();
+                    updateTotalStats();
+                }
+                
+                // Always save to backend if not already saved
+                if (!backendNotified) {
+                    console.log('Calling markComplete API for module:', modules[currentIdx].id);
+                    modules[currentIdx].backendSaved = true;
+                    markComplete(modules[currentIdx].id);
+                } else {
+                    console.log('Backend already notified, skipping API call');
+                }
+            } else {
+                console.log('currentIdx invalid or module not found');
             }
         }
 
         // Fallback: Standard 'ended' event
-        player.onended = handleVideoComplete;
+        player.onended = function() {
+            console.log('Video ended event fired');
+            handleVideoComplete();
+        };
 
         player.ontimeupdate = () => {
             if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
@@ -920,6 +908,7 @@
             if (player.duration > 0) {
                 const thresh = player.duration * 0.95;
                 if (player.currentTime > thresh) {
+                    console.log('Video reached 95% threshold, currentTime:', player.currentTime, 'duration:', player.duration);
                     handleVideoComplete();
                 }
             }

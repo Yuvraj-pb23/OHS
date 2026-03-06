@@ -55,17 +55,24 @@ def custom_login_redirect(request):
             plan__type__in=["POSH", "BOTH"],
         ).exists()
 
-        if has_posh:
-            return redirect("posh_act_page")
-
         has_pocso = Subscription.objects.filter(
             Q(user=user) | Q(organization__organizationmember__user=user),
             status="ACTIVE",
             plan__type__in=["POCSO", "BOTH"],
         ).exists()
 
-        if has_pocso:
-            return redirect("pocso_act_page")
+        if user.account_type == "EMPLOYEE":
+            # Company employees -> pages WITHOUT certificate option
+            if has_posh:
+                return redirect("posh_act_page_corp")
+            if has_pocso:
+                return redirect("pocso_act_page_corp")
+        else:
+            # Individual subscribers -> pages WITH certificate option
+            if has_posh:
+                return redirect("posh_act_page")
+            if has_pocso:
+                return redirect("pocso_act_page")
 
         return redirect("tutorial")
 
@@ -553,22 +560,28 @@ def mod_complete(request, module_id):
     """
     API called when a video ends. Marks module as complete.
     """
+    print(f"DEBUG mod_complete called: method={request.method}, module_id={module_id}, user={request.user}")
     if request.method == "POST":
         try:
             module = TrainingModule.objects.get(id=module_id)
+            print(f"DEBUG: Found module: {module.title}")
             prog, created = ModuleProgress.objects.get_or_create(
                 user=request.user, module=module
             )
+            print(f"DEBUG: ModuleProgress {'created' if created else 'found'}, current is_completed={prog.is_completed}")
             prog.is_completed = True
             prog.save()
+            print(f"DEBUG: Saved ModuleProgress, is_completed=True for user={request.user.id}, module={module_id}")
             return JsonResponse({"status": "success", "module_id": module_id})
         except TrainingModule.DoesNotExist:
+            print(f"DEBUG ERROR: Module {module_id} not found")
             return JsonResponse(
                 {"status": "error", "message": "Module not found"}, status=404
             )
         except Exception as e:
+            print(f"DEBUG ERROR: Exception in mod_complete: {e}")
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    return JsonResponse({"status": "error"}, status=400)
+    print(f"DEBUG: Invalid method {request.method}")
     return JsonResponse({"status": "error"}, status=400)
 
 
@@ -643,7 +656,7 @@ def pocso_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": "/media/training videos/Demo video.mp4",
+            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
@@ -653,6 +666,9 @@ def pocso_act_page(request):
 
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    
+    # Reset previous_completed for PPT sequence
+    previous_completed = True
     
     # [NEW] Inject POSH Act PDF for Reference (as requested)
     posh_pdf_mod = TrainingModule.objects.filter(module_type="POSH", ppt_file__isnull=False).exclude(video_file__isnull=False).order_by('order').first()
@@ -730,6 +746,266 @@ def pocso_act_page(request):
     }
 
     return render(request, "pocso_act_page.html", context)
+
+
+# --- 6b. COMPANY EMPLOYEE TRAINING PAGES (No Certificate) ---
+
+@login_required(login_url="login")
+def posh_act_page_corp(request):
+    """Same as posh_act_page but for company employees - no certificate option."""
+    user = request.user
+    has_access = Subscription.objects.filter(
+        Q(user=user) | Q(organization__organizationmember__user=user),
+        status="ACTIVE",
+        plan__type__in=["POSH", "BOTH"],
+    ).exists()
+
+    if not has_access:
+        messages.error(request, "Access Denied: Subscription Required.")
+        return redirect("tutorial")
+
+    # 1. Fetch Modules
+    modules = TrainingModule.objects.filter(module_type="POSH").order_by("order")
+
+    # 2. Fetch User Progress
+    progress_map = {}
+    completed_count = 0
+
+    # Initialize progress for all modules if not exists
+    for mod in modules:
+        prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
+        progress_map[mod.id] = prog.is_completed
+        if prog.is_completed:
+            completed_count += 1
+
+    # 3. Calculate Overall Status
+    total_modules = modules.count()
+    percent_complete = (
+        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    )
+
+    # 4. Determine Locked Status & Split
+    video_list = []
+    ppt_list = []
+
+    # Process Videos Sequence
+    # UPDATED: Include if it has a video_file (priority), regardless of PPT presence
+    video_modules = [m for m in modules if m.video_file]
+    previous_completed = True
+    for mod in video_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            # UPDATED: Use new hardcoded path for demo video
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+            "duration": mod.duration_seconds,
+        }
+        video_list.append(item)
+        previous_completed = is_completed
+
+    # Process PPT Sequence
+    ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    
+    # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
+    previous_completed = True
+    for mod in ppt_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": "",
+            # UPDATED: Use new hardcoded path for PPT
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+            "duration": mod.duration_seconds,
+        }
+        ppt_list.append(item)
+        previous_completed = is_completed
+
+    # 5. Daily Activity Stats for Chart (Last 7 days)
+    today = timezone.now().date()
+
+    # Calculate Total Study Time (Lifetime)
+    total_mins_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))[
+            "minutes_watched__sum"
+        ]
+        or 0
+    )
+    total_secs_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))[
+            "seconds_watched__sum"
+        ]
+        or 0
+    )
+    total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
+    last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
+    chart_labels = [d.strftime("%a") for d in last_7_days]
+    chart_data = []
+
+    for d in last_7_days:
+        activity = DailyActivity.objects.filter(user=user, date=d).first()
+        chart_data.append(activity.minutes_watched if activity else 0)
+
+    context = {
+        "video_modules": video_list,
+        "ppt_modules": ppt_list,
+        "percent_complete": percent_complete,
+        "completed_count": completed_count,
+        "total_modules": total_modules,
+        "chart_labels": json.dumps(chart_labels),
+        "chart_data": json.dumps(chart_data),
+        # Remove duplicate key if present
+        "total_seconds_watched": total_seconds_watched,
+        "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
+        "is_final_quiz_passed": AssessmentProgress.objects.filter(user=user, assessment_type="POSH", is_passed=True).exists(),
+        "is_company_employee": True,
+    }
+
+    return render(request, "posh_act_page_corp.html", context)
+
+
+@login_required(login_url="login")
+def pocso_act_page_corp(request):
+    """Same as pocso_act_page but for company employees - no certificate option."""
+    user = request.user
+    has_access = Subscription.objects.filter(
+        Q(user=user) | Q(organization__organizationmember__user=user),
+        status="ACTIVE",
+        plan__type__in=["POCSO", "BOTH"],
+    ).exists()
+
+    if not has_access:
+        messages.error(request, "Access Denied: Subscription Required.")
+        return redirect("tutorial")
+
+    # 1. Fetch Modules
+    modules = TrainingModule.objects.filter(module_type="POCSO").order_by("order")
+    
+    # Debug logging
+    print(f"DEBUG POCSO CORP: Total modules found: {modules.count()}")
+
+    # 2. Fetch User Progress
+    progress_map = {}
+    completed_count = 0
+
+    for mod in modules:
+        prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
+        progress_map[mod.id] = prog.is_completed
+        if prog.is_completed:
+            completed_count += 1
+        print(f"DEBUG: Module {mod.id} '{mod.title}' - is_completed: {prog.is_completed}")
+
+    # 3. Calculate Overall Status
+    total_modules = modules.count()
+    percent_complete = (
+        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+    )
+
+    # 4. Determine Locked Status & Split
+    video_list = []
+    ppt_list = []
+
+    # Process Videos Sequence - modules with video files
+    video_modules = [m for m in modules if m.video_file]
+    print(f"DEBUG: Video modules count: {len(video_modules)}")
+    previous_completed = True
+    for mod in video_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+            "duration": mod.duration_seconds,
+        }
+        video_list.append(item)
+        print(f"DEBUG: Added video {mod.id} - is_completed: {is_completed}, is_locked: {is_locked}")
+        previous_completed = is_completed
+
+
+    # Process PPTs Sequence
+    ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    print(f"DEBUG: PPT modules count: {len(ppt_modules)}")
+    
+    # Reset previous_completed for PPT sequence
+    previous_completed = True
+
+    for mod in ppt_modules:
+        is_completed = progress_map.get(mod.id, False)
+        is_locked = not previous_completed 
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else None,
+            "src": "/media/training ppt/Posh Video PPT.pptx",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+        }
+        ppt_list.append(item)
+        previous_completed = is_completed
+
+    # 5. Daily Activity Stats for Chart (Last 7 days)
+    today = timezone.now().date()
+
+    # Calculate Total Study Time (Lifetime)
+    total_mins_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))[
+            "minutes_watched__sum"
+        ]
+        or 0
+    )
+    total_secs_agg = (
+        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))[
+            "seconds_watched__sum"
+        ]
+        or 0
+    )
+    total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+    formatted_total_time = f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}"
+
+    last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
+    chart_labels = [d.strftime("%a") for d in last_7_days]
+    chart_data = []
+
+    for d in last_7_days:
+        activity = DailyActivity.objects.filter(user=user, date=d).first()
+        chart_data.append(activity.minutes_watched if activity else 0)
+
+    context = {
+        "video_modules": video_list,
+        "ppt_modules": ppt_list,
+        "percent_complete": percent_complete,
+        "completed_count": completed_count,
+        "total_modules": total_modules,
+        "chart_labels": json.dumps(chart_labels),
+        "chart_data": json.dumps(chart_data),
+        "total_seconds_watched": total_seconds_watched,
+        "formatted_total_time": formatted_total_time,
+        "is_assessment_unlocked": percent_complete == 100,
+        "final_quiz_completed": AssessmentProgress.objects.filter(user=user, assessment_type="POCSO", is_passed=True).exists(),
+        "is_company_employee": True,
+    }
+
+    return render(request, "pocso_act_page_corp.html", context)
 
 
 # --- 7. STATIC, CHATBOT & INTERMEDIATE PAGES ---

@@ -395,7 +395,11 @@
                 <!-- POSH MODULE -->
                 {% if show_posh %}
                 <div class="glass-module module-posh">
-                    <a href="{% url 'posh_act_page' %}" style="text-decoration: none; color: inherit;">
+                    {% if user.is_authenticated and user.account_type == 'EMPLOYEE' %}
+                        <a href="{% url 'posh_act_page_corp' %}" style="text-decoration: none; color: inherit;">
+                    {% else %}
+                        <a href="{% url 'posh_act_page' %}" style="text-decoration: none; color: inherit;">
+                    {% endif %}
                         <div class="module-icon">📜</div>
                         <h2>POSH Act</h2>
                         <p>
@@ -408,6 +412,10 @@
                             {% if user.account_type == 'COMPANY_ADMIN' %}
                                 <a href="{% url 'company_dashboard' %}" class="sub-btn btn-posh-ind">
                                     Manage Dashboard
+                                </a>
+                            {% elif user.account_type == 'EMPLOYEE' %}
+                                <a href="{% url 'posh_act_page_corp' %}" class="sub-btn btn-posh-ind">
+                                    Go to Training
                                 </a>
                             {% else %}
                                 <a href="{% url 'posh_act_page' %}" class="sub-btn btn-posh-ind">
@@ -429,7 +437,11 @@
                 <!-- POCSO MODULE -->
                 {% if show_pocso %}
                 <div class="glass-module module-pocso">
-                    <a href="{% url 'pocso_act_page' %}" style="text-decoration: none; color: inherit;">
+                    {% if user.is_authenticated and user.account_type == 'EMPLOYEE' %}
+                        <a href="{% url 'pocso_act_page_corp' %}" style="text-decoration: none; color: inherit;">
+                    {% else %}
+                        <a href="{% url 'pocso_act_page' %}" style="text-decoration: none; color: inherit;">
+                    {% endif %}
                         <div class="module-icon"> 🧒 👧</div>
                         <h2>POCSO Act</h2>
                         <p>
@@ -442,6 +454,10 @@
                             {% if user.account_type == 'COMPANY_ADMIN' %}
                                 <a href="{% url 'company_dashboard' %}" class="sub-btn btn-pocso-ind">
                                     Manage Dashboard
+                                </a>
+                            {% elif user.account_type == 'EMPLOYEE' %}
+                                <a href="{% url 'pocso_act_page_corp' %}" class="sub-btn btn-pocso-ind">
+                                    Go to Training
                                 </a>
                             {% else %}
                                 <a href="{% url 'pocso_act_page' %}" class="sub-btn btn-pocso-ind">

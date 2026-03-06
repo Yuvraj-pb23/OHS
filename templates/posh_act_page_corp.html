@@ -212,7 +212,6 @@
         <h2 style="color: var(--primary); margin-bottom: 20px; padding-left: 10px;">POSH Training</h2>
         <div class="nav-menu">
             <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active"><span>📊 Dashboard</span></div>
-            <div onclick="showView('certificate')" id="nav-cert" class="nav-item"><span>📜 My Certificate</span></div>
             
             <div onclick="attemptFinalQuiz()" id="nav-final-quiz" class="nav-item disabled">
                 <span>📝 Final Quiz</span>
@@ -275,18 +274,6 @@
                         <div id="perc-bar" style="width: 0%; height: 100%; background: var(--complete); transition: 1s;"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div id="certificate-view" style="display: none;">
-            <h1 style="color: white; margin-bottom: 20px;">🎉 Congratulations!</h1>
-            <div class="section-card" id="cert-status-container" style="text-align: center; padding: 40px;">
-                <h2>You have successfully completed the POSH Training.</h2>
-                <p style="margin: 20px 0; color: #555;">Your certificate is ready for download.</p>
-                <a href="{% url 'download_certificate' 'POSH' %}" id="btn-download-cert" class="btn btn-primary disabled btn-disabled" style="padding: 15px 30px; font-size: 1.2rem; text-decoration: none; display: inline-block; background-color: #27ae60; color: white; border-radius: 5px;">
-                    Download Certificate
-                </a>
-                <p id="cert-lock-msg" style="color: var(--danger); margin-top: 15px; display: none;">🔒 Complete Videos, PPTs & Final Quiz to unlock.</p>
             </div>
         </div>
         
@@ -393,20 +380,23 @@
     let currentQuizSet = []; // To store the 15 shuffled questions
 
     function markComplete(moduleId) {
+        console.log('markComplete called with moduleId:', moduleId);
         fetch(`/ajax/mod-complete/${moduleId}/`, {
             method: 'POST',
             headers: { 'X-CSRFToken': '{{ csrf_token }}' }
         })
         .then(r => r.json())
-        .then(d => { if(d.status === 'success') console.log(`Module ${moduleId} saved.`); })
-        .catch(e => { console.error("Save failed", e); });
+        .then(d => { 
+            console.log(`Module ${moduleId} response:`, d); 
+            if(d.status === 'success') console.log(`Module ${moduleId} saved successfully.`);
+            else console.error(`Module ${moduleId} save failed:`, d);
+        })
+        .catch(e => { console.error("Save failed for module", moduleId, e); });
     }
 
     function showView(v) {
         document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
-        document.getElementById('certificate-view').style.display = v === 'certificate' ? 'block' : 'none';
         document.getElementById('nav-dash').classList.remove('active');
-        document.getElementById('nav-cert').classList.remove('active');
         if(v === 'dashboard') {
             document.getElementById('nav-dash').classList.add('active');
             // Re-render modules and PPTs to refresh the UI state
@@ -414,7 +404,6 @@
             renderPPTList();
             updateTotalStats();
         }
-        else if (v === 'certificate') document.getElementById('nav-cert').classList.add('active');
     }
 
     function switchTab(type) {
@@ -698,7 +687,9 @@
             document.getElementById('ppt-timer-badge').style.display = 'block';
             document.getElementById('ppt-timer-badge').innerText = `Time: ${viewed}s`;
             if (viewed >= 10 && ppts[currentPPTIdx].status !== 'complete') {
+                console.log('Marking PPT complete:', ppts[currentPPTIdx]);
                 ppts[currentPPTIdx].status = 'complete';
+                console.log('Calling markComplete with id:', ppts[currentPPTIdx].id);
                 markComplete(ppts[currentPPTIdx].id); 
                 if(ppts[currentPPTIdx+1]) ppts[currentPPTIdx+1].status = 'pending';
                 renderPPTList(); updateTotalStats();
@@ -728,8 +719,6 @@
         const allPPTsComplete = ppts.every(p => p.status === 'complete');
         const quizLink = document.getElementById('nav-final-quiz');
         const lockIcon = document.getElementById('quiz-lock-icon');
-        const certBtn = document.getElementById('btn-download-cert');
-        const certMsg = document.getElementById('cert-lock-msg');
 
         if (allVideosComplete && allPPTsComplete) {
             quizLink.classList.remove('disabled');
@@ -737,16 +726,6 @@
         } else {
             quizLink.classList.add('disabled');
             lockIcon.innerText = "🔒";
-        }
-
-        if (allVideosComplete && allPPTsComplete && isFinalQuizPassed) {
-            certBtn.classList.remove('disabled');
-            certBtn.classList.remove('btn-disabled');
-            certMsg.style.display = 'none';
-        } else {
-            certBtn.classList.add('disabled');
-            certBtn.classList.add('btn-disabled');
-            certMsg.style.display = 'block';
         }
     }
 

@@ -407,13 +407,7 @@
         document.getElementById('certificate-view').style.display = v === 'certificate' ? 'block' : 'none';
         document.getElementById('nav-dash').classList.remove('active');
         document.getElementById('nav-cert').classList.remove('active');
-        if(v === 'dashboard') {
-            document.getElementById('nav-dash').classList.add('active');
-            // Re-render modules and PPTs to refresh the UI state
-            renderModules();
-            renderPPTList();
-            updateTotalStats();
-        }
+        if(v === 'dashboard') document.getElementById('nav-dash').classList.add('active');
         else if (v === 'certificate') document.getElementById('nav-cert').classList.add('active');
     }
 
@@ -558,10 +552,6 @@
         document.getElementById('pptModal').style.display = 'none';
         document.getElementById('pptFrame').src = "";
         clearInterval(quizTimerInterval);
-        // Refresh the UI state when closing modal
-        renderModules();
-        renderPPTList();
-        updateTotalStats();
     }
     
     // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---

@@ -42,6 +42,9 @@ urlpatterns = [
     # Note: You had a duplicate path for pocso earlier in your code,
     # ensuring backward compatibility with 'pocso_act' name if used elsewhere:
     path("tutorial/pocso-act-legacy/", views.pocso_act_page, name="pocso_act"),
+    # --- COMPANY EMPLOYEE TRAINING PAGES (no certificate) ---
+    path("tutorial/posh-act-corp/", views.posh_act_page_corp, name="posh_act_page_corp"),
+    path("tutorial/pocso-act-corp/", views.pocso_act_page_corp, name="pocso_act_page_corp"),
     path('posh_assessment/', views.posh_assessment, name='posh_assessment'),
     path('pocso_assessment/', views.pocso_assessment, name='pocso_assessment'),
 
