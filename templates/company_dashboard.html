@@ -480,6 +480,18 @@
       #bulkImportModal .modal-header {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
       }
+      
+      /* Form inputs in modals with light background and black text */
+      #addEmployeeModal .form-control,
+      #bulkImportModal .form-control {
+        background: rgba(248, 250, 252, 0.95) !important;
+        color: #020617 !important;
+        border: 1px solid rgba(249, 115, 22, 0.3);
+      }
+      #addEmployeeModal .form-control::placeholder,
+      #bulkImportModal .form-control::placeholder {
+        color: #64748b !important;
+      }
 
       .alert {
         border-radius: 12px;
