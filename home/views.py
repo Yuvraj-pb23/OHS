@@ -313,7 +313,18 @@ def company_dashboard(request):
         minutes = (grand_total_seconds % 3600) // 60
         mem.total_active_time = f"{hours}h {minutes}m"
 
+        # Check if employee has passed the final quiz (for certificate eligibility)
+        has_passed_quiz = AssessmentProgress.objects.filter(
+            user=user_obj, 
+            assessment_type=training_type, 
+            is_passed=True
+        ).exists()
+        mem.has_certificate = has_passed_quiz and mem.is_training_completed
+
     training_pending = total_employees - training_completed_count
+
+    # Get employees with certificates
+    certified_employees = [m for m in members if hasattr(m, 'has_certificate') and m.has_certificate]
 
     context = {
         "organization": org,
@@ -325,6 +336,8 @@ def company_dashboard(request):
         "training_completed": training_completed_count,
         "training_pending": training_pending,
         "total_modules_count": total_modules_count,
+        "certified_employees": certified_employees,
+        "training_type": training_type,
     }
 
     # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
@@ -1498,6 +1511,37 @@ def download_certificate(request, course_type="POSH"):
     if not request.user.is_authenticated:
         return redirect("login")
 
+    # Check if downloading for another user (company admin)
+    user_id = request.GET.get('user_id')
+    if user_id:
+        # Verify that the requester is an admin of the organization
+        try:
+            target_user = User.objects.get(id=user_id)
+            # Check if current user is admin
+            is_admin = OrganizationMember.objects.filter(
+                user=request.user, 
+                role="ADMIN"
+            ).exists()
+            
+            if not is_admin:
+                messages.error(request, "Access denied. Admin privileges required.")
+                return redirect("company_dashboard")
+            
+            # Check if target user is in same organization
+            target_membership = OrganizationMember.objects.filter(user=target_user).first()
+            admin_membership = OrganizationMember.objects.filter(user=request.user, role="ADMIN").first()
+            
+            if not target_membership or not admin_membership or target_membership.organization != admin_membership.organization:
+                messages.error(request, "Cannot download certificate for user outside your organization.")
+                return redirect("company_dashboard")
+            
+            certificate_user = target_user
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect("company_dashboard")
+    else:
+        certificate_user = request.user
+
     # 1. Check Completion
     # Re-using logic from posh_act_page roughly
     # In a real app, maybe extract this check to a helper
@@ -1505,45 +1549,45 @@ def download_certificate(request, course_type="POSH"):
         modules = TrainingModule.objects.filter(module_type="POSH")
         total = modules.count()
         # Count COMPLETED modules for this user
-        completed = ModuleProgress.objects.filter(user=request.user, module__in=modules, is_completed=True).count()
+        completed = ModuleProgress.objects.filter(user=certificate_user, module__in=modules, is_completed=True).count()
         
         # Strict check: Must be 100% complete
         if total == 0 or completed < total:
-            messages.error(request, "You must complete all modules before downloading the certificate.")
-            return redirect("posh_act_page")
+            messages.error(request, "Training must be completed before downloading the certificate.")
+            return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
 
 
         # CHECK FINAL ASSESSMENT (NEW)
-        has_passed_assessment = AssessmentProgress.objects.filter(user=request.user, assessment_type="POSH", is_passed=True).exists()
+        has_passed_assessment = AssessmentProgress.objects.filter(user=certificate_user, assessment_type="POSH", is_passed=True).exists()
         if not has_passed_assessment:
-            messages.error(request, "You must pass the Final Quiz to download the certificate.")
-            return redirect("posh_act_page")
+            messages.error(request, "Final Quiz must be passed to download the certificate.")
+            return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
 
     elif course_type == "POCSO":
         # Check POCSO completion
         modules = TrainingModule.objects.filter(module_type="POCSO")
         total = modules.count()
-        completed = ModuleProgress.objects.filter(user=request.user, module__in=modules, is_completed=True).count()
+        completed = ModuleProgress.objects.filter(user=certificate_user, module__in=modules, is_completed=True).count()
         
         if total == 0 or completed < total:
-             messages.error(request, "You must complete all modules before downloading the certificate.")
-             return redirect("pocso_act_page")
+             messages.error(request, "Training must be completed before downloading the certificate.")
+             return redirect("pocso_act_page") if not user_id else redirect("company_dashboard")
 
-        has_passed_assessment = AssessmentProgress.objects.filter(user=request.user, assessment_type="POCSO", is_passed=True).exists()
+        has_passed_assessment = AssessmentProgress.objects.filter(user=certificate_user, assessment_type="POCSO", is_passed=True).exists()
         if not has_passed_assessment:
-            messages.error(request, "You must pass the Final Quiz to download the certificate.")
-            return redirect("pocso_act_page")
+            messages.error(request, "Final Quiz must be passed to download the certificate.")
+            return redirect("pocso_act_page") if not user_id else redirect("company_dashboard")
 
     # 2. Generate PDF
-    pdf_content = generate_certificate(request.user, course_type)
+    pdf_content = generate_certificate(certificate_user, course_type)
     
     if not pdf_content:
         messages.error(request, "Error generating certificate. Please contact support.")
-        return redirect("posh_act_page")
+        return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
 
     # 3. Serve PDF
     response = HttpResponse(pdf_content, content_type='application/pdf')
-    filename = f"Certificate_{course_type}_{request.user.username}.pdf"
+    filename = f"Certificate_{course_type}_{certificate_user.username}.pdf"
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 

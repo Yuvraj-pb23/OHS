@@ -447,7 +447,7 @@
       .form-control {
         background: #020617;
         border: 1px solid var(--border-soft);
-        color: #f8fafc !important;
+        color: #020617 !important;
         border-radius: 12px;
         padding: 0.8rem;
         font-size: 1.1rem;
@@ -455,6 +455,18 @@
       .form-control::placeholder {
         color: #94a3b8 !important;
         opacity: 0.8;
+      }
+      
+      /* Search inputs with light background for better visibility */
+      #memberSearch,
+      #certificateSearch {
+        background: rgba(248, 250, 252, 0.95) !important;
+        color: #020617 !important;
+        border: 1px solid rgba(249, 115, 22, 0.3);
+      }
+      #memberSearch::placeholder,
+      #certificateSearch::placeholder {
+        color: #64748b !important;
       }
 
       /* Dark Modals for Add/Import overrides */
@@ -582,8 +594,17 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="section-title">
             <i class="bi bi-people me-2"></i>Team Members
+            <small class="text-muted ms-2" style="font-size: 0.8rem;" id="lastRefreshTime"></small>
           </h2>
           <div class="d-flex gap-3 align-items-center">
+            <button
+              class="btn btn-sm btn-outline-info"
+              onclick="refreshDashboard()"
+              id="refreshBtn"
+              title="Refresh employee progress"
+            >
+              <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+            </button>
             <div class="position-relative">
               <i
                 class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
@@ -912,37 +933,123 @@
 
       <!-- === SECTION 4: CERTIFICATES === -->
       <div id="certificates" class="content-section">
-        <h2 class="mb-4 section-title">
-          <i class="bi bi-award me-2"></i>Certificates
-        </h2>
-        <div class="cert-card">
-          <div class="d-flex align-items-center gap-3">
-            <div class="bg-dark p-3 rounded text-warning fs-3">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title mb-0">
+            <i class="bi bi-award me-2"></i>Certificates
+          </h2>
+          {% if certified_employees %}
+          <div class="position-relative">
+            <i
+              class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+            ></i>
+            <input
+              type="text"
+              id="certificateSearch"
+              class="form-control ps-5"
+              placeholder="Search by employee name..."
+              style="min-width: 300px"
+            />
+          </div>
+          {% endif %}
+        </div>
+        
+        {% if certified_employees %}
+        <div class="members-grid">
+          {% for member in certified_employees %}
+          <div
+            class="member-card certificate-card"
+            data-bs-toggle="modal"
+            data-bs-target="#certificateModal-{{ member.id }}"
+            style="cursor: pointer;"
+          >
+            <div class="avatar bg-success">
               <i class="bi bi-patch-check-fill"></i>
             </div>
-            <div>
-              <h5 class="mb-1">Organization Compliance Certificate (2024)</h5>
-              <p class="mb-0 text-muted small">Issued on: Jan 15, 2024</p>
+            <h3 class="member-name">
+              {{ member.user.get_full_name|default:member.user.first_name }}
+            </h3>
+            <p class="member-email">{{ member.user.email }}</p>
+            <span class="role-badge" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+              <i class="bi bi-award me-1"></i>Certified
+            </span>
+          </div>
+
+          <!-- CERTIFICATE MODAL -->
+          <div
+            class="modal fade"
+            id="certificateModal-{{ member.id }}"
+            tabindex="-1"
+          >
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+              <div class="modal-content">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title">
+                    <i class="bi bi-award me-2"></i>Certificate of Completion
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+
+                <div class="modal-body" style="padding: 40px; text-align: center;">
+                  <div style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 60px 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                    <div style="background: white; padding: 40px; border-radius: 10px; border: 5px solid #f59e0b;">
+                      <h1 style="color: #1e3a8a; font-size: 2.5rem; font-weight: 700; margin-bottom: 20px;">
+                        🎉 Certificate of Completion
+                      </h1>
+                      <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 30px;">
+                        This is to certify that
+                      </p>
+                      <h2 style="color: #1e3a8a; font-size: 2rem; font-weight: 600; margin-bottom: 30px;">
+                        {{ member.user.get_full_name|default:member.user.first_name }}
+                      </h2>
+                      <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 20px;">
+                        has successfully completed the
+                      </p>
+                      <h3 style="color: #f59e0b; font-size: 1.5rem; font-weight: 600; margin-bottom: 30px;">
+                        {% if training_type == 'POSH' %}
+                        Prevention of Sexual Harassment (POSH) Training
+                        {% else %}
+                        Protection of Children from Sexual Offences (POCSO) Training
+                        {% endif %}
+                      </h3>
+                      <p style="color: #6b7280; font-size: 0.95rem; margin-top: 40px;">
+                        Awarded by {{ organization.name }}
+                      </p>
+                      <p style="color: #9ca3af; font-size: 0.85rem; margin-top: 10px;">
+                        Date: {{ member.user.date_joined|date:"F d, Y" }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="mt-4">
+                    <a 
+                      href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}" 
+                      class="btn btn-gradient"
+                      style="padding: 15px 40px; font-size: 1.1rem;"
+                    >
+                      <i class="bi bi-download me-2"></i>Download Certificate
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button class="btn btn-gradient btn-sm">
-            <i class="bi bi-download me-2"></i>Download
-          </button>
+          {% endfor %}
         </div>
-        <div class="cert-card">
-          <div class="d-flex align-items-center gap-3">
-            <div class="bg-dark p-3 rounded text-muted fs-3">
-              <i class="bi bi-file-earmark-pdf"></i>
-            </div>
-            <div>
-              <h5 class="mb-1">Training Completion Report</h5>
-              <p class="mb-0 text-muted small">Generated on: Feb 01, 2024</p>
-            </div>
+        {% else %}
+        <div class="cert-card" style="text-align: center; padding: 60px 40px;">
+          <div style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">
+            <i class="bi bi-award"></i>
           </div>
-          <button class="btn btn-outline-light btn-sm">
-            <i class="bi bi-eye me-2"></i>View
-          </button>
+          <h4 style="color: var(--text-main); margin-bottom: 15px;">No Certificates Yet</h4>
+          <p class="text-muted">
+            Certificates will appear here once employees complete their training and pass the final quiz.
+          </p>
         </div>
+        {% endif %}
       </div>
     </main>
 
@@ -1068,7 +1175,7 @@
         .getElementById("memberSearch")
         .addEventListener("input", function () {
           const filter = this.value.toLowerCase();
-          const cards = document.querySelectorAll(".member-card");
+          const cards = document.querySelectorAll("#membersGrid .member-card");
           cards.forEach((card) => {
             const name = card
               .querySelector(".member-name")
@@ -1083,6 +1190,28 @@
             }
           });
         });
+
+      // Certificate search functionality
+      const certSearchInput = document.getElementById("certificateSearch");
+      if (certSearchInput) {
+        certSearchInput.addEventListener("input", function () {
+          const filter = this.value.toLowerCase();
+          const cards = document.querySelectorAll("#certificates .certificate-card");
+          cards.forEach((card) => {
+            const name = card
+              .querySelector(".member-name")
+              .innerText.toLowerCase();
+            const email = card
+              .querySelector(".member-email")
+              .innerText.toLowerCase();
+            if (name.includes(filter) || email.includes(filter)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      }
 
       // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
       function switchModalTab(memberId, tab) {
@@ -1166,6 +1295,45 @@
 
           // 2. Draw PPT Chart (Warning Yellow/Orange)
           drawChart(`pie-ppts-${memberId}`, "#f1c40f");
+        }
+      });
+
+      // === DASHBOARD REFRESH FUNCTIONALITY ===
+      function refreshDashboard() {
+        const btn = document.getElementById('refreshBtn');
+        const icon = btn.querySelector('i');
+        
+        // Show loading state
+        btn.disabled = true;
+        icon.classList.add('fa-spin');
+        
+        // Reload the page to fetch fresh data
+        location.reload();
+      }
+
+      // Update last refresh time
+      function updateRefreshTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          second: '2-digit'
+        });
+        const elem = document.getElementById('lastRefreshTime');
+        if (elem) {
+          elem.textContent = `Last updated: ${timeStr}`;
+        }
+      }
+
+      // Set initial refresh time
+      updateRefreshTime();
+
+      // Show notification when page loads after refresh
+      window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('refreshed') === 'true') {
+          // Remove the parameter from URL
+          window.history.replaceState({}, document.title, window.location.pathname);
         }
       });
     </script>
