@@ -19,9 +19,83 @@ class User(AbstractUser):
     account_type = models.CharField(
         max_length=20, choices=USER_TYPES, default="INDIVIDUAL"
     )
+    
+    # Unique user ID
+    user_id = models.CharField(max_length=20, unique=True, blank=True, null=True)
+    
+    # Force password change on first login for company employees
+    force_password_change = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.username} ({self.account_type})"
+    
+    def generate_user_id(self, organization=None):
+        """Generate unique ID based on user type and subscription"""
+        # Determine prefix based on account type and subscription
+        if self.account_type == "INDIVIDUAL":
+            # Check subscription type
+            subscription = Subscription.objects.filter(user=self).first()
+            if subscription:
+                if subscription.plan.type in ["POSH", "BOTH"]:
+                    prefix = "PI"  # POSH Individual
+                else:
+                    prefix = "POI"  # POCSO Individual
+            else:
+                prefix = "PI"  # Default to POSH
+        elif self.account_type in ["EMPLOYEE", "COMPANY_ADMIN"]:
+            # If organization is passed directly, use it (avoids querying unsaved relationships)
+            if organization:
+                org_subscription = Subscription.objects.filter(
+                    organization=organization, 
+                    status="ACTIVE"
+                ).first()
+                if org_subscription:
+                    if org_subscription.plan.type in ["POSH", "BOTH"]:
+                        prefix = "PC"  # POSH Company
+                    else:
+                        prefix = "POC"  # POCSO Company
+                else:
+                    prefix = "PC"  # Default to POSH Company
+            else:
+                # Fallback to querying membership
+                membership = OrganizationMember.objects.filter(user=self).first()
+                if membership:
+                    org_subscription = Subscription.objects.filter(
+                        organization=membership.organization, 
+                        status="ACTIVE"
+                    ).first()
+                    if org_subscription:
+                        if org_subscription.plan.type in ["POSH", "BOTH"]:
+                            prefix = "PC"  # POSH Company
+                        else:
+                            prefix = "POC"  # POCSO Company
+                    else:
+                        prefix = "PC"  # Default to POSH Company
+                else:
+                    prefix = "PC"  # Default
+        else:
+            prefix = "PI"  # Fallback
+        
+        # Get the last user with this prefix
+        last_user = User.objects.filter(user_id__startswith=prefix).order_by('-id').first()
+        
+        if last_user and last_user.user_id:
+            # Extract number from last ID and increment
+            try:
+                last_number = int(last_user.user_id[len(prefix):])
+                new_number = last_number + 1
+            except (ValueError, IndexError):
+                new_number = 1
+        else:
+            new_number = 1
+        
+        # Generate new ID with zero-padding
+        return f"{prefix}{new_number:05d}"  # e.g., PI00001, PC00123
+    
+    def save(self, *args, **kwargs):
+        # Don't auto-generate user_id in save() - it's set explicitly in views
+        # to avoid issues with unsaved relationships
+        super().save(*args, **kwargs)
 
 
 # 2. Subscription Plan
@@ -57,9 +131,30 @@ class Organization(models.Model):
     organization_type = models.CharField(max_length=20, choices=ORG_TYPE_CHOICES, default="CORPORATE")
     max_users = models.IntegerField(default=10)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    # Default password for employees
+    default_password = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.name
+    
+    def generate_default_password(self):
+        """Generate default password: First 4 letters of company + random number + special char"""
+        import random
+        import string
+        
+        # Get first 4 letters of company name (alphanumeric only)
+        company_prefix = ''.join(c for c in self.name if c.isalnum())[:4].upper()
+        if len(company_prefix) < 4:
+            company_prefix = company_prefix.ljust(4, 'X')
+        
+        # Generate random 4-digit number
+        random_number = random.randint(1000, 9999)
+        
+        # Pick a random special character
+        special_char = random.choice('@#$%&*!')
+        
+        return f"{company_prefix}{random_number}{special_char}"
 
 
 # 4. Subscription

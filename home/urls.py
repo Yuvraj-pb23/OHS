@@ -26,6 +26,9 @@ urlpatterns = [
 
     # --- MAIN TUTORIAL / TRAINING LANDING ---
     path('tutorial/', views.tutorial_view, name='tutorial'),
+    
+    # --- FORCE PASSWORD CHANGE (First-time login) ---
+    path('force-password-change/', views.force_password_change, name='force_password_change'),
 
     # --- INTERMEDIATE COURSE INFO PAGES ---
     path('posh-individual-info/', views.posh_i, name='posh_i_page'),

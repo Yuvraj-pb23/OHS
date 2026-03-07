@@ -606,7 +606,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h2 class="section-title">
             <i class="bi bi-people me-2"></i>Team Members
-            <small class="text-muted ms-2" style="font-size: 0.8rem;" id="lastRefreshTime"></small>
+            <small class="ms-2" style="font-size: 0.85rem; color: #fb923c; font-weight: 500;" id="lastRefreshTime"></small>
           </h2>
           <div class="d-flex gap-3 align-items-center">
             <button
@@ -658,6 +658,11 @@
               {{ member.user.get_full_name|default:member.user.first_name }}
             </h3>
             <p class="member-email">{{ member.user.email }}</p>
+            {% if member.user.user_id %}
+            <p class="small mb-1" style="font-size: 0.9rem; color: #fbbf24; font-weight: 600;">
+              <i class="bi bi-credit-card-2-front me-1"></i>ID: {{ member.user.user_id }}
+            </p>
+            {% endif %}
             <span class="role-badge">{{ member.role }}</span>
           </div>
 
@@ -1093,13 +1098,18 @@
                 placeholder="Email"
                 required
               />
-              <input
-                class="form-control mb-4"
-                name="emp_password"
-                type="password"
-                placeholder="Password"
-                required
-              />
+              <div class="mb-3">
+                <label class="form-label text-muted small">Default Password (Auto-filled)</label>
+                <input
+                  class="form-control"
+                  name="emp_password"
+                  type="text"
+                  value="{{ default_password }}"
+                  readonly
+                  style="background-color: rgba(251, 191, 36, 0.1) !important; border-color: #fbbf24; color: #fbbf24 !important; font-weight: 600; font-size: 1.1rem; text-align: center;"
+                />
+                <small class="text-muted">This password will be used for the new employee</small>
+              </div>
               <button class="btn btn-gradient w-100">Add Employee</button>
             </form>
           </div>

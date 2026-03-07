@@ -62,6 +62,10 @@ def custom_login_redirect(request):
         ).exists()
 
         if user.account_type == "EMPLOYEE":
+            # Check if password change is required
+            if user.force_password_change:
+                return redirect("force_password_change")
+            
             # Company employees -> pages WITHOUT certificate option
             if has_posh:
                 return redirect("posh_act_page_corp")
@@ -77,6 +81,50 @@ def custom_login_redirect(request):
         return redirect("tutorial")
 
     return redirect("home")
+
+
+# --- 1.5 FORCE PASSWORD CHANGE (First-time Login) ---
+@login_required
+def force_password_change(request):
+    user = request.user
+    
+    # Redirect if user doesn't need to change password
+    if not user.force_password_change:
+        return redirect("custom_login_redirect")
+    
+    if request.method == "POST":
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+        
+        if not new_password or not confirm_password:
+            messages.error(request, "Both fields are required.")
+            return render(request, "force_password_change.html")
+        
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, "force_password_change.html")
+        
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters long.")
+            return render(request, "force_password_change.html")
+        
+        # Update password
+        user.set_password(new_password)
+        user.force_password_change = False
+        user.save()
+        
+        # Send email notification
+        from home.email_utils import send_password_change_email
+        send_password_change_email(user)
+        
+        # Update session to prevent logout
+        from django.contrib.auth import update_session_auth_hash
+        update_session_auth_hash(request, user)
+        
+        messages.success(request, "Password changed successfully!")
+        return redirect("custom_login_redirect")
+    
+    return render(request, "force_password_change.html")
 
 
 # --- 2. COMPANY SUBSCRIPTION (FORM) ---
@@ -113,6 +161,11 @@ def company_subscription(request, plan_type):
                 org = Organization.objects.create(
                     name=comp_name, owner=user, max_users=int(seats)
                 )
+                
+                # Generate default password for this organization
+                org.default_password = org.generate_default_password()
+                org.save()
+                
                 OrganizationMember.objects.create(
                     organization=org, user=user, role="ADMIN"
                 )
@@ -123,6 +176,14 @@ def company_subscription(request, plan_type):
                     status="ACTIVE",
                     start_date=timezone.now(),
                 )
+                
+                # Regenerate user_id after organization and subscription are created
+                user.user_id = user.generate_user_id()
+                user.save()
+                
+                # Send welcome email to company admin
+                from home.email_utils import send_welcome_email
+                send_welcome_email(user, password, is_company_employee=False)
 
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("company_dashboard")
@@ -166,6 +227,16 @@ def add_employee(request):
         emp_name = request.POST.get("emp_name")
         emp_email = request.POST.get("emp_email")
         emp_password = request.POST.get("emp_password")
+        
+        # Use default password if not provided in form
+        if not emp_password:
+            emp_password = org.default_password
+        
+        # If still no password (org doesn't have default), generate one
+        if not emp_password:
+            emp_password = org.generate_default_password()
+            org.default_password = emp_password
+            org.save()
 
         if User.objects.filter(email=emp_email).exists():
             messages.error(request, "User email already exists.")
@@ -178,15 +249,25 @@ def add_employee(request):
                 )
                 new_user.first_name = emp_name
                 new_user.account_type = "EMPLOYEE"
+                new_user.force_password_change = True  # Force password change on first login
+                # Generate user_id by passing org directly (avoids querying unsaved relationships)
+                new_user.user_id = new_user.generate_user_id(organization=org)
                 new_user.save()
 
                 OrganizationMember.objects.create(
                     organization=org, user=new_user, role="MEMBER"
                 )
+                
+                # Send welcome email with credentials
+                from home.email_utils import send_welcome_email
+                send_welcome_email(new_user, emp_password, is_company_employee=True, organization_name=org.name)
 
             messages.success(request, f"{emp_name} added successfully!")
         except Exception as e:
-            messages.error(request, "Database error.")
+            print(f"Error adding employee: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            messages.error(request, f"Database error: {str(e)}")
 
         return redirect("company_dashboard")
     return redirect("company_dashboard")
@@ -325,6 +406,11 @@ def company_dashboard(request):
 
     # Get employees with certificates
     certified_employees = [m for m in members if hasattr(m, 'has_certificate') and m.has_certificate]
+    
+    # Ensure organization has a default password
+    if not org.default_password:
+        org.default_password = org.generate_default_password()
+        org.save()
 
     context = {
         "organization": org,
@@ -338,6 +424,7 @@ def company_dashboard(request):
         "total_modules_count": total_modules_count,
         "certified_employees": certified_employees,
         "training_type": training_type,
+        "default_password": org.default_password,  # Pass default password to template
     }
 
     # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
@@ -381,6 +468,14 @@ def individual_subscription(request, plan_type):
                 Subscription.objects.create(
                     user=user, plan=plan, status="ACTIVE", start_date=timezone.now()
                 )
+                
+                # Regenerate user_id after subscription is created
+                user.user_id = user.generate_user_id()
+                user.save()
+                
+                # Send welcome email
+                from home.email_utils import send_welcome_email
+                send_welcome_email(user, password, is_company_employee=False)
 
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("posh_act_page")
@@ -1166,7 +1261,17 @@ def chatbot_response(request):
 
 
 @login_required
+@login_required(login_url="login")
 def download_employee_template(request):
+    # Get user's organization to include the default password
+    membership = OrganizationMember.objects.filter(
+        user=request.user, role="ADMIN"
+    ).first()
+    
+    default_password = "Welcome@123"  # Fallback
+    if membership and membership.organization.default_password:
+        default_password = membership.organization.default_password
+    
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="employee_template.csv"'
     writer = csv.writer(response)
@@ -1174,7 +1279,7 @@ def download_employee_template(request):
         ["Name", "Last name", "Department", "Email", "Phone no", "Default password"]
     )
     writer.writerow(
-        ["John", "Doe", "IT", "john.doe@company.com", "9876543210", "Welcome@123"]
+        ["John", "Doe", "IT", "john.doe@company.com", "9876543210", default_password]
     )
     return response
 
@@ -1224,6 +1329,10 @@ def upload_employee_bulk(request):
                 email = row.get("Email", "").strip()
                 phone = row.get("Phone no", "").strip()
                 password = row.get("Default password", "").strip()
+                
+                # Use organization's default password if not provided in CSV
+                if not password:
+                    password = org.default_password
 
                 if not email or not password:
                     continue
@@ -1237,6 +1346,7 @@ def upload_employee_bulk(request):
                     user.first_name = first_name
                     user.last_name = last_name
                     user.account_type = "EMPLOYEE"
+                    user.force_password_change = True  # Force password change on first login
 
                     if hasattr(user, "department"):
                         user.department = department
@@ -1248,6 +1358,15 @@ def upload_employee_bulk(request):
                     OrganizationMember.objects.create(
                         organization=org, user=user, role="MEMBER"
                     )
+                    
+                    # Regenerate user_id after membership is created
+                    user.user_id = user.generate_user_id()
+                    user.save()
+                    
+                    # Send welcome email
+                    from home.email_utils import send_welcome_email
+                    send_welcome_email(user, password, is_company_employee=True, organization_name=org.name)
+                    
                     added_count += 1
                 except Exception as e:
                     continue

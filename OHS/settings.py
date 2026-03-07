@@ -166,3 +166,12 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # Without manifest
     },
 }
+
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Update if using different email provider
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'info@openhandsolution.com'
+EMAIL_HOST_PASSWORD = ''  # Add your email password or app password here
+DEFAULT_FROM_EMAIL = 'info@openhandsolution.com'
