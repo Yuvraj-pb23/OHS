@@ -65,7 +65,7 @@ def custom_login_redirect(request):
             # Check if password change is required
             if user.force_password_change:
                 return redirect("force_password_change")
-            
+
             # Company employees -> pages WITHOUT certificate option
             if has_posh:
                 return redirect("posh_act_page_corp")
@@ -87,43 +87,45 @@ def custom_login_redirect(request):
 @login_required
 def force_password_change(request):
     user = request.user
-    
+
     # Redirect if user doesn't need to change password
     if not user.force_password_change:
         return redirect("custom_login_redirect")
-    
+
     if request.method == "POST":
         new_password = request.POST.get("new_password")
         confirm_password = request.POST.get("confirm_password")
-        
+
         if not new_password or not confirm_password:
             messages.error(request, "Both fields are required.")
             return render(request, "force_password_change.html")
-        
+
         if new_password != confirm_password:
             messages.error(request, "Passwords do not match.")
             return render(request, "force_password_change.html")
-        
+
         if len(new_password) < 8:
             messages.error(request, "Password must be at least 8 characters long.")
             return render(request, "force_password_change.html")
-        
+
         # Update password
         user.set_password(new_password)
         user.force_password_change = False
         user.save()
-        
+
         # Send email notification
         from home.email_utils import send_password_change_email
+
         send_password_change_email(user)
-        
+
         # Update session to prevent logout
         from django.contrib.auth import update_session_auth_hash
+
         update_session_auth_hash(request, user)
-        
+
         messages.success(request, "Password changed successfully!")
         return redirect("custom_login_redirect")
-    
+
     return render(request, "force_password_change.html")
 
 
@@ -161,11 +163,11 @@ def company_subscription(request, plan_type):
                 org = Organization.objects.create(
                     name=comp_name, owner=user, max_users=int(seats)
                 )
-                
+
                 # Generate default password for this organization
                 org.default_password = org.generate_default_password()
                 org.save()
-                
+
                 OrganizationMember.objects.create(
                     organization=org, user=user, role="ADMIN"
                 )
@@ -176,13 +178,14 @@ def company_subscription(request, plan_type):
                     status="ACTIVE",
                     start_date=timezone.now(),
                 )
-                
+
                 # Regenerate user_id after organization and subscription are created
                 user.user_id = user.generate_user_id()
                 user.save()
-                
+
                 # Send welcome email to company admin
                 from home.email_utils import send_welcome_email
+
                 send_welcome_email(user, password, is_company_employee=False)
 
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
@@ -227,11 +230,11 @@ def add_employee(request):
         emp_name = request.POST.get("emp_name")
         emp_email = request.POST.get("emp_email")
         emp_password = request.POST.get("emp_password")
-        
+
         # Use default password if not provided in form
         if not emp_password:
             emp_password = org.default_password
-        
+
         # If still no password (org doesn't have default), generate one
         if not emp_password:
             emp_password = org.generate_default_password()
@@ -249,7 +252,9 @@ def add_employee(request):
                 )
                 new_user.first_name = emp_name
                 new_user.account_type = "EMPLOYEE"
-                new_user.force_password_change = True  # Force password change on first login
+                new_user.force_password_change = (
+                    True  # Force password change on first login
+                )
                 # Generate user_id by passing org directly (avoids querying unsaved relationships)
                 new_user.user_id = new_user.generate_user_id(organization=org)
                 new_user.save()
@@ -257,15 +262,22 @@ def add_employee(request):
                 OrganizationMember.objects.create(
                     organization=org, user=new_user, role="MEMBER"
                 )
-                
+
                 # Send welcome email with credentials
                 from home.email_utils import send_welcome_email
-                send_welcome_email(new_user, emp_password, is_company_employee=True, organization_name=org.name)
+
+                send_welcome_email(
+                    new_user,
+                    emp_password,
+                    is_company_employee=True,
+                    organization_name=org.name,
+                )
 
             messages.success(request, f"{emp_name} added successfully!")
         except Exception as e:
             print(f"Error adding employee: {str(e)}")
             import traceback
+
             traceback.print_exc()
             messages.error(request, f"Database error: {str(e)}")
 
@@ -346,7 +358,7 @@ def company_dashboard(request):
 
         # Split modules for calculation
         # Note: all_modules is already filtered by training_type
-        vid_mods = [m for m in all_modules if m.video_file] 
+        vid_mods = [m for m in all_modules if m.video_file]
         ppt_mods = [m for m in all_modules if m.ppt_file and not m.video_file]
 
         total_vid_count = len(vid_mods)
@@ -355,8 +367,16 @@ def company_dashboard(request):
         completed_vid_count = sum(1 for m in vid_mods if m.id in user_progress_map)
         completed_ppt_count = sum(1 for m in ppt_mods if m.id in user_progress_map)
 
-        mem.video_percent = int((completed_vid_count / total_vid_count) * 100) if total_vid_count > 0 else 0
-        mem.ppt_percent = int((completed_ppt_count / total_ppt_count) * 100) if total_ppt_count > 0 else 0
+        mem.video_percent = (
+            int((completed_vid_count / total_vid_count) * 100)
+            if total_vid_count > 0
+            else 0
+        )
+        mem.ppt_percent = (
+            int((completed_ppt_count / total_ppt_count) * 100)
+            if total_ppt_count > 0
+            else 0
+        )
 
         for mod in all_modules:
             is_done = mod.id in user_progress_map
@@ -366,11 +386,11 @@ def company_dashboard(request):
                 "duration": mod.duration_seconds,
                 "thumbnail_url": mod.thumbnail.url if mod.thumbnail else "",
                 "ppt_url": mod.ppt_file.url if mod.ppt_file else "",
-                "is_ppt": bool(mod.ppt_file and not mod.video_file), # Strict check
+                "is_ppt": bool(mod.ppt_file and not mod.video_file),  # Strict check
             }
             mem_modules_status.append(item)
 
-        mem.modules_status = mem_modules_status 
+        mem.modules_status = mem_modules_status
         mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"]]
         mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"]]
 
@@ -396,17 +416,17 @@ def company_dashboard(request):
 
         # Check if employee has passed the final quiz (for certificate eligibility)
         has_passed_quiz = AssessmentProgress.objects.filter(
-            user=user_obj, 
-            assessment_type=training_type, 
-            is_passed=True
+            user=user_obj, assessment_type=training_type, is_passed=True
         ).exists()
         mem.has_certificate = has_passed_quiz and mem.is_training_completed
 
     training_pending = total_employees - training_completed_count
 
     # Get employees with certificates
-    certified_employees = [m for m in members if hasattr(m, 'has_certificate') and m.has_certificate]
-    
+    certified_employees = [
+        m for m in members if hasattr(m, "has_certificate") and m.has_certificate
+    ]
+
     # Ensure organization has a default password
     if not org.default_password:
         org.default_password = org.generate_default_password()
@@ -468,13 +488,14 @@ def individual_subscription(request, plan_type):
                 Subscription.objects.create(
                     user=user, plan=plan, status="ACTIVE", start_date=timezone.now()
                 )
-                
+
                 # Regenerate user_id after subscription is created
                 user.user_id = user.generate_user_id()
                 user.save()
-                
+
                 # Send welcome email
                 from home.email_utils import send_welcome_email
+
                 send_welcome_email(user, password, is_company_employee=False)
 
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
@@ -558,7 +579,7 @@ def posh_act_page(request):
 
     # Process PPT Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
-    
+
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
     for mod in ppt_modules:
@@ -617,7 +638,9 @@ def posh_act_page(request):
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
-        "is_final_quiz_passed": AssessmentProgress.objects.filter(user=user, assessment_type="POSH", is_passed=True).exists(),
+        "is_final_quiz_passed": AssessmentProgress.objects.filter(
+            user=user, assessment_type="POSH", is_passed=True
+        ).exists(),
     }
 
     return render(request, "posh_act_page.html", context)
@@ -641,7 +664,6 @@ def update_watch_time(request):
             activity, created = DailyActivity.objects.get_or_create(
                 user=request.user, date=today
             )
-
 
             # Add delta
             activity.seconds_watched += seconds_delta
@@ -668,7 +690,9 @@ def mod_complete(request, module_id):
     """
     API called when a video ends. Marks module as complete.
     """
-    print(f"DEBUG mod_complete called: method={request.method}, module_id={module_id}, user={request.user}")
+    print(
+        f"DEBUG mod_complete called: method={request.method}, module_id={module_id}, user={request.user}"
+    )
     if request.method == "POST":
         try:
             module = TrainingModule.objects.get(id=module_id)
@@ -676,10 +700,14 @@ def mod_complete(request, module_id):
             prog, created = ModuleProgress.objects.get_or_create(
                 user=request.user, module=module
             )
-            print(f"DEBUG: ModuleProgress {'created' if created else 'found'}, current is_completed={prog.is_completed}")
+            print(
+                f"DEBUG: ModuleProgress {'created' if created else 'found'}, current is_completed={prog.is_completed}"
+            )
             prog.is_completed = True
             prog.save()
-            print(f"DEBUG: Saved ModuleProgress, is_completed=True for user={request.user.id}, module={module_id}")
+            print(
+                f"DEBUG: Saved ModuleProgress, is_completed=True for user={request.user.id}, module={module_id}"
+            )
             return JsonResponse({"status": "success", "module_id": module_id})
         except TrainingModule.DoesNotExist:
             print(f"DEBUG ERROR: Module {module_id} not found")
@@ -714,6 +742,7 @@ def submit_assessment(request):
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
+
 
 @login_required(login_url="login")
 def pocso_act_page(request):
@@ -764,38 +793,48 @@ def pocso_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training%20videos/Demo%20video.mp4"
+            ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
         video_list.append(item)
         previous_completed = is_completed
 
-
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
-    
+
     # Reset previous_completed for PPT sequence
     previous_completed = True
-    
+
     # [NEW] Inject POSH Act PDF for Reference (as requested)
-    posh_pdf_mod = TrainingModule.objects.filter(module_type="POSH", ppt_file__isnull=False).exclude(video_file__isnull=False).order_by('order').first()
+    posh_pdf_mod = (
+        TrainingModule.objects.filter(module_type="POSH", ppt_file__isnull=False)
+        .exclude(video_file__isnull=False)
+        .order_by("order")
+        .first()
+    )
     if posh_pdf_mod:
         item = {
             "id": posh_pdf_mod.id,
             "title": f"Reference: {posh_pdf_mod.title}",
-            "is_completed": False, # Just a reference, no tracking here needed
-            "is_locked": False, 
+            "is_completed": False,  # Just a reference, no tracking here needed
+            "is_locked": False,
             "thumb": posh_pdf_mod.thumbnail.url if posh_pdf_mod.thumbnail else None,
             "src": "",
             # UPDATED: Use new hardcoded path for PPT if referencing POSH PDF
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
         }
-        ppt_list.append(item) # Add to end or start? User said "show... when i open ppt". List is safer.
+        ppt_list.append(
+            item
+        )  # Add to end or start? User said "show... when i open ppt". List is safer.
 
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
-        is_locked = not previous_completed 
+        is_locked = not previous_completed
 
         item = {
             "id": mod.id,
@@ -850,13 +889,16 @@ def pocso_act_page(request):
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": formatted_total_time,
         "is_assessment_unlocked": percent_complete == 100,
-        "final_quiz_completed": AssessmentProgress.objects.filter(user=user, assessment_type="POCSO", is_passed=True).exists(),
+        "final_quiz_completed": AssessmentProgress.objects.filter(
+            user=user, assessment_type="POCSO", is_passed=True
+        ).exists(),
     }
 
     return render(request, "pocso_act_page.html", context)
 
 
 # --- 6b. COMPANY EMPLOYEE TRAINING PAGES (No Certificate) ---
+
 
 @login_required(login_url="login")
 def posh_act_page_corp(request):
@@ -919,7 +961,7 @@ def posh_act_page_corp(request):
 
     # Process PPT Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
-    
+
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
     for mod in ppt_modules:
@@ -977,7 +1019,9 @@ def posh_act_page_corp(request):
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
-        "is_final_quiz_passed": AssessmentProgress.objects.filter(user=user, assessment_type="POSH", is_passed=True).exists(),
+        "is_final_quiz_passed": AssessmentProgress.objects.filter(
+            user=user, assessment_type="POSH", is_passed=True
+        ).exists(),
         "is_company_employee": True,
     }
 
@@ -1000,7 +1044,7 @@ def pocso_act_page_corp(request):
 
     # 1. Fetch Modules
     modules = TrainingModule.objects.filter(module_type="POCSO").order_by("order")
-    
+
     # Debug logging
     print(f"DEBUG POCSO CORP: Total modules found: {modules.count()}")
 
@@ -1013,7 +1057,9 @@ def pocso_act_page_corp(request):
         progress_map[mod.id] = prog.is_completed
         if prog.is_completed:
             completed_count += 1
-        print(f"DEBUG: Module {mod.id} '{mod.title}' - is_completed: {prog.is_completed}")
+        print(
+            f"DEBUG: Module {mod.id} '{mod.title}' - is_completed: {prog.is_completed}"
+        )
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
@@ -1039,25 +1085,30 @@ def pocso_act_page_corp(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training%20videos/Demo%20video.mp4"
+            ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
         video_list.append(item)
-        print(f"DEBUG: Added video {mod.id} - is_completed: {is_completed}, is_locked: {is_locked}")
+        print(
+            f"DEBUG: Added video {mod.id} - is_completed: {is_completed}, is_locked: {is_locked}"
+        )
         previous_completed = is_completed
-
 
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
     print(f"DEBUG: PPT modules count: {len(ppt_modules)}")
-    
+
     # Reset previous_completed for PPT sequence
     previous_completed = True
 
     for mod in ppt_modules:
         is_completed = progress_map.get(mod.id, False)
-        is_locked = not previous_completed 
+        is_locked = not previous_completed
 
         item = {
             "id": mod.id,
@@ -1109,7 +1160,9 @@ def pocso_act_page_corp(request):
         "total_seconds_watched": total_seconds_watched,
         "formatted_total_time": formatted_total_time,
         "is_assessment_unlocked": percent_complete == 100,
-        "final_quiz_completed": AssessmentProgress.objects.filter(user=user, assessment_type="POCSO", is_passed=True).exists(),
+        "final_quiz_completed": AssessmentProgress.objects.filter(
+            user=user, assessment_type="POCSO", is_passed=True
+        ).exists(),
         "is_company_employee": True,
     }
 
@@ -1267,11 +1320,11 @@ def download_employee_template(request):
     membership = OrganizationMember.objects.filter(
         user=request.user, role="ADMIN"
     ).first()
-    
+
     default_password = "Welcome@123"  # Fallback
     if membership and membership.organization.default_password:
         default_password = membership.organization.default_password
-    
+
     response = HttpResponse(content_type="text/csv")
     response["Content-Disposition"] = 'attachment; filename="employee_template.csv"'
     writer = csv.writer(response)
@@ -1329,7 +1382,7 @@ def upload_employee_bulk(request):
                 email = row.get("Email", "").strip()
                 phone = row.get("Phone no", "").strip()
                 password = row.get("Default password", "").strip()
-                
+
                 # Use organization's default password if not provided in CSV
                 if not password:
                     password = org.default_password
@@ -1346,7 +1399,9 @@ def upload_employee_bulk(request):
                     user.first_name = first_name
                     user.last_name = last_name
                     user.account_type = "EMPLOYEE"
-                    user.force_password_change = True  # Force password change on first login
+                    user.force_password_change = (
+                        True  # Force password change on first login
+                    )
 
                     if hasattr(user, "department"):
                         user.department = department
@@ -1358,15 +1413,21 @@ def upload_employee_bulk(request):
                     OrganizationMember.objects.create(
                         organization=org, user=user, role="MEMBER"
                     )
-                    
+
                     # Regenerate user_id after membership is created
                     user.user_id = user.generate_user_id()
                     user.save()
-                    
+
                     # Send welcome email
                     from home.email_utils import send_welcome_email
-                    send_welcome_email(user, password, is_company_employee=True, organization_name=org.name)
-                    
+
+                    send_welcome_email(
+                        user,
+                        password,
+                        is_company_employee=True,
+                        organization_name=org.name,
+                    )
+
                     added_count += 1
                 except Exception as e:
                     continue
@@ -1626,34 +1687,45 @@ def custom_logout(request):
     logout(request)
     return redirect("home")
 
+
 def download_certificate(request, course_type="POSH"):
     if not request.user.is_authenticated:
         return redirect("login")
 
     # Check if downloading for another user (company admin)
-    user_id = request.GET.get('user_id')
+    user_id = request.GET.get("user_id")
     if user_id:
         # Verify that the requester is an admin of the organization
         try:
             target_user = User.objects.get(id=user_id)
             # Check if current user is admin
             is_admin = OrganizationMember.objects.filter(
-                user=request.user, 
-                role="ADMIN"
+                user=request.user, role="ADMIN"
             ).exists()
-            
+
             if not is_admin:
                 messages.error(request, "Access denied. Admin privileges required.")
                 return redirect("company_dashboard")
-            
+
             # Check if target user is in same organization
-            target_membership = OrganizationMember.objects.filter(user=target_user).first()
-            admin_membership = OrganizationMember.objects.filter(user=request.user, role="ADMIN").first()
-            
-            if not target_membership or not admin_membership or target_membership.organization != admin_membership.organization:
-                messages.error(request, "Cannot download certificate for user outside your organization.")
+            target_membership = OrganizationMember.objects.filter(
+                user=target_user
+            ).first()
+            admin_membership = OrganizationMember.objects.filter(
+                user=request.user, role="ADMIN"
+            ).first()
+
+            if (
+                not target_membership
+                or not admin_membership
+                or target_membership.organization != admin_membership.organization
+            ):
+                messages.error(
+                    request,
+                    "Cannot download certificate for user outside your organization.",
+                )
                 return redirect("company_dashboard")
-            
+
             certificate_user = target_user
         except User.DoesNotExist:
             messages.error(request, "User not found.")
@@ -1668,63 +1740,103 @@ def download_certificate(request, course_type="POSH"):
         modules = TrainingModule.objects.filter(module_type="POSH")
         total = modules.count()
         # Count COMPLETED modules for this user
-        completed = ModuleProgress.objects.filter(user=certificate_user, module__in=modules, is_completed=True).count()
-        
+        completed = ModuleProgress.objects.filter(
+            user=certificate_user, module__in=modules, is_completed=True
+        ).count()
+
         # Strict check: Must be 100% complete
         if total == 0 or completed < total:
-            messages.error(request, "Training must be completed before downloading the certificate.")
-            return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
-
+            messages.error(
+                request,
+                "Training must be completed before downloading the certificate.",
+            )
+            return (
+                redirect("posh_act_page")
+                if not user_id
+                else redirect("company_dashboard")
+            )
 
         # CHECK FINAL ASSESSMENT (NEW)
-        has_passed_assessment = AssessmentProgress.objects.filter(user=certificate_user, assessment_type="POSH", is_passed=True).exists()
+        has_passed_assessment = AssessmentProgress.objects.filter(
+            user=certificate_user, assessment_type="POSH", is_passed=True
+        ).exists()
         if not has_passed_assessment:
-            messages.error(request, "Final Quiz must be passed to download the certificate.")
-            return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
+            messages.error(
+                request, "Final Quiz must be passed to download the certificate."
+            )
+            return (
+                redirect("posh_act_page")
+                if not user_id
+                else redirect("company_dashboard")
+            )
 
     elif course_type == "POCSO":
         # Check POCSO completion
         modules = TrainingModule.objects.filter(module_type="POCSO")
         total = modules.count()
-        completed = ModuleProgress.objects.filter(user=certificate_user, module__in=modules, is_completed=True).count()
-        
-        if total == 0 or completed < total:
-             messages.error(request, "Training must be completed before downloading the certificate.")
-             return redirect("pocso_act_page") if not user_id else redirect("company_dashboard")
+        completed = ModuleProgress.objects.filter(
+            user=certificate_user, module__in=modules, is_completed=True
+        ).count()
 
-        has_passed_assessment = AssessmentProgress.objects.filter(user=certificate_user, assessment_type="POCSO", is_passed=True).exists()
+        if total == 0 or completed < total:
+            messages.error(
+                request,
+                "Training must be completed before downloading the certificate.",
+            )
+            return (
+                redirect("pocso_act_page")
+                if not user_id
+                else redirect("company_dashboard")
+            )
+
+        has_passed_assessment = AssessmentProgress.objects.filter(
+            user=certificate_user, assessment_type="POCSO", is_passed=True
+        ).exists()
         if not has_passed_assessment:
-            messages.error(request, "Final Quiz must be passed to download the certificate.")
-            return redirect("pocso_act_page") if not user_id else redirect("company_dashboard")
+            messages.error(
+                request, "Final Quiz must be passed to download the certificate."
+            )
+            return (
+                redirect("pocso_act_page")
+                if not user_id
+                else redirect("company_dashboard")
+            )
 
     # 2. Generate PDF
     pdf_content = generate_certificate(certificate_user, course_type)
-    
+
     if not pdf_content:
         messages.error(request, "Error generating certificate. Please contact support.")
-        return redirect("posh_act_page") if not user_id else redirect("company_dashboard")
+        return (
+            redirect("posh_act_page") if not user_id else redirect("company_dashboard")
+        )
 
     # 3. Serve PDF
-    response = HttpResponse(pdf_content, content_type='application/pdf')
+    response = HttpResponse(pdf_content, content_type="application/pdf")
     filename = f"Certificate_{course_type}_{certificate_user.username}.pdf"
-    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
     return response
+
 
 # In your Django Form
 def clean_phone(self):
-    phone = self.cleaned_data.get('phone')
+    phone = self.cleaned_data.get("phone")
     if not phone.isdigit() or len(phone) != 10:
         raise forms.ValidationError("Invalid phone number")
     return phone
 
+
 def custom_404(request, exception):
-    return render(request, 'hh.html', status=404)
+    return render(request, "hh.html", status=404)
+
 
 def custom_403(request, exception):
-    return render(request, 'hh.html', status=403)
+    return render(request, "hh.html", status=403)
+
 
 def custom_500(request):
-    return render(request, 'hh.html', status=500)
+    return render(request, "hh.html", status=500)
+
 
 def custom_402(request, exception=None):
-    return render(request, 'hh.html', status=402)
+    return render(request, "hh.html", status=402)
