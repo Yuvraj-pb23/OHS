@@ -109,8 +109,10 @@
 
         <div class="form-group">
             <label class="form-label">Number of Employees (Seats)</label>
-            <input type="number" name="seats" id="seats" class="form-control" value="10" min="1">
+            <input type="number" name="seats" id="seats" class="form-control valid" value="10" min="1"
+                   readonly style="background-color: #f0fdf4; border-color: #26a69a; color: #00695c; font-weight: 700; cursor: not-allowed;">
             <div class="error-msg">Must be a valid number (minimum 1).</div>
+            <small style="color: #26a69a; font-size: 0.82rem;">&#128274; Fixed by your selected plan. Cannot be changed here.</small>
         </div>
 
         <hr style="margin: 25px 0; border:0; border-top:1px dashed #ddd;">
@@ -146,31 +148,39 @@
 </div>
 
 <script>
-    // ... (All existing validation script logic remains the same)
     document.addEventListener('DOMContentLoaded', function() {
         const submitBtn = document.getElementById('submitBtn');
         const patterns = {
-            company_name: /^[a-zA-Z0-9\s\.\,\&\-]{2,100}$/, 
-            seats: /^[1-9][0-9]*$/,
+            company_name: /^[a-zA-Z0-9\s\.\,\&\-]{2,100}$/,
             fullname: /^[a-zA-Z\s]{3,50}$/,
             email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
             password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
         };
 
+        // ── Pre-fill seats from URL query param ──────────────────────────────
+        const urlParams = new URLSearchParams(window.location.search);
+        const seatsParam = urlParams.get('seats');
+        const seatsInput = document.getElementById('seats');
+        if (seatsParam && /^[1-9][0-9]*$/.test(seatsParam)) {
+            seatsInput.value = seatsParam;
+        }
+        // Seats is readonly; always mark it valid
+        seatsInput.classList.add('valid');
+        // ────────────────────────────────────────────────────────────────────
+
         function validateField(field, regex) {
             const value = field.value.trim();
             const errorMsg = field.nextElementSibling;
-            if (field.id === 'seats' && value === "") return false;
 
             if (regex.test(value)) {
                 field.classList.remove('invalid');
                 field.classList.add('valid');
-                errorMsg.style.display = 'none';
+                if (errorMsg && errorMsg.classList.contains('error-msg')) errorMsg.style.display = 'none';
                 return true;
             } else {
                 field.classList.remove('valid');
                 field.classList.add('invalid');
-                errorMsg.style.display = 'block';
+                if (errorMsg && errorMsg.classList.contains('error-msg')) errorMsg.style.display = 'block';
                 return false;
             }
         }
@@ -184,47 +194,39 @@
             if (pass.value === confirm.value && pass.value !== "") {
                 confirm.classList.remove('invalid');
                 confirm.classList.add('valid');
-                errorMsg.style.display = 'none';
+                if (errorMsg) errorMsg.style.display = 'none';
                 return true;
             } else {
                 confirm.classList.remove('valid');
                 confirm.classList.add('invalid');
-                errorMsg.style.display = 'block';
+                if (errorMsg) errorMsg.style.display = 'block';
                 return false;
             }
         }
 
         function checkFormValidity() {
             const isCompanyValid = patterns.company_name.test(document.getElementById('company_name').value.trim());
-            const isSeatsValid = patterns.seats.test(document.getElementById('seats').value.trim());
-            const isNameValid = patterns.fullname.test(document.getElementById('fullname').value.trim());
-            const isEmailValid = patterns.email.test(document.getElementById('email').value.trim());
-            const isPassValid = patterns.password.test(document.getElementById('password').value);
-            const isMatchValid = (document.getElementById('password').value === document.getElementById('confirm_password').value && document.getElementById('confirm_password').value !== "");
-
-            submitBtn.disabled = !(isCompanyValid && isSeatsValid && isNameValid && isEmailValid && isPassValid && isMatchValid);
+            const isNameValid   = patterns.fullname.test(document.getElementById('fullname').value.trim());
+            const isEmailValid  = patterns.email.test(document.getElementById('email').value.trim());
+            const isPassValid   = patterns.password.test(document.getElementById('password').value);
+            const isMatchValid  = (document.getElementById('password').value === document.getElementById('confirm_password').value
+                                    && document.getElementById('confirm_password').value !== "");
+            // Seats is always valid because it's readonly & pre-filled
+            submitBtn.disabled = !(isCompanyValid && isNameValid && isEmailValid && isPassValid && isMatchValid);
         }
 
-        const inputs = document.querySelectorAll('.form-control');
-        inputs.forEach(input => {
+        document.querySelectorAll('.form-control').forEach(input => {
+            if (input.id === 'seats') return; // skip read-only seats
             input.addEventListener('keyup', (e) => {
                 const id = e.target.id;
-                if (id === 'company_name') validateField(e.target, patterns.company_name);
-                if (id === 'seats') validateField(e.target, patterns.seats);
-                if (id === 'fullname') validateField(e.target, patterns.fullname);
-                if (id === 'email') validateField(e.target, patterns.email);
-                if (id === 'password') { validateField(e.target, patterns.password); validateMatch(); }
+                if (id === 'company_name')    validateField(e.target, patterns.company_name);
+                if (id === 'fullname')        validateField(e.target, patterns.fullname);
+                if (id === 'email')           validateField(e.target, patterns.email);
+                if (id === 'password')        { validateField(e.target, patterns.password); validateMatch(); }
                 if (id === 'confirm_password') validateMatch();
                 checkFormValidity();
             });
-            if(input.type === 'number') {
-                input.addEventListener('change', (e) => {
-                     validateField(e.target, patterns.seats);
-                     checkFormValidity();
-                });
-            }
         });
-        validateField(document.getElementById('seats'), patterns.seats);
     });
 </script>
 {% endblock %}

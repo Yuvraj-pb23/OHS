@@ -354,9 +354,141 @@
             z-index: 9999;
         }
     </style>
+
+    {% if force_password_change %}
+    <!-- ===== FIRST-LOGIN PASSWORD CHANGE MODAL STYLES ===== -->
+    <style>
+        #pwChangeOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(10, 10, 30, 0.55);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+        #pwChangeBox {
+            background: #fff;
+            border-radius: 22px;
+            padding: 40px 36px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 24px 60px rgba(78,84,200,0.25);
+            position: relative;
+            animation: modalSlideIn 0.4s cubic-bezier(.22,1,.36,1);
+        }
+        @keyframes modalSlideIn {
+            from { opacity:0; transform: translateY(-30px) scale(0.97); }
+            to   { opacity:1; transform: translateY(0) scale(1); }
+        }
+        #pwChangeBox h2 {
+            color: #4e54c8;
+            margin: 0 0 6px;
+            font-size: 1.5rem;
+        }
+        #pwChangeBox p.sub { color: #636e72; font-size: 0.9rem; margin-bottom: 24px; }
+        #pwChangeBox label { display:block; font-weight:600; color:#444; margin-bottom:5px; font-size:0.88rem; }
+        #pwChangeBox input[type=password] {
+            width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0;
+            border-radius: 10px; font-size: 1rem; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
+            margin-bottom: 16px;
+        }
+        #pwChangeBox input[type=password]:focus { border-color: #4e54c8; outline: none; }
+        #pwChangeSaveBtn {
+            width: 100%; padding: 13px;
+            background: linear-gradient(135deg, #4e54c8, #8f94fb);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1rem; font-weight: 700; cursor: pointer;
+            transition: opacity 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        #pwChangeSaveBtn:hover { opacity: 0.9; }
+        #pwChangeSaveBtn:disabled { background: #b2bec3; cursor: not-allowed; }
+        #pwChangeMsg { margin-top: 12px; font-size: 0.88rem; text-align: center; min-height: 20px; }
+        .pw-icon { font-size: 2.5rem; margin-bottom: 10px; display:block; }
+    </style>
+    {% endif %}
 </head>
 
 <body oncontextmenu="return false;">
+
+    {% if force_password_change %}
+    <!-- ===== FIRST-LOGIN PASSWORD CHANGE MODAL ===== -->
+    <div id="pwChangeOverlay">
+        <div id="pwChangeBox">
+            <span class="pw-icon">🔐</span>
+            <h2>Set Your New Password</h2>
+            <p class="sub">Welcome! Your HR has assigned a temporary password.<br>Please set a new password to continue.</p>
+
+            <label for="newPw">New Password</label>
+            <input type="password" id="newPw" placeholder="Min. 8 characters" autocomplete="new-password">
+
+            <label for="confirmPw">Confirm Password</label>
+            <input type="password" id="confirmPw" placeholder="Repeat your new password">
+
+            <div id="pwChangeMsg"></div>
+
+            <button id="pwChangeSaveBtn" onclick="submitPwChange()">Save &amp; Continue Training ▶</button>
+        </div>
+    </div>
+
+    <script>
+        function submitPwChange() {
+            const newPw = document.getElementById('newPw').value;
+            const confirmPw = document.getElementById('confirmPw').value;
+            const msg = document.getElementById('pwChangeMsg');
+            const btn = document.getElementById('pwChangeSaveBtn');
+
+            if (newPw.length < 8) {
+                msg.style.color = '#c62828';
+                msg.textContent = '⚠ Password must be at least 8 characters.';
+                return;
+            }
+            if (newPw !== confirmPw) {
+                msg.style.color = '#c62828';
+                msg.textContent = '⚠ Passwords do not match.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+            msg.textContent = '';
+
+            const formData = new FormData();
+            formData.append('new_password', newPw);
+            formData.append('confirm_password', confirmPw);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+            fetch("{% url 'force_password_change' %}", {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => {
+                if (res.redirected || res.ok) {
+                    msg.style.color = '#27ae60';
+                    msg.textContent = '✓ Password changed! Starting training...';
+                    setTimeout(() => {
+                        document.getElementById('pwChangeOverlay').style.display = 'none';
+                    }, 900);
+                } else {
+                    return res.text().then(t => { throw new Error(t); });
+                }
+            })
+            .catch(() => {
+                window.location.href = "{% url 'force_password_change' %}";
+            });
+        }
+
+        document.getElementById('confirmPw').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') submitPwChange();
+        });
+    </script>
+    {% endif %}
 
     <div id="presence-indicator">● Protected System Active</div>
 
