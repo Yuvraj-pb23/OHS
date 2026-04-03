@@ -1,8 +1,9 @@
 import csv
 import io
 import json
+import os
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, FileResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
@@ -13,6 +14,8 @@ from django.db.models import Q, Sum
 from django.contrib.auth.decorators import user_passes_test
 from datetime import timedelta
 from django.contrib.auth import logout
+from PIL import Image
+from django.conf import settings
 
 # Models
 # Ensure your User model has 'phone' and 'department' fields if you want to save them to the DB.
@@ -32,6 +35,152 @@ from .models import (
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
 from .utils import generate_certificate
+
+
+@login_required(login_url="login")
+def upload_company_logo(request):
+    """View for HR Admin to upload their company logo"""
+    if request.method == "POST":
+        current_user = request.user
+        membership = OrganizationMember.objects.filter(
+            user=current_user, role="ADMIN"
+        ).first()
+        if not membership:
+            messages.error(request, "Unauthorized.")
+            return redirect("company_dashboard")
+
+        org = membership.organization
+        logo = request.FILES.get("company_logo")
+        if logo:
+            org.logo = logo
+            org.save()
+            messages.success(request, "Company logo uploaded successfully!")
+        else:
+            messages.error(request, "No logo file selected.")
+
+    return redirect("company_dashboard")
+
+
+@login_required(login_url="login")
+def get_poster_with_logo(request, poster_type):
+    """View to merge company logo into the poster and serve it (view or download)"""
+    user = request.user
+
+    # Identify organization (HR Admin requirement)
+    membership = OrganizationMember.objects.filter(user=user, role="ADMIN").first()
+    if not membership:
+        # Check if user is an employee of an organization
+        membership = OrganizationMember.objects.filter(user=user).first()
+        if not membership:
+            return HttpResponse("Unauthorized", status=403)
+
+    org = membership.organization
+    is_download = request.GET.get("download") == "1"
+
+    # Determine the poster file path
+    if poster_type == "posh":
+        poster_filename = "POSH Poster.jpeg"
+    elif poster_type == "pocso":
+        poster_filename = "POCSO Poster.jpeg"
+    else:
+        return HttpResponse("Invalid poster type", status=400)
+
+    poster_path = os.path.join(settings.MEDIA_ROOT, "Posters", poster_filename)
+
+    if not os.path.exists(poster_path):
+        return HttpResponse("Base poster not found", status=404)
+
+    try:
+        # Open the base poster
+        poster_img = Image.open(poster_path).convert("RGBA")
+        p_width, p_height = poster_img.size
+
+        # If organization has a logo, merge it
+        if org.logo:
+            logo_path = org.logo.path
+            if os.path.exists(logo_path):
+                logo_img = Image.open(logo_path).convert("RGBA")
+
+                # Scale based on saved org.logo_width (percentage of poster width)
+                # Default to 15% if something goes wrong
+                lw_pct = org.logo_width if org.logo_width > 0 else 15.0
+                target_width = int(p_width * (lw_pct / 100.0))
+                w_percent = target_width / float(logo_img.size[0])
+                target_height = int((float(logo_img.size[1]) * float(w_percent)))
+                logo_img = logo_img.resize((target_width, target_height), Image.LANCZOS)
+
+                # Positioning based on saved org.logo_x, org.logo_y (percentages)
+                pos_x = int(p_width * (org.logo_x / 100.0))
+                pos_y = int(p_height * (org.logo_y / 100.0))
+
+                # Paste the logo directly onto the poster (using itself as mask for transparency)
+                poster_img.paste(logo_img, (pos_x, pos_y), logo_img)
+
+        # Save to buffer
+        buffer = io.BytesIO()
+        poster_img.convert("RGB").save(buffer, format="JPEG", quality=95)
+        buffer.seek(0)
+
+        safe_org_name = "".join(
+            [c for c in org.name if c.isalnum() or c in (" ", "_", "-")]
+        ).strip()
+        filename = f"{safe_org_name}_{poster_filename}"
+
+        return FileResponse(
+            buffer,
+            as_attachment=is_download,
+            filename=filename,
+            content_type="image/jpeg",
+        )
+
+    except Exception as e:
+        print(f"Error generating poster: {str(e)}")
+        return HttpResponse(f"Error generating poster: {str(e)}", status=500)
+
+
+@csrf_exempt
+@login_required(login_url="login")
+def save_logo_config(request):
+    """Save logo position and size from interactive editor"""
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            membership = OrganizationMember.objects.filter(
+                user=request.user, role="ADMIN"
+            ).first()
+            if not membership:
+                return JsonResponse(
+                    {"status": "error", "message": "Unauthorized"}, status=403
+                )
+
+            org = membership.organization
+            org.logo_x = float(data.get("x", 2.0))
+            org.logo_y = float(data.get("y", 2.0))
+            org.logo_width = float(data.get("width", 15.0))
+            org.save()
+            return JsonResponse({"status": "success"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
+
+
+@login_required(login_url="login")
+def reset_logo_config(request):
+    """Reset logo position and size to default"""
+    membership = OrganizationMember.objects.filter(
+        user=request.user, role="ADMIN"
+    ).first()
+    if not membership:
+        messages.error(request, "Unauthorized.")
+        return redirect("company_dashboard")
+
+    org = membership.organization
+    org.logo_x = 2.0
+    org.logo_y = 2.0
+    org.logo_width = 15.0
+    org.save()
+    messages.success(request, "Logo position and size reset to default.")
+    return redirect("company_dashboard")
 
 
 # --- 1. LOGIN REDIRECT LOGIC ---

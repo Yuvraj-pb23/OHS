@@ -134,6 +134,12 @@ class Organization(models.Model):
     
     # Default password for employees
     default_password = models.CharField(max_length=50, blank=True, null=True)
+    logo = models.ImageField(upload_to="company_logos/", null=True, blank=True)
+    
+    # Logo customization (as percentages 0-100)
+    logo_x = models.FloatField(default=2.0)
+    logo_y = models.FloatField(default=2.0)
+    logo_width = models.FloatField(default=15.0) # percentage of poster width
 
     def __str__(self):
         return self.name

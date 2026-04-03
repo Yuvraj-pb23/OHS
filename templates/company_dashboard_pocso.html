@@ -925,13 +925,388 @@
       <h2 class="mb-4 section-title"><i class="bi bi-megaphone me-2"></i>Awareness Material</h2>
       <div class="poster-grid">
         <div class="poster-item">
-          <div class="poster-placeholder">
-            <i class="bi bi-shield-shaded fs-1 d-block mb-2"></i>
-            <span>Good Touch vs Bad Touch</span>
+          <div class="d-inline-block position-relative" id="poster-editor-container" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-soft); background: #1a1a1a; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <!-- Base Poster Image -->
+            <img src="/media/Posters/POCSO Poster.jpeg" alt="POCSO Poster"
+                 style="max-height: 500px; width: auto; display: block;" id="base-poster-pocso">
+            
+            {% if organization.logo %}
+            <!-- Draggable Logo Container -->
+            <div id="draggable-logo" 
+                 style="position: absolute; 
+                        top: {{ organization.logo_y }}%; 
+                        left: {{ organization.logo_x }}%; 
+                        width: {{ organization.logo_width }}%; 
+                        cursor: default; 
+                        user-select: none;
+                        touch-action: none;
+                        border: 2px dashed transparent;
+                        transition: border 0.2s;
+                        z-index: 10;">
+              <img src="{{ organization.logo.url }}" alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
+              <!-- Resize handle removed from dashboard view -->
+            </div>
+            {% endif %}
           </div>
-          <h5>Child Safety Awareness</h5>
-          <button class="btn btn-sm btn-outline-light mt-2"><i class="bi bi-download me-2"></i>Download Poster</button>
+
+          <h5 class="mt-3">Child Safety Awareness</h5>
+          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+            <a href="{% url 'get_poster_with_logo' 'pocso' %}" target="_blank" class="btn btn-sm btn-outline-light">
+              <i class="bi bi-eye me-1"></i>View
+            </a>
+            <a href="{% url 'get_poster_with_logo' 'pocso' %}?download=1" download class="btn btn-sm btn-outline-light">
+              <i class="bi bi-download me-1"></i>Download
+            </a>
+            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#fullscreenEditorModal">
+              <i class="bi bi-pencil-square me-1"></i>Edit Layout
+            </button>
+          </div>
+          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to resize. Use <b>Fullscreen Edit</b> for precision.</p>
         </div>
+
+<style>
+/* Studio Dark Editor Theme */
+#fullscreenEditorModal .modal-content {
+    background-color: #121212 !important;
+    border: none;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+#fullscreenEditorModal .editor-top-bar {
+    background: #1e1e1e;
+    border-bottom: 1px solid #333;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1050;
+}
+
+#fullscreenEditorModal .editor-toolbar {
+    background: #252526;
+    border-bottom: 1px solid #333;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    z-index: 1049;
+}
+
+#fullscreenEditorModal .editor-canvas {
+    background: #0f0f0f;
+    background-image: radial-gradient(#222 1px, transparent 1px);
+    background-size: 20px 20px;
+    height: calc(100vh - 100px);
+    overflow: auto;
+    position: relative;
+    cursor: grab;
+}
+
+#fullscreenEditorModal .editor-canvas:active { cursor: grabbing; }
+
+#fullscreenEditorModal .tool-group {
+    display: flex;
+    align-items: center;
+    background: #333;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+#fullscreenEditorModal .tool-btn {
+    background: transparent;
+    border: none;
+    color: #ccc;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+#fullscreenEditorModal .tool-btn:hover {
+    background: #444;
+    color: #fff;
+}
+
+#fullscreenEditorModal .tool-btn.active {
+    background: #007acc;
+    color: #fff;
+}
+
+#fullscreenEditorModal .btn-save-project {
+    background: #28a745;
+    color: white;
+    font-weight: 600;
+    padding: 6px 20px;
+    border-radius: 6px;
+    border: none;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+    transition: transform 0.2s, background 0.2s;
+}
+
+#fullscreenEditorModal .btn-save-project:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+#fullscreenEditorModal .status-bar {
+    background: #007acc;
+    color: white;
+    padding: 2px 16px;
+    font-size: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#modal-poster-container {
+    box-shadow: 0 0 50px rgba(0,0,0,0.5), 0 0 10px rgba(0,0,0,0.3);
+    border: 1px solid #444;
+    background: white;
+}
+</style>
+
+<!-- Fullscreen Editor Modal -->
+<div class="modal fade" id="fullscreenEditorModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-fullscreen">
+    <div class="modal-content">
+      <!-- Editor Top Bar -->
+      <div class="editor-top-bar">
+        <div class="d-flex align-items-center gap-3">
+          <h6 class="mb-0 text-white fw-bold"><i class="bi bi-layers-half me-2"></i>Branding Workshop</h6>
+          <span class="badge bg-dark text-secondary border border-secondary">v2.0 Professional</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Editor Toolbar -->
+      <div class="editor-toolbar">
+        <div class="tool-group">
+          <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#uploadLogoModal">
+            <i class="bi bi-image"></i> Change Logo
+          </button>
+          <a href="{% url 'reset_logo_config' %}" class="tool-btn text-decoration-none">
+            <i class="bi bi-arrow-counterclockwise"></i> Reset
+          </a>
+        </div>
+
+        <div class="tool-group">
+          <button class="tool-btn" id="reset-zoom-btn">
+            <i class="bi bi-zoom-in"></i> 100%
+          </button>
+          <div class="px-2 text-secondary" style="font-size: 0.7rem;">
+            <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
+          </div>
+        </div>
+
+        <div class="ms-auto">
+          <button type="button" class="btn-save-project" id="modal-save-btn">
+            <i class="bi bi-cloud-arrow-up me-2"></i>Save Layout
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Canvas -->
+      <div class="editor-canvas d-flex justify-content-center p-5" id="modal-body-zoom">
+        <div id="modal-poster-container" class="position-relative d-inline-block align-self-start" 
+             style="transform-origin: top center; transition: transform 0.1s ease-out;">
+          <img src="/media/Posters/POCSO Poster.jpeg" alt="POCSO Poster" style="max-height: 85vh; width: auto; display: block;" id="modal-base-poster">
+          
+          {% if organization.logo %}
+          <div id="modal-draggable-logo" 
+               style="position: absolute; 
+                      top: {{ organization.logo_y }}%; 
+                      left: {{ organization.logo_x }}%; 
+                      width: {{ organization.logo_width }}%; 
+                      cursor: move; 
+                      user-select: none;
+                      touch-action: none;
+                      border: 2px dashed rgba(255,193,7,0.8);
+                      z-index: 100;">
+              <img src="{{ organization.logo.url }}" style="width: 100%; height: auto; pointer-events: none; display: block;">
+              <div id="modal-resize-handle" style="position: absolute; right: -8px; bottom: -8px; width: 18px; height: 18px; background: #ffc107; border-radius: 2px; cursor: nwse-resize; border: 2px solid #000; z-index: 101;"></div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Status Bar -->
+      <div class="status-bar">
+        <div><i class="bi bi-info-circle me-1"></i> Drag to move. Hold Resize handle for scaling.</div>
+        <div id="editor-zoom-status">Scale: 100%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let modalZoomScale = 1.0;
+
+    const initDraggable = (logoId, containerId, saveBtnId, resizeHandleId, isModal = false) => {
+        const logo = document.getElementById(logoId);
+        const container = logo ? logo.parentElement : null;
+        const saveBtn = document.getElementById(saveBtnId);
+        const resizeHandle = document.getElementById(resizeHandleId);
+        
+        if (!logo || !container) return;
+
+        let isDragging = false;
+        let isResizing = false;
+        let startX, startY, startLeft, startTop, startWidth;
+
+        logo.addEventListener('mousedown', function(e) {
+            if (!isModal) return; // Only allow editing in the modal Fullscreen version
+            
+            if (e.target === resizeHandle) {
+                isResizing = true;
+                startWidth = logo.offsetWidth;
+            } else {
+                isDragging = true;
+                startLeft = logo.offsetLeft;
+                startTop = logo.offsetTop;
+            }
+            startX = e.clientX;
+            startY = e.clientY;
+            logo.style.transition = 'none';
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+            e.preventDefault();
+        });
+
+        const onMouseMove = (e) => {
+            // Recalibrate movement based on zoom level
+            const currentScale = isModal ? modalZoomScale : 1.0;
+            const dx = (e.clientX - startX) / currentScale;
+            const dy = (e.clientY - startY) / currentScale;
+            
+            if (isDragging) {
+                let newX = startLeft + dx;
+                let newY = startTop + dy;
+                
+                // Extremely relaxed constraints: allow moving up to 95% of the logo width/height outside
+                const limitXMin = -(logo.offsetWidth * 0.95);
+                const limitXMax = container.offsetWidth - (logo.offsetWidth * 0.05);
+                const limitYMin = -(logo.offsetHeight * 0.95);
+                const limitYMax = container.offsetHeight - (logo.offsetHeight * 0.05);
+                
+                newX = Math.max(limitXMin, Math.min(newX, limitXMax));
+                newY = Math.max(limitYMin, Math.min(newY, limitYMax));
+                
+                const leftPct = (newX / container.offsetWidth * 100);
+                const topPct = (newY / container.offsetHeight * 100);
+                
+                logo.style.left = leftPct + '%';
+                logo.style.top = topPct + '%';
+                syncLogo(leftPct, topPct, null, isModal);
+            } else if (isResizing) {
+                let newWidth = startWidth + dx;
+                newWidth = Math.max(20, Math.min(newWidth, container.offsetWidth * 0.9));
+                
+                const widthPct = (newWidth / container.offsetWidth * 100);
+                logo.style.width = widthPct + '%';
+                syncLogo(null, null, widthPct, isModal);
+            }
+            if (saveBtn) saveBtn.style.display = 'inline-block';
+            document.getElementById('save-logo-btn').style.display = 'inline-block';
+        };
+
+        const onMouseUp = () => {
+            isDragging = false;
+            isResizing = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', onMouseUp);
+        };
+    };
+
+    const syncLogo = (x, y, w, fromModal) => {
+        const targetLogo = fromModal ? document.getElementById('draggable-logo') : document.getElementById('modal-draggable-logo');
+        if (!targetLogo) return;
+        if (x !== null) targetLogo.style.left = x + '%';
+        if (y !== null) targetLogo.style.top = y + '%';
+        if (w !== null) targetLogo.style.width = w + '%';
+    };
+
+    initDraggable('draggable-logo', 'poster-editor-container', 'save-logo-btn', 'resize-handle');
+    initDraggable('modal-draggable-logo', 'modal-poster-container', 'modal-save-btn', 'modal-resize-handle', true);
+
+    // --- ZOOM LOGIC ---
+    const modalBody = document.getElementById('modal-body-zoom');
+    const zoomContainer = document.getElementById('modal-poster-container');
+    const resetZoomBtn = document.getElementById('reset-zoom-btn');
+
+    if (modalBody && zoomContainer) {
+        const updateZoomUI = () => {
+             const zoomPct = Math.round(modalZoomScale * 100);
+             const statusElem = document.getElementById('editor-zoom-status');
+             if (statusElem) statusElem.innerHTML = `Scale: ${zoomPct}%`;
+             if (resetZoomBtn) resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
+        };
+
+        modalBody.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                modalZoomScale = Math.max(0.3, Math.min(modalZoomScale + delta, 4.0));
+                zoomContainer.style.transform = `scale(${modalZoomScale})`;
+                updateZoomUI();
+            }
+        }, { passive: false });
+
+        resetZoomBtn?.addEventListener('click', () => {
+            modalZoomScale = 1.0;
+            zoomContainer.style.transform = 'scale(1)';
+            updateZoomUI();
+        });
+    }
+
+    const handleSave = (btn) => {
+        const logo = document.getElementById('draggable-logo');
+        const x_pct = parseFloat(logo.style.left);
+        const y_pct = parseFloat(logo.style.top);
+        const width_pct = parseFloat(logo.style.width);
+
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+
+        fetch("{% url 'save_logo_config' %}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                btn.innerHTML = '<i class="bi bi-check-all me-1"></i>Saved!';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    if (btn.id === 'save-logo-btn') btn.style.display = 'none';
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('fullscreenEditorModal'));
+                    if (modal && btn.id === 'modal-save-btn') {
+                        setTimeout(() => {
+                            // modal.hide();
+                        }, 500);
+                    }
+                }, 1500);
+            }
+        });
+    };
+
+    document.getElementById('save-logo-btn')?.addEventListener('click', function() { handleSave(this); });
+    document.getElementById('modal-save-btn')?.addEventListener('click', function() { handleSave(this); });
+
+    // Disable hover-resize and change-layout button on dashboard
+    const dLogo = document.getElementById('draggable-logo');
+    if (dLogo) {
+        // dLogo.addEventListener('mouseenter', () => document.getElementById('resize-handle').style.display = 'block');
+    }
+});
+</script>
         <div class="poster-item">
           <div class="poster-placeholder">
             <i class="bi bi-telephone-outbound fs-1 d-block mb-2"></i>
@@ -1231,6 +1606,35 @@
     // Set the initial time when page loads
     updateRefreshTime();
   </script>
+
+  <!-- UPLOAD COMPANY LOGO MODAL -->
+  <div class="modal fade" id="uploadLogoModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: #020617; border: 1px solid var(--border-soft); color: white;">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">
+            <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{% else %}Add{% endif %} Company Logo
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form method="POST" action="{% url 'upload_company_logo' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p class="text-white-50 small mb-4">
+              This logo will be displayed on the top-left of your awareness posters.
+            </p>
+            <div class="mb-4">
+              <input class="form-control" type="file" name="company_logo" accept="image/*" required 
+                     style="background: rgba(248, 250, 252, 0.95); color: #020617;">
+            </div>
+            <button type="submit" class="btn btn-gradient w-100">
+              Upload Logo
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 
