@@ -30,6 +30,7 @@ from .models import (
     ModuleProgress,
     DailyActivity,
     AssessmentProgress,
+    POSHRegistration,
 )
 
 # Ensure this file exists in your app or adjust import accordingly
@@ -1989,3 +1990,132 @@ def custom_500(request):
 
 def custom_402(request, exception=None):
     return render(request, "hh.html", status=402)
+
+def posh_registration_view(request):
+    """View to handle POSH Registration form submission"""
+    if request.method == "POST":
+        try:
+            # Extract basic details
+            company_name = request.POST.get("company_name")
+            city = request.POST.get("city")
+            contact_person = request.POST.get("contact_person")
+            designation = request.POST.get("designation")
+            phone = request.POST.get("phone")
+            email = request.POST.get("email")
+            website = request.POST.get("website")
+
+            # Company Information (Sanitized)
+            try:
+                employee_count = int(request.POST.get("employee_count") or 0)
+            except ValueError:
+                employee_count = 0
+                
+            try:
+                trained_employee_count = int(request.POST.get("trained_employee_count") or 0)
+            except ValueError:
+                trained_employee_count = 0
+                
+            training_type = request.POST.get("training_type")
+
+            # Compliance Details (Radio buttons / Booleans)
+            has_posh_policy = request.POST.get("has_posh_policy") == "yes"
+            has_ic = request.POST.get("has_ic") == "yes"
+            
+            # Conditional IC Fields (Sanitized)
+            try:
+                ic_last_training_year = int(request.POST.get("ic_last_training_year") or 0) if request.POST.get("ic_last_training_year") else None
+            except ValueError:
+                ic_last_training_year = None
+                
+            ic_training_mode = request.POST.get("ic_training_mode")
+            
+            external_member_support = request.POST.get("external_member_support") == "yes"
+            she_box_registered = request.POST.get("she_box_registered") == "yes"
+            
+            # Conditional SHE Box Field
+            nodal_officer_appointed = request.POST.get("nodal_officer_appointed") == "yes"
+            
+            annual_report_submitted = request.POST.get("annual_report_submitted") == "yes"
+
+            # Create and save the object
+            registration = POSHRegistration(
+                company_name=company_name,
+                city=city,
+                contact_person=contact_person,
+                designation=designation,
+                phone=phone,
+                email=email,
+                website=website,
+                employee_count=employee_count,
+                trained_employee_count=trained_employee_count,
+                training_type=training_type,
+                has_posh_policy=has_posh_policy,
+                has_ic=has_ic,
+                ic_last_training_year=ic_last_training_year if has_ic and ic_last_training_year else None,
+                ic_training_mode=ic_training_mode if has_ic and ic_training_mode else None,
+                external_member_support=external_member_support,
+                she_box_registered=she_box_registered,
+                nodal_officer_appointed=nodal_officer_appointed if she_box_registered else False,
+                annual_report_submitted=annual_report_submitted
+            )
+            if request.user.is_authenticated:
+                registration.user = request.user
+            registration.save()
+            
+            # Store ID in session for anonymous billing access
+            request.session['last_registration_id'] = registration.id
+            
+            # Redirect to billing page
+            return redirect("billing")
+            
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
+            return redirect("posh_registration")
+
+    return render(request, "posh_registration.html")
+
+def billing_view(request):
+    """View to handle billing/payment details after registration"""
+    # Find registration by user OR session ID (for anonymous users)
+    if request.user.is_authenticated:
+        registration = POSHRegistration.objects.filter(user=request.user).order_by('-created_at').first()
+    else:
+        reg_id = request.session.get('last_registration_id')
+        registration = POSHRegistration.objects.filter(id=reg_id).first() if reg_id else None
+    
+    # If no registration found, go to reg form
+    if not registration:
+        return redirect("posh_registration")
+    
+    # Base platform fee
+    base_price = 5000.00
+    
+    # Calculate tiered cost based on employee count
+    employee_count = registration.employee_count if registration else 0
+    
+    if employee_count <= 25:
+        per_employee_price = 163.00
+    elif employee_count <= 100:
+        per_employee_price = 154.00
+    elif employee_count <= 200:
+        per_employee_price = 145.00
+    elif employee_count <= 500:
+        per_employee_price = 127.00
+    else:
+        per_employee_price = 127.00 # Default for > 500
+        
+    training_cost = employee_count * per_employee_price
+    subtotal = base_price + training_cost
+    tax = subtotal * 0.18 # 18% GST
+    total = subtotal + tax
+    
+    context = {
+        "registration": registration,
+        "per_employee_price": per_employee_price,
+        "training_cost": training_cost,
+        "subtotal": subtotal,
+        "tax": tax,
+        "total": total,
+        "company_name": registration.company_name if registration else "Your Company"
+    }
+    return render(request, "billing.html", context)

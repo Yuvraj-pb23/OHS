@@ -19,6 +19,7 @@ urlpatterns = [
     path("blogdata/", views.blogdata, name="blogdata"),
     path("why_choose_ohs/", views.why_choose_ohs, name="why_choose_ohs"),
     path("posh-compliance/", views.posh_compliance, name="posh_compliance"),
+    path("posh-registration/", views.posh_registration_view, name="posh_registration"),
 
     # --- MAIN TUTORIAL / TRAINING LANDING ---
     path("tutorial/", views.tutorial_view, name="tutorial"),
@@ -93,4 +94,5 @@ urlpatterns = [
     # --- CERTIFICATE ---
     path('certificate/<str:course_type>/', views.download_certificate, name='download_certificate'),
     path('402/', views.custom_402, name='402'),
+    path('billing/', views.billing_view, name='billing'),
 ]

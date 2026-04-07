@@ -195,7 +195,8 @@
   </head>
 
   <body>
-    <!-- SLIDING POSTER SECTION -->
+    <!-- SLIDING POSTER SECTION (Hidden if already registered) -->
+    {% if not user.is_authenticated or not user.posh_registrations.exists %}
     <div class="side-poster-container" id="mainPosterContainer">
         <div class="poster-card">
             <span class="poster-close" id="closePoster">&times;</span>
@@ -207,6 +208,7 @@
             <a href="/tutorial" class="poster-btn">Learn More & Apply</a>
         </div>
     </div>
+    {% endif %}
 
     <!-- CSRF Token for security -->
     {% csrf_token %}
@@ -273,7 +275,19 @@
     </nav>
 
     <!-- Main Content -->
-    <main>{% block body %}{% endblock %}</main>
+    <main>
+      {% if messages %}
+        <div class="container mt-3">
+          {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+      {% block body %}{% endblock %}
+    </main>
 
     <!-- CHATBOT -->
     {% include 'chat/chatbot_snippet.html' %}

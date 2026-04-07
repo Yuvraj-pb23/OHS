@@ -310,5 +310,49 @@ class AssessmentProgress(models.Model):
     class Meta:
         unique_together = ("user", "assessment_type")
 
+# 12. POSH Registration Form Data
+class POSHRegistration(models.Model):
+    # Basic Company Details
+    company_name = models.CharField(max_length=255)
+    city = models.CharField(max_length=100)
+    contact_person = models.CharField(max_length=255)
+    designation = models.CharField(max_length=100)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    website = models.URLField(blank=True, null=True)
+
+    # Company Information
+    employee_count = models.IntegerField()
+    trained_employee_count = models.IntegerField()
+    
+    TRAINING_TYPE_CHOICES = [
+        ('OFFLINE', 'Offline'),
+        ('VIRTUAL', 'Virtual'),
+        ('E_LEARNING', 'E-learning'),
+    ]
+    training_type = models.CharField(max_length=20, choices=TRAINING_TYPE_CHOICES, null=True, blank=True)
+
+    # Compliance Details
+    has_posh_policy = models.BooleanField(default=False)
+    has_ic = models.BooleanField(default=False)
+    
+    # Conditional IC Fields
+    ic_last_training_year = models.IntegerField(null=True, blank=True)
+    ic_training_mode = models.CharField(max_length=20, choices=TRAINING_TYPE_CHOICES, null=True, blank=True)
+    
+    external_member_support = models.BooleanField(default=False)
+    she_box_registered = models.BooleanField(default=False)
+    
+    # Conditional SHE Box Field
+    nodal_officer_appointed = models.BooleanField(default=False)
+    
+    annual_report_submitted = models.BooleanField(default=False)
+    
+    # User association
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="posh_registrations")
+    is_paid = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return f"{self.user.username} - {self.assessment_type} - {'Passed' if self.is_passed else 'Failed'}"
+        return f"{self.company_name} - {self.created_at.date()}"

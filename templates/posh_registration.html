@@ -1,0 +1,560 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POSH Registration | Professional Compliance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1e1b4b;
+            --accent: #6366f1;
+            --success: #10b981;
+            --bg-gradient: linear-gradient(135deg, #f8faff 0%, #eff2ff 100%);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--primary);
+        }
+
+        .heading-font { font-family: 'Outfit', sans-serif; }
+
+        .glass-container {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+        }
+
+        .step-content {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .step-link.active .progress-dot {
+            background: var(--accent);
+            transform: scale(1.4);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.3);
+        }
+
+        .step-link.completed .progress-dot {
+            background: var(--success);
+        }
+
+        /* Compact Inputs */
+        .floating-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            border: 1.5px solid #e2e8f0;
+            background: #fff;
+            transition: all 0.25s;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .floating-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        }
+
+        .selection-card {
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1.5px solid #f1f5f9;
+            background: #fff;
+        }
+
+        .selection-card:hover { border-color: #e2e8f0; }
+
+        input[type="radio"]:checked + .selection-card {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.04);
+            color: var(--accent);
+        }
+
+        .btn-premium {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .btn-premium:hover { transform: translateY(-1px); opacity: 0.95; }
+
+        .section-tag {
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* Compact Row Components */
+        .compact-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem;
+            border: 1.5px solid #f1f5f9;
+            gap: 1rem;
+        }
+
+        .compact-row.dark {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .pill-toggle {
+            display: flex;
+            background: #f1f5f9;
+            padding: 0.2rem;
+            border-radius: 0.6rem;
+            gap: 0.2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .pill-toggle label {
+            flex: 1;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .pill-toggle span {
+            display: block;
+            padding: 0.4rem 0;
+            border-radius: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #64748b;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Logic handled by Tailwind peer classes in HTML */
+        
+        .pill-toggle.dark { 
+            background: rgba(255,255,255,0.1); 
+            border-color: rgba(255,255,255,0.1);
+        }
+        
+        .pill-toggle.dark span {
+            color: rgba(255,255,255,0.5);
+        }
+    </style>
+</head>
+<body class="py-10 px-4 antialiased">
+
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="heading-font text-3xl font-extrabold text-indigo-950 tracking-tight">POSH Registration</h1>
+            <p class="text-indigo-950/50 text-sm mt-1">Fill in the details for compliance certification.</p>
+        </div>
+
+        <!-- Stepper -->
+        <div class="flex justify-between items-center px-4 mb-10 max-w-md mx-auto">
+            <div class="step-link active flex items-center gap-2" data-step="1">
+                <div class="progress-dot"></div>
+                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 1</span>
+            </div>
+            <div class="h-px bg-gray-200 flex-grow mx-4"></div>
+            <div class="step-link flex items-center gap-2" data-step="2">
+                <div class="progress-dot"></div>
+                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 2</span>
+            </div>
+            <div class="h-px bg-gray-200 flex-grow mx-4"></div>
+            <div class="step-link flex items-center gap-2" data-step="3">
+                <div class="progress-dot"></div>
+                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 3</span>
+            </div>
+        </div>
+
+        <form id="multiStepForm" method="POST" action="{% url 'posh_registration' %}" onsubmit="return validateForm()" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
+            {% csrf_token %}
+            
+            <!-- Messages Section -->
+            {% if messages %}
+            <div class="px-6 pt-6">
+                {% for message in messages %}
+                <div class="p-4 mb-4 rounded-2xl flex items-center gap-3 {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-100{% else %}bg-emerald-50 text-emerald-700 border border-emerald-100{% endif %}">
+                    <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
+                    <p class="text-sm font-semibold">{{ message }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            <div class="p-6 md:p-10">
+                <!-- STEP 1 -->
+                <div class="step-content active" id="step-1">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="section-tag">Personal</span>
+                        <h2 class="font-bold text-indigo-950">Primary Details</h2>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="col-span-full">
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Full Name</label>
+                            <input type="text" name="contact_person" required class="floating-input" 
+                                   placeholder="Enter name" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Designation</label>
+                            <input type="text" name="designation" required class="floating-input" 
+                                   placeholder="HR Manager" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">City</label>
+                            <input type="text" name="city" required class="floating-input" 
+                                   placeholder="City" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Phone</label>
+                            <div class="relative group">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-900/40">+91</span>
+                                <input type="tel" name="phone" id="phone_input" required 
+                                       pattern="[0-9]{10}" maxlength="10"
+                                       class="floating-input !pl-12" 
+                                       placeholder="9876543210"
+                                       onkeypress="return /[0-9]/.test(event.key)">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Work Email</label>
+                            <input type="email" name="email" required class="floating-input" placeholder="email@company.com">
+                        </div>
+                        <div class="col-span-full">
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Website</label>
+                            <input type="url" name="website" required class="floating-input" placeholder="https://example.com">
+                            <span class="text-[0.6rem] text-slate-400 mt-1 block">Include https:// for a genuine link</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2 -->
+                <div class="step-content" id="step-2">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="section-tag">Organization</span>
+                        <h2 class="font-bold text-indigo-950">Company Profile</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-2 block">Organization Type</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="organization_type" value="government" required class="hidden peer">
+                                    <div class="selection-card p-4 rounded-xl flex items-center justify-center gap-2 peer-checked:ring-2 peer-checked:ring-indigo-500">
+                                        <i class="fas fa-landmark text-xs"></i>
+                                        <span class="text-sm font-bold">Government</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="organization_type" value="private" class="hidden peer">
+                                    <div class="selection-card p-4 rounded-xl flex items-center justify-center gap-2 peer-checked:ring-2 peer-checked:ring-indigo-500">
+                                        <i class="fas fa-building text-xs"></i>
+                                        <span class="text-sm font-bold">Private</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Name of Organization/Company</label>
+                            <input type="text" name="company_name" required class="floating-input" 
+                                   placeholder="Company Name" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Total Employees</label>
+                                <input type="number" name="employee_count" id="employee_count" required 
+                                       class="floating-input" placeholder="0" min="10">
+                            </div>
+                            <div>
+                                <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">POSH Trained</label>
+                                <input type="number" name="trained_employee_count" id="trained_employee_count" 
+                                       class="floating-input" placeholder="0" min="0"
+                                       oninput="updateTrainingStatus(this.value)">
+                            </div>
+                        </div>
+
+                        <div id="training_type_section" class="transition-all duration-300">
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-2 block">Type of Training Provided</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <label class="cursor-pointer training-option">
+                                    <input type="radio" name="training_type" value="OFFLINE" class="hidden peer">
+                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">Offline</div>
+                                </label>
+                                <label class="cursor-pointer training-option">
+                                    <input type="radio" name="training_type" value="VIRTUAL" class="hidden peer">
+                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">Virtual</div>
+                                </label>
+                                <label class="cursor-pointer training-option">
+                                    <input type="radio" name="training_type" value="E_LEARNING" class="hidden peer">
+                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">E-learning</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 3 -->
+                <div class="step-content" id="step-3">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="section-tag">Compliance</span>
+                        <h2 class="font-bold text-indigo-950">Statutory Details</h2>
+                    </div>
+
+                    <div class="space-y-3">
+                        <!-- Questions as Compact Rows -->
+                        <div class="compact-row">
+                            <span class="text-sm font-semibold">Do you have POSH Policy in Place?</span>
+                            <div class="pill-toggle w-32">
+                                <label><input type="radio" name="has_posh_policy" value="yes" required class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="has_posh_policy" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div class="compact-row">
+                            <span class="text-sm font-semibold">Do you have Internal Committee (IC) in Place?</span>
+                            <div class="pill-toggle w-32">
+                                <label><input type="radio" name="has_ic" value="yes" required class="peer hidden" onchange="toggleICFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="has_ic" value="no" class="peer hidden" onchange="toggleICFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div id="ic-details" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn">
+                             <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-500 uppercase">Has the IC received specialized training as per Act?</span>
+                                <div class="pill-toggle w-32 bg-white">
+                                    <label><input type="radio" name="ic_specialized_training" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="ic_specialized_training" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                </div>
+                             </div>
+                             <div class="grid grid-cols-2 gap-3">
+                                <input type="number" name="ic_last_training_year" class="floating-input" placeholder="Last Training Year">
+                                <select name="ic_training_mode" class="floating-input">
+                                    <option value="" disabled selected>Mode</option>
+                                    <option value="OFFLINE">Offline</option>
+                                    <option value="VIRTUAL">Virtual</option>
+                                    <option value="E_LEARNING">E-learning</option>
+                                </select>
+                             </div>
+                        </div>
+
+                        <div class="compact-row">
+                            <span class="text-sm font-semibold">Do you have external member in IC?</span>
+                            <div class="pill-toggle w-32">
+                                <label><input type="radio" name="external_member_support" value="yes" required class="peer hidden" onchange="toggleExternalMemberFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="external_member_support" value="no" class="peer hidden" onchange="toggleExternalMemberFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div id="external-member-support-fields" class="hidden compact-row border-dashed border-indigo-200 bg-indigo-50/30">
+                            <span class="text-xs font-bold text-indigo-900 uppercase">Require External Member Support?</span>
+                            <div class="pill-toggle w-32 bg-white">
+                                <label><input type="radio" name="require_external_member_support" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="require_external_member_support" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div class="compact-row">
+                            <span class="text-sm font-semibold">Have you Registered on SHe Box Portal?</span>
+                            <div class="pill-toggle w-32">
+                                <label><input type="radio" name="she_box_registered" value="yes" required class="peer hidden" onchange="toggleSHEBoxFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="she_box_registered" value="no" class="peer hidden" onchange="toggleSHEBoxFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div id="she-box-details" class="hidden compact-row border-slate-100 bg-slate-50">
+                            <span class="text-sm font-semibold">Have you appointed Nodal Officer for the Portal?</span>
+                            <div class="pill-toggle w-32">
+                                <label><input type="radio" name="nodal_officer_appointed" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="nodal_officer_appointed" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+
+                        <div class="compact-row border-slate-100 bg-slate-50">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold">Annual Report Submitted?</span>
+                                <span class="text-[0.65rem] text-slate-500 font-bold uppercase tracking-wider">Deadline 31 Mar 2026</span>
+                            </div>
+                            <div class="pill-toggle w-32 font-bold">
+                                <label><input type="radio" name="annual_report_submitted" value="yes" required class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="annual_report_submitted" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
+                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors hidden">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="flex-grow"></div>
+                    <div class="flex gap-2">
+                        <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn-premium flex items-center gap-2 text-sm">
+                            NEXT <i class="fas fa-chevron-right text-[0.6rem]"></i>
+                        </button>
+                        <button type="submit" id="submitBtn" class="btn-premium hidden flex items-center gap-2 text-sm bg-emerald-600">
+                            SUBMIT <i class="fas fa-check text-[0.6rem]"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <p class="mt-8 text-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">
+            &copy; 2026 Open Hand Solutions &bull; Secure Workplace Compliance
+        </p>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        function showStep(n) {
+            const steps = document.querySelectorAll(".step-content");
+            steps.forEach((step, index) => {
+                step.classList.toggle("active", index === n - 1);
+            });
+
+            if (n === 2) {
+                updateTrainingStatus(document.getElementById('trained_employee_count').value);
+            }
+            
+            const links = document.querySelectorAll(".step-link");
+            links.forEach((link, index) => {
+                link.classList.toggle("active", index === n - 1);
+                link.classList.toggle("completed", index < n - 1);
+            });
+
+            document.getElementById("prevBtn").style.display = (n === 1) ? "none" : "block";
+            if (n === totalSteps) {
+                document.getElementById("nextBtn").style.display = "none";
+                document.getElementById("submitBtn").style.display = "flex";
+            } else {
+                document.getElementById("nextBtn").style.display = "flex";
+                document.getElementById("submitBtn").style.display = "none";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function nextPrev(n) {
+            if (n === 1 && !validateForm()) return false;
+            currentStep += n;
+            showStep(currentStep);
+        }
+
+        function validateForm() {
+            const currentStepEl = document.getElementById(`step-${currentStep}`);
+            let valid = true;
+            const inputs = currentStepEl.querySelectorAll("input, select");
+            
+            const radioNames = new Set();
+            inputs.forEach(input => {
+                if (input.type === "radio") {
+                    if (input.hasAttribute('required')) radioNames.add(input.name);
+                } else if (!input.checkValidity()) {
+                    input.classList.add("border-rose-300", "ring-1", "ring-rose-100");
+                    valid = false;
+                } else {
+                    input.classList.remove("border-rose-300", "ring-1", "ring-rose-100");
+                }
+            });
+            
+            // Special check for Step 2: POSH Trained <= Employees
+            if (currentStep === 2) {
+                const empInput = document.getElementById('employee_count');
+                const trainedInput = document.getElementById('trained_employee_count');
+                const empCount = parseInt(empInput.value) || 0;
+                const trainedCount = parseInt(trainedInput.value) || 0;
+                
+                if (trainedCount > empCount) {
+                    trainedInput.classList.add("border-rose-300", "ring-1", "ring-rose-100");
+                    valid = false;
+                }
+                
+                if (empCount < 10) {
+                    empInput.classList.add("border-rose-300", "ring-1", "ring-rose-100");
+                    valid = false;
+                }
+            }
+
+            radioNames.forEach(name => {
+                const checked = document.querySelector(`input[name="${name}"]:checked`);
+                if (!checked) valid = false;
+            });
+
+            return valid;
+        }
+
+        function updateTrainingStatus(val) {
+            const section = document.getElementById('training_type_section');
+            const inputs = section.querySelectorAll('input[type="radio"]');
+            const isTrained = parseInt(val) > 0;
+            
+            section.style.opacity = isTrained ? "1" : "0.5";
+            section.style.pointerEvents = isTrained ? "auto" : "none";
+            
+            inputs.forEach(input => {
+                input.disabled = !isTrained;
+                if (!isTrained) {
+                    input.checked = false;
+                    input.removeAttribute('required');
+                } else {
+                    input.setAttribute('required', '');
+                }
+            });
+        }
+
+        function toggleICFields(show) {
+            const el = document.getElementById('ic-details');
+            el.classList.toggle('hidden', !show);
+            el.querySelectorAll('input, select').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+        }
+
+        function toggleExternalMemberFields(show) {
+            document.getElementById('external-member-support-fields').classList.toggle('hidden', !show);
+        }
+
+        function toggleSHEBoxFields(show) {
+            document.getElementById('she-box-details').classList.toggle('hidden', !show);
+        }
+
+        showStep(currentStep);
+    </script>
+</body>
+</html>

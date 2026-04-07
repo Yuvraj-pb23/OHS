@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Invoice | Open Hand Solutions{% endblock %}
+
+{% block body %}
+<!-- Premium Assets for Billing Page -->
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #1e1b4b;
+        --accent: #6366f1;
+        --success: #10b981;
+        --bg-pattern: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%), 
+                      radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+    }
+
+    .billing-page {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8faff;
+        background-image: var(--bg-pattern);
+    }
+
+    .heading-font { font-family: 'Outfit', sans-serif; }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 1);
+        box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
+    }
+
+    .status-badge {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .invoice-table th {
+        font-family: 'Outfit', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.7rem;
+        color: #64748b;
+        padding: 1rem 0;
+        border-bottom: 2px solid #f1f5f9;
+    }
+
+    .invoice-table td {
+        padding: 1.5rem 0;
+        border-bottom: 1px solid #f8fafc;
+    }
+
+    .print-button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .print-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px -5px rgba(99, 102, 241, 0.4);
+    }
+
+    @media print {
+        .no-print, .navbar, .side-poster-container { display: none !important; }
+        .glass-card { box-shadow: none; border: none; background: white; }
+        .billing-page { background: white; padding: 0; }
+    }
+</style>
+
+<div class="billing-page min-h-screen py-12 md:py-20">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Breadcrumbs (No Print) -->
+        <nav class="flex mb-8 text-sm font-medium no-print" aria-label="Breadcrumb">
+            <ol class="flex items-center space-x-2">
+                <li><a href="{% url 'home' %}" class="text-slate-400 hover:text-accent transition-colors">Home</a></li>
+                <li class="flex items-center space-x-2">
+                    <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+                    <span class="text-slate-400">Compliance</span>
+                </li>
+                <li class="flex items-center space-x-2 text-primary font-bold">
+                    <i class="fas fa-chevron-right text-[10px] text-slate-300"></i>
+                    <span>Invoice</span>
+                </li>
+            </ol>
+        </nav>
+
+        <!-- Main Invoice Container -->
+        <div class="glass-card rounded-[2.5rem] overflow-hidden">
+            <!-- Top Header Strip -->
+            <div class="bg-primary px-8 md:px-12 py-12 text-white relative overflow-hidden">
+                <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full text-[0.65rem] font-bold uppercase tracking-widest mb-4 border border-white/10">
+                            <span class="w-1.5 h-1.5 rounded-full bg-success animate-pulse"></span>
+                            Official Invoice
+                        </div>
+                        <h1 class="text-3xl md:text-4xl font-extrabold heading-font tracking-tight">Invoice Summary</h1>
+                        <p class="text-indigo-200/60 mt-2 text-sm">Reference: #POSH-{{ registration.id|default:"0000" }}-{{ registration.created_at|date:"Ymd" }}</p>
+                    </div>
+                    
+                    <div class="text-left md:text-right">
+                        <div class="text-indigo-300/80 text-[0.65rem] font-bold uppercase tracking-widest mb-1">Billed To</div>
+                        <div class="text-xl font-bold heading-font">{{ company_name }}</div>
+                        <div class="text-indigo-200/60 text-sm mt-1">{{ registration.contact_person }}</div>
+                        <div class="text-indigo-200/40 text-xs mt-0.5">{{ registration.email }}</div>
+                    </div>
+                </div>
+                
+                <!-- Background Decoration -->
+                <div class="absolute -right-12 -top-12 w-64 h-64 bg-accent/20 rounded-full blur-3xl"></div>
+                <div class="absolute -left-12 -bottom-12 w-48 h-48 bg-indigo-400/10 rounded-full blur-2xl"></div>
+            </div>
+
+            <!-- Content Body -->
+            <div class="px-8 md:px-12 py-10 md:py-14">
+                <!-- Status & Date Row -->
+                <div class="flex flex-wrap items-center justify-between gap-6 mb-12 pb-8 border-b border-slate-100">
+                    <div class="flex items-center gap-10">
+                        <div>
+                            <div class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Status</div>
+                            <div class="status-badge px-4 py-1 rounded-full text-white text-xs font-bold inline-flex items-center gap-2">
+                                <i class="fas fa-check-circle"></i> Generated
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mb-1">Issue Date</div>
+                            <div class="text-sm font-bold text-primary">{{ registration.created_at|date:"d M, Y" }}</div>
+                        </div>
+                    </div>
+                    
+                    <button onclick="window.print()" class="no-print print-button px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-primary text-sm font-bold flex items-center gap-2 hover:bg-slate-50 transition-all">
+                        <i class="fas fa-print text-accent"></i> Print Invoice
+                    </button>
+                </div>
+
+                <!-- Plan Highlights -->
+                <div class="mb-14">
+                    <h3 class="text-[0.65rem] font-black text-slate-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-4">
+                        Service Parameters
+                        <div class="h-px bg-slate-100 flex-grow"></div>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="p-6 bg-slate-50/50 rounded-2xl border border-white flex flex-col gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent">
+                                <i class="fas fa-shield-halved"></i>
+                            </div>
+                            <div>
+                                <div class="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wider">Compliance</div>
+                                <div class="text-sm font-bold text-primary">POSH Act ({{ registration.employee_count }} Emp)</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-slate-50/50 rounded-2xl border border-white flex flex-col gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div>
+                                <div class="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wider">Plan Type</div>
+                                <div class="text-sm font-bold text-primary">{{ registration.training_type|default:"Standard"|title }} Training</div>
+                            </div>
+                        </div>
+                        <div class="p-6 bg-slate-50/50 rounded-2xl border border-white flex flex-col gap-3">
+                            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-accent">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wider">Validity</div>
+                                <div class="text-sm font-bold text-primary">Annual Registration</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Items Table -->
+                <div class="mb-12">
+                    <table class="w-full invoice-table">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Details</th>
+                                <th class="text-right">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="font-bold text-primary heading-font">POSH Compliance Package</div>
+                                    <div class="text-xs text-slate-400 mt-1 max-w-sm">Setup, documentation, policy framework, and 12-month platform access.</div>
+                                </td>
+                                <td class="text-right font-bold text-primary leading-none">₹5,000.00</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="font-bold text-primary heading-font">Employee Awareness Training</div>
+                                    <div class="text-xs text-slate-400 mt-1">Tiered pricing (₹{{ per_employee_price|floatformat:2 }}/emp) for {{ registration.employee_count }} employees.</div>
+                                </td>
+                                <td class="text-right font-bold text-primary leading-none">₹{{ training_cost|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totals Section -->
+                <div class="flex flex-col items-end">
+                    <div class="w-full max-w-xs space-y-4 p-8 bg-primary/5 rounded-[2rem] border border-primary/5">
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500 font-medium">Subtotal</span>
+                            <span class="text-primary font-bold">₹{{ subtotal|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm">
+                            <span class="text-slate-500 font-medium">GST (18%)</span>
+                            <span class="text-primary font-bold">₹{{ tax|floatformat:2 }}</span>
+                        </div>
+                        <div class="h-px bg-primary/10 my-2"></div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-black uppercase text-xs tracking-widest">Total Amount</span>
+                            <span class="text-2xl font-black text-primary heading-font tracking-tight">₹{{ total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Note -->
+                <div class="mt-16 pt-8 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-white rounded-2xl shadow-sm border border-slate-100 p-2 text-indigo-600 flex items-center justify-center font-black">
+                            OHS
+                        </div>
+                        <div>
+                            <div class="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">Questions?</div>
+                            <div class="text-xs font-medium text-slate-600 italic">support@openhandsolutions.com</div>
+                        </div>
+                    </div>
+                    
+                    <a href="{% url 'home' %}" class="no-print text-sm font-bold text-accent hover:text-primary transition-colors flex items-center gap-2">
+                        Return to Dashboard <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Bottom Security Note (No Print) -->
+        <div class="mt-8 text-center no-print">
+            <p class="text-slate-400 text-xs flex items-center justify-center gap-2">
+                <i class="fas fa-lock text-[10px]"></i> Secure PDF Invoice generated by Open Hand Solutions Systems
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}
