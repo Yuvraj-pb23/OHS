@@ -136,7 +136,6 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
     else:
         billing_data = get_pocso_billing_data(registration)
     
-    amount_str = f"₹{billing_data['total_amount']:,.2f}"
     invoice_url = f"https://openhandsolutions.com/billing/" # Link to billing portal
 
     # Placeholders replacement
@@ -145,7 +144,7 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
         'company_name': company_name,
         'id': registration.id,
         'type': registration_type,
-        'amount': amount_str,
+        # amount removed as per user request
         'invoice_url': invoice_url,
     }
     
@@ -184,7 +183,7 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
         # 6. Attach Proforma Invoice PDF
         from .utils import generate_proforma_invoice_pdf
         try:
-            pdf_invoice = generate_proforma_invoice_pdf(registration, registration_type)
+            pdf_invoice = generate_proforma_invoice_pdf(registration, registration_type, tier_key)
             msg.attach(f"Proforma_Invoice_{registration.id}.pdf", pdf_invoice, 'application/pdf')
         except Exception as pdf_err:
             print(f"DEBUG: Error generating/attaching PDF: {pdf_err}")

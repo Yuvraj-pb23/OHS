@@ -224,19 +224,26 @@ def get_pocso_billing_data(registration):
         "student_workshop_total": student_workshop_total,
     }
 
-def generate_proforma_invoice_pdf(registration, registration_type='POSH'):
+def generate_proforma_invoice_pdf(registration, registration_type='POSH', tier_key=None):
     """Generates a Proforma Invoice PDF using WeasyPrint"""
     if registration_type == 'POSH':
         billing_data = get_posh_billing_data(registration)
     else:
         billing_data = get_pocso_billing_data(registration)
         
+    # Calculate tiered totals (matching logic in views.py)
+    total_amount = billing_data['total_amount']
+    
     context = {
         'registration': registration,
         'billing_data': billing_data,
         'registration_type': registration_type,
+        'tier_key': tier_key,
         'date': timezone.now().strftime("%d %b %Y"),
         'invoice_no': f"PRO-{registration_type[:3]}-{registration.id:05d}",
+        'total_tier_1': total_amount * 0.8,
+        'total_tier_2': total_amount * 0.9,
+        'total_tier_3': total_amount,
         'base_url': settings.BASE_URL if hasattr(settings, 'BASE_URL') else 'https://openhandsolutions.com',
         'logo_path': os.path.join(settings.BASE_DIR, 'static', 'img', 'logo_new.png')
     }

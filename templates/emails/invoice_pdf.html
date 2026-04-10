@@ -2,204 +2,266 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Proforma Invoice</title>
+    <title>Proforma Invoice Summary</title>
     <style>
         @page {
             size: A4;
-            margin: 20mm;
+            margin: 15mm;
         }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            color: #1e293b;
-            line-height: 1.5;
+            color: #334155;
+            line-height: 1.6;
             font-size: 10pt;
+            background-color: #ffffff;
         }
         .header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30mm;
-            border-bottom: 2px solid #6366f1;
+            margin-bottom: 20mm;
+            border-bottom: 3px solid #6366f1;
             padding-bottom: 10mm;
         }
-        .company-info {
-            width: 60%;
+        .company-logo-container {
+            width: 50%;
         }
-        .invoice-title {
+        .invoice-info {
             text-align: right;
-            width: 40%;
+            width: 50%;
         }
         .logo {
-            height: 15mm;
-            margin-bottom: 5mm;
+            height: 12mm;
+            margin-bottom: 3mm;
         }
         h1 {
-            color: #6366f1;
-            font-size: 24pt;
+            color: #1e293b;
+            font-size: 20pt;
             margin: 0;
             text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .billing-summary-label {
+            font-size: 8pt;
+            font-weight: 900;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5mm;
         }
         .details-grid {
-            margin-bottom: 10mm;
-        }
-        .details-row {
-            display: flex;
-            margin-bottom: 2mm;
-        }
-        .details-label {
-            font-weight: bold;
-            width: 40mm;
-            color: #64748b;
-        }
-        .table-container {
-            margin-top: 10mm;
-            margin-bottom: 10mm;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        th {
-            background-color: #f8fafc;
-            color: #475569;
-            text-align: left;
-            padding: 4mm;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 9pt;
-            text-transform: uppercase;
-        }
-        td {
-            padding: 4mm;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .text-right {
-            text-align: right;
-        }
-        .totals {
-            margin-left: auto;
-            width: 70mm;
-        }
-        .total-row {
             display: flex;
             justify-content: space-between;
-            padding: 2mm 0;
+            margin-bottom: 15mm;
+            background-color: #f8fafc;
+            padding: 10mm;
+            border-radius: 4mm;
         }
-        .grand-total {
-            border-top: 1px solid #6366f1;
-            margin-top: 2mm;
-            padding-top: 2mm;
-            font-weight: bold;
+        .details-col {
+            width: 48%;
+        }
+        .label {
+            font-weight: 800;
+            font-size: 8pt;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2mm;
+        }
+        .value {
+            font-weight: 700;
+            font-size: 11pt;
+            color: #1e293b;
+        }
+        .services-section {
+            margin-bottom: 20mm;
+        }
+        .section-title {
             font-size: 12pt;
-            color: #0f172a;
+            font-weight: 800;
+            color: #1e293b;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 3mm;
+            margin-bottom: 5mm;
+            display: flex;
+            align-items: center;
+        }
+        .service-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3mm;
+            font-weight: 600;
+            color: #475569;
+        }
+        .service-dot {
+            width: 2mm;
+            height: 2mm;
+            background-color: #10b981;
+            border-radius: 50%;
+            margin-right: 4mm;
+        }
+        .pricing-grid {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15mm;
+            gap: 5mm;
+        }
+        .pricing-card {
+            flex: 1;
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4mm;
+            padding: 5mm;
+            text-align: center;
+        }
+        .card-active {
+            background-color: #eef2ff;
+            border-color: #c7d2fe;
+        }
+        .tier-label {
+            font-size: 7pt;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3mm;
+            color: #6366f1;
+        }
+        .tier-amount {
+            font-size: 16pt;
+            font-weight: 900;
+            color: #1e293b;
+        }
+        .tax-disclaimer {
+            text-align: center;
+            font-size: 8pt;
+            color: #94a3b8;
+            margin-top: 5mm;
         }
         .footer {
             margin-top: 20mm;
-            font-size: 8pt;
-            color: #94a3b8;
-            text-align: center;
-            border-top: 1px solid #f1f5f9;
             padding-top: 10mm;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .bank-details {
-            margin-top: 10mm;
-            padding: 5mm;
-            background-color: #f1f5f9;
-            border-radius: 2mm;
+        .footer-brand {
+            display: flex;
+            align-items: center;
         }
-        .bank-title {
-            font-weight: bold;
-            margin-bottom: 2mm;
-            color: #0f172a;
+        .footer-logo {
+            width: 8mm;
+            height: 8mm;
+            background-color: #6366f1;
+            color: white;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1mm;
+            margin-right: 3mm;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="company-info">
-            <img src="{{ logo_path }}" alt="Open Hand Logo" class="logo">
-            <div style="font-weight: bold; font-size: 12pt;">Open Hand Private Limited</div>
-            <div>H-1/32, South Ex Part-1, New Delhi-110049</div>
-            <div>Email: openhandpvtltd@gmail.com</div>
+        <div class="company-logo-container">
+            <img src="{{ logo_path }}" alt="Logo" class="logo">
+            <div style="font-weight: 800; font-size: 11pt; color: #1e293b;">Open Hand Private Limited</div>
+            <div style="font-size: 8pt; color: #64748b;">H-1/32, South Ex Part-1, New Delhi-110049</div>
         </div>
-        <div class="invoice-title">
+        <div class="invoice-info">
+            <div class="billing-summary-label">Official Billing Summary</div>
             <h1>Proforma Invoice</h1>
-            <div style="margin-top: 5mm;">
-                <div><strong>Invoice No:</strong> #{{ invoice_no }}</div>
-                <div><strong>Date:</strong> {{ date }}</div>
+            <div style="margin-top: 4mm; font-size: 9pt; color: #64748b;">
+                <strong>Ref:</strong> #{{ invoice_no }} | <strong>Date:</strong> {{ date }}
             </div>
         </div>
     </div>
 
     <div class="details-grid">
-        <div class="details-row">
-            <div class="details-label">Bill To:</div>
-            <div>
-                <strong>
-                    {% if registration_type == 'POSH' %}
-                        {{ registration.company_name }}
-                    {% else %}
-                        {{ registration.school_name }}
-                    {% endif %}
-                </strong><br>
+        <div class="details-col">
+            <div class="label">Billed To</div>
+            <div class="value">
                 {% if registration_type == 'POSH' %}
-                    {{ registration.contact_person }}
+                    {{ registration.company_name }}
                 {% else %}
-                    {{ registration.person_name }}
-                {% endif %}<br>
+                    {{ registration.school_name }}
+                {% endif %}
+            </div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 1mm;">
                 {{ registration.email }}<br>
                 {{ registration.city }}
             </div>
         </div>
-    </div>
-
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Description</th>
-                    <th class="text-right">Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for fee in billing_data.addon_fees %}
-                <tr>
-                    <td>{{ fee.label }}</td>
-                    <td class="text-right">₹{{ fee.amount|floatformat:2 }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="totals">
-        <div class="total-row">
-            <span>Subtotal:</span>
-            <span>₹{{ billing_data.subtotal|floatformat:2 }}</span>
-        </div>
-        <div class="total-row">
-            <span>GST ({{ billing_data.gst_percentage }}%):</span>
-            <span>₹{{ billing_data.gst_amount|floatformat:2 }}</span>
-        </div>
-        <div class="total-row grand-total">
-            <span>Total Amount:</span>
-            <span>₹{{ billing_data.total_amount|floatformat:2 }}</span>
+        <div class="details-col" style="text-align: right;">
+            <div class="label">Contact Authority</div>
+            <div class="value">
+                {% if registration_type == 'POSH' %}
+                    {{ registration.contact_person }}
+                {% else %}
+                    {{ registration.person_name }}
+                {% endif %}
+            </div>
+            <div style="font-size: 9pt; color: #64748b; margin-top: 1mm;">
+                Authorized Compliance Representative
+            </div>
         </div>
     </div>
 
-    <div class="bank-details">
-        <div class="bank-title">Payment Instructions / Bank Details</div>
-        <div>Account Name: Open Hand Private Limited</div>
-        <div>Account Number: 50200057891234 (Sample)</div>
-        <div>Bank Name: HDFC Bank</div>
-        <div>IFSC Code: HDFC0001234</div>
-        <div style="margin-top: 3mm; font-style: italic; font-size: 9pt;">
-            * Please mention Reference #{{ invoice_no }} in your payment remarks.
+    <div class="services-section">
+        <div class="section-title">Included Compliance Services</div>
+        {% for fee in billing_data.addon_fees %}
+        <div class="service-item">
+            <div class="service-dot"></div>
+            {{ fee.label }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="pricing-section">
+        {% if tier_key == 'PAY_NOW' %}
+            <div class="section-title" style="color: #64748b;">Payment Status</div>
+            <div class="pricing-grid">
+                <div class="pricing-card card-active" style="background-color: #f8fafc; border-color: #e2e8f0; max-width: 50%; margin: 0 auto;">
+                    <div class="tier-label" style="color: #64748b;">Amount Under Review</div>
+                    <div class="tier-amount" style="color: #1e293b;">₹{{ total_tier_1|floatformat:0 }}</div>
+                    <div style="font-size: 8pt; font-weight: 800; color: #64748b; margin-top: 2mm; text-transform: uppercase;">This amount is under review</div>
+                </div>
+            </div>
+        {% else %}
+            <div class="section-title">Final Calculated Amount (Tiered Options)</div>
+            <div class="pricing-grid">
+                <div class="pricing-card card-active">
+                    <div class="tier-label">Pay Now</div>
+                    <div class="tier-amount">₹{{ total_tier_1|floatformat:0 }}</div>
+                </div>
+                <div class="pricing-card">
+                    <div class="tier-label">Before 15th May</div>
+                    <div class="tier-amount">₹{{ total_tier_2|floatformat:0 }}</div>
+                </div>
+                <div class="pricing-card">
+                    <div class="tier-label">Regular Price</div>
+                    <div class="tier-amount">₹{{ total_tier_3|floatformat:0 }}</div>
+                </div>
+            </div>
+        {% endif %}
+        <div class="tax-disclaimer">
+            All prices are inclusive of GST ({{ billing_data.gst_percentage|floatformat:0 }}%)
         </div>
     </div>
 
     <div class="footer">
-        <div style="font-weight: bold; margin-bottom: 2mm;">Open Hand Private Limited</div>
-        <div>This is a computer-generated Proforma Invoice and does not require a physical signature.</div>
-        <div>Generated via OHS Compliance Portal - {{ base_url }}</div>
+        <div class="footer-brand">
+            <div class="footer-logo">OHS</div>
+            <div>
+                <div style="font-weight: 800; font-size: 8pt;">Open Hand Private Limited</div>
+                <div style="font-size: 7pt; color: #94a3b8;">Official Verification Summary</div>
+            </div>
+        </div>
+        <div style="font-size: 8pt; color: #94a3b8; text-align: right;">
+            Generated via OHS Compliance Portal<br>
+            {{ base_url }}
+        </div>
     </div>
 </body>
 </html>
