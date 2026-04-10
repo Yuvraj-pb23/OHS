@@ -110,4 +110,6 @@ urlpatterns = [
     path('accounts-portal/verify-pocso-payment/<int:registration_id>/', views.accounts_verify_pocso_payment_view, name='accounts_verify_pocso_payment'),
     path('accounts-portal/reject-pocso-payment/<int:registration_id>/', views.accounts_reject_pocso_payment_view, name='accounts_reject_pocso_payment'),
     path('accounts-portal/pocso-registration/<int:registration_id>/', views.accounts_pocso_registration_detail_view, name='accounts_pocso_registration_detail'),
+    path('accounts-portal/save-email-templates/', views.accounts_save_email_templates_view, name='accounts_save_email_templates'),
+    path('billing/trigger-tier-email/', views.trigger_tier_email_view, name='trigger_tier_email'),
 ]

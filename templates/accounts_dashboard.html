@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -199,6 +200,9 @@
                 </button>
                 <button onclick="switchTab('pocso_registrations')" id="tab-pocso_registrations" class="tab-btn">
                     <i class="fas fa-clipboard-list mr-2"></i> POCSO Queue
+                </button>
+                <button onclick="switchTab('emails')" id="tab-emails" class="tab-btn">
+                    <i class="fas fa-envelope mr-2"></i> Email Templates
                 </button>
             </div>
         </div>
@@ -750,15 +754,105 @@
                 </div>
             </div>
         </div>
+
+        <!-- EMAIL TEMPLATES TAB -->
+        <div id="content-emails" class="tab-content hidden">
+            <div class="card p-8">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h3 class="heading-font text-2xl font-black">Email Communication Center</h3>
+                        <p class="text-text-muted text-sm mt-1">Customize the subject and content of automated emails sent to clients during registration.</p>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'accounts_save_email_templates' %}" class="space-y-12">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 gap-8">
+                        {% for t_key, t_label in email_tiers %}
+                        <div class="bg-white/5 rounded-3xl p-6 md:p-8 border border-white/5 hover:border-indigo-500/20 transition-all">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400">
+                                    <i class="fas {% if t_key == 'PAY_NOW' %}fa-bolt{% elif t_key == 'BEFORE_15' %}fa-calendar-check{% else %}fa-clock{% endif %}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-white">{{ t_label }}</h4>
+                                    <p class="text-[0.65rem] text-text-muted uppercase tracking-widest font-black">Trigger: {% if t_key == 'PAY_NOW' %}After "Payment Done" click{% else %}On "Register Later" click{% endif %}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="space-y-1.5">
+                                    <label class="text-[0.65rem] font-black text-indigo-300 uppercase tracking-widest ml-1">Email Subject</label>
+                                    <input type="text" name="subject_{{ t_key }}" 
+                                           value="{{ email_templates|get_item_subject:t_key }}"
+                                           placeholder="e.g. Action Required: Complete your POSH Compliance Registration"
+                                           class="w-full bg-slate-900 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-indigo-500 transition-all">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-[0.65rem] font-black text-indigo-300 uppercase tracking-widest ml-1">Email Body (HTML supported)</label>
+                                    <textarea name="body_{{ t_key }}" rows="8"
+                                              class="w-full bg-slate-900 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono"
+                                              placeholder="Dear {name}, ...">{{ email_templates|get_item_body:t_key }}</textarea>
+                                    <div class="flex flex-wrap gap-2 mt-2">
+                                        <span class="text-[0.6rem] font-bold text-text-muted">Available Placeholders:</span>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{name}')">{name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{company_name}')">{company_name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{amount}')">{amount}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{invoice_url}')">{invoice_url}</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="flex justify-end pt-6">
+                        <button type="submit" class="btn-save px-12 flex items-center gap-3">
+                            <i class="fas fa-cloud-upload-alt"></i> Save All Templates
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {% if email_saved %}
+            <div class="fixed bottom-8 right-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 animate-bounce shadow-2xl backdrop-blur-md z-50">
+                <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                <div class="flex flex-col">
+                    <span class="text-xs font-black text-emerald-400 uppercase tracking-widest">Success</span>
+                    <span class="text-[0.65rem] text-emerald-300/80">Email Templates Saved!</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
     </main>
 
     <script>
+        function insertAtCursor(name, text) {
+            const el = document.querySelector(`[name="${name}"]`);
+            const start = el.selectionStart;
+            const end = el.selectionEnd;
+            el.value = el.value.substring(0, start) + text + el.value.substring(end);
+            el.focus();
+            el.selectionStart = el.selectionEnd = start + text.length;
+        }
         function switchTab(tab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`content-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
+            if (document.getElementById(`content-${tab}`)) {
+                document.getElementById(`content-${tab}`).classList.remove('hidden');
+                document.getElementById(`tab-${tab}`).classList.add('active');
+            }
         }
+
+        // Tab persistence logic
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('active_tab');
+            if (activeTab) {
+                switchTab(activeTab);
+            }
+        });
 
         const TIER_LABELS = ['Tier 1 (1–10)', 'Tier 2 (11–25)', 'Tier 3 (26–100)', 'Tier 4 (101–200)', 'Tier 5 (201–500)'];
 

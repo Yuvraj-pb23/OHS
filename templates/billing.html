@@ -281,8 +281,8 @@
                            class="px-12 py-4 bg-primary text-white rounded-2xl font-black text-lg heading-font shadow-xl shadow-indigo-200 hover:scale-[1.02] transition-all flex items-center gap-3 cursor-pointer">
                             SCAN & PAY NOW <i class="fas fa-qrcode"></i>
                         </a>
-                        <a id="btn-register-later" href="/" 
-                           class="hidden px-12 py-4 bg-slate-900 text-white rounded-2xl font-black text-lg heading-font shadow-xl shadow-slate-200 hover:scale-[1.02] transition-all flex items-center gap-3">
+                        <a id="btn-register-later" onclick="handleRegisterLater()" 
+                           class="hidden px-12 py-4 bg-slate-900 text-white rounded-2xl font-black text-lg heading-font shadow-xl shadow-slate-200 hover:scale-[1.02] transition-all flex items-center gap-3 cursor-pointer">
                             REGISTER LATER <i class="fas fa-clock"></i>
                         </a>
                     </div>
@@ -366,6 +366,8 @@
 </div>
 
 <script>
+    let selectedTierKey = null;
+
     function selectTier(tierIdx) {
         // Update card visuals
         document.querySelectorAll('.pricing-card').forEach(el => el.classList.remove('selected'));
@@ -378,9 +380,49 @@
         if (tierIdx === 1) {
             payBtn.classList.remove('hidden');
             laterBtn.classList.add('hidden');
+            selectedTierKey = 'PAY_NOW';
         } else {
             payBtn.classList.add('hidden');
             laterBtn.classList.remove('hidden');
+            selectedTierKey = tierIdx === 2 ? 'BEFORE_15' : 'REGULAR';
+        }
+    }
+
+    async function handleRegisterLater() {
+        if (!selectedTierKey || selectedTierKey === 'PAY_NOW') return;
+        
+        const btn = document.getElementById('btn-register-later');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('{% url "trigger_tier_email" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    registration_id: '{{ registration.id }}',
+                    tier_key: selectedTierKey,
+                    registration_type: 'POSH'
+                })
+            });
+
+            if (response.ok) {
+                // Redirect to home without success message in URL
+                window.location.href = "{% url 'home' %}";
+            } else {
+                alert('There was an issue sending your registration email. Please try again or contact support.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Something went wrong. Please check your connection.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
     }
 

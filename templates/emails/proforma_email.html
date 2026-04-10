@@ -1,0 +1,94 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #334155; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 20px auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
+        .header { background-color: #0f172a; padding: 30px; text-align: center; }
+        .content { padding: 40px; background-color: #ffffff; }
+        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #f1f5f9; }
+        .invoice-card { background-color: #f1f5f9; border-radius: 8px; padding: 20px; margin-top: 30px; }
+        .invoice-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        .invoice-table th { text-align: left; font-size: 12px; text-transform: uppercase; color: #64748b; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; }
+        .invoice-table td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        .total-row td { font-weight: bold; font-size: 16px; color: #0f172a; border-top: 2px solid #e2e8f0; border-bottom: none; padding-top: 15px; }
+        .btn-action { display: inline-block; padding: 12px 24px; background-color: #6366f1; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+        .logo { height: 40px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+                <div style="font-size: 24px; font-weight: bold; color: #ffffff; margin-bottom: 20px;">
+                    Open Hand Solutions
+                </div>
+            <div style="color: #6366f1; font-size: 10px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Official Communication</div>
+        </div>
+        <div class="content">
+            <div style="font-size: 14px; color: #0f172a;">
+                {{ body_content|safe|linebreaks }}
+            </div>
+
+            <div class="invoice-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-weight: 800; font-size: 14px; color: #1e293b;">Proforma Invoice Summary</span>
+                    <span style="font-size: 11px; color: #64748b;">Ref: #{{ registration_type }}-{{ registration.id }}</span>
+                </div>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th style="text-align: right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if registration_type == 'POSH' %}
+                            <tr>
+                                <td>POSH Implementation & Training ({{ registration.employee_count }} Emps)</td>
+                                <td style="text-align: right;">₹{{ billing_data.training_total|floatformat:2 }}</td>
+                            </tr>
+                            {% if billing_data.total_add_ons > 0 %}
+                            <tr>
+                                <td>Compliance Add-ons</td>
+                                <td style="text-align: right;">₹{{ billing_data.total_add_ons|floatformat:2 }}</td>
+                            </tr>
+                            {% endif %}
+                        {% else %}
+                            <tr>
+                                <td>POCSO Implementation & Workshops</td>
+                                <td style="text-align: right;">₹{{ billing_data.flat_fees_total|floatformat:2 }}</td>
+                            </tr>
+                            {% if billing_data.student_workshop_total > 0 %}
+                            <tr>
+                                <td>Student Safety Workshop ({{ registration.students_count }} Students)</td>
+                                <td style="text-align: right;">₹{{ billing_data.student_workshop_total|floatformat:2 }}</td>
+                            </tr>
+                            {% endif %}
+                        {% endif %}
+                        <tr>
+                            <td>GST ({{ billing_data.gst_percentage }}%)</td>
+                            <td style="text-align: right;">₹{{ billing_data.gst_amount|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total Amount Eligible</td>
+                            <td style="text-align: right;">₹{{ billing_data.total_amount|floatformat:2 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <p style="font-size: 12px; color: #64748b;">Visit our portal to view full breakdown and complete payment.</p>
+                <a href="https://openhandsolutions.com/billing/" class="btn-action">Go to Billing Portal</a>
+            </div>
+        </div>
+        <div class="footer">
+            <p><strong>Open Hand Private Limited</strong></p>
+            <p>Empowering safety and compliance across institutions.</p>
+            <p style="margin-top: 10px;">This is an automated email. Please do not reply directly to this message.</p>
+        </div>
+    </div>
+</body>
+</html>

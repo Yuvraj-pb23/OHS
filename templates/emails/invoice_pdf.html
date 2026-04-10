@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Proforma Invoice</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 20mm;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+            font-size: 10pt;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30mm;
+            border-bottom: 2px solid #6366f1;
+            padding-bottom: 10mm;
+        }
+        .company-info {
+            width: 60%;
+        }
+        .invoice-title {
+            text-align: right;
+            width: 40%;
+        }
+        .logo {
+            height: 15mm;
+            margin-bottom: 5mm;
+        }
+        h1 {
+            color: #6366f1;
+            font-size: 24pt;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .details-grid {
+            margin-bottom: 10mm;
+        }
+        .details-row {
+            display: flex;
+            margin-bottom: 2mm;
+        }
+        .details-label {
+            font-weight: bold;
+            width: 40mm;
+            color: #64748b;
+        }
+        .table-container {
+            margin-top: 10mm;
+            margin-bottom: 10mm;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #f8fafc;
+            color: #475569;
+            text-align: left;
+            padding: 4mm;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 9pt;
+            text-transform: uppercase;
+        }
+        td {
+            padding: 4mm;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .totals {
+            margin-left: auto;
+            width: 70mm;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 2mm 0;
+        }
+        .grand-total {
+            border-top: 1px solid #6366f1;
+            margin-top: 2mm;
+            padding-top: 2mm;
+            font-weight: bold;
+            font-size: 12pt;
+            color: #0f172a;
+        }
+        .footer {
+            margin-top: 20mm;
+            font-size: 8pt;
+            color: #94a3b8;
+            text-align: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 10mm;
+        }
+        .bank-details {
+            margin-top: 10mm;
+            padding: 5mm;
+            background-color: #f1f5f9;
+            border-radius: 2mm;
+        }
+        .bank-title {
+            font-weight: bold;
+            margin-bottom: 2mm;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <img src="{{ logo_path }}" alt="Open Hand Logo" class="logo">
+            <div style="font-weight: bold; font-size: 12pt;">Open Hand Private Limited</div>
+            <div>H-1/32, South Ex Part-1, New Delhi-110049</div>
+            <div>Email: openhandpvtltd@gmail.com</div>
+        </div>
+        <div class="invoice-title">
+            <h1>Proforma Invoice</h1>
+            <div style="margin-top: 5mm;">
+                <div><strong>Invoice No:</strong> #{{ invoice_no }}</div>
+                <div><strong>Date:</strong> {{ date }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="details-grid">
+        <div class="details-row">
+            <div class="details-label">Bill To:</div>
+            <div>
+                <strong>
+                    {% if registration_type == 'POSH' %}
+                        {{ registration.company_name }}
+                    {% else %}
+                        {{ registration.school_name }}
+                    {% endif %}
+                </strong><br>
+                {% if registration_type == 'POSH' %}
+                    {{ registration.contact_person }}
+                {% else %}
+                    {{ registration.person_name }}
+                {% endif %}<br>
+                {{ registration.email }}<br>
+                {{ registration.city }}
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th class="text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fee in billing_data.addon_fees %}
+                <tr>
+                    <td>{{ fee.label }}</td>
+                    <td class="text-right">₹{{ fee.amount|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="totals">
+        <div class="total-row">
+            <span>Subtotal:</span>
+            <span>₹{{ billing_data.subtotal|floatformat:2 }}</span>
+        </div>
+        <div class="total-row">
+            <span>GST ({{ billing_data.gst_percentage }}%):</span>
+            <span>₹{{ billing_data.gst_amount|floatformat:2 }}</span>
+        </div>
+        <div class="total-row grand-total">
+            <span>Total Amount:</span>
+            <span>₹{{ billing_data.total_amount|floatformat:2 }}</span>
+        </div>
+    </div>
+
+    <div class="bank-details">
+        <div class="bank-title">Payment Instructions / Bank Details</div>
+        <div>Account Name: Open Hand Private Limited</div>
+        <div>Account Number: 50200057891234 (Sample)</div>
+        <div>Bank Name: HDFC Bank</div>
+        <div>IFSC Code: HDFC0001234</div>
+        <div style="margin-top: 3mm; font-style: italic; font-size: 9pt;">
+            * Please mention Reference #{{ invoice_no }} in your payment remarks.
+        </div>
+    </div>
+
+    <div class="footer">
+        <div style="font-weight: bold; margin-bottom: 2mm;">Open Hand Private Limited</div>
+        <div>This is a computer-generated Proforma Invoice and does not require a physical signature.</div>
+        <div>Generated via OHS Compliance Portal - {{ base_url }}</div>
+    </div>
+</body>
+</html>

@@ -609,3 +609,18 @@ class POCSOPricingConfig(models.Model):
     def __str__(self):
         return f"POCSO Pricing Config (Updated: {self.updated_at.date()}) - Active: {self.is_active}"
 
+# 16. Email Templates for Registrations
+class EmailTemplate(models.Model):
+    TIER_CHOICES = (
+        ("PAY_NOW", "Pay Now"),
+        ("BEFORE_15", "Before 15th May"),
+        ("REGULAR", "Regular Price"),
+    )
+    tier_key = models.CharField(max_length=20, choices=TIER_CHOICES, unique=True)
+    subject = models.CharField(max_length=255)
+    body = models.TextField(help_text="Placeholders: {name}, {company_name}, {amount}, {invoice_url}, {id}")
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Email: {self.get_tier_key_display()}"
