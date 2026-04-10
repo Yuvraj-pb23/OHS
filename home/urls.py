@@ -20,7 +20,9 @@ urlpatterns = [
     path("why_choose_ohs/", views.why_choose_ohs, name="why_choose_ohs"),
     path("posh-compliance/", views.posh_compliance, name="posh_compliance"),
     path("posh-registration/", views.posh_registration_view, name="posh_registration"),
-
+    path("registration-selection/", views.registration_selection_view, name="registration_selection"),
+    path("pocso-registration/", views.pocso_registration_view, name="pocso_registration"),
+    path("pocso-billing/", views.pocso_billing_view, name="pocso_billing"),
     # --- MAIN TUTORIAL / TRAINING LANDING ---
     path("tutorial/", views.tutorial_view, name="tutorial"),
     
@@ -95,4 +97,17 @@ urlpatterns = [
     path('certificate/<str:course_type>/', views.download_certificate, name='download_certificate'),
     path('402/', views.custom_402, name='402'),
     path('billing/', views.billing_view, name='billing'),
+
+    # --- ACCOUNTS PORTAL ---
+    path('accounts-portal/login/', views.accounts_login_view, name='accounts_login'),
+    path('accounts-portal/dashboard/', views.accounts_dashboard_view, name='accounts_dashboard'),
+    path('accounts-portal/save-pricing/', views.accounts_save_pricing_view, name='accounts_save_pricing'),
+    path('billing/submit-payment/<int:registration_id>/', views.submit_payment_view, name='submit_payment'),
+    path('accounts-portal/verify-payment/<int:registration_id>/', views.accounts_verify_payment_view, name='accounts_verify_payment'),
+    path('accounts-portal/reject-payment/<int:registration_id>/', views.accounts_reject_payment_view, name='accounts_reject_payment'),
+    path('accounts-portal/registration/<int:registration_id>/', views.accounts_registration_detail_view, name='accounts_registration_detail'),
+    path('accounts-portal/save-pocso-pricing/', views.accounts_save_pocso_pricing_view, name='accounts_save_pocso_pricing'),
+    path('accounts-portal/verify-pocso-payment/<int:registration_id>/', views.accounts_verify_pocso_payment_view, name='accounts_verify_pocso_payment'),
+    path('accounts-portal/reject-pocso-payment/<int:registration_id>/', views.accounts_reject_pocso_payment_view, name='accounts_reject_pocso_payment'),
+    path('accounts-portal/pocso-registration/<int:registration_id>/', views.accounts_pocso_registration_detail_view, name='accounts_pocso_registration_detail'),
 ]

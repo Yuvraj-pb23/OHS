@@ -34,12 +34,9 @@
         }
 
         .step-content {
-            display: none;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        .step-content.active {
             display: block;
+            margin-bottom: 2.5rem;
+            animation: fadeIn 0.4s ease-out;
         }
 
         @keyframes fadeIn {
@@ -181,23 +178,7 @@
             <p class="text-indigo-950/50 text-sm mt-1">Fill in the details for compliance certification.</p>
         </div>
 
-        <!-- Stepper -->
-        <div class="flex justify-between items-center px-4 mb-10 max-w-md mx-auto">
-            <div class="step-link active flex items-center gap-2" data-step="1">
-                <div class="progress-dot"></div>
-                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 1</span>
-            </div>
-            <div class="h-px bg-gray-200 flex-grow mx-4"></div>
-            <div class="step-link flex items-center gap-2" data-step="2">
-                <div class="progress-dot"></div>
-                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 2</span>
-            </div>
-            <div class="h-px bg-gray-200 flex-grow mx-4"></div>
-            <div class="step-link flex items-center gap-2" data-step="3">
-                <div class="progress-dot"></div>
-                <span class="text-[0.65rem] font-bold uppercase tracking-wider text-indigo-950/40">Step 3</span>
-            </div>
-        </div>
+        <!-- Stepper Removed for Single Page Experience -->
 
         <form id="multiStepForm" method="POST" action="{% url 'posh_registration' %}" onsubmit="return validateForm()" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
             {% csrf_token %}
@@ -216,27 +197,27 @@
             
             <div class="p-6 md:p-10">
                 <!-- STEP 1 -->
-                <div class="step-content active" id="step-1">
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="section-tag">Personal</span>
-                        <h2 class="font-bold text-indigo-950">Primary Details</h2>
+                <div class="step-content" id="section-1">
+                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
+                        <span class="section-tag">Section 1</span>
+                        <h2 class="font-black text-xl text-indigo-950 heading-font">Primary Contact Details</h2>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="col-span-full">
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Full Name</label>
                             <input type="text" name="contact_person" required class="floating-input" 
-                                   placeholder="Enter name" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                                   placeholder="John Doe" value="{{ registration.contact_person|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Designation</label>
                             <input type="text" name="designation" required class="floating-input" 
-                                   placeholder="HR Manager" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                                   placeholder="HR Manager" value="{{ registration.designation|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">City</label>
                             <input type="text" name="city" required class="floating-input" 
-                                   placeholder="City" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                                   placeholder="City" value="{{ registration.city|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Phone</label>
@@ -246,94 +227,64 @@
                                        pattern="[0-9]{10}" maxlength="10"
                                        class="floating-input !pl-12" 
                                        placeholder="9876543210"
+                                       value="{{ registration.phone|default:'' }}"
                                        onkeypress="return /[0-9]/.test(event.key)">
                             </div>
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Work Email</label>
-                            <input type="email" name="email" required class="floating-input" placeholder="email@company.com">
+                            <input type="email" name="email" required class="floating-input" placeholder="email@company.com" value="{{ registration.email|default:'' }}">
                         </div>
                         <div class="col-span-full">
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Website</label>
-                            <input type="url" name="website" required class="floating-input" placeholder="https://example.com">
+                            <input type="url" name="website" required class="floating-input" placeholder="https://example.com" value="{{ registration.website|default:'' }}">
                             <span class="text-[0.6rem] text-slate-400 mt-1 block">Include https:// for a genuine link</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 2 -->
-                <div class="step-content" id="step-2">
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="section-tag">Organization</span>
-                        <h2 class="font-bold text-indigo-950">Company Profile</h2>
+                <div class="step-content" id="section-2">
+                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
+                        <span class="section-tag">Section 2</span>
+                        <h2 class="font-black text-xl text-indigo-950 heading-font">Organization Profile</h2>
                     </div>
 
                     <div class="space-y-6">
                         <div>
-                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-2 block">Organization Type</label>
-                            <div class="grid grid-cols-2 gap-3">
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="organization_type" value="government" required class="hidden peer">
-                                    <div class="selection-card p-4 rounded-xl flex items-center justify-center gap-2 peer-checked:ring-2 peer-checked:ring-indigo-500">
-                                        <i class="fas fa-landmark text-xs"></i>
-                                        <span class="text-sm font-bold">Government</span>
-                                    </div>
-                                </label>
-                                <label class="cursor-pointer">
-                                    <input type="radio" name="organization_type" value="private" class="hidden peer">
-                                    <div class="selection-card p-4 rounded-xl flex items-center justify-center gap-2 peer-checked:ring-2 peer-checked:ring-indigo-500">
-                                        <i class="fas fa-building text-xs"></i>
-                                        <span class="text-sm font-bold">Private</span>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Name of Organization/Company</label>
                             <input type="text" name="company_name" required class="floating-input" 
-                                   placeholder="Company Name" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                                   placeholder="Company Name" value="{{ registration.company_name|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Total Employees</label>
                                 <input type="number" name="employee_count" id="employee_count" required 
-                                       class="floating-input" placeholder="0" min="10">
+                                       class="floating-input" placeholder="0" min="1" value="{{ registration.employee_count|default:'' }}">
                             </div>
                             <div>
-                                <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">POSH Trained</label>
-                                <input type="number" name="trained_employee_count" id="trained_employee_count" 
-                                       class="floating-input" placeholder="0" min="0"
-                                       oninput="updateTrainingStatus(this.value)">
-                            </div>
-                        </div>
-
-                        <div id="training_type_section" class="transition-all duration-300">
-                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-2 block">Type of Training Provided</label>
-                            <div class="grid grid-cols-3 gap-2">
-                                <label class="cursor-pointer training-option">
-                                    <input type="radio" name="training_type" value="OFFLINE" class="hidden peer">
-                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">Offline</div>
-                                </label>
-                                <label class="cursor-pointer training-option">
-                                    <input type="radio" name="training_type" value="VIRTUAL" class="hidden peer">
-                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">Virtual</div>
-                                </label>
-                                <label class="cursor-pointer training-option">
-                                    <input type="radio" name="training_type" value="E_LEARNING" class="hidden peer">
-                                    <div class="selection-card p-3 rounded-lg text-center text-xs font-bold peer-checked:bg-indigo-950 peer-checked:text-white peer-disabled:opacity-50">E-learning</div>
-                                </label>
+                                <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Last Year of Employee POSH Sensitization</label>
+                                <select name="last_training_year" id="last_training_year" required class="floating-input">
+                                    <option value="none" {% if registration.last_training_year == 'none' %}selected{% endif %}>None</option>
+                                    <option value="2021" {% if registration.last_training_year == '2021' %}selected{% endif %}>2021</option>
+                                    <option value="2022" {% if registration.last_training_year == '2022' %}selected{% endif %}>2022</option>
+                                    <option value="2023" {% if registration.last_training_year == '2023' %}selected{% endif %}>2023</option>
+                                    <option value="2024" {% if registration.last_training_year == '2024' %}selected{% endif %}>2024</option>
+                                    <option value="2025" {% if registration.last_training_year == '2025' %}selected{% endif %}>2025</option>
+                                    <option value="2026" {% if registration.last_training_year == '2026' %}selected{% endif %}>2026</option>
+                                    <option value="other" {% if registration.last_training_year == 'other' %}selected{% endif %}>Other</option>
+                                </select>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- STEP 3 -->
-                <div class="step-content" id="step-3">
-                    <div class="flex items-center gap-2 mb-6">
-                        <span class="section-tag">Compliance</span>
-                        <h2 class="font-bold text-indigo-950">Statutory Details</h2>
+                <div class="step-content" id="section-3">
+                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
+                        <span class="section-tag">Section 3</span>
+                        <h2 class="font-black text-xl text-indigo-950 heading-font">Compliance Statutory Audit</h2>
                     </div>
 
                     <div class="space-y-3">
@@ -341,97 +292,157 @@
                         <div class="compact-row">
                             <span class="text-sm font-semibold">Do you have POSH Policy in Place?</span>
                             <div class="pill-toggle w-32">
-                                <label><input type="radio" name="has_posh_policy" value="yes" required class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="has_posh_policy" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                <label><input type="radio" name="has_posh_policy" value="yes" required class="peer hidden" {% if registration.has_posh_policy %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="has_posh_policy" value="no" class="peer hidden" {% if registration and not registration.has_posh_policy %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
 
                         <div class="compact-row">
                             <span class="text-sm font-semibold">Do you have Internal Committee (IC) in Place?</span>
                             <div class="pill-toggle w-32">
-                                <label><input type="radio" name="has_ic" value="yes" required class="peer hidden" onchange="toggleICFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="has_ic" value="no" class="peer hidden" onchange="toggleICFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                <label><input type="radio" name="has_ic" value="yes" required class="peer hidden" onchange="toggleICFields(true)" {% if registration.has_ic %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="has_ic" value="no" class="peer hidden" onchange="toggleICFields(false)" {% if registration and not registration.has_ic %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
 
-                        <div id="ic-details" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn">
+                         <div id="ic-details" class="{% if not registration.has_ic %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn">
                              <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-500 uppercase">Has the IC received specialized training as per Act?</span>
                                 <div class="pill-toggle w-32 bg-white">
-                                    <label><input type="radio" name="ic_specialized_training" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                    <label><input type="radio" name="ic_specialized_training" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                    <label><input type="radio" name="ic_specialized_training" value="yes" class="peer hidden" onchange="toggleSpecializedTrainingFields(true)" {% if registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="ic_specialized_training" value="no" class="peer hidden" onchange="toggleSpecializedTrainingFields(false)" {% if registration and not registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                                 </div>
                              </div>
-                             <div class="grid grid-cols-2 gap-3">
-                                <input type="number" name="ic_last_training_year" class="floating-input" placeholder="Last Training Year">
-                                <select name="ic_training_mode" class="floating-input">
-                                    <option value="" disabled selected>Mode</option>
-                                    <option value="OFFLINE">Offline</option>
-                                    <option value="VIRTUAL">Virtual</option>
-                                    <option value="E_LEARNING">E-learning</option>
-                                </select>
+
+                             <div class="grid grid-cols-1 gap-3" id="ic-training-dropdowns">
+                                 <div>
+                                     <label class="text-[0.6rem] font-bold text-slate-400 uppercase ml-1 block mb-1">Last Training Year</label>
+                                     <select name="ic_last_training_year" id="ic_last_training_year" class="floating-input {% if not registration.ic_specialized_training %}opacity-50 cursor-not-allowed{% endif %}" {% if not registration.ic_specialized_training %}disabled{% endif %}>
+                                        <option value="" disabled selected>Select Year</option>
+                                        <option value="2021" {% if registration.ic_last_training_year == '2021' %}selected{% endif %}>2021</option>
+                                        <option value="2022" {% if registration.ic_last_training_year == '2022' %}selected{% endif %}>2022</option>
+                                        <option value="2023" {% if registration.ic_last_training_year == '2023' %}selected{% endif %}>2023</option>
+                                        <option value="2024" {% if registration.ic_last_training_year == '2024' %}selected{% endif %}>2024</option>
+                                        <option value="2025" {% if registration.ic_last_training_year == '2025' %}selected{% endif %}>2025</option>
+                                        <option value="2026" {% if registration.ic_last_training_year == '2026' %}selected{% endif %}>2026</option>
+                                        <option value="other" {% if registration.ic_last_training_year == 'other' %}selected{% endif %}>Other</option>
+                                     </select>
+                                 </div>
+                             </div>
+
+                             <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                                <span class="text-xs font-bold text-slate-500 uppercase">Do you require IC training as per Act?</span>
+                                <div class="pill-toggle w-32 bg-white">
+                                    <label><input type="radio" name="require_ic_training" value="yes" class="peer hidden" onchange="toggleRequireICTrainingMode(true)" {% if registration.require_ic_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="require_ic_training" value="no" class="peer hidden" onchange="toggleRequireICTrainingMode(false)" {% if registration and not registration.require_ic_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                </div>
+                             </div>
+
+                             <!-- Integrated IC Training Mode Selection -->
+                             <div id="ic-requested-mode-box" class="{% if not registration.require_ic_training %}hidden{% endif %} bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 space-y-4 animate-fadeIn mt-4">
+                                 <div class="text-[0.7rem] font-bold text-indigo-800 uppercase tracking-tight">In what mode do you want IC training with certification?</div>
+                                 
+                                 <!-- Real backend fields (hidden) -->
+                                 <input type="hidden" name="requested_ic_training_mode" id="id_requested_ic_training_mode" value="{{ registration.requested_ic_training_mode|default:'' }}">
+                                 <input type="hidden" name="requested_expert_led_type" id="id_requested_expert_led_type" value="{{ registration.requested_expert_led_type|default:'' }}">
+
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                     <!-- Standard Mode Category -->
+                                     <div class="space-y-2">
+                                         <div class="text-[0.6rem] font-black text-indigo-400 uppercase tracking-widest pl-1">Standard Mode</div>
+                                         <label class="cursor-pointer block">
+                                             <input type="radio" name="ic_mode_selection" value="ONLINE" class="peer hidden" onchange="setICMode('ONLINE', null)" {% if registration.requested_ic_training_mode == 'ONLINE' %}checked{% endif %}>
+                                             <div class="p-4 border-2 border-white rounded-xl text-center text-xs font-bold bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-500 peer-checked:text-white transition-all shadow-sm">
+                                                 ONLINE
+                                             </div>
+                                         </label>
+                                     </div>
+
+                                     <!-- Expert-Led Category -->
+                                     <div class="space-y-2">
+                                         <div class="text-[0.6rem] font-black text-indigo-400 uppercase tracking-widest pl-1">Expert-Led</div>
+                                         <div class="grid grid-cols-2 gap-3">
+                                             <label class="cursor-pointer">
+                                                 <input type="radio" name="ic_mode_selection" value="PHYSICAL" class="peer hidden" onchange="setICMode('EXPERT_LED', 'PHYSICAL')" {% if registration.requested_ic_training_mode == 'EXPERT_LED' and registration.requested_expert_led_type == 'PHYSICAL' %}checked{% endif %}>
+                                                 <div class="p-4 border-2 border-white rounded-xl text-center text-[0.65rem] font-bold bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-500 peer-checked:text-white transition-all shadow-sm">
+                                                     PHYSICAL
+                                                 </div>
+                                             </label>
+                                             <label class="cursor-pointer">
+                                                 <input type="radio" name="ic_mode_selection" value="VIRTUAL" class="peer hidden" onchange="setICMode('EXPERT_LED', 'VIRTUAL')" {% if registration.requested_ic_training_mode == 'EXPERT_LED' and registration.requested_expert_led_type == 'VIRTUAL' %}checked{% endif %}>
+                                                 <div class="p-4 border-2 border-white rounded-xl text-center text-[0.65rem] font-bold bg-white peer-checked:border-indigo-500 peer-checked:bg-indigo-500 peer-checked:text-white transition-all shadow-sm">
+                                                     VIRTUAL
+                                                 </div>
+                                             </label>
+                                         </div>
+                                     </div>
+                                 </div>
                              </div>
                         </div>
 
                         <div class="compact-row">
                             <span class="text-sm font-semibold">Do you have external member in IC?</span>
                             <div class="pill-toggle w-32">
-                                <label><input type="radio" name="external_member_support" value="yes" required class="peer hidden" onchange="toggleExternalMemberFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="external_member_support" value="no" class="peer hidden" onchange="toggleExternalMemberFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                <label><input type="radio" name="external_member_support" value="yes" required class="peer hidden" onchange="toggleExternalMemberFields(false)" {% if registration.external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="external_member_support" value="no" class="peer hidden" onchange="toggleExternalMemberFields(true)" {% if registration and not registration.external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
 
-                        <div id="external-member-support-fields" class="hidden compact-row border-dashed border-indigo-200 bg-indigo-50/30">
+                        <div id="external-member-support-fields" class="{% if registration.external_member_support or not registration %}hidden{% endif %} compact-row border-dashed border-indigo-200 bg-indigo-50/30">
                             <span class="text-xs font-bold text-indigo-900 uppercase">Require External Member Support?</span>
                             <div class="pill-toggle w-32 bg-white">
-                                <label><input type="radio" name="require_external_member_support" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="require_external_member_support" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                <label><input type="radio" name="require_external_member_support" value="yes" class="peer hidden" {% if registration.require_external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="require_external_member_support" value="no" class="peer hidden" {% if registration and not registration.require_external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
 
                         <div class="compact-row">
                             <span class="text-sm font-semibold">Have you Registered on SHe Box Portal?</span>
                             <div class="pill-toggle w-32">
-                                <label><input type="radio" name="she_box_registered" value="yes" required class="peer hidden" onchange="toggleSHEBoxFields(true)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="she_box_registered" value="no" class="peer hidden" onchange="toggleSHEBoxFields(false)"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                <label><input type="radio" name="she_box_registered" value="yes" required class="peer hidden" onchange="toggleSHEBoxFields(true)" {% if registration.she_box_registered %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                <label><input type="radio" name="she_box_registered" value="no" class="peer hidden" onchange="toggleSHEBoxFields(false)" {% if registration and not registration.she_box_registered %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
 
-                        <div id="she-box-details" class="hidden compact-row border-slate-100 bg-slate-50">
-                            <span class="text-sm font-semibold">Have you appointed Nodal Officer for the Portal?</span>
-                            <div class="pill-toggle w-32">
-                                <label><input type="radio" name="nodal_officer_appointed" value="yes" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="nodal_officer_appointed" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                        <div id="she-box-details" class="{% if not registration.she_box_registered %}hidden{% endif %} compact-row border-slate-100 bg-slate-50 flex-col items-stretch gap-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-semibold">Have you appointed Nodal Officer for the Portal?</span>
+                                <div class="pill-toggle w-32">
+                                    <label><input type="radio" name="nodal_officer_appointed" value="yes" class="peer hidden" onchange="toggleNodalOfficerSupport(false)" {% if registration.nodal_officer_appointed %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="nodal_officer_appointed" value="no" class="peer hidden" onchange="toggleNodalOfficerSupport(true)" {% if registration and not registration.nodal_officer_appointed %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                </div>
+                            </div>
+
+                            <div id="nodal-support-question" class="flex items-center justify-between border-t border-slate-200 pt-4 hidden">
+                                <span class="text-sm font-semibold">Do you require Nodal Officer Support?</span>
+                                <div class="pill-toggle w-32">
+                                    <label><input type="radio" name="require_nodal_officer_support" value="yes" class="peer hidden" {% if registration.require_nodal_officer_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="require_nodal_officer_support" value="no" class="peer hidden" {% if registration and not registration.require_nodal_officer_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="compact-row border-slate-100 bg-slate-50">
-                            <div class="flex flex-col">
-                                <span class="text-sm font-semibold">Annual Report Submitted?</span>
-                                <span class="text-[0.65rem] text-slate-500 font-bold uppercase tracking-wider">Deadline 31 Mar 2026</span>
-                            </div>
-                            <div class="pill-toggle w-32 font-bold">
-                                <label><input type="radio" name="annual_report_submitted" value="yes" required class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                <label><input type="radio" name="annual_report_submitted" value="no" class="peer hidden"><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                        <div class="compact-row flex-col items-start gap-1 mt-4">
+                            <div class="flex items-center justify-between w-full">
+                                <div>
+                                    <span class="text-sm font-semibold">Annual Report Submitted?</span>
+                                    <div class="text-[0.6rem] font-bold text-slate-400 uppercase tracking-widest mt-0.5">DEADLINE 31 MAR 2026</div>
+                                </div>
+                                <div class="pill-toggle w-32">
+                                    <label><input type="radio" name="annual_report_submitted" value="yes" required class="peer hidden" {% if registration.annual_report_submitted %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                    <label><input type="radio" name="annual_report_submitted" value="no" class="peer hidden" {% if registration and not registration.annual_report_submitted %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Navigation -->
-                <div class="mt-8 pt-6 border-t border-slate-100 flex justify-between items-center">
-                    <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="text-xs font-bold text-slate-400 hover:text-slate-900 transition-colors hidden">
-                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                <div class="mt-8 pt-8 border-t border-slate-100">
+                    <button type="submit" id="submitBtn" class="btn-premium w-full flex items-center justify-center gap-3 text-lg py-5 bg-indigo-600 shadow-xl shadow-indigo-100">
+                        SUBMIT REGISTRATION <i class="fas fa-paper-plane text-xs"></i>
                     </button>
-                    <div class="flex-grow"></div>
-                    <div class="flex gap-2">
-                        <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn-premium flex items-center gap-2 text-sm">
-                            NEXT <i class="fas fa-chevron-right text-[0.6rem]"></i>
-                        </button>
-                        <button type="submit" id="submitBtn" class="btn-premium hidden flex items-center gap-2 text-sm bg-emerald-600">
-                            SUBMIT <i class="fas fa-check text-[0.6rem]"></i>
-                        </button>
-                    </div>
+                    <p class="text-[0.65rem] text-center text-slate-400 mt-4 font-bold uppercase tracking-widest">Please review all sections before submitting</p>
                 </div>
             </div>
         </form>
@@ -442,46 +453,10 @@
     </div>
 
     <script>
-        let currentStep = 1;
-        const totalSteps = 3;
-
-        function showStep(n) {
-            const steps = document.querySelectorAll(".step-content");
-            steps.forEach((step, index) => {
-                step.classList.toggle("active", index === n - 1);
-            });
-
-            if (n === 2) {
-                updateTrainingStatus(document.getElementById('trained_employee_count').value);
-            }
-            
-            const links = document.querySelectorAll(".step-link");
-            links.forEach((link, index) => {
-                link.classList.toggle("active", index === n - 1);
-                link.classList.toggle("completed", index < n - 1);
-            });
-
-            document.getElementById("prevBtn").style.display = (n === 1) ? "none" : "block";
-            if (n === totalSteps) {
-                document.getElementById("nextBtn").style.display = "none";
-                document.getElementById("submitBtn").style.display = "flex";
-            } else {
-                document.getElementById("nextBtn").style.display = "flex";
-                document.getElementById("submitBtn").style.display = "none";
-            }
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function nextPrev(n) {
-            if (n === 1 && !validateForm()) return false;
-            currentStep += n;
-            showStep(currentStep);
-        }
-
         function validateForm() {
-            const currentStepEl = document.getElementById(`step-${currentStep}`);
+            const form = document.getElementById("multiStepForm");
             let valid = true;
-            const inputs = currentStepEl.querySelectorAll("input, select");
+            const inputs = form.querySelectorAll("input, select, textarea");
             
             const radioNames = new Set();
             inputs.forEach(input => {
@@ -495,19 +470,11 @@
                 }
             });
             
-            // Special check for Step 2: POSH Trained <= Employees
-            if (currentStep === 2) {
-                const empInput = document.getElementById('employee_count');
-                const trainedInput = document.getElementById('trained_employee_count');
+            // Employee validation
+            const empInput = document.getElementById('employee_count');
+            if (empInput) {
                 const empCount = parseInt(empInput.value) || 0;
-                const trainedCount = parseInt(trainedInput.value) || 0;
-                
-                if (trainedCount > empCount) {
-                    trainedInput.classList.add("border-rose-300", "ring-1", "ring-rose-100");
-                    valid = false;
-                }
-                
-                if (empCount < 10) {
+                if (empCount < 1) {
                     empInput.classList.add("border-rose-300", "ring-1", "ring-rose-100");
                     valid = false;
                 }
@@ -515,46 +482,138 @@
 
             radioNames.forEach(name => {
                 const checked = document.querySelector(`input[name="${name}"]:checked`);
-                if (!checked) valid = false;
-            });
-
-            return valid;
-        }
-
-        function updateTrainingStatus(val) {
-            const section = document.getElementById('training_type_section');
-            const inputs = section.querySelectorAll('input[type="radio"]');
-            const isTrained = parseInt(val) > 0;
-            
-            section.style.opacity = isTrained ? "1" : "0.5";
-            section.style.pointerEvents = isTrained ? "auto" : "none";
-            
-            inputs.forEach(input => {
-                input.disabled = !isTrained;
-                if (!isTrained) {
-                    input.checked = false;
-                    input.removeAttribute('required');
-                } else {
-                    input.setAttribute('required', '');
+                if (!checked) {
+                    // Find the parent compact-row and highlight it
+                    const parent = document.querySelector(`input[name="${name}"]`).closest('.compact-row') || 
+                                 document.querySelector(`input[name="${name}"]`).closest('.card') ||
+                                 document.querySelector(`input[name="${name}"]`).closest('.selection-card');
+                    if (parent) parent.classList.add("border-rose-300", "ring-1", "ring-rose-50");
+                    valid = false;
                 }
             });
+
+            if (!valid) {
+                const firstError = document.querySelector(".border-rose-300");
+                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            return valid;
         }
 
         function toggleICFields(show) {
             const el = document.getElementById('ic-details');
             el.classList.toggle('hidden', !show);
-            el.querySelectorAll('input, select').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+            // Updated to handle require_ic_training as well
+            el.querySelectorAll('input, select').forEach(i => {
+                if (show) {
+                    if (i.name === 'require_ic_training' || i.name === 'ic_specialized_training') {
+                        i.setAttribute('required', '');
+                    }
+                } else {
+                    i.removeAttribute('required');
+                }
+            });
+            // If hiding IC details, also hide nested boxes
+            if (!show) {
+                toggleRequireICTrainingMode(false);
+            }
+        }
+
+        function toggleRequireICTrainingMode(show) {
+            const box = document.getElementById('ic-requested-mode-box');
+            box.classList.toggle('hidden', !show);
+            box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+            if (!show) {
+                document.getElementById('id_requested_ic_training_mode').value = '';
+                document.getElementById('id_requested_expert_led_type').value = '';
+                box.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+            }
+        }
+
+        function setICMode(mode, type) {
+            document.getElementById('id_requested_ic_training_mode').value = mode;
+            document.getElementById('id_requested_expert_led_type').value = type || '';
         }
 
         function toggleExternalMemberFields(show) {
-            document.getElementById('external-member-support-fields').classList.toggle('hidden', !show);
+            const box = document.getElementById('external-member-support-fields');
+            box.classList.toggle('hidden', !show);
+            box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
         }
 
         function toggleSHEBoxFields(show) {
-            document.getElementById('she-box-details').classList.toggle('hidden', !show);
+            const box = document.getElementById('she-box-details');
+            box.classList.toggle('hidden', !show);
+            box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+            if (show) {
+                const nodalAppointed = document.querySelector('input[name="nodal_officer_appointed"]:checked');
+                if (nodalAppointed) toggleNodalOfficerSupport(nodalAppointed.value === 'no');
+            }
         }
 
-        showStep(currentStep);
+        function toggleNodalOfficerSupport(show) {
+            const box = document.getElementById('nodal-support-question');
+            box.classList.toggle('hidden', !show);
+            box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+        }
+
+        function toggleSpecializedTrainingFields(show) {
+            const yearSelect = document.getElementById('ic_last_training_year');
+            
+            if (show) {
+                yearSelect.removeAttribute('disabled');
+                yearSelect.setAttribute('required', '');
+                yearSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                yearSelect.setAttribute('disabled', 'disabled');
+                yearSelect.removeAttribute('required');
+                yearSelect.classList.add('opacity-50', 'cursor-not-allowed');
+                if (!window.formInitializing) {
+                    yearSelect.value = '';
+                }
+            }
+        }
+
+        // Initialize form on load
+        window.addEventListener('DOMContentLoaded', () => {
+            window.formInitializing = true;
+            
+            // Check IC toggle
+            const hasIC = document.querySelector('input[name="has_ic"]:checked');
+            if (hasIC) toggleICFields(hasIC.value === 'yes');
+
+            // Check Specialized Training
+            const hasSpecialized = document.querySelector('input[name="ic_specialized_training"]:checked');
+            if (hasSpecialized) toggleSpecializedTrainingFields(hasSpecialized.value === 'yes');
+
+            // Check Require IC Training
+            const requireTraining = document.querySelector('input[name="require_ic_training"]:checked');
+            if (requireTraining) toggleRequireICTrainingMode(requireTraining.value === 'yes');
+
+            // Check Requested Training Mode
+            const requestedMode = document.querySelector('input[name="ic_mode_selection"]:checked');
+            if (requestedMode) {
+                if (requestedMode.value === 'PHYSICAL' || requestedMode.value === 'VIRTUAL') {
+                    setICMode('EXPERT_LED', requestedMode.value);
+                } else {
+                    setICMode('ONLINE', null);
+                }
+            }
+
+            // Check External Member
+            const hasExternal = document.querySelector('input[name="external_member_support"]:checked');
+            if (hasExternal) toggleExternalMemberFields(hasExternal.value === 'no');
+
+            // Check SHe Box
+            const hasSHE = document.querySelector('input[name="she_box_registered"]:checked');
+            if (hasSHE) {
+                toggleSHEBoxFields(hasSHE.value === 'yes');
+                const hasNodal = document.querySelector('input[name="nodal_officer_appointed"]:checked');
+                if (hasNodal) toggleNodalOfficerSupport(hasNodal.value === 'no');
+            }
+
+            window.formInitializing = false;
+        });
     </script>
 </body>
 </html>

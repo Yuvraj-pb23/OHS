@@ -1,0 +1,814 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts Dashboard | Open Hand Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #020617;
+            --card-dark: #0f172a;
+            --accent: #6366f1;
+            --accent-hover: #4f46e5;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .heading-font { font-family: 'Outfit', sans-serif; }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--card-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        /* Tabs */
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .tag-amber { background: #78350f; color: #fbbf24; }
+        .tag-green { background: #064e3b; color: #34d399; }
+        .tag-blue { background: #1e3a8a; color: #60a5fa; }
+        .tag-red { background: #450a0a; color: #f87171; }
+
+        .price-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem 0.75rem 2.25rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .price-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .rupee-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .tier-table-compact th {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            padding-bottom: 1rem;
+        }
+        .tier-table-compact td { padding: 0.75rem 0.5rem; }
+
+        .btn-save {
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-save:hover {
+            background: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .preview-stat { border-right: 1px solid var(--border-color); }
+        .preview-stat:last-child { border-right: none; }
+
+        .registration-row:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Remove numeric increment arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="glass-nav">
+        <div class="max-w-[1400px] mx-auto px-8 flex justify-between items-center h-20">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'home' %}" class="flex items-center">
+                    <img src="{% static 'img/footer-logo.png' %}?v=1.1" alt="OHS Logo" class="h-12 w-auto object-contain">
+                </a>
+                <div class="h-8 w-px bg-white/10"></div>
+                <p class="heading-font font-extrabold text-lg tracking-tight">Accounts Portal</p>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <a href="{% url 'home' %}" class="text-sm font-semibold text-text-muted hover:text-white transition-colors">Exit Dashboard</a>
+                <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit" class="p-2.5 bg-white/5 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all border border-white/5"><i class="fas fa-power-off"></i></button></form>
+            </div>
+        </div>
+    </nav>
+
+    <main class="dashboard-container">
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-8 space-y-4">
+            {% for message in messages %}
+            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-emerald-500/15 border-emerald-500/30 text-emerald-400{% else %}bg-red-500/15 border-red-500/30 text-red-400{% endif %} border flex items-center gap-3">
+                <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
+                <p class="text-sm font-semibold">{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Header with Tabs -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-white/5">
+            <div class="pb-6">
+                <h1 class="heading-font text-3xl font-black mb-2">Operations Center</h1>
+                <p class="text-text-muted text-sm tracking-wide">Manage statutory pricing tiers and verify incoming statutory bill payments.</p>
+            </div>
+            <div class="flex flex-wrap">
+                <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-btn active">
+                    <i class="fas fa-sliders mr-2"></i> POSH Pricing
+                </button>
+                <button onclick="switchTab('pocso_pricing')" id="tab-pocso_pricing" class="tab-btn">
+                    <i class="fas fa-child mr-2"></i> POCSO Pricing
+                </button>
+                <button onclick="switchTab('registrations')" id="tab-registrations" class="tab-btn">
+                    <i class="fas fa-file-invoice mr-2"></i> POSH Queue
+                </button>
+                <button onclick="switchTab('pocso_registrations')" id="tab-pocso_registrations" class="tab-btn">
+                    <i class="fas fa-clipboard-list mr-2"></i> POCSO Queue
+                </button>
+            </div>
+        </div>
+
+        <!-- PRICING TAB -->
+        <div id="content-pricing" class="tab-content">
+            <form method="POST" action="{% url 'accounts_save_pricing' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    <div class="xl:col-span-2 space-y-8">
+                        <!-- Per-Employee Tiers -->
+                        <div class="card p-8">
+                            <div class="flex items-center justify-between mb-8">
+                                <h3 class="heading-font text-xl font-bold">Standard Tier Rates</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="tag tag-amber">Per-Employee Range</span>
+                                    <span class="tag tag-blue">GST Inclusion</span>
+                                </div>
+                            </div>
+                            
+                            <table class="w-full tier-table-compact">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left">Employee Range</th>
+                                        <th class="text-left w-64">Rate Per Individual</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for i in "01234"|make_list %}
+                                    <tr class="registration-row transition-all rounded-lg">
+                                        <td class="font-bold text-slate-400 py-3">
+                                            {% if i == '0' %}Tier 1: 1-10{% elif i == '1' %}Tier 2: 11-25{% elif i == '2' %}Tier 3: 26-100{% elif i == '3' %}Tier 4: 101-200{% else %}Tier 5: 201-500{% endif %}
+                                            <input type="hidden" name="price_tier_{{ i }}_max" value="{% if i == '0' %}10{% elif i == '1' %}25{% elif i == '2' %}100{% elif i == '3' %}200{% else %}500{% endif %}">
+                                        </td>
+                                        <td>
+                                            <div class="relative">
+                                                <span class="rupee-prefix">₹</span>
+                                                <input type="number" name="price_tier_{{ i }}_rate" step="0.01" 
+                                                       value="{% if i == '0' %}{{ config.price_tier_0_rate|default:'200.00' }}{% elif i == '1' %}{{ config.price_tier_1_rate|default:'163.00' }}{% elif i == '2' %}{{ config.price_tier_2_rate|default:'154.00' }}{% elif i == '3' %}{{ config.price_tier_3_rate|default:'145.00' }}{% else %}{{ config.price_tier_4_rate|default:'127.00' }}{% endif %}"
+                                                       class="price-input" oninput="updatePreview()">
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+
+                    <!-- RIGHT COLUMN: PREVIEW & GST -->
+                    <div class="space-y-6">
+                        <div class="card p-8 bg-indigo-500/5 border-indigo-500/20">
+                            <h3 class="heading-font text-lg font-bold mb-6 flex items-center gap-2">
+                                <i class="fas fa-calculator text-accent"></i> Real-time Preview
+                            </h3>
+                            <div class="space-y-6">
+                                <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                                    <label class="text-[0.65rem] font-bold text-text-muted uppercase mb-4 block">Test Employee Count</label>
+                                    <input type="range" id="emp_slider" min="1" max="500" value="50" oninput="updatePreview()" class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-accent">
+                                    <div class="flex justify-between mt-3 px-1 text-[0.65rem] font-black text-white">
+                                        <span id="preview_emp_count">50</span> Employees
+                                        <span id="preview_tier_label" class="text-accent underline">Tier 3</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-indigo-900/20 rounded-2xl overflow-hidden border border-indigo-500/10">
+                                    <div class="p-4 border-b border-indigo-500/10">
+                                        <p class="text-xs text-indigo-300 font-bold mb-1">Total Estimated Statutory Fee</p>
+                                        <p class="text-2xl font-black heading-font text-white">₹<span id="prev_total">0</span></p>
+                                    </div>
+                                    <div class="p-4 flex flex-col gap-2">
+                                        <div class="flex justify-between items-center text-[0.65rem]">
+                                            <span class="text-indigo-300/60 font-medium">Training Fee <span id="prev_rate_label"></span></span>
+                                            <span class="text-white font-bold">₹<span id="prev_training">0</span></span>
+                                        </div>
+                                        <div class="flex justify-between items-center text-[0.65rem]">
+                                            <span class="text-indigo-300/60 font-medium font-medium">GST (<span id="prev_gst_pct">18</span>%)</span>
+                                            <span class="text-white font-bold">₹<span id="prev_gst">0</span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="card p-8">
+                            <label class="text-[0.65rem] font-bold text-text-muted uppercase mb-3 block tracking-widest">Master GST Configuration</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-accent font-bold">%</span>
+                                <input type="number" name="gst_percentage" step="0.01" value="{{ config.gst_percentage|default_if_none:'18.00' }}" oninput="updatePreview()" class="price-input !pl-10 !text-xl">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn-save w-full text-lg shadow-xl shadow-indigo-500/10">
+                            Update Billing Engine
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Compliance Add-ons (Full Width) -->
+                <div class="card p-8 mt-8 col-span-1 xl:col-span-3">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                        <div>
+                            <h3 class="heading-font text-xs font-black text-indigo-400 uppercase tracking-[0.15em] border-b-0 pb-0">COMPLIANCE ADD-ON FEES <span class="text-text-muted mx-2">—</span> PER TIER</h3>
+                            <p class="text-text-muted text-sm mt-2">These fees are added when a client answers NO to a compliance question. Each question has a different fee for each pricing tier.</p>
+                        </div>
+                        <div class="text-text-muted text-sm whitespace-nowrap">Set ₹0 to disable</div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left tier-table-compact">
+                            <thead>
+                                <tr class="text-[0.60rem] font-bold text-indigo-400/80 uppercase tracking-[0.15em] border-b border-white/5">
+                                    <th class="py-4 pr-10 whitespace-nowrap">QUESTION / COMPLIANCE</th>
+                                    <th class="py-4 px-4 text-center w-40"><span class="bg-indigo-500/10 text-indigo-300 py-1.5 px-3 rounded-lg font-black border border-indigo-500/20">T1 1-10</span></th>
+                                    <th class="py-4 px-4 text-center w-40"><span class="bg-indigo-500/10 text-indigo-300 py-1.5 px-3 rounded-lg font-black border border-indigo-500/20">T2 11-25</span></th>
+                                    <th class="py-4 px-4 text-center w-40"><span class="bg-indigo-500/10 text-indigo-300 py-1.5 px-3 rounded-lg font-black border border-indigo-500/20">T3 26-100</span></th>
+                                    <th class="py-4 px-4 text-center w-40"><span class="bg-indigo-500/10 text-indigo-300 py-1.5 px-3 rounded-lg font-black border border-indigo-500/20">T4 101-200</span></th>
+                                    <th class="py-4 px-4 text-center w-40"><span class="bg-indigo-500/10 text-indigo-300 py-1.5 px-3 rounded-lg font-black border border-indigo-500/20">T5 201-500</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <!-- No POSH Policy -->
+                                <tr class="registration-row group transition-all">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-white text-sm">No POSH Policy</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Client has no POSH compliance policy</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_posh_policy_t0" step="0.01" value="{{ config.fee_no_posh_policy_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_posh_policy_t1" step="0.01" value="{{ config.fee_no_posh_policy_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_posh_policy_t2" step="0.01" value="{{ config.fee_no_posh_policy_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_posh_policy_t3" step="0.01" value="{{ config.fee_no_posh_policy_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_posh_policy_t4" step="0.01" value="{{ config.fee_no_posh_policy_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- No IC -->
+                                <tr class="registration-row group transition-all">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-white text-sm">No Internal Committee (IC)</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Client has no IC constituted</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_ic_t0" step="0.01" value="{{ config.fee_no_ic_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_ic_t1" step="0.01" value="{{ config.fee_no_ic_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_ic_t2" step="0.01" value="{{ config.fee_no_ic_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_ic_t3" step="0.01" value="{{ config.fee_no_ic_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_ic_t4" step="0.01" value="{{ config.fee_no_ic_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- Requested: Online -->
+                                <tr class="registration-row group transition-all border-l-2 border-indigo-500/50">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-indigo-300 text-sm">Requested: Online Training</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">User explicitly requested Online IC training</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_online_t0" step="0.01" value="{{ config.fee_ic_requested_online_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_online_t1" step="0.01" value="{{ config.fee_ic_requested_online_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_online_t2" step="0.01" value="{{ config.fee_ic_requested_online_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_online_t3" step="0.01" value="{{ config.fee_ic_requested_online_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_online_t4" step="0.01" value="{{ config.fee_ic_requested_online_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- Requested: Physical -->
+                                <tr class="registration-row group transition-all border-l-2 border-indigo-500/50">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-indigo-300 text-sm">Requested: Physical Training</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">User explicitly requested Physical Expert-Led training</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_physical_t0" step="0.01" value="{{ config.fee_ic_requested_physical_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_physical_t1" step="0.01" value="{{ config.fee_ic_requested_physical_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_physical_t2" step="0.01" value="{{ config.fee_ic_requested_physical_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_physical_t3" step="0.01" value="{{ config.fee_ic_requested_physical_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_physical_t4" step="0.01" value="{{ config.fee_ic_requested_physical_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- Requested: Virtual -->
+                                <tr class="registration-row group transition-all border-l-2 border-indigo-500/50">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-indigo-300 text-sm">Requested: Virtual Training</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">User explicitly requested Virtual Expert-Led training</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_virtual_t0" step="0.01" value="{{ config.fee_ic_requested_virtual_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_virtual_t1" step="0.01" value="{{ config.fee_ic_requested_virtual_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_virtual_t2" step="0.01" value="{{ config.fee_ic_requested_virtual_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_virtual_t3" step="0.01" value="{{ config.fee_ic_requested_virtual_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_requested_virtual_t4" step="0.01" value="{{ config.fee_ic_requested_virtual_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- History: 2021-2022 -->
+                                <tr class="registration-row group transition-all border-l-2 border-amber-500/30">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-amber-200 text-sm">History: 2021—2022</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Specialized training is outdated</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_21_23_t0" step="0.01" value="{{ config.fee_ic_history_21_23_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_21_23_t1" step="0.01" value="{{ config.fee_ic_history_21_23_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_21_23_t2" step="0.01" value="{{ config.fee_ic_history_21_23_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_21_23_t3" step="0.01" value="{{ config.fee_ic_history_21_23_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_21_23_t4" step="0.01" value="{{ config.fee_ic_history_21_23_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- History: 2023-2025 -->
+                                <tr class="registration-row group transition-all border-l-2 border-emerald-500/30">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-emerald-200 text-sm">History: 2023—2025</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Refresher training specifically required</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_24_25_t0" step="0.01" value="{{ config.fee_ic_history_24_25_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_24_25_t1" step="0.01" value="{{ config.fee_ic_history_24_25_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_24_25_t2" step="0.01" value="{{ config.fee_ic_history_24_25_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_24_25_t3" step="0.01" value="{{ config.fee_ic_history_24_25_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_24_25_t4" step="0.01" value="{{ config.fee_ic_history_24_25_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- History: Other -->
+                                <tr class="registration-row group transition-all border-l-2 border-rose-500/30">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-rose-200 text-sm">History: Other / None</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Full IC Training Required</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_other_t0" step="0.01" value="{{ config.fee_ic_history_other_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_other_t1" step="0.01" value="{{ config.fee_ic_history_other_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_other_t2" step="0.01" value="{{ config.fee_ic_history_other_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_other_t3" step="0.01" value="{{ config.fee_ic_history_other_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_ic_history_other_t4" step="0.01" value="{{ config.fee_ic_history_other_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- External Member Support -->
+                                <tr class="registration-row group transition-all">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-white text-sm">External Member Support</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Client requires external IC member support</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_external_member_t0" step="0.01" value="{{ config.fee_no_external_member_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_external_member_t1" step="0.01" value="{{ config.fee_no_external_member_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_external_member_t2" step="0.01" value="{{ config.fee_no_external_member_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_external_member_t3" step="0.01" value="{{ config.fee_no_external_member_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_external_member_t4" step="0.01" value="{{ config.fee_no_external_member_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- Not Registered on SHe Box -->
+                                <tr class="registration-row group transition-all">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-white text-sm">Not Registered on SHe Box</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Client is not registered on the SHe Box portal</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_not_she_box_t0" step="0.01" value="{{ config.fee_not_she_box_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_not_she_box_t1" step="0.01" value="{{ config.fee_not_she_box_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_not_she_box_t2" step="0.01" value="{{ config.fee_not_she_box_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_not_she_box_t3" step="0.01" value="{{ config.fee_not_she_box_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_not_she_box_t4" step="0.01" value="{{ config.fee_not_she_box_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+
+                                <!-- Requires Nodal Officer Support -->
+                                <tr class="registration-row group transition-all">
+                                    <td class="py-5 pr-4">
+                                        <p class="font-bold text-white text-sm">Requires Nodal Officer Support</p>
+                                        <p class="text-xs text-text-muted mt-1 w-64">Client requires assistance appointing a Nodal Officer</p>
+                                    </td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_nodal_officer_t0" step="0.01" value="{{ config.fee_nodal_officer_t0|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_nodal_officer_t1" step="0.01" value="{{ config.fee_nodal_officer_t1|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_nodal_officer_t2" step="0.01" value="{{ config.fee_nodal_officer_t2|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_nodal_officer_t3" step="0.01" value="{{ config.fee_nodal_officer_t3|default:'0.00' }}" class="price-input"></div></td>
+                                    <td class="py-4 px-4"><div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="fee_nodal_officer_t4" step="0.01" value="{{ config.fee_nodal_officer_t4|default:'0.00' }}" class="price-input"></div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </form>
+
+            {% if saved %}
+            <div class="fixed bottom-8 right-8 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center gap-3 animate-bounce shadow-2xl backdrop-blur-md z-50">
+                <i class="fas fa-check-circle text-indigo-400 text-lg"></i>
+                <div class="flex flex-col">
+                    <span class="text-xs font-black text-indigo-400 uppercase tracking-widest">Success</span>
+                    <span class="text-[0.65rem] text-indigo-300/80">POSH Billing Matrix Updated!</span>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- POCSO PRICING TAB -->
+        <div id="content-pocso_pricing" class="tab-content hidden">
+            <form method="POST" action="{% url 'accounts_save_pocso_pricing' %}">
+                {% csrf_token %}
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Global Settings & Gap Fees -->
+                    <div class="space-y-6">
+                        <div class="card p-8 bg-rose-500/5 border-rose-500/10 flex justify-between items-center">
+                            <div>
+                                <h3 class="heading-font text-xl font-bold text-rose-200">Global Settings</h3>
+                                <p class="text-xs text-text-muted mt-1">Configure tax and primary billing parameters.</p>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-[0.6rem] font-bold text-rose-300/60 uppercase tracking-widest block">POCSO GST %</label>
+                                <div class="relative w-32"><span class="rupee-prefix">%</span><input type="number" name="gst_percentage" step="0.01" value="{{ pocso_config.gst_percentage|default_if_none:'18.00' }}" class="price-input !pl-10 !py-2"></div>
+                            </div>
+                        </div>
+
+                        <div class="card p-8">
+                            <div class="mb-6">
+                                <h3 class="heading-font text-xl font-bold text-white">Compliance Gap Fees</h3>
+                                <p class="text-xs text-text-muted mt-1">Fixed costs charged when a school lacks specific POCSO statutory requirements.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-rose-500/20 transition-all">
+                                    <div><p class="font-bold text-white text-sm">Protection Policy</p><p class="text-[0.65rem] text-text-muted">Drafting & implementation fee</p></div>
+                                    <div class="relative w-40"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_policy" value="{{ pocso_config.fee_no_policy|default_if_none:'5000.00' }}" class="price-input"></div>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-rose-500/20 transition-all">
+                                    <div><p class="font-bold text-white text-sm">POCSO Committee</p><p class="text-[0.65rem] text-text-muted">Internal committee formation</p></div>
+                                    <div class="relative w-40"><span class="rupee-prefix">₹</span><input type="number" name="fee_no_committee" value="{{ pocso_config.fee_no_committee|default_if_none:'5000.00' }}" class="price-input"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Training Rates & Actions -->
+                    <div class="space-y-6">
+                        <div class="card p-8">
+                            <div class="mb-6">
+                                <h3 class="heading-font text-xl font-bold text-white">Per-Head Training Rates</h3>
+                                <p class="text-xs text-text-muted mt-1">Standardized rates applied per person for various training modules.</p>
+                            </div>
+                            <div class="space-y-4">
+                                <!-- Granular Training Rates -->
+                                <div class="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-6">
+                                    <div class="flex items-center gap-3 border-b border-white/5 pb-4 mb-4">
+                                        <i class="fas fa-users-gear text-rose-400"></i>
+                                        <h4 class="text-xs font-black text-rose-200 uppercase tracking-widest">Teaching Staff Rates</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_online" value="{{ pocso_config.teacher_rate_online|default_if_none:'136.00' }}" class="price-input"></div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_offline" value="{{ pocso_config.teacher_rate_offline|default_if_none:'136.00' }}" class="price-input"></div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_elearning" value="{{ pocso_config.teacher_rate_elearning|default_if_none:'136.00' }}" class="price-input"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white/5 p-6 rounded-2xl border border-white/5 space-y-6">
+                                    <div class="flex items-center gap-3 border-b border-white/5 pb-4 mb-4">
+                                        <i class="fas fa-user-shield text-rose-400"></i>
+                                        <h4 class="text-xs font-black text-rose-200 uppercase tracking-widest">Non-Teaching Staff Rates</h4>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_online" value="{{ pocso_config.staff_rate_online|default_if_none:'91.00' }}" class="price-input"></div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_offline" value="{{ pocso_config.staff_rate_offline|default_if_none:'91.00' }}" class="price-input"></div>
+                                        </div>
+                                        <div class="space-y-1">
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning</label>
+                                            <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_elearning" value="{{ pocso_config.staff_rate_elearning|default_if_none:'91.00' }}" class="price-input"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-rose-500/20 transition-all">
+                                    <div><p class="font-bold text-white text-sm">Student Safety Workshop</p><p class="text-[0.65rem] text-text-muted">Rate per Student</p></div>
+                                    <div class="relative w-40"><span class="rupee-prefix">₹</span><input type="number" name="student_rate" value="{{ pocso_config.student_rate|default_if_none:'55.00' }}" class="price-input"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 pt-6 border-t border-white/5">
+                                <button type="submit" class="w-full py-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-black heading-font transition-all shadow-xl shadow-rose-900/20 flex items-center justify-center gap-3">
+                                    <i class="fas fa-save"></i> UPDATE POCSO PRICING ENGINE
+                                </button>
+                                <p class="text-[0.6rem] text-center text-text-muted mt-3 uppercase tracking-widest font-bold">Changes will apply to new registrations immediately</p>
+                            </div>
+                        </div>
+
+                        <!-- Info Card -->
+                        <div class="card p-6 bg-amber-500/5 border-amber-500/10 flex gap-4">
+                            <i class="fas fa-info-circle text-amber-500 text-lg mt-1"></i>
+                            <div>
+                                <p class="text-xs font-bold text-amber-200">Flat Fee Model Active</p>
+                                <p class="text-[0.65rem] text-amber-200/60 mt-1">The system has been updated to ignore school headcount tiers for gap fees. Only the student safety workshop remains variable based on student count.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- End grid -->
+
+                {% if pocso_saved %}
+                <div class="fixed bottom-8 right-8 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-3 animate-bounce shadow-2xl backdrop-blur-md z-50">
+                    <i class="fas fa-check-circle text-emerald-400 text-lg"></i>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-black text-emerald-400 uppercase tracking-widest">Success</span>
+                        <span class="text-[0.65rem] text-emerald-300/80">POCSO Matrix Updated Successfully!</span>
+                    </div>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        <div id="content-registrations" class="tab-content hidden">
+            <div class="card overflow-hidden">
+                <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                    <h3 class="heading-font text-xl font-bold">POSH Registration Queue</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                            <input type="text" placeholder="Search Registrations..." class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent">
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-white/5 text-[0.65rem] font-bold text-text-muted uppercase tracking-[0.15em]">
+                                <th class="px-8 py-5">Organization Details</th>
+                                <th class="px-8 py-5">Contact</th>
+                                <th class="px-8 py-5">Submitted Date</th>
+                                <th class="px-8 py-5">Payment Status</th>
+                                <th class="px-8 py-5">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for reg in registrations %}
+                            <tr class="registration-row group transition-all">
+                                <td class="px-8 py-6">
+                                    <p class="font-bold heading-font text-white">{{ reg.company_name }}</p>
+                                    <p class="text-xs text-text-muted italic">{{ reg.city }}</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <p class="text-sm font-semibold text-white">{{ reg.contact_person }}</p>
+                                    <p class="text-xs text-text-muted">{{ reg.email }}</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <p class="text-sm font-semibold">{{ reg.created_at|date:"d M Y" }}</p>
+                                    <p class="text-[0.6rem] text-text-muted uppercase font-bold">{{ reg.created_at|date:"H:i" }} IST</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    {% if reg.payment_status == 'VERIFIED' %}
+                                        <span class="tag tag-green">Verified</span>
+                                    {% elif reg.payment_status == 'SUBMITTED' %}
+                                        <span class="tag tag-blue active animate-pulse">Pending Review</span>
+                                    {% else %}
+                                        <span class="tag tag-amber opacity-40">Awaiting Sub.</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-8 py-6">
+                                    <a href="{% url 'accounts_registration_detail' reg.id %}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 rounded-lg text-xs font-bold hover:bg-indigo-500 hover:text-white transition-all">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-20 text-center">
+                                    <div class="flex flex-col items-center gap-4 opacity-20">
+                                        <i class="fas fa-inbox text-5xl"></i>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- POCSO REGISTRATIONS TAB -->
+        <div id="content-pocso_registrations" class="tab-content hidden">
+            <div class="card overflow-hidden">
+                <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                    <h3 class="heading-font text-xl font-bold">POCSO Registration Queue</h3>
+                    <div class="flex items-center gap-4">
+                        <div class="relative">
+                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
+                            <input type="text" placeholder="Search Schools..." class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent">
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead>
+                            <tr class="bg-white/5 text-[0.65rem] font-bold text-text-muted uppercase tracking-[0.15em]">
+                                <th class="px-8 py-5">School Details</th>
+                                <th class="px-8 py-5">Contact</th>
+                                <th class="px-8 py-5">Submitted Date</th>
+                                <th class="px-8 py-5">Payment Status</th>
+                                <th class="px-8 py-5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for reg in pocso_registrations %}
+                            <tr class="registration-row group transition-all">
+                                <td class="px-8 py-6">
+                                    <div class="flex items-start gap-3">
+                                        <div>
+                                            <p class="font-bold heading-font text-white">{{ reg.school_name }}</p>
+                                            <div class="flex items-center gap-2 mt-1">
+                                                <p class="text-[0.6rem] text-text-muted uppercase tracking-tighter">{{ reg.city }}</p>
+                                                <span class="w-1 h-1 rounded-full bg-white/20"></span>
+                                                <span class="text-[0.6rem] font-black text-rose-400/80">{{ reg.students_count }} Students</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <p class="text-sm font-semibold text-white">{{ reg.person_name }}</p>
+                                    <p class="text-xs text-text-muted">{{ reg.email }}</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    <p class="text-sm font-semibold">{{ reg.created_at|date:"d M Y" }}</p>
+                                    <p class="text-[0.6rem] text-text-muted uppercase font-bold">{{ reg.created_at|date:"H:i" }} IST</p>
+                                </td>
+                                <td class="px-8 py-6">
+                                    {% if reg.payment_status == 'VERIFIED' %}
+                                        <span class="tag tag-green">Verified</span>
+                                    {% elif reg.payment_status == 'SUBMITTED' %}
+                                        <span class="tag tag-blue active animate-pulse">Pending Review</span>
+                                    {% else %}
+                                        <span class="tag tag-amber opacity-40">Awaiting Sub.</span>
+                                    {% endif %}
+                                </td>
+                                <td class="px-8 py-6 text-right">
+                                    <a href="{% url 'accounts_pocso_registration_detail' reg.id %}" class="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-300 border border-rose-500/20 rounded-lg text-xs font-bold hover:bg-rose-600 hover:text-white transition-all">
+                                        <i class="fas fa-search-plus"></i> Review
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="py-20 text-center">
+                                    <div class="flex flex-col items-center gap-4 opacity-20">
+                                        <i class="fas fa-inbox text-5xl"></i>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations found</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`content-${tab}`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+
+        const TIER_LABELS = ['Tier 1 (1–10)', 'Tier 2 (11–25)', 'Tier 3 (26–100)', 'Tier 4 (101–200)', 'Tier 5 (201–500)'];
+
+        function fmt(num) { return Math.round(num).toLocaleString('en-IN'); }
+
+        function getInputByName(name, fallback) {
+            const el = document.querySelector(`[name="${name}"]`);
+            if (!el) return fallback;
+            const val = parseFloat(el.value);
+            return isNaN(val) ? fallback : val;
+        }
+
+        function getTierIdx(emp, t0max, t1max, t2max, t3max) {
+            if (emp <= t0max) return 0;
+            if (emp <= t1max) return 1;
+            if (emp <= t2max) return 2;
+            if (emp <= t3max) return 3;
+            return 4;
+        }
+
+        function getTierRate(idx, t0r, t1r, t2r, t3r, t4r) {
+            return [t0r, t1r, t2r, t3r, t4r][idx];
+        }
+
+        function updatePreview() {
+            const emp  = parseInt(document.getElementById('emp_slider').value) || 50;
+            const t0max = 10, t1max = 25, t2max = 100, t3max = 200;
+            const t0r = getInputByName('price_tier_0_rate', 200);
+            const t1r = getInputByName('price_tier_1_rate', 163);
+            const t2r = getInputByName('price_tier_2_rate', 154);
+            const t3r = getInputByName('price_tier_3_rate', 145);
+            const t4r = getInputByName('price_tier_4_rate', 127);
+            const gst = getInputByName('gst_percentage', 18);
+
+            const tierIdx = getTierIdx(emp, t0max, t1max, t2max, t3max);
+            const rate    = getTierRate(tierIdx, t0r, t1r, t2r, t3r, t4r);
+            const training = emp * rate;
+            const tax = training * (gst / 100);
+            const total = training + tax;
+
+            document.getElementById('preview_emp_count').textContent = emp;
+            document.getElementById('preview_tier_label').textContent = TIER_LABELS[tierIdx];
+            document.getElementById('prev_rate_label').textContent = `(${emp} × ₹${Math.round(rate)})`;
+            document.getElementById('prev_training').textContent = fmt(training);
+            document.getElementById('prev_gst_pct').textContent = gst;
+            document.getElementById('prev_gst').textContent = fmt(tax);
+            document.getElementById('prev_total').textContent = fmt(total);
+        }
+
+        updatePreview();
+    </script>
+</body>
+</html>

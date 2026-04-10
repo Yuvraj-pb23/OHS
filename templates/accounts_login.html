@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounts Portal | OHS Internal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .heading-font { font-family: 'Outfit', sans-serif; }
+
+        .bg-mesh {
+            background-color: #0f172a;
+            background-image:
+                radial-gradient(at 20% 30%, rgba(99,102,241,0.25) 0px, transparent 50%),
+                radial-gradient(at 80% 70%, rgba(139,92,246,0.2) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(6,182,212,0.08) 0px, transparent 70%);
+        }
+
+        .glass-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0.75rem;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.25s;
+        }
+
+        .input-field::placeholder { color: rgba(255,255,255,0.3); }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 0.85rem;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 0.75rem;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(99,102,241,0.4);
+        }
+
+        .badge-internal {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: rgba(99,102,241,0.15);
+            border: 1px solid rgba(99,102,241,0.3);
+            color: #a5b4fc;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+    </style>
+</head>
+<body class="bg-mesh min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md">
+
+        <!-- Logo & Badge -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl mb-4">
+                <i class="fas fa-calculator text-2xl text-indigo-400"></i>
+            </div>
+            <h1 class="heading-font text-2xl font-extrabold text-white mb-2">Accounts Portal</h1>
+            <span class="badge-internal">
+                <i class="fas fa-lock text-[0.6rem]"></i>
+                Internal Access Only
+            </span>
+        </div>
+
+        <!-- Card -->
+        <div class="glass-card rounded-3xl p-8">
+            <p class="text-white/50 text-sm mb-6 text-center">Sign in with your department credentials to manage POSH pricing.</p>
+
+            {% if form.errors %}
+            <div class="mb-5 p-4 rounded-xl bg-rose-500/15 border border-rose-500/30 flex items-center gap-3">
+                <i class="fas fa-triangle-exclamation text-rose-400 text-sm"></i>
+                <p class="text-rose-300 text-sm font-semibold">Invalid credentials. Please try again.</p>
+            </div>
+            {% endif %}
+
+            <form method="POST" action="{% url 'accounts_login' %}">
+                {% csrf_token %}
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-white/40 uppercase tracking-wider mb-2">Username</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
+                                <i class="fas fa-user text-xs"></i>
+                            </span>
+                            <input type="text" name="username" id="id_username" required
+                                   class="input-field pl-10"
+                                   placeholder="Enter your username"
+                                   autocomplete="username">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-white/40 uppercase tracking-wider mb-2">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-white/30">
+                                <i class="fas fa-lock text-xs"></i>
+                            </span>
+                            <input type="password" name="password" id="id_password" required
+                                   class="input-field pl-10"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button type="submit" class="btn-login">
+                        <i class="fas fa-arrow-right-to-bracket mr-2"></i>
+                        Sign In to Accounts Portal
+                    </button>
+                </div>
+
+                <input type="hidden" name="next" value="{{ next }}">
+            </form>
+        </div>
+
+        <p class="text-center text-white/20 text-xs mt-6">
+            &copy; 2026 Open Hand Solutions &bull; Secure Internal Access
+        </p>
+    </div>
+
+</body>
+</html>

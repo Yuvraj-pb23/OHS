@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ reg.school_name }} — POCSO Review | OHS Accounts</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0d0a0b;
+            --surface: #1a1517;
+            --card: #241c1e;
+            --border: rgba(255,255,255,0.06);
+            --accent: #f43f5e;
+            --muted: #4b5563;
+            --text-muted: #94a3b8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #f1f5f9; font-family: 'Inter', sans-serif; min-height: 100vh; }
+        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 1.25rem; }
+
+        .section-label {
+            font-size: 0.65rem; font-weight: 900; letter-spacing: 0.18em;
+            text-transform: uppercase; color: var(--accent);
+            margin-bottom: 1.25rem; padding-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-row {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+            gap: 1rem;
+        }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-key { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; width: 140px; flex-shrink: 0; }
+        .detail-val { font-size: 0.85rem; font-weight: 600; color: #f1f5f9; text-align: right; flex: 1; word-break: break-all; }
+
+        .badge-yes { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        .badge-no { background: rgba(244,63,94,0.12); color: #fb7185; border: 1px solid rgba(244,63,94,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+
+        .status-verified { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+        .status-submitted { background: rgba(244,63,94,0.1); color: #fb7185; border: 1px solid rgba(244,63,94,0.2); }
+
+        .btn-approve {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 2rem; border-radius: 0.75rem;
+            background: rgba(34,197,94,0.1); color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.25);
+            font-size: 0.85rem; font-weight: 700; transition: all 0.2s;
+        }
+        .btn-approve:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
+
+        .btn-reject {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 2rem; border-radius: 0.75rem;
+            background: rgba(244,63,94,0.08); color: #fb7185;
+            border: 1px solid rgba(244,63,94,0.2);
+            font-size: 0.85rem; font-weight: 700; transition: all 0.2s;
+        }
+        .btn-reject:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
+
+        .billing-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+
+    <header class="border-b border-white/5 bg-[#1a1517]/80 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'accounts_dashboard' %}" class="px-4 py-2 rounded-xl bg-white/5 text-xs font-bold text-text-muted hover:text-white transition-all border border-white/5">
+                    <i class="fas fa-arrow-left mr-2"></i> Dashboard
+                </a>
+                <span class="text-white/10">|</span>
+                <span class="heading-font font-bold text-white text-sm">POCSO Compliance Review</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="
+                    px-3 py-1 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider
+                    {% if reg.payment_status == 'VERIFIED' %}status-verified{% else %}status-submitted{% endif %}
+                ">
+                    {% if reg.payment_status == 'VERIFIED' %}Verified{% else %}Pending Review{% endif %}
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-6 py-10 space-y-8">
+        <!-- Institution Header -->
+        <div class="card p-8 border-l-4 border-l-rose-500">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <p class="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest mb-1">Educational Institution</p>
+                    <h1 class="heading-font text-3xl font-black text-white">{{ reg.school_name }}</h1>
+                    <p class="text-text-muted mt-1">{{ reg.address }}, {{ reg.city }}, {{ reg.state }} — {{ reg.pin_code }}</p>
+                </div>
+                <div class="text-left md:text-right">
+                    <p class="text-xs text-text-muted">Submitted Date</p>
+                    <p class="text-white font-bold">{{ reg.created_at|date:"d M Y" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left: Info -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Institution Profile -->
+                <div class="card p-7">
+                    <p class="section-label">Institution Profile & Contact</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                        <div class="detail-row"><span class="detail-key">Contact Person</span><span class="detail-val">{{ reg.person_name }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Designation</span><span class="detail-val">{{ reg.designation }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">{{ reg.contact_no }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">{{ reg.email }}</span></div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                        <div class="detail-row"><span class="detail-key">Student Count</span><span class="detail-val font-black text-rose-400">{{ reg.students_count }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Teaching Staff</span><span class="detail-val font-black text-rose-400">{{ reg.teachers_count }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Non-Teaching Staff</span><span class="detail-val font-black text-rose-400">{{ reg.non_teaching_staff_count }}</span></div>
+                    </div>
+                </div>
+
+                <!-- Compliance Status -->
+                <div class="card p-7">
+                    <p class="section-label">POCSO Statutory Compliance</p>
+                    <div class="space-y-1">
+                        <div class="detail-row">
+                            <span class="detail-key">Child Protection Policy?</span>
+                            <span class="detail-val">{% if reg.has_policy %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-key">Internal POCSO Committee?</span>
+                            <span class="detail-val">{% if reg.has_committee %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-key">Teaching Staff Trained?</span>
+                            <span class="detail-val">{% if reg.teaching_staff_trained %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No (Mode: {{ reg.teaching_training_mode }})</span>{% endif %}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-key">Non-Teaching Staff Trained?</span>
+                            <span class="detail-val">{% if reg.non_teaching_staff_trained %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no (Mode: {{ reg.non_teaching_training_mode }})">No</span>{% endif %}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Billing & Actions -->
+            <div class="space-y-6">
+                <!-- Billing Card -->
+                <div class="card p-7 bg-rose-500/5 border-rose-500/10">
+                    <p class="section-label" style="color:#fb7185;">Billing Breakdown</p>
+                    <div class="space-y-2 mb-6">
+                        {% for fee in addon_fees %}
+                        <div class="billing-row">
+                            <span class="text-xs text-text-muted">{{ fee.label }}</span>
+                            <span class="font-bold">₹{{ fee.amount|floatformat:2 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="border-t border-white/5 pt-4 space-y-2">
+                        <div class="flex justify-between text-xs text-text-muted">
+                            <span>Subtotal</span>
+                            <span>₹{{ subtotal|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-text-muted">
+                            <span>GST ({{ gst_percentage|floatformat:0 }}%)</span>
+                            <span>₹{{ tax|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between items-center bg-rose-500/10 p-3 rounded-xl mt-4">
+                            <span class="heading-font font-black text-rose-200">Total Due</span>
+                            <span class="heading-font text-white font-black text-2xl">₹{{ total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Early Bird Brackets -->
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <p class="text-[0.6rem] text-rose-400/60 uppercase font-black tracking-widest mb-3">Discount Brackets</p>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-[0.7rem] p-2 bg-emerald-500/5 rounded-lg border border-emerald-500/10">
+                                <span class="text-emerald-400 font-bold">Pay Now (10-14 Apr)</span>
+                                <span class="text-white font-black">₹{{ total_tier_1|floatformat:0 }}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[0.7rem] p-2 bg-rose-500/5 rounded-lg border border-rose-500/10">
+                                <span class="text-rose-400 font-bold">Before 15th May (15 Apr-15 May)</span>
+                                <span class="text-white font-black">₹{{ total_tier_2|floatformat:0 }}</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[0.7rem] p-2 bg-white/5 rounded-lg border border-white/10">
+                                <span class="text-stone-400 font-bold">Regular Price (Post 15th May)</span>
+                                <span class="text-white font-black">₹{{ total_tier_3|floatformat:0 }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Screenshot -->
+                <div class="card p-7">
+                    <p class="section-label">Payment Evidence</p>
+                    {% if reg.payment_screenshot %}
+                        <img src="{{ reg.payment_screenshot.url }}" class="w-full h-auto rounded-lg border border-white/5">
+                        <a href="{{ reg.payment_screenshot.url }}" target="_blank" class="mt-4 inline-block text-[0.6rem] font-bold text-rose-400 uppercase tracking-widest hover:underline">Open Full Image <i class="fas fa-external-link-alt ml-1"></i></a>
+                    {% else %}
+                        <div class="py-10 text-center opacity-20"><i class="fas fa-image text-3xl"></i><p class="text-xs font-bold mt-2">NO SCREENSHOT</p></div>
+                    {% endif %}
+                </div>
+
+                <!-- Verification -->
+                {% if reg.payment_status != 'VERIFIED' %}
+                <div class="card p-6 flex flex-col gap-3">
+                    <a href="{% url 'accounts_verify_pocso_payment' reg.id %}" class="btn-approve justify-center">Verify & Approve</a>
+                    <a href="{% url 'accounts_reject_pocso_payment' reg.id %}" class="btn-reject justify-center" onclick="return confirm('Reject this POCSO payment?')">Reject Payment</a>
+                </div>
+                {% else %}
+                <div class="card p-6 bg-emerald-500/10 border-emerald-500/20 flex items-center gap-3">
+                    <i class="fas fa-check-double text-emerald-400"></i>
+                    <p class="text-xs font-bold text-emerald-400">This registration is officially verified.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

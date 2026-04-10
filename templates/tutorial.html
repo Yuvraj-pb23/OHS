@@ -413,6 +413,75 @@
             border-top-color: #f59e0b;
             background: linear-gradient(145deg, #fffbeb, #ffffff);
         }
+
+        /* Coming Soon Overlay - Iteration 4 (Ultra-Premium Minimalist) */
+        .glass-module {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coming-soon-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(12px) grayscale(100%);
+            -webkit-backdrop-filter: blur(12px) grayscale(100%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        .coming-soon-content {
+            text-align: center;
+            transform: translateY(10px);
+            transition: transform 0.6s ease;
+        }
+
+        .glass-module:hover .coming-soon-overlay {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px) grayscale(0%);
+        }
+
+        .glass-module:hover .coming-soon-content {
+            transform: translateY(0);
+        }
+
+        .lock-icon-glow {
+            font-size: 2.5rem;
+            color: #fbbf24;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6));
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        .coming-soon-title {
+            color: white;
+            font-weight: 800;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            margin: 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .coming-soon-sub {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            margin-top: 8px;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.6)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.9)); }
+        }
     </style>
 </head>
 
@@ -437,6 +506,13 @@
             <div class="modules-row">
                 {% if show_posh %}
                 <div class="glass-module module-posh" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="coming-soon-overlay">
+                        <div class="coming-soon-content">
+                            <i class="fas fa-lock lock-icon-glow"></i>
+                            <h3 class="coming-soon-title">Coming Soon</h3>
+                            <p class="coming-soon-sub">Platform Integration</p>
+                        </div>
+                    </div>
                     <div class="module-icon">📜</div>
                     <h2>POSH Act</h2>
                     <p>Learn how the POSH Act ensures dignity, safety, and fairness at workplaces.</p>
@@ -453,6 +529,13 @@
 
                 {% if show_pocso %}
                 <div class="glass-module module-pocso" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="coming-soon-overlay">
+                        <div class="coming-soon-content">
+                            <i class="fas fa-lock lock-icon-glow"></i>
+                            <h3 class="coming-soon-title">Coming Soon</h3>
+                            <p class="coming-soon-sub">Platform Integration</p>
+                        </div>
+                    </div>
                     <div class="module-icon">🧒</div>
                     <h2>POCSO Act</h2>
                     <p>Understand child protection laws designed for a secure institutional environment.</p>

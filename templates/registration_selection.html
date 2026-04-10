@@ -1,0 +1,93 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Registration | Open Hand Solutions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --posh: #6366f1;
+            --pocso: #f43f5e;
+            --bg-gradient: radial-gradient(circle at top right, #f8fafc, #f1f5f9);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--primary);
+        }
+        .heading-font { font-family: 'Outfit', sans-serif; }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-glass:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-6">
+    <div class="max-w-5xl w-full">
+        <div class="text-center mb-16">
+            <h1 class="heading-font text-5xl font-extrabold text-slate-900 tracking-tight mb-4">Choose Your Path</h1>
+            <p class="text-slate-500 text-lg max-w-2xl mx-auto">Select the specialized compliance registration you wish to proceed with. Our expert-driven modules ensure your organization stays legally sound and safe.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+            <!-- POSH CARD -->
+            <a href="{% url 'posh_registration' %}" class="card-glass p-10 rounded-[2.5rem] group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+                
+                <div class="icon-box bg-indigo-50 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                
+                <h2 class="heading-font text-3xl font-bold mb-4 text-slate-900">POSH Compliance</h2>
+                <p class="text-slate-500 mb-8 leading-relaxed">Ensure a safe and respectful workplace for all employees. Includes policy drafting, IC formation, and mandatory sensitization training.</p>
+                
+                <div class="flex items-center text-indigo-600 font-bold tracking-wide uppercase text-sm">
+                    Register Now <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
+                </div>
+            </a>
+
+            <!-- POCSO CARD -->
+            <a href="{% url 'pocso_registration' %}" class="card-glass p-10 rounded-[2.5rem] group relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-rose-500/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150"></div>
+                
+                <div class="icon-box bg-rose-50 text-rose-600 group-hover:bg-rose-600 group-hover:text-white transition-all duration-300">
+                    <i class="fas fa-child"></i>
+                </div>
+                
+                <h2 class="heading-font text-3xl font-bold mb-4 text-slate-900">POCSO Framework</h2>
+                <p class="text-slate-500 mb-8 leading-relaxed">Comprehensive child safety framework for schools and institutions. Includes CPP drafting, committee setup, and multi-tier staff & student training.</p>
+                
+                <div class="flex items-center text-rose-600 font-bold tracking-wide uppercase text-sm">
+                    Register Now <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
+                </div>
+            </a>
+        </div>
+
+        <p class="mt-20 text-center text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
+            &copy; 2026 Open Hand Solutions &bull; Legal Compliance Excellence
+        </p>
+    </div>
+</body>
+</html>

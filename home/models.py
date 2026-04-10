@@ -15,6 +15,7 @@ class User(AbstractUser):
         ("INDIVIDUAL", "Individual Subscriber"),
         ("COMPANY_ADMIN", "Company Admin"),
         ("EMPLOYEE", "Company Employee"),
+        ("ACCOUNTS", "Accounts Department"),
     )
     account_type = models.CharField(
         max_length=20, choices=USER_TYPES, default="INDIVIDUAL"
@@ -315,7 +316,7 @@ class POSHRegistration(models.Model):
     # Basic Company Details
     company_name = models.CharField(max_length=255)
     city = models.CharField(max_length=100)
-    contact_person = models.CharField(max_length=255)
+    contact_person = models.CharField(max_length=255, blank=True, null=True)
     designation = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
     email = models.EmailField()
@@ -324,6 +325,7 @@ class POSHRegistration(models.Model):
     # Company Information
     employee_count = models.IntegerField()
     trained_employee_count = models.IntegerField()
+    last_training_year = models.CharField(max_length=20, blank=True, null=True)
     
     TRAINING_TYPE_CHOICES = [
         ('OFFLINE', 'Offline'),
@@ -337,16 +339,31 @@ class POSHRegistration(models.Model):
     has_ic = models.BooleanField(default=False)
     
     # Conditional IC Fields
-    ic_last_training_year = models.IntegerField(null=True, blank=True)
+    require_ic_training = models.BooleanField(default=False)
+    requested_ic_training_mode = models.CharField(max_length=20, null=True, blank=True) # EXPERT_LED, ONLINE
+    requested_expert_led_type = models.CharField(max_length=20, null=True, blank=True)  # PHYSICAL, VIRTUAL
+    ic_specialized_training = models.BooleanField(default=False)
+    ic_last_training_year = models.CharField(max_length=20, null=True, blank=True)
     ic_training_mode = models.CharField(max_length=20, choices=TRAINING_TYPE_CHOICES, null=True, blank=True)
     
     external_member_support = models.BooleanField(default=False)
+    require_external_member_support = models.BooleanField(default=False)
     she_box_registered = models.BooleanField(default=False)
     
     # Conditional SHE Box Field
     nodal_officer_appointed = models.BooleanField(default=False)
+    require_nodal_officer_support = models.BooleanField(default=False)
     
     annual_report_submitted = models.BooleanField(default=False)
+    
+    # Payment Tracking
+    payment_screenshot = models.ImageField(upload_to='posh_payments/', null=True, blank=True)
+    PAYMENT_STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SUBMITTED', 'Submitted'),
+        ('VERIFIED', 'Verified'),
+    ]
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     
     # User association
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="posh_registrations")
@@ -356,3 +373,239 @@ class POSHRegistration(models.Model):
 
     def __str__(self):
         return f"{self.company_name} - {self.created_at.date()}"
+
+
+# 13. POSH Pricing Configuration (managed by Accounts Dept)
+class POSHPricingConfig(models.Model):
+    # Base platform fee
+    base_platform_fee = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=18.00, help_text="Global GST percentage")
+
+    # Per-employee pricing tiers
+    price_tier_0_max = models.IntegerField(default=10, help_text="Max employees for Tier 1 (1-10)")
+    price_tier_0_rate = models.DecimalField(max_digits=8, decimal_places=2, default=200.00)
+
+    price_tier_1_max = models.IntegerField(default=25, help_text="Max employees for Tier 2")
+    price_tier_1_rate = models.DecimalField(max_digits=8, decimal_places=2, default=163.00)
+
+    price_tier_2_max = models.IntegerField(default=100, help_text="Max employees for Tier 3")
+    price_tier_2_rate = models.DecimalField(max_digits=8, decimal_places=2, default=154.00)
+
+    price_tier_3_max = models.IntegerField(default=200, help_text="Max employees for Tier 4 (101-200)")
+    price_tier_3_rate = models.DecimalField(max_digits=8, decimal_places=2, default=145.00)
+
+    price_tier_4_max = models.IntegerField(default=500, help_text="Max employees for Tier 5 (201-500)")
+    price_tier_4_rate = models.DecimalField(max_digits=8, decimal_places=2, default=127.00)
+
+    # Compliance add-on fees per tier (t0=Tier1 1-10, t1=Tier2 11-25, t2=Tier3 26-100, t3=Tier4 101-200)
+    # No POSH Policy
+    fee_no_posh_policy_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_posh_policy_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_posh_policy_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_posh_policy_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_posh_policy_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # No IC
+    fee_no_ic_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_ic_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_ic_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_ic_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_ic_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # External Member Support Required
+    fee_no_external_member_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_external_member_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_external_member_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_external_member_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_no_external_member_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # Not SHe Box Registered
+    fee_not_she_box_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_not_she_box_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_not_she_box_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_not_she_box_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_not_she_box_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # IC No Specialized Training (Deprecated in favor of historical_other)
+    fee_ic_no_specialized_training_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_no_specialized_training_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_no_specialized_training_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_no_specialized_training_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_no_specialized_training_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # IC Specialized Training Outdated (Deprecated in favor of historical_21_23)
+    fee_ic_training_outdated_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_training_outdated_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_training_outdated_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_training_outdated_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_training_outdated_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # NEW GRANULAR IC PRICING
+    # Requested Mode: Online
+    fee_ic_requested_online_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_online_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_online_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_online_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_online_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Requested Mode: Physical
+    fee_ic_requested_physical_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_physical_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_physical_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_physical_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_physical_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Requested Mode: Virtual
+    fee_ic_requested_virtual_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_virtual_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_virtual_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_virtual_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_requested_virtual_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Historical: 2021-2023
+    fee_ic_history_21_23_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_21_23_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_21_23_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_21_23_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_21_23_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Historical: 2024-2025 (Refresher)
+    fee_ic_history_24_25_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_24_25_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_24_25_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_24_25_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_24_25_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # Historical: Other (Full IC Training)
+    fee_ic_history_other_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_other_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_other_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_other_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_ic_history_other_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # Requires Nodal Officer Support
+    fee_nodal_officer_t0 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_nodal_officer_t1 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_nodal_officer_t2 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_nodal_officer_t3 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fee_nodal_officer_t4 = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+
+
+    # Metadata
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, help_text="Only ONE active config should exist")
+
+    class Meta:
+        verbose_name = "POSH Pricing Configuration"
+        verbose_name_plural = "POSH Pricing Configurations"
+
+    def __str__(self):
+        return f"Pricing Config (Updated: {self.updated_at.date()}) - Active: {self.is_active}"
+
+
+# 14. POCSO Registration Form Data
+class POCSORegistration(models.Model):
+    # Basic Details
+    person_name = models.CharField(max_length=255)
+    designation = models.CharField(max_length=100)
+    school_name = models.CharField(max_length=255)
+    
+    # Counts
+    students_count = models.IntegerField(default=0)
+    teachers_count = models.IntegerField(default=0)
+    non_teaching_staff_count = models.IntegerField(default=0)
+    
+    # Location & Contact
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    address = models.TextField()
+    pin_code = models.CharField(max_length=20)
+    phone = models.CharField(max_length=20)
+    email = models.EmailField()
+    contact_person = models.CharField(max_length=255, blank=True, null=True)
+
+    # POCSO Module
+    has_policy = models.BooleanField(default=False)
+    has_committee = models.BooleanField(default=False)
+    
+    # Training details
+    teaching_staff_trained = models.BooleanField(default=False)
+    TRAINING_MODE_CHOICES = [
+        ('E_LEARNING', 'E-Learning'),
+        ('OFFLINE', 'Offline'),
+        ('ONLINE', 'Online'),
+    ]
+    teaching_training_mode = models.CharField(max_length=20, choices=TRAINING_MODE_CHOICES, null=True, blank=True)
+    
+    non_teaching_staff_trained = models.BooleanField(default=False)
+    non_teaching_training_mode = models.CharField(max_length=20, choices=TRAINING_MODE_CHOICES, null=True, blank=True)
+    
+    # Vendor & Transport
+    vendors_access_premises = models.BooleanField(default=False)
+    has_vendor_policy = models.BooleanField(default=False)
+    has_transport = models.BooleanField(default=False)
+    aware_of_transport_policy = models.BooleanField(default=False)
+    
+    # Student Training
+    students_trained = models.BooleanField(default=False)
+
+    # Payment Tracking
+    payment_screenshot = models.ImageField(upload_to='pocso_payments/', null=True, blank=True)
+    PAYMENT_STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('SUBMITTED', 'Submitted'),
+        ('VERIFIED', 'Verified'),
+    ]
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
+    
+    # User association
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="pocso_registrations")
+    is_paid = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"POCSO: {self.school_name} - {self.created_at.date()}"
+
+
+# 15. POCSO Pricing Configuration
+# 15. POCSO Pricing Configuration
+class POCSOPricingConfig(models.Model):
+    # [1] Granular Training Rates (Per Head)
+    teacher_rate_online = models.DecimalField(max_digits=10, decimal_places=2, default=136.00)
+    teacher_rate_offline = models.DecimalField(max_digits=10, decimal_places=2, default=136.00)
+    teacher_rate_elearning = models.DecimalField(max_digits=10, decimal_places=2, default=136.00)
+    
+    staff_rate_online = models.DecimalField(max_digits=10, decimal_places=2, default=91.00)
+    staff_rate_offline = models.DecimalField(max_digits=10, decimal_places=2, default=91.00)
+    staff_rate_elearning = models.DecimalField(max_digits=10, decimal_places=2, default=91.00)
+
+    student_rate = models.DecimalField(max_digits=10, decimal_places=2, default=55.00)
+    
+    # Deprecated single rates
+    teacher_rate = models.DecimalField(max_digits=10, decimal_places=2, default=136.00)
+    staff_rate = models.DecimalField(max_digits=10, decimal_places=2, default=91.00)
+
+    # [2] Flat Compliance Fees
+    fee_no_policy = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    fee_no_committee = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    fee_no_training = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    fee_no_transport = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    fee_no_vendor = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+    fee_no_student_training = models.DecimalField(max_digits=10, decimal_places=2, default=5000.00)
+
+    # Global Settings
+    gst_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=18.00)
+
+    # Metadata
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, help_text="Only ONE active config should exist")
+
+    class Meta:
+        verbose_name = "POCSO Pricing Configuration"
+        verbose_name_plural = "POCSO Pricing Configurations"
+
+    def __str__(self):
+        return f"POCSO Pricing Config (Updated: {self.updated_at.date()}) - Active: {self.is_active}"
+

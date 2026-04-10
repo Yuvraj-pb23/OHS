@@ -31,6 +31,9 @@ from .models import (
     DailyActivity,
     AssessmentProgress,
     POSHRegistration,
+    POSHPricingConfig,
+    POCSORegistration,
+    POCSOPricingConfig,
 )
 
 # Ensure this file exists in your app or adjust import accordingly
@@ -1968,14 +1971,6 @@ def download_certificate(request, course_type="POSH"):
     return response
 
 
-# In your Django Form
-def clean_phone(self):
-    phone = self.cleaned_data.get("phone")
-    if not phone.isdigit() or len(phone) != 10:
-        raise forms.ValidationError("Invalid phone number")
-    return phone
-
-
 def custom_404(request, exception):
     return render(request, "hh.html", status=404)
 
@@ -2074,48 +2069,644 @@ def posh_registration_view(request):
 
     return render(request, "posh_registration.html")
 
+def get_posh_pricing_context(registration):
+    """Refactored helper to calculate POSH billing context for both billing_view and admin review"""
+    # Fetch active pricing config
+    config = POSHPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
+    if not config:
+        config = POSHPricingConfig()
+        
+    emp_count = registration.employee_count
+    
+    # 1. Determine Tier (t0 to t4)
+    if emp_count <= config.price_tier_0_max:
+        tier = 't0'
+        per_employee_rate = config.price_tier_0_rate
+        tier_label = f'Tier 1 (1-{config.price_tier_0_max})'
+    elif emp_count <= config.price_tier_1_max:
+        tier = 't1'
+        per_employee_rate = config.price_tier_1_rate
+        tier_label = f'Tier 2 ({config.price_tier_0_max + 1}-{config.price_tier_1_max})'
+    elif emp_count <= config.price_tier_2_max:
+        tier = 't2'
+        per_employee_rate = config.price_tier_2_rate
+        tier_label = f'Tier 3 ({config.price_tier_1_max + 1}-{config.price_tier_2_max})'
+    elif emp_count <= config.price_tier_3_max:
+        tier = 't3'
+        per_employee_rate = config.price_tier_3_rate
+        tier_label = f'Tier 4 ({config.price_tier_2_max + 1}-{config.price_tier_3_max})'
+    else:
+        tier = 't4'
+        per_employee_rate = config.price_tier_4_rate
+        tier_label = f'Tier 5 ({config.price_tier_3_max}+)'
+
+    # 2. Build Add-on Fees
+    addon_fees = []
+    base_price = 0.0 # Base platform fee removed as per request
+    training_cost = float(emp_count * per_employee_rate)
+    
+    # 2a. Base Subscription (Always showing)
+    addon_fees.append({
+        'label': f'POSH Act Compliance ({emp_count} Employees)',
+        'amount': training_cost,
+        'points': ['Digital Compliance Portal Access', 'Annual Compliance Tracker', 'Statutory Documents Vault']
+    })
+    
+    # 2b. Policy Drafting (Show if NO policy)
+    if not registration.has_posh_policy:
+        fee = float(getattr(config, f'fee_no_posh_policy_{tier}', 0))
+        addon_fees.append({
+            'label': 'POSH Protection Policy Drafting',
+            'amount': fee,
+            'points': ['Customized Statutory Policy', 'Preventive Framework Design']
+        })
+            
+    # 2c. IC Formation (Show if NO IC)
+    if not registration.has_ic:
+        fee = float(getattr(config, f'fee_no_ic_{tier}', 0))
+        addon_fees.append({
+            'label': 'Internal Committee (IC) Formation',
+            'amount': fee,
+            'points': ['Selection Matrix for Members', 'Drafting Appointment Letters']
+        })
+            
+    # 2d. IC Training (Historical Gaps or Special Requests)
+    if registration.require_ic_training or not registration.has_ic:
+        rate_field = 'fee_ic_history_other'
+        mode_label = 'Full Training'
+        
+        if registration.require_ic_training:
+            req_mode = registration.requested_ic_training_mode
+            req_type = registration.requested_expert_led_type
+            
+            if req_mode == 'ONLINE':
+                rate_field = 'fee_ic_requested_online'
+                mode_label = 'Online IC Training'
+            elif req_mode == 'EXPERT_LED':
+                if req_type == 'PHYSICAL':
+                    rate_field = 'fee_ic_requested_physical'
+                    mode_label = 'Physical Expert-Led Workshop'
+                elif req_type == 'VIRTUAL':
+                    rate_field = 'fee_ic_requested_virtual'
+                    mode_label = 'Virtual Expert-Led Workshop'
+        else:
+            year = registration.ic_last_training_year
+            if year == '2021-2022':
+                rate_field = 'fee_ic_history_21_23'
+                mode_label = 'IC Refresher (2021-2022)'
+            elif year == '2023-2025':
+                rate_field = 'fee_ic_history_24_25'
+                mode_label = 'IC Safety Check (2023-2025)'
+            else:
+                rate_field = 'fee_ic_history_other'
+                mode_label = 'Full IC Training Required'
+
+        fee = float(getattr(config, f'{rate_field}_{tier}', 0))
+        addon_fees.append({
+            'label': f'IC Specialized Training ({mode_label})',
+            'amount': fee,
+            'points': ['Case Study Workshops', 'Statutory Powers & Duties Training']
+        })
+
+    # 2e. External Member Support
+    if registration.require_external_member_support:
+        fee = float(getattr(config, f'fee_no_external_member_{tier}', 0))
+        addon_fees.append({
+            'label': 'External Member Matchmaking',
+            'amount': fee,
+            'points': ['Selection from Authorized Panellists', 'Legal Compliance Verification']
+        })
+            
+    # 2f. Statutory Portal (SHe Box)
+    if not registration.she_box_registered or registration.require_nodal_officer_support:
+        fee = float(getattr(config, f'fee_not_she_box_{tier}', 0))
+        addon_fees.append({
+            'label': 'Statutory Portal Compliance (SHe Box)',
+            'amount': fee,
+            'points': ['Government Portal Registration', 'Nodal Officer Liaison Support']
+        })
+
+    # 3. Final Multi-Tier Calculations
+    subtotal = sum(item['amount'] for item in addon_fees)
+    gst_rate = float(config.gst_percentage) / 100
+    
+    total_tier_3 = subtotal * (1 + gst_rate) # Regular
+    total_tier_2 = total_tier_3 * 0.9              # -10%
+    total_tier_1 = total_tier_3 * 0.8              # -20%
+    
+    return {
+        "reg": registration, # Standardized key for templates
+        "registration": registration, # Backward compatibility
+        "addon_fees": addon_fees,
+        "subtotal": subtotal,
+        "tax": subtotal * gst_rate,
+        "total": total_tier_3,
+        "total_tier_1": total_tier_1,
+        "total_tier_2": total_tier_2,
+        "total_tier_3": total_tier_3,
+        "gst_percentage": config.gst_percentage,
+        "company_name": registration.company_name,
+        "payment_status": registration.payment_status,
+        "tier_label": tier_label,
+        "per_emp": per_employee_rate,
+        "training_cost": training_cost,
+    }
+
 def billing_view(request):
-    """View to handle billing/payment details after registration"""
-    # Find registration by user OR session ID (for anonymous users)
+    """Calculate and show POSH billing summary with tiered pricing"""
     if request.user.is_authenticated:
         registration = POSHRegistration.objects.filter(user=request.user).order_by('-created_at').first()
     else:
         reg_id = request.session.get('last_registration_id')
         registration = POSHRegistration.objects.filter(id=reg_id).first() if reg_id else None
     
-    # If no registration found, go to reg form
     if not registration:
         return redirect("posh_registration")
     
-    # Base platform fee
-    base_price = 5000.00
+    context = get_posh_pricing_context(registration)
+    return render(request, "billing.html", context)
+
+def accounts_login_view(request):
+    """Custom login for accounts department"""
+    if request.method == "POST":
+        u = request.POST.get("username")
+        p = request.POST.get("password")
+        user = authenticate(username=u, password=p)
+        if user is not None and (user.account_type == "ACCOUNTS" or user.is_superuser):
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            return redirect("accounts_dashboard")
+        else:
+            from django import forms as dj_forms
+            return render(request, "accounts_login.html", {"form": type('F', (), {'errors': True})()})
+
+    return render(request, "accounts_login.html", {})
+
+
+@login_required(login_url="accounts_login")
+def accounts_dashboard_view(request):
+    """Pricing configuration dashboard for the Accounts Department"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    config = POSHPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
+    pocso_config = POCSOPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
     
-    # Calculate tiered cost based on employee count
-    employee_count = registration.employee_count if registration else 0
+    registrations = POSHRegistration.objects.all().order_by('-created_at')
+    pocso_registrations = POCSORegistration.objects.all().order_by('-created_at')
     
-    if employee_count <= 25:
-        per_employee_price = 163.00
-    elif employee_count <= 100:
-        per_employee_price = 154.00
-    elif employee_count <= 200:
-        per_employee_price = 145.00
-    elif employee_count <= 500:
-        per_employee_price = 127.00
-    else:
-        per_employee_price = 127.00 # Default for > 500
+    saved = request.session.pop('pricing_saved', False)
+    pocso_saved = request.session.pop('pocso_pricing_saved', False)
+
+    return render(request, "accounts_dashboard.html", {
+        "config": config,
+        "pocso_config": pocso_config,
+        "registrations": registrations,
+        "pocso_registrations": pocso_registrations,
+        "saved": saved,
+        "pocso_saved": pocso_saved,
+    })
+
+
+@login_required(login_url="accounts_login")
+def accounts_verify_payment_view(request, registration_id):
+    """Mark a registration as verified by the accounts department"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    registration = get_object_or_404(POSHRegistration, id=registration_id)
+    registration.payment_status = 'VERIFIED'
+    registration.is_paid = True
+    registration.save()
+    
+    messages.success(request, f"Payment for {registration.company_name} verified successfully!")
+    return redirect("accounts_dashboard")
+
+
+@login_required(login_url="accounts_login")
+def accounts_reject_payment_view(request, registration_id):
+    """Reject a payment and return it to pending status"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    registration = get_object_or_404(POSHRegistration, id=registration_id)
+    registration.payment_status = 'PENDING'
+    registration.save()
+    
+    messages.warning(request, f"Payment for {registration.company_name} rejected.")
+    return redirect("accounts_dashboard")
+
+
+@login_required(login_url="accounts_login")
+def accounts_registration_detail_view(request, registration_id):
+    """Full registration detail for billing review with calculated context"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    registration = get_object_or_404(POSHRegistration, id=registration_id)
+    context = get_posh_pricing_context(registration)
+    return render(request, "accounts_registration_detail.html", context)
+
+
+@login_required(login_url="accounts_login")
+def accounts_save_pricing_view(request):
+    """Update the POSH pricing matrix with per-tier add-on fees"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    if request.method == "POST":
+        from decimal import Decimal
+        def to_dec(val, default="0.00"):
+            try:
+                return Decimal(str(val))
+            except:
+                return Decimal(default)
+
+        p = request.POST.get
         
-    training_cost = employee_count * per_employee_price
-    subtotal = base_price + training_cost
-    tax = subtotal * 0.18 # 18% GST
-    total = subtotal + tax
+        try:
+            # Create a NEW config as the active one
+            config = POSHPricingConfig(
+                base_platform_fee=to_dec(p("base_platform_fee", 5000.00)),
+                gst_percentage=to_dec(p("gst_percentage", 18.00)),
+
+                price_tier_0_rate=to_dec(p("price_tier_0_rate", 200.00)),
+                price_tier_1_rate=to_dec(p("price_tier_1_rate", 163.00)),
+                price_tier_2_rate=to_dec(p("price_tier_2_rate", 154.00)),
+                price_tier_3_rate=to_dec(p("price_tier_3_rate", 145.00)),
+                price_tier_4_rate=to_dec(p("price_tier_4_rate", 127.00)),
+
+                fee_no_posh_policy_t0=to_dec(p("fee_no_posh_policy_t0", 0.00)),
+                fee_no_posh_policy_t1=to_dec(p("fee_no_posh_policy_t1", 0.00)),
+                fee_no_posh_policy_t2=to_dec(p("fee_no_posh_policy_t2", 0.00)),
+                fee_no_posh_policy_t3=to_dec(p("fee_no_posh_policy_t3", 0.00)),
+                fee_no_posh_policy_t4=to_dec(p("fee_no_posh_policy_t4", 0.00)),
+
+                fee_no_ic_t0=to_dec(p("fee_no_ic_t0", 0.00)),
+                fee_no_ic_t1=to_dec(p("fee_no_ic_t1", 0.00)),
+                fee_no_ic_t2=to_dec(p("fee_no_ic_t2", 0.00)),
+                fee_no_ic_t3=to_dec(p("fee_no_ic_t3", 0.00)),
+                fee_no_ic_t4=to_dec(p("fee_no_ic_t4", 0.00)),
+
+                fee_no_external_member_t0=to_dec(p("fee_no_external_member_t0", 0.00)),
+                fee_no_external_member_t1=to_dec(p("fee_no_external_member_t1", 0.00)),
+                fee_no_external_member_t2=to_dec(p("fee_no_external_member_t2", 0.00)),
+                fee_no_external_member_t3=to_dec(p("fee_no_external_member_t3", 0.00)),
+                fee_no_external_member_t4=to_dec(p("fee_no_external_member_t4", 0.00)),
+
+                fee_ic_requested_online_t0=to_dec(p("fee_ic_requested_online_t0", 0.00)),
+                fee_ic_requested_online_t1=to_dec(p("fee_ic_requested_online_t1", 0.00)),
+                fee_ic_requested_online_t2=to_dec(p("fee_ic_requested_online_t2", 0.00)),
+                fee_ic_requested_online_t3=to_dec(p("fee_ic_requested_online_t3", 0.00)),
+                fee_ic_requested_online_t4=to_dec(p("fee_ic_requested_online_t4", 0.00)),
+
+                fee_ic_requested_physical_t0=to_dec(p("fee_ic_requested_physical_t0", 0.00)),
+                fee_ic_requested_physical_t1=to_dec(p("fee_ic_requested_physical_t1", 0.00)),
+                fee_ic_requested_physical_t2=to_dec(p("fee_ic_requested_physical_t2", 0.00)),
+                fee_ic_requested_physical_t3=to_dec(p("fee_ic_requested_physical_t3", 0.00)),
+                fee_ic_requested_physical_t4=to_dec(p("fee_ic_requested_physical_t4", 0.00)),
+
+                fee_ic_requested_virtual_t0=to_dec(p("fee_ic_requested_virtual_t0", 0.00)),
+                fee_ic_requested_virtual_t1=to_dec(p("fee_ic_requested_virtual_t1", 0.00)),
+                fee_ic_requested_virtual_t2=to_dec(p("fee_ic_requested_virtual_t2", 0.00)),
+                fee_ic_requested_virtual_t3=to_dec(p("fee_ic_requested_virtual_t3", 0.00)),
+                fee_ic_requested_virtual_t4=to_dec(p("fee_ic_requested_virtual_t4", 0.00)),
+
+                fee_ic_history_21_23_t0=to_dec(p("fee_ic_history_21_23_t0", 0.00)),
+                fee_ic_history_21_23_t1=to_dec(p("fee_ic_history_21_23_t1", 0.00)),
+                fee_ic_history_21_23_t2=to_dec(p("fee_ic_history_21_23_t2", 0.00)),
+                fee_ic_history_21_23_t3=to_dec(p("fee_ic_history_21_23_t3", 0.00)),
+                fee_ic_history_21_23_t4=to_dec(p("fee_ic_history_21_23_t4", 0.00)),
+                fee_ic_history_24_25_t0=to_dec(p("fee_ic_history_24_25_t0", 0.00)),
+                fee_ic_history_24_25_t1=to_dec(p("fee_ic_history_24_25_t1", 0.00)),
+                fee_ic_history_24_25_t2=to_dec(p("fee_ic_history_24_25_t2", 0.00)),
+                fee_ic_history_24_25_t3=to_dec(p("fee_ic_history_24_25_t3", 0.00)),
+                fee_ic_history_24_25_t4=to_dec(p("fee_ic_history_24_25_t4", 0.00)),
+                fee_ic_history_other_t0=to_dec(p("fee_ic_history_other_t0", 0.00)),
+                fee_ic_history_other_t1=to_dec(p("fee_ic_history_other_t1", 0.00)),
+                fee_ic_history_other_t2=to_dec(p("fee_ic_history_other_t2", 0.00)),
+                fee_ic_history_other_t3=to_dec(p("fee_ic_history_other_t3", 0.00)),
+                fee_ic_history_other_t4=to_dec(p("fee_ic_history_other_t4", 0.00)),
+
+                fee_not_she_box_t0=to_dec(p("fee_not_she_box_t0", 0.00)),
+                fee_not_she_box_t1=to_dec(p("fee_not_she_box_t1", 0.00)),
+                fee_not_she_box_t2=to_dec(p("fee_not_she_box_t2", 0.00)),
+                fee_not_she_box_t3=to_dec(p("fee_not_she_box_t3", 0.00)),
+                fee_not_she_box_t4=to_dec(p("fee_not_she_box_t4", 0.00)),
+                fee_nodal_officer_t0=to_dec(p("fee_nodal_officer_t0", 0.00)),
+                fee_nodal_officer_t1=to_dec(p("fee_nodal_officer_t1", 0.00)),
+                fee_nodal_officer_t2=to_dec(p("fee_nodal_officer_t2", 0.00)),
+                fee_nodal_officer_t3=to_dec(p("fee_nodal_officer_t3", 0.00)),
+                fee_nodal_officer_t4=to_dec(p("fee_nodal_officer_t4", 0.00)),
+
+                created_by=request.user,
+                is_active=True,
+            )
+            config.save()
+
+            # Now deactivate others (safely)
+            POSHPricingConfig.objects.exclude(id=config.id).update(is_active=False)
+
+            request.session['pricing_saved'] = True
+            messages.success(request, "POSH Billing Engine updated successfully!")
+        except Exception as e:
+            messages.error(request, f"Error updating pricing: {str(e)}")
+
+    return redirect("accounts_dashboard")
+
+
+@login_required(login_url="accounts_login")
+def accounts_verify_pocso_payment_view(request, registration_id):
+    """Mark a POCSO registration as verified by the accounts department"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    registration = get_object_or_404(POCSORegistration, id=registration_id)
+    registration.payment_status = 'VERIFIED'
+    registration.save()
     
-    context = {
-        "registration": registration,
-        "per_employee_price": per_employee_price,
-        "training_cost": training_cost,
+    messages.success(request, f"Payment for {registration.school_name} verified successfully!")
+    return redirect("accounts_dashboard")
+
+
+@login_required(login_url="accounts_login")
+def accounts_reject_pocso_payment_view(request, registration_id):
+    """Reject/reset a POCSO payment status back to PENDING"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+    registration = get_object_or_404(POCSORegistration, id=registration_id)
+    registration.payment_status = 'PENDING'
+    registration.save()
+    messages.warning(request, f"Payment for {registration.school_name} has been rejected.")
+    return redirect("accounts_dashboard")
+
+
+def get_pocso_pricing_context(registration):
+    """Refactored helper to calculate POCSO billing context for both customer billing and admin review"""
+    config = POCSOPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
+    if not config:
+        config = POCSOPricingConfig()
+
+    gst_pct = float(config.gst_percentage)
+    addon_fees = []
+    
+    if not registration.has_policy:
+        addon_fees.append({'label': 'Child Protection Policy Drafting', 'amount': float(config.fee_no_policy)})
+    if not registration.has_committee:
+        addon_fees.append({'label': 'Child Safety Committee Formation', 'amount': float(config.fee_no_committee)})
+    
+    if not registration.teaching_staff_trained:
+        mode = registration.teaching_training_mode or 'ONLINE'
+        mode_key = mode.lower().replace('_', '')
+        rate = getattr(config, f'teacher_rate_{mode_key}', config.teacher_rate_online)
+        count = registration.teachers_count
+        amount = count * float(rate)
+        addon_fees.append({'label': f'POCSO Awareness (Teaching Staff - {mode}) x {count}', 'amount': amount})
+    
+    if not registration.non_teaching_staff_trained:
+        mode = registration.non_teaching_training_mode or 'ONLINE'
+        mode_key = mode.lower().replace('_', '')
+        rate = getattr(config, f'staff_rate_{mode_key}', config.staff_rate_online)
+        count = registration.non_teaching_staff_count
+        amount = count * float(rate)
+        addon_fees.append({'label': f'POCSO Awareness (Non-Teaching Staff - {mode}) x {count}', 'amount': amount})
+        
+    if not registration.students_trained:
+        workshop_cost = registration.students_count * float(config.student_rate)
+        addon_fees.append({'label': f'Student Body Safety Workshop ({registration.students_count} students)', 'amount': workshop_cost})
+
+    subtotal = sum(f['amount'] for f in addon_fees)
+    tax = subtotal * (gst_pct / 100.0)
+    total = subtotal + tax
+
+    # early bird calculations
+    total_tier_1 = total * 0.80
+    total_tier_2 = total * 0.90
+    total_tier_3 = total
+
+    return {
+        "reg": registration,
+        "registration": registration, # Compatibility
+        "addon_fees": addon_fees,
         "subtotal": subtotal,
+        "gst_percentage": gst_pct,
         "tax": tax,
         "total": total,
-        "company_name": registration.company_name if registration else "Your Company"
+        "total_tier_1": total_tier_1,
+        "total_tier_2": total_tier_2,
+        "total_tier_3": total_tier_3,
     }
-    return render(request, "billing.html", context)
+
+@login_required(login_url="accounts_login")
+def accounts_pocso_registration_detail_view(request, registration_id):
+    """Full POCSO registration detail with billing breakdown for Accounts team review"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    registration = get_object_or_404(POCSORegistration, id=registration_id)
+    context = get_pocso_pricing_context(registration)
+    return render(request, "accounts_pocso_registration_detail.html", context)
+
+
+@login_required(login_url="accounts_login")
+def accounts_save_pocso_pricing_view(request):
+    """Save the POCSO pricing configuration with Flat Fee Model"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    if request.method == "POST":
+        from decimal import Decimal
+        # Deactivate all existing configs
+        POCSOPricingConfig.objects.update(is_active=False)
+
+        p = request.POST.get
+        gst_percentage_str = request.POST.get("gst_percentage", "").strip()
+        if gst_percentage_str == "":
+            gst_percentage = Decimal("18.00")
+        else:
+            gst_percentage = Decimal(gst_percentage_str)
+
+        config = POCSOPricingConfig(
+            # Compliance Gap Fees (Flat)
+            fee_no_policy=p("fee_no_policy", 5000.00),
+            fee_no_committee=p("fee_no_committee", 5000.00),
+            # Redundant gap fees removed in favor of granular per-head rates
+
+            # Granular Training Rates
+            teacher_rate_online=p("teacher_rate_online", 136.00),
+            teacher_rate_offline=p("teacher_rate_offline", 136.00),
+            teacher_rate_elearning=p("teacher_rate_elearning", 136.00),
+            
+            staff_rate_online=p("staff_rate_online", 91.00),
+            staff_rate_offline=p("staff_rate_offline", 91.00),
+            staff_rate_elearning=p("staff_rate_elearning", 91.00),
+
+            student_rate=p("student_rate", 55.00),
+            
+            gst_percentage=gst_percentage,
+            created_by=request.user,
+            is_active=True,
+        )
+        config.save()
+        request.session['pocso_pricing_saved'] = True
+
+    return redirect("accounts_dashboard")
+
+def registration_selection_view(request):
+    """Simple selection page between POSH and POCSO registration"""
+    return render(request, "registration_selection.html")
+
+
+def posh_registration_view(request):
+    """Handle POSH compliance registration submission"""
+    if request.method == "POST":
+        data = request.POST
+        
+        # Determine IC training mode from hidden fields or radio
+        ic_training_mode = data.get("requested_ic_training_mode")
+        expert_led_type = data.get("requested_expert_led_type")
+        
+        reg = POSHRegistration(
+            contact_person=data.get("contact_person"),
+            designation=data.get("designation"),
+            city=data.get("city"),
+            phone=data.get("phone"),
+            email=data.get("email"),
+            website=data.get("website"),
+            company_name=data.get("company_name"),
+            employee_count=int(data.get("employee_count", 0)),
+            trained_employee_count=0, # Defaulting to 0 for now as it's required by model
+            last_training_year=data.get("last_training_year"),
+            has_posh_policy=data.get("has_posh_policy") == "yes",
+            has_ic=data.get("has_ic") == "yes",
+            ic_specialized_training=data.get("ic_specialized_training") == "yes",
+            ic_last_training_year=data.get("ic_last_training_year"),
+            require_ic_training=data.get("require_ic_training") == "yes",
+            requested_ic_training_mode=ic_training_mode,
+            requested_expert_led_type=expert_led_type,
+            external_member_support=data.get("external_member_support") == "yes",
+            require_external_member_support=data.get("require_external_member_support") == "yes",
+            she_box_registered=data.get("she_box_registered") == "yes",
+            nodal_officer_appointed=data.get("nodal_officer_appointed") == "yes",
+            annual_report_submitted=data.get("annual_report_submitted") == "yes",
+            require_nodal_officer_support=data.get("require_nodal_officer_support") == "yes",
+        )
+        reg.save()
+        request.session['last_registration_id'] = reg.id
+        return redirect("billing")
+
+    registration = None
+    if request.GET.get('edit') == 'true':
+        if request.user.is_authenticated:
+            registration = POSHRegistration.objects.filter(user=request.user).order_by('-created_at').first()
+        else:
+            reg_id = request.session.get('last_registration_id')
+            if reg_id:
+                registration = POSHRegistration.objects.filter(id=reg_id).first()
+
+    return render(request, "posh_registration.html", {"registration": registration})
+
+
+def pocso_registration_view(request):
+    """Handle POCSO compliance registration submission"""
+    if request.method == "POST":
+        data = request.POST
+        reg = POCSORegistration(
+            school_name=data.get("school_name"),
+            person_name=data.get("person_name"),
+            email=data.get("email"),
+            phone=data.get("phone"),
+            address=data.get("address"),
+            city=data.get("city"),
+            students_count=int(data.get("students_count", 0)),
+            teachers_count=int(data.get("teachers_count", 0)),
+            non_teaching_staff_count=int(data.get("non_teaching_staff_count", 0)),
+            has_policy=data.get("has_policy") == "yes",
+            has_committee=data.get("has_committee") == "yes",
+            teaching_staff_trained=data.get("teaching_staff_trained") == "yes",
+            non_teaching_staff_trained=data.get("non_teaching_staff_trained") == "yes",
+            students_trained=data.get("students_trained") == "yes",
+            vendors_access_premises=data.get("vendors_access_premises") == "yes",
+            has_transport=data.get("has_transport") == "yes",
+            # POCSO Training Preferences
+            teaching_training_mode=data.get("teaching_staff_training_pref"),
+            non_teaching_training_mode=data.get("non_teaching_staff_training_pref"),
+        )
+        reg.save()
+        request.session['last_pocso_registration_id'] = reg.id
+        return redirect("pocso_billing")
+
+    registration = None
+    if request.GET.get('edit') == 'true':
+        if request.user.is_authenticated:
+            registration = POCSORegistration.objects.filter(user=request.user).order_by('-created_at').first()
+        else:
+            reg_id = request.session.get('last_pocso_registration_id')
+            if reg_id:
+                registration = POCSORegistration.objects.filter(id=reg_id).first()
+
+    return render(request, "pocso_registration.html", {"registration": registration})
+
+
+def pocso_billing_view(request):
+    """Show billing breakdown for POCSO with calculated context"""
+    reg_id = request.session.get('last_pocso_registration_id')
+    if reg_id:
+        registration = POCSORegistration.objects.filter(id=reg_id).first()
+    else:
+        registration = POCSORegistration.objects.order_by('-created_at').first()
+    
+    if not registration:
+        return redirect("pocso_registration")
+        
+    context = get_pocso_pricing_context(registration)
+    return render(request, "pocso_billing.html", context)
+
+
+def submit_payment_view(request, registration_id):
+    """Handle payment screenshot upload for POSH"""
+    registration = get_object_or_404(POSHRegistration, id=registration_id)
+    if request.method == "POST":
+        screenshot = request.FILES.get("payment_screenshot")
+        if screenshot:
+            registration.payment_screenshot = screenshot
+            registration.payment_status = 'SUBMITTED'
+            registration.save()
+            return redirect("home") # Or congratulations page
+    return render(request, "submit_payment.html", {"registration": registration})
+
+
+def tutorial_view(request):
+    """Main landing page for training/tutorial"""
+    return render(request, "tutorial.html")
+
+
+def custom_logout(request):
+    logout(request)
+    return redirect("home")
+
+
+def custom_login_redirect(request):
+    if request.user.is_superuser:
+        return redirect("superuser_dashboard")
+    elif request.user.account_type == "ACCOUNTS":
+        return redirect("accounts_dashboard")
+    else:
+        return redirect("company_dashboard")
+
+
+def superuser_dashboard(request):
+    """Admin dashboard for managing organizations and subscriptions"""
+    if not request.user.is_superuser:
+        return redirect("home")
+    # ... logic for superuser dashboard ...
+    return render(request, "superuser_dashboard.html")
+
+
+def download_certificate(request, course_type):
+    """Generate and download certificate for POSH/POCSO"""
+    # Logic based on AssessmentProgress
+    return HttpResponse("Certificate generation logic here")
+
+def custom_402(request):
+    return render(request, "402.html")
+
