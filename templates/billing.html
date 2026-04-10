@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Proforma Invoice | Open Hand Solutions{% endblock %}
+{% block title %}Proforma Invoice | Open Hand Private Limited{% endblock %}
 
 {% block body %}
 <script src="https://cdn.tailwindcss.com"></script>
@@ -179,6 +179,9 @@
                     <!-- Header -->
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
                         <div>
+                            <div class="mb-6">
+                                <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Private Limited Logo" style="height: 60px; width: auto; object-fit: contain;">
+                            </div>
                             <div
                                 class="text-[0.65rem] font-black text-certificate-gold uppercase tracking-[0.3em] mb-4">
                                 Official Billing Summary</div>
@@ -293,7 +296,7 @@
                             OHS</div>
                         <div>
                             <p class="text-[0.6rem] font-bold text-slate-400 uppercase">Verification</p>
-                            <p class="text-xs font-bold text-slate-900 leading-none">Open Hand Solutions</p>
+                            <p class="text-xs font-bold text-slate-900 leading-none">Open Hand Private Limited</p>
                         </div>
                     </div>
                     <div class="text-right">
