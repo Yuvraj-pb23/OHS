@@ -99,6 +99,23 @@
             border-radius: 50%;
             margin-right: 4mm;
         }
+        .service-points {
+            margin-left: 10mm;
+            margin-bottom: 4mm;
+        }
+        .point-item {
+            font-size: 8pt;
+            color: #64748b;
+            margin-bottom: 1mm;
+            display: flex;
+            align-items: center;
+        }
+        .point-dot {
+            width: 1mm;
+            height: 1mm;
+            background-color: #cbd5e1;
+            margin-right: 2mm;
+        }
         .pricing-grid {
             display: flex;
             justify-content: space-between;
@@ -215,6 +232,16 @@
             <div class="service-dot"></div>
             {{ fee.label }}
         </div>
+        {% if fee.points %}
+        <div class="service-points">
+            {% for point in fee.points %}
+            <div class="point-item">
+                <div class="point-dot"></div>
+                {{ point }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% endfor %}
     </div>
 
@@ -252,7 +279,7 @@
 
     <div class="footer">
         <div class="footer-brand">
-            <div class="footer-logo">OHS</div>
+            <img src="{{ logo_path }}" alt="Logo" style="height: 6mm; width: auto; margin-right: 3mm;">
             <div>
                 <div style="font-weight: 800; font-size: 8pt;">Open Hand Private Limited</div>
                 <div style="font-size: 7pt; color: #94a3b8;">Official Verification Summary</div>

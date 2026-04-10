@@ -127,17 +127,26 @@ def get_posh_billing_data(registration):
     addon_fees.append({
         'label': f'POSH Act Compliance ({emp_count} Employees)',
         'amount': training_cost,
+        'points': ['Awareness Education', 'Certification Support', 'Compliance Records']
     })
     
     # 2b. Policy Drafting
     if not registration.has_posh_policy:
         fee = float(getattr(config, f'fee_no_posh_policy_{tier}', 0))
-        addon_fees.append({'label': 'POSH Protection Policy Drafting', 'amount': fee})
+        addon_fees.append({
+            'label': 'POSH Protection Policy Drafting', 
+            'amount': fee,
+            'points': ['Full Policy Drafting', 'Legal Verification', 'Final Document Provision']
+        })
             
     # 2c. IC Formation
     if not registration.has_ic:
         fee = float(getattr(config, f'fee_no_ic_{tier}', 0))
-        addon_fees.append({'label': 'Internal Committee (IC) Formation', 'amount': fee})
+        addon_fees.append({
+            'label': 'Internal Committee (IC) Formation', 
+            'amount': fee,
+            'points': ['Member Appointment', 'Roles & Responsibilities', 'Statutory Documentation']
+        })
             
     # 2d. IC Training (Simplified for PDF)
     if registration.require_ic_training or not registration.has_ic:
@@ -155,17 +164,29 @@ def get_posh_billing_data(registration):
             elif year == '2023-2025': rate_field = 'fee_ic_history_24_25'
 
         fee = float(getattr(config, f'{rate_field}_{tier}', 0))
-        addon_fees.append({'label': 'IC Specialized Training', 'amount': fee})
+        addon_fees.append({
+            'label': 'IC Specialized Training', 
+            'amount': fee,
+            'points': ['Expert-Led Session', 'Case Study Analysis', 'Legal Framework']
+        })
 
     # 2e. External Member Support
     if registration.require_external_member_support:
         fee = float(getattr(config, f'fee_no_external_member_{tier}', 0))
-        addon_fees.append({'label': 'External Member Matchmaking', 'amount': fee})
+        addon_fees.append({
+            'label': 'External Member Matchmaking', 
+            'amount': fee,
+            'points': ['Authorized Expert Search', 'Statutory Compliance', 'Yearly Support']
+        })
             
     # 2f. Statutory Portal (SHe Box)
     if not registration.she_box_registered or registration.require_nodal_officer_support:
         fee = float(getattr(config, f'fee_not_she_box_{tier}', 0))
-        addon_fees.append({'label': 'Statutory Portal Compliance (SHe Box)', 'amount': fee})
+        addon_fees.append({
+            'label': 'Statutory Portal Compliance (SHe Box)', 
+            'amount': fee,
+            'points': ['Portal Registration', 'Digital Onboarding', 'Compliance Maintenance']
+        })
 
     subtotal = sum(item['amount'] for item in addon_fees)
     gst_rate = float(config.gst_percentage) / 100
@@ -190,9 +211,17 @@ def get_pocso_billing_data(registration):
     addon_fees = []
     
     if not registration.has_policy:
-        addon_fees.append({'label': 'Child Protection Policy Drafting', 'amount': float(config.fee_no_policy)})
+        addon_fees.append({
+            'label': 'Child Protection Policy Drafting', 
+            'amount': float(config.fee_no_policy),
+            'points': ['Drafting & Customization', 'Statutory Review', 'Institutional Integration']
+        })
     if not registration.has_committee:
-        addon_fees.append({'label': 'Child Safety Committee Formation', 'amount': float(config.fee_no_committee)})
+        addon_fees.append({
+            'label': 'Child Safety Committee Formation', 
+            'amount': float(config.fee_no_committee),
+            'points': ['Member Selection Support', 'Appointment Letters', 'Statutory Documentation']
+        })
     
     if not registration.teaching_staff_trained:
         mode = (registration.teaching_training_mode or 'ONLINE').upper()
@@ -206,7 +235,11 @@ def get_pocso_billing_data(registration):
             amount = rate
             label = f'POCSO Awareness: Teaching Staff ({mode.title()} - Fixed Fee)'
             
-        addon_fees.append({'label': label, 'amount': amount})
+        addon_fees.append({
+            'label': label, 
+            'amount': amount,
+            'points': ['Educational Resource Access', 'Certification Support', 'Compliance Reporting']
+        })
     
     if not registration.non_teaching_staff_trained:
         mode = (registration.non_teaching_training_mode or 'ONLINE').upper()
@@ -220,12 +253,20 @@ def get_pocso_billing_data(registration):
             amount = rate
             label = f'POCSO Awareness: Non-Teaching Staff ({mode.title()} - Fixed Fee)'
             
-        addon_fees.append({'label': label, 'amount': amount})
+        addon_fees.append({
+            'label': label, 
+            'amount': amount,
+            'points': ['Educational Resource Access', 'Certification Support', 'Compliance Reporting']
+        })
         
     student_workshop_total = 0
     if not registration.students_trained:
         student_workshop_total = registration.students_count * float(config.student_rate)
-        addon_fees.append({'label': f'Student Body Safety Workshop', 'amount': student_workshop_total})
+        addon_fees.append({
+            'label': f'Student Body Safety Workshop', 
+            'amount': student_workshop_total,
+            'points': ['Student Outreach', 'Safety Awareness Curriculum', 'Institutional Safety Audit']
+        })
 
     subtotal = sum(f['amount'] for f in addon_fees)
     gst_amount = subtotal * (gst_pct / 100.0)

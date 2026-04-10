@@ -154,6 +154,9 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
         subject = subject.replace(placeholder, str(val))
         body_content = body_content.replace(placeholder, str(val))
 
+    # 3. Logo URL for Email
+    logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
+
     # 3. Generate Invoice HTML for Email Body
     # (Billing data already calculated above)
 
@@ -164,6 +167,7 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
         'body_content': body_content,
         'registration_type': registration_type,
         'tier_key': tier_key,
+        'logo_url': logo_url,
     })
     text_content = strip_tags(html_content)
 

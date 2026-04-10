@@ -20,9 +20,7 @@
 <body>
     <div class="container">
         <div class="header">
-                <div style="font-size: 24px; font-weight: bold; color: #ffffff; margin-bottom: 20px;">
-                    Open Hand Solutions
-                </div>
+            <img src="{{ logo_url }}" alt="Open Hand Solutions" style="height: 50px; width: auto; margin-bottom: 10px;">
             <div style="color: #6366f1; font-size: 10px; font-weight: bold; letter-spacing: 2px; text-transform: uppercase;">Official Communication</div>
         </div>
         <div class="content">
@@ -30,9 +28,28 @@
                 {{ body_content|safe|linebreaks }}
             </div>
 
-            <!-- Pricing summary removed as per request to hide costs in emails -->
-
-            <!-- Portal links removed as per request -->
+            <!-- Services Summary -->
+            <div style="margin-top: 30px; border-top: 1px solid #f1f5f9; pt-20">
+                <p style="font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">
+                    Services Included in Registration
+                </p>
+                {% for fee in billing_data.addon_fees %}
+                <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                        <span style="color: #10b981;">✓</span> {{ fee.label }}
+                    </div>
+                    {% if fee.points %}
+                    <div style="margin-left: 20px; margin-top: 5px;">
+                        {% for point in fee.points %}
+                        <div style="font-size: 12px; color: #64748b; margin-bottom: 2px;">
+                            • {{ point }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
         </div>
         <div class="footer">
             <p><strong>Open Hand Private Limited</strong></p>

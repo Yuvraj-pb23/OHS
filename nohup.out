@@ -43,3 +43,656 @@ System check identified 1 issue (0 silenced).
 [10/Apr/2026 12:23:09] "GET /accounts-portal/dashboard/ HTTP/1.1" 200 184026
 [10/Apr/2026 12:23:09] "GET /static/img/footer-logo.png?v=1.1 HTTP/1.1" 200 7874
 [10/Apr/2026 12:23:11] "GET /favicon.ico HTTP/1.1" 404 2335
+Loading Faiss index from /home/hanuai/Documents/OHS/OHS/chat/data/bot.index...
+Loading answers from /home/hanuai/Documents/OHS/OHS/chat/data/answers.json...
+RAG Chatbot loaded successfully.
+April 10, 2026 - 12:16:51
+Django version 6.0.3, using settings 'OHS.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator SVC from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator Pipeline from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator LabelEncoder from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Performing system checks...
+
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1321.01it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Attempting to load real models...
+Loading RAG model: all-MiniLM-L6-v2...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1373.40it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+
+System check identified 1 issue (0 silenced).
+[10/Apr/2026 12:44:26] "GET /accounts-portal/dashboard/ HTTP/1.1" 200 184026
+[10/Apr/2026 12:44:26] "GET /static/img/footer-logo.png?v=1.1 HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "POST /logout/ HTTP/1.1" 302 0
+[10/Apr/2026 12:44:35] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 12:44:35] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:44:35] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:44:35] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 12:44:35] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:44:35] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:44:36] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 12:44:38] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 12:45:18] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 12:45:18] "GET /billing/ HTTP/1.1" 200 41895
+[10/Apr/2026 12:45:18] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:45:18] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:45:18] "GET /media/QR%20OHS.png HTTP/1.1" 304 0
+[10/Apr/2026 12:45:35] "GET /posh-registration/?edit=true HTTP/1.1" 200 35100
+[10/Apr/2026 12:45:48] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 12:45:49] "GET /billing/ HTTP/1.1" 200 41900
+[10/Apr/2026 12:45:49] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:45:49] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:45:49] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 12:45:49] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 12:45:49] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 12:45:49] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 12:45:49] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:45:49] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "POST /billing/submit-payment/55/ HTTP/1.1" 302 0
+[10/Apr/2026 12:46:26] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 12:46:26] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:26] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:26] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 12:46:26] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 12:46:27] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:27] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:44] "GET /login/? HTTP/1.1" 200 18326
+[10/Apr/2026 12:46:44] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:44] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:46:58] "POST /login/? HTTP/1.1" 302 0
+[10/Apr/2026 12:46:58] "GET /accounts/profile/ HTTP/1.1" 302 0
+[10/Apr/2026 12:46:58] "GET /accounts-portal/dashboard/ HTTP/1.1" 200 187501
+[10/Apr/2026 12:46:58] "GET /static/img/footer-logo.png?v=1.1 HTTP/1.1" 304 0
+[10/Apr/2026 12:49:17] "POST /accounts-portal/save-email-templates/ HTTP/1.1" 302 0
+[10/Apr/2026 12:49:18] "GET /accounts-portal/dashboard/?active_tab=emails HTTP/1.1" 200 189109
+[10/Apr/2026 12:49:18] "GET /static/img/footer-logo.png?v=1.1 HTTP/1.1" 304 0
+[10/Apr/2026 12:51:14] "GET /accounts-portal/dashboard/?active_tab=emails HTTP/1.1" 200 188153
+[10/Apr/2026 12:51:14] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+Loading Faiss index from /home/hanuai/Documents/OHS/OHS/chat/data/bot.index...
+Loading answers from /home/hanuai/Documents/OHS/OHS/chat/data/answers.json...
+RAG Chatbot loaded successfully.
+April 10, 2026 - 12:40:34
+Django version 6.0.3, using settings 'OHS.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+--- Login Attempt for: accounts ---
+Found User in DB: accounts (Email: )
+Password matches! Logging in...
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator SVC from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator Pipeline from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator LabelEncoder from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Performing system checks...
+
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1235.53it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Attempting to load real models...
+Loading RAG model: all-MiniLM-L6-v2...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1402.39it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+
+System check identified 1 issue (0 silenced).
+[10/Apr/2026 12:54:39] "GET /accounts-portal/dashboard/?active_tab=emails HTTP/1.1" 200 188153
+[10/Apr/2026 12:54:40] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 12:55:19] "POST /accounts-portal/save-pocso-pricing/ HTTP/1.1" 302 0
+[10/Apr/2026 12:55:19] "GET /accounts-portal/dashboard/?active_tab=pocso_pricing HTTP/1.1" 200 188776
+[10/Apr/2026 12:58:22] "POST /accounts-portal/save-email-templates/ HTTP/1.1" 302 0
+[10/Apr/2026 12:58:23] "GET /accounts-portal/dashboard/?active_tab=emails HTTP/1.1" 200 189965
+[10/Apr/2026 12:58:23] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "POST /logout/ HTTP/1.1" 302 0
+[10/Apr/2026 12:58:48] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 12:58:48] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:58:48] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:58:48] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:58:48] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 12:58:48] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:58:48] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 12:58:50] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 12:58:51] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 12:59:24] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 12:59:24] "GET /billing/ HTTP/1.1" 200 41907
+[10/Apr/2026 12:59:24] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 12:59:24] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 12:59:24] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:00:01] "POST /billing/submit-payment/56/ HTTP/1.1" 302 0
+[10/Apr/2026 13:00:01] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 13:00:01] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:00:01] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:00:01] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:00:01] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:00:01] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:00:01] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:01:28] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 13:01:29] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 13:02:01] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 13:02:01] "GET /billing/ HTTP/1.1" 200 36712
+[10/Apr/2026 13:02:01] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:01] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:01] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:02:01] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:02:01] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:01] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:02:01] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:01] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "POST /billing/submit-payment/57/ HTTP/1.1" 302 0
+[10/Apr/2026 13:02:55] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 13:02:55] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:55] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:55] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:55] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:02:55] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:02:56] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:02:56] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:10:19] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 13:10:19] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:10:19] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:10:19] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:19] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:10:20] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:10:20] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:10:21] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 13:10:23] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 13:11:06] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 13:11:06] "GET /billing/ HTTP/1.1" 200 37047
+[10/Apr/2026 13:11:06] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:07] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:53] "POST /billing/submit-payment/58/ HTTP/1.1" 302 0
+[10/Apr/2026 13:11:54] "GET / HTTP/1.1" 200 89473
+[10/Apr/2026 13:11:54] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:54] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:54] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:54] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:11:54] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:11:54] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:18:35] "GET /login/? HTTP/1.1" 200 18326
+[10/Apr/2026 13:18:35] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:18:35] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:18:35] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:18:35] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:18:35] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:18:35] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:18:35] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:18:35] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:18:49] "POST /login/? HTTP/1.1" 302 0
+[10/Apr/2026 13:18:49] "GET /accounts/profile/ HTTP/1.1" 302 0
+[10/Apr/2026 13:18:50] "GET /accounts-portal/dashboard/ HTTP/1.1" 200 194248
+[10/Apr/2026 13:21:06] "GET / HTTP/1.1" 200 89177
+[10/Apr/2026 13:21:06] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:06] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:06] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:06] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:21:06] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:06] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:07] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 13:21:11] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 13:21:39] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 13:21:39] "GET /billing/ HTTP/1.1" 200 41970
+[10/Apr/2026 13:21:39] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:21:39] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:22:26] "POST /billing/submit-payment/59/ HTTP/1.1" 302 0
+[10/Apr/2026 13:22:26] "GET / HTTP/1.1" 200 89177
+[10/Apr/2026 13:22:26] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:22:26] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:22:26] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:22:26] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:22:26] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:22:27] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:22:27] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+Loading Faiss index from /home/hanuai/Documents/OHS/OHS/chat/data/bot.index...
+Loading answers from /home/hanuai/Documents/OHS/OHS/chat/data/answers.json...
+RAG Chatbot loaded successfully.
+April 10, 2026 - 12:54:30
+Django version 6.0.3, using settings 'OHS.settings'
+Starting development server at http://0.0.0.0:8000/
+Quit the server with CONTROL-C.
+
+WARNING: This is a development server. Do not use it in a production setting. Use a production WSGI or ASGI server instead.
+For more information on production servers see: https://docs.djangoproject.com/en/6.0/howto/deployment/
+--- Login Attempt for: accounts ---
+Found User in DB: accounts (Email: )
+Password matches! Logging in...
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfTransformer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator TfidfVectorizer from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator SVC from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator Pipeline from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+/home/hanuai/Documents/OHS/OHS/env/lib/python3.12/site-packages/sklearn/base.py:463: InconsistentVersionWarning: Trying to unpickle estimator LabelEncoder from version 1.7.0 when using version 1.8.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:
+https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations
+  warnings.warn(
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Performing system checks...
+
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1526.14it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Attempting to load real models...
+Loading RAG model: all-MiniLM-L6-v2...
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 1108.01it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+System check identified some issues:
+
+WARNINGS:
+?: (urls.W005) URL namespace 'admin' isn't unique. You may not be able to reverse all URLs in this namespace
+
+System check identified 1 issue (0 silenced).
+[10/Apr/2026 13:32:56] "GET / HTTP/1.1" 200 89177
+[10/Apr/2026 13:32:56] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:32:56] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:32:56] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:32:56] "GET /static/css/index.css HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/p1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/font4.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:32:56] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client4.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client5.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client6.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client8.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client9.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client10.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client11.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client12.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client13.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client15.png HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client14.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client16.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client17.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client18.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/client19.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/clientN.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/clientN1.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/clientN2.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/clientN3.jpeg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/impact.avif HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/pocso1.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /static/img/photo-1486406146926-c627a92ad1ab%20(1).avif HTTP/1.1" 304 0
+[10/Apr/2026 13:32:56] "GET /footer.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:32:56] "GET /HTML/navbar.html HTTP/1.1" 404 2335
+[10/Apr/2026 13:33:11] "GET /registration-selection/ HTTP/1.1" 200 4731
+[10/Apr/2026 13:33:14] "GET /posh-registration/ HTTP/1.1" 200 34951
+[10/Apr/2026 13:34:25] "POST /posh-registration/ HTTP/1.1" 302 0
+[10/Apr/2026 13:34:25] "GET /billing/ HTTP/1.1" 200 38488
+[10/Apr/2026 13:34:25] "GET /static/img/logo_new.png HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/css/base.css HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:34:25] "GET /media/QR%20OHS.png HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/css/chatbot.css?v=1 HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:34:25] "GET /static/css/chatbot.css?v=11 HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/images/logo_v2.jpg HTTP/1.1" 304 0
+[10/Apr/2026 13:34:25] "GET /static/js/chatbot.js?v=12 HTTP/1.1" 304 0
+[10/Apr/2026 13:35:12] "POST /billing/submit-payment/60/ HTTP/1.1" 302 0
+[10/Apr/2026 13:35:12] "GET /billing/ HTTP/1.1" 200 27620
+[10/Apr/2026 13:35:12] "GET /static/css/new.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:35:12] "GET /static/css/footer.css HTTP/1.1" 404 2335
+[10/Apr/2026 13:35:28] "GET /posh-registration/ HTTP/1.1" 200 34951

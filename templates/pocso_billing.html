@@ -316,7 +316,7 @@
 
             <!-- UPLOAD SECTION -->
             <form action="{% url 'submit_payment' registration.id %}" method="POST" enctype="multipart/form-data"
-                class="w-full space-y-3">
+                class="w-full space-y-3" onsubmit="handlePaymentSubmit(this)">
                 {% csrf_token %}
                 <div class="space-y-1">
                     <label class="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest ml-1">Upload
@@ -336,7 +336,7 @@
                     </div>
                 </div>
 
-                <button type="submit"
+                <button type="submit" id="btn-payment-done"
                     class="w-full py-3 bg-success text-white rounded-xl font-black text-sm heading-font shadow-lg shadow-emerald-100 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
                     PAYMENT DONE <i class="fas fa-check text-xs"></i>
                 </button>
@@ -351,6 +351,14 @@
 
 <script>
     let selectedTierKey = null;
+
+    function handlePaymentSubmit(form) {
+        const btn = document.getElementById('btn-payment-done');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.style.cursor = 'not-allowed';
+    }
 
     function selectTier(tierIdx) {
         // Update card visuals

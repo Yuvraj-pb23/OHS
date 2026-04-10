@@ -454,6 +454,7 @@
         
         <aside class="sidebar" id="sidebar">
             <div class="logo">
+                <img src="{% static 'img/logo_new.png' %}" alt="Logo" style="height: 40px; width: auto; object-fit: contain;" id="sidebar-logo">
                 <i class="ri-menu-fold-line" id="menu-toggle"></i>
             </div>
             <ul class="menu">
@@ -728,6 +729,12 @@
         // Sidebar Toggles
         document.getElementById('menu-toggle').addEventListener('click', () => {
             document.getElementById('dashboard').classList.toggle('collapsed');
+            const logo = document.getElementById('sidebar-logo');
+            if (document.getElementById('dashboard').classList.contains('collapsed')) {
+                logo.style.display = 'none';
+            } else {
+                logo.style.display = 'block';
+            }
         });
         document.getElementById('mobile-toggle-btn').addEventListener('click', () => {
             document.getElementById('sidebar').classList.add('mobile-active');

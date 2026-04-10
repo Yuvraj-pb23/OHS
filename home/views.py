@@ -2336,6 +2336,7 @@ def get_pocso_pricing_context(registration):
         "total_tier_1": billing_data['total_amount'] * 0.8,
         "total_tier_2": billing_data['total_amount'] * 0.9,
         "total_tier_3": billing_data['total_amount'],
+        "payment_status": registration.payment_status,
     }
 
 @login_required(login_url="accounts_login")
@@ -2526,8 +2527,11 @@ def submit_payment_view(request, registration_id):
             from .email_utils import send_tiered_email
             send_tiered_email(registration, 'PAY_NOW', reg_type)
             
-            # Redirect to home (Success message removed as per request)
-            return redirect("home")
+            # Redirect to the respective billing page to show the success screen
+            if reg_type == 'POSH':
+                return redirect("billing")
+            else:
+                return redirect("pocso_billing")
             
     return render(request, "submit_payment.html", {"registration": registration})
 
