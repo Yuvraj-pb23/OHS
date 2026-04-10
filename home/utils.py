@@ -195,16 +195,32 @@ def get_pocso_billing_data(registration):
         addon_fees.append({'label': 'Child Safety Committee Formation', 'amount': float(config.fee_no_committee)})
     
     if not registration.teaching_staff_trained:
-        mode = registration.teaching_training_mode or 'ONLINE'
-        rate = getattr(config, f'teacher_rate_{mode.lower().replace("_", "")}', config.teacher_rate_online)
-        amount = registration.teachers_count * float(rate)
-        addon_fees.append({'label': f'POCSO Awareness (Teaching Staff)', 'amount': amount})
+        mode = (registration.teaching_training_mode or 'ONLINE').upper()
+        rate_attr = f'teacher_rate_{mode.lower().replace("_", "")}'
+        rate = float(getattr(config, rate_attr, config.teacher_rate_online))
+        
+        if mode == 'E_LEARNING':
+            amount = registration.teachers_count * rate
+            label = f'POCSO Awareness: Teaching Staff (Per Head x {registration.teachers_count})'
+        else:
+            amount = rate
+            label = f'POCSO Awareness: Teaching Staff ({mode.title()} - Fixed Fee)'
+            
+        addon_fees.append({'label': label, 'amount': amount})
     
     if not registration.non_teaching_staff_trained:
-        mode = registration.non_teaching_training_mode or 'ONLINE'
-        rate = getattr(config, f'staff_rate_{mode.lower().replace("_", "")}', config.staff_rate_online)
-        amount = registration.non_teaching_staff_count * float(rate)
-        addon_fees.append({'label': f'POCSO Awareness (Non-Teaching Staff)', 'amount': amount})
+        mode = (registration.non_teaching_training_mode or 'ONLINE').upper()
+        rate_attr = f'staff_rate_{mode.lower().replace("_", "")}'
+        rate = float(getattr(config, rate_attr, config.staff_rate_online))
+        
+        if mode == 'E_LEARNING':
+            amount = registration.non_teaching_staff_count * rate
+            label = f'POCSO Awareness: Non-Teaching Staff (Per Head x {registration.non_teaching_staff_count})'
+        else:
+            amount = rate
+            label = f'POCSO Awareness: Non-Teaching Staff ({mode.title()} - Fixed Fee)'
+            
+        addon_fees.append({'label': label, 'amount': amount})
         
     student_workshop_total = 0
     if not registration.students_trained:

@@ -527,8 +527,8 @@
                     <div class="space-y-6">
                         <div class="card p-8">
                             <div class="mb-6">
-                                <h3 class="heading-font text-xl font-bold text-white">Per-Head Training Rates</h3>
-                                <p class="text-xs text-text-muted mt-1">Standardized rates applied per person for various training modules.</p>
+                                <h3 class="heading-font text-xl font-bold text-white">POCSO Training Rates</h3>
+                                <p class="text-xs text-text-muted mt-1">Configure fixed fees for expert-led sessions and per-head rates for e-learning modules.</p>
                             </div>
                             <div class="space-y-4">
                                 <!-- Granular Training Rates -->
@@ -539,15 +539,15 @@
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online (Fixed)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_online" value="{{ pocso_config.teacher_rate_online|default_if_none:'136.00' }}" class="price-input"></div>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline (Fixed)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_offline" value="{{ pocso_config.teacher_rate_offline|default_if_none:'136.00' }}" class="price-input"></div>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning (Per-Head)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="teacher_rate_elearning" value="{{ pocso_config.teacher_rate_elearning|default_if_none:'136.00' }}" class="price-input"></div>
                                         </div>
                                     </div>
@@ -560,15 +560,15 @@
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Online (Fixed)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_online" value="{{ pocso_config.staff_rate_online|default_if_none:'91.00' }}" class="price-input"></div>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">Offline (Fixed)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_offline" value="{{ pocso_config.staff_rate_offline|default_if_none:'91.00' }}" class="price-input"></div>
                                         </div>
                                         <div class="space-y-1">
-                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning</label>
+                                            <label class="text-[0.6rem] font-bold text-text-muted uppercase tracking-wider">E-Learning (Per-Head)</label>
                                             <div class="relative"><span class="rupee-prefix">₹</span><input type="number" name="staff_rate_elearning" value="{{ pocso_config.staff_rate_elearning|default_if_none:'91.00' }}" class="price-input"></div>
                                         </div>
                                     </div>
