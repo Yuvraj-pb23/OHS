@@ -586,7 +586,7 @@
                 const response = await fetch(`/ajax/mod-complete/${id}/`, {
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
+                        'X-CSRFToken': getCsrfToken(),
                         'Content-Type': 'application/json'
                     }
                 });
@@ -618,7 +618,7 @@
                     const res = await fetch(`/ajax/update-watch-time/`, {
                         method: 'POST',
                         headers: {
-                            'X-CSRFToken': '{{ csrf_token }}',
+                            'X-CSRFToken': getCsrfToken(),
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({ seconds: deltaSeconds }),

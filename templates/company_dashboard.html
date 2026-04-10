@@ -1331,7 +1331,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         fetch("{% url 'save_logo_config' %}", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
             body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct })
         })
         .then(response => response.json())

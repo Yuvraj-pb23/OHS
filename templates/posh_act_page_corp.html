@@ -278,13 +278,16 @@
         const formData = new FormData();
         formData.append('new_password', newPw);
         formData.append('confirm_password', confirmPw);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        // CSRF handled via header
 
         fetch("{% url 'force_password_change' %}", {
             method: 'POST',
             body: formData,
             credentials: 'same-origin',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { 
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': getCsrfToken()
+            }
         })
         .then(res => res.json())
         .then(data => {
@@ -521,7 +524,7 @@
         console.log('markComplete called with moduleId:', moduleId);
         fetch(`/ajax/mod-complete/${moduleId}/`, {
             method: 'POST',
-            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+            headers: { 'X-CSRFToken': getCsrfToken() }
         })
         .then(r => r.json())
         .then(d => { 
@@ -776,7 +779,7 @@
                 const res = await fetch(`/ajax/update-watch-time/`, { 
                     method: 'POST',
                     headers: {
-                        'X-CSRFToken': '{{ csrf_token }}', 
+                        'X-CSRFToken': getCsrfToken(), 
                         'Content-Type': 'application/json' 
                     },
                     body: JSON.stringify({ seconds: deltaSeconds }),

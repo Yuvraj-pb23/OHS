@@ -97,7 +97,10 @@ function fetchAndShowIRCModal(topic) {
 
     fetch("/chat/chat/", {
         method: "POST",
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
+        },
         body: JSON.stringify({ message: topic })
     })
         .then(response => response.json())
@@ -204,7 +207,10 @@ function fetchAndShowIRCModal(topic) {
 
                 fetch("/chat/chat/", {
                     method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
                     body: JSON.stringify({ message: subtopic })
                 })
                     .then(res => res.json())
@@ -307,7 +313,10 @@ function fetchAndShowIRCModal(topic) {
 
                 fetch("/chat/chat/", {
                     method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
                     body: JSON.stringify({ message: question })
                 })
                     .then(res => res.json())
@@ -377,6 +386,7 @@ function fetchBotResponse(message) {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
+            'X-CSRFToken': getCsrfToken()
         },
         body: JSON.stringify({ message: message })
     })
@@ -570,7 +580,10 @@ function createImageResultsMessage(container, introText, images, searchedFigNumb
 
                 fetch("/chat/chat/", {
                     method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
                     body: JSON.stringify({ message: image.fig_number })
                 })
                     .then(response => response.json())

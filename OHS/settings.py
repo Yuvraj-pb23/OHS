@@ -26,7 +26,16 @@ SECRET_KEY = 'django-insecure-jf_-mlc346oc3-uzri+_p)xul%)y-6&j2h&(cr57cf0sdaownw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', '127.0.0.1']
+ALLOWED_HOSTS = ['*', '127.0.0.1', 'openhandsolutions.com', 'www.openhandsolutions.com']
+
+# Production Security Settings
+CSRF_TRUSTED_ORIGINS = [
+    'https://openhandsolutions.com',
+    'https://www.openhandsolutions.com'
+]
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
 
 
 # Application definition
