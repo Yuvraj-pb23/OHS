@@ -168,6 +168,43 @@
         .pill-toggle.dark span {
             color: rgba(255,255,255,0.5);
         }
+
+        /* Phone Input with Prefix Group */
+        .phone-group {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 0.75rem;
+            transition: all 0.25s;
+            overflow: hidden;
+            height: 48px; /* Consistent height */
+        }
+        .phone-group:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        }
+        .prefix-box {
+            background: #f8fafc;
+            padding: 0 1rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #1e1b4b; /* Matches primary theme */
+            border-right: 1.5px solid #e2e8f0;
+            user-select: none;
+        }
+        .phone-group .floating-input {
+            border: none;
+            border-radius: 0;
+            padding-left: 1rem;
+            height: 100%;
+        }
+        .phone-group .floating-input:focus {
+            box-shadow: none;
+        }
     </style>
 </head>
 <body class="py-10 px-4 antialiased">
@@ -221,11 +258,11 @@
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Phone</label>
-                            <div class="relative group">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-indigo-900/40">+91</span>
+                            <div class="phone-group">
+                                <span class="prefix-box">+91</span>
                                 <input type="tel" name="phone" id="phone_input" required 
                                        pattern="[0-9]{10}" maxlength="10"
-                                       class="floating-input !pl-12" 
+                                       class="floating-input" 
                                        placeholder="9876543210"
                                        value="{{ registration.phone|default:'' }}"
                                        onkeypress="return /[0-9]/.test(event.key)">

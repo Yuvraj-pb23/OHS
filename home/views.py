@@ -201,6 +201,10 @@ def custom_login_redirect(request):
     if user.account_type == "COMPANY_ADMIN":
         return redirect("company_dashboard")
 
+    # 1.5 ACCOUNTS -> Accounts Dashboard
+    if user.account_type == "ACCOUNTS":
+        return redirect("accounts_dashboard")
+
     # 2. USER (Employee/Individual) -> Direct to Training Page
     elif user.account_type in ["EMPLOYEE", "INDIVIDUAL"]:
         has_posh = Subscription.objects.filter(
@@ -1839,6 +1843,7 @@ def superuser_dashboard(request):
 
 def custom_logout(request):
     logout(request)
+    messages.success(request, "Successfully logged out.")
     return redirect("home")
 
 
@@ -2534,40 +2539,4 @@ def submit_payment_view(request, registration_id):
                 return redirect("pocso_billing")
             
     return render(request, "submit_payment.html", {"registration": registration})
-
-
-def tutorial_view(request):
-    """Main landing page for training/tutorial"""
-    return render(request, "tutorial.html")
-
-
-def custom_logout(request):
-    logout(request)
-    return redirect("home")
-
-
-def custom_login_redirect(request):
-    if request.user.is_superuser:
-        return redirect("superuser_dashboard")
-    elif request.user.account_type == "ACCOUNTS":
-        return redirect("accounts_dashboard")
-    else:
-        return redirect("company_dashboard")
-
-
-def superuser_dashboard(request):
-    """Admin dashboard for managing organizations and subscriptions"""
-    if not request.user.is_superuser:
-        return redirect("home")
-    # ... logic for superuser dashboard ...
-    return render(request, "superuser_dashboard.html")
-
-
-def download_certificate(request, course_type):
-    """Generate and download certificate for POSH/POCSO"""
-    # Logic based on AssessmentProgress
-    return HttpResponse("Certificate generation logic here")
-
-def custom_402(request):
-    return render(request, "402.html")
 
