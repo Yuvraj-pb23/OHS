@@ -149,23 +149,26 @@ def get_posh_billing_data(registration):
         })
             
     # 2d. IC Training (Simplified for PDF)
-    if registration.require_ic_training or not registration.has_ic:
-        rate_field = 'fee_ic_history_other'
-        if registration.require_ic_training:
-            req_mode = registration.requested_ic_training_mode
-            if req_mode == 'ONLINE': rate_field = 'fee_ic_requested_online'
-            elif req_mode == 'EXPERT_LED':
-                req_type = registration.requested_expert_led_type
-                if req_type == 'PHYSICAL': rate_field = 'fee_ic_requested_physical'
-                else: rate_field = 'fee_ic_requested_virtual'
+    if registration.require_ic_training:
+        req_mode = registration.requested_ic_training_mode
+        if req_mode == 'ONLINE':
+            rate_field = 'fee_ic_requested_online'
+            display_mode = 'Online'
+        elif req_mode == 'EXPERT_LED':
+            req_type = registration.requested_expert_led_type
+            if req_type == 'PHYSICAL':
+                rate_field = 'fee_ic_requested_physical'
+                display_mode = 'Physical'
+            else:
+                rate_field = 'fee_ic_requested_virtual'
+                display_mode = 'Virtual'
         else:
-            year = registration.ic_last_training_year
-            if year == '2021-2022': rate_field = 'fee_ic_history_21_23'
-            elif year == '2023-2025': rate_field = 'fee_ic_history_24_25'
+            rate_field = 'fee_ic_history_other'
+            display_mode = 'Standard'
 
         fee = float(getattr(config, f'{rate_field}_{tier}', 0))
         addon_fees.append({
-            'label': 'IC Specialized Training', 
+            'label': f'IC Specialized Training ({display_mode})', 
             'amount': fee,
             'points': ['Expert-Led Session', 'Case Study Analysis', 'Legal Framework']
         })

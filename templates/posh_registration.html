@@ -486,7 +486,7 @@
                             </div>
                         </div>
 
-                         <div id="ic-details" class="{% if not registration.has_ic %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn">
+                         <div id="ic-history-box" class="{% if not registration.has_ic %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
                              <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-500 uppercase">Has the IC received specialized training as per Act?</span>
                                 <div class="pill-toggle w-32 bg-white">
@@ -516,8 +516,10 @@
                                      </div>
                                  </div>
                              </div>
+                         </div>
 
-                             <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+                         <div id="ic-training-requirement-box" class="{% if not registration.require_ic_training and not registration.has_ic == False %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
+                             <div class="flex items-center justify-between">
                                 <span class="text-xs font-bold text-slate-500 uppercase">Do you require IC training as per Act?</span>
                                 <div class="pill-toggle w-32 bg-white">
                                     <label><input type="radio" name="require_ic_training" value="yes" class="peer hidden" onchange="toggleRequireICTrainingMode(true)" {% if registration.require_ic_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
@@ -565,7 +567,7 @@
                                      </div>
                                  </div>
                              </div>
-                        </div>
+                         </div>
 
                         <div class="compact-row">
                             <span class="text-sm font-semibold">Do you have external member in IC?</span>
@@ -687,22 +689,35 @@
             return valid;
         }
 
-        function toggleICFields(show) {
-            const el = document.getElementById('ic-details');
-            el.classList.toggle('hidden', !show);
-            // Updated to handle require_ic_training as well
-            el.querySelectorAll('input, select').forEach(i => {
-                if (show) {
-                    if (i.name === 'require_ic_training' || i.name === 'ic_specialized_training') {
-                        i.setAttribute('required', '');
-                    }
+        function toggleICFields(hasIC) {
+            const historyBox = document.getElementById('ic-history-box');
+            const trainingBox = document.getElementById('ic-training-requirement-box');
+            
+            // Show history only if IC exists
+            historyBox.classList.toggle('hidden', !hasIC);
+            
+            // Show training requirement box if IC question is answered (both Yes and No cases)
+            trainingBox.classList.remove('hidden');
+            
+            // Handle required attributes for history
+            historyBox.querySelectorAll('input, select').forEach(i => {
+                if (hasIC) {
+                    if (i.name === 'ic_specialized_training') i.setAttribute('required', '');
                 } else {
                     i.removeAttribute('required');
                 }
             });
-            // If hiding IC details, also hide nested boxes
-            if (!show) {
-                toggleRequireICTrainingMode(false);
+
+            // Handle required attributes for training box (it's always required now)
+            trainingBox.querySelectorAll('input[type="radio"]').forEach(i => {
+                if (i.name === 'require_ic_training') i.setAttribute('required', '');
+            });
+
+            if (!hasIC) {
+                // If no IC, we might still want to reset history fields
+                const specializedTrainingNo = document.querySelector('input[name="ic_specialized_training"][value="no"]');
+                if (specializedTrainingNo) specializedTrainingNo.checked = true;
+                toggleSpecializedTrainingFields(false);
             }
         }
 

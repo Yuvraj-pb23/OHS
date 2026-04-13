@@ -167,7 +167,7 @@
                                 class="text-[0.65rem] font-black text-certificate-gold uppercase tracking-[0.3em] mb-4">
                                 Official POCSO Billing</div>
                             <h1 class="text-2xl md:text-3xl font-black text-primary heading-font tracking-tight mb-2">
-                                Cost Summary</h1>
+                                Proforma Invoice</h1>
                             <p class="text-slate-400 text-sm">Ref: #POCSO-{{ registration.id }}-{{ registration.created_at|date:"Ymd" }}</p>
                         </div>
                         <div class="text-left md:text-right">
@@ -195,7 +195,7 @@
                     </div>
 
                     <!-- Line Items -->
-                    <div class="grid grid-cols-1 gap-y-6 mb-16">
+                    <div class="grid grid-cols-1 gap-y-6">
                         {% for fee in addon_fees %}
                         <div class="flex flex-col gap-1">
                             <div class="flex items-start gap-3">
@@ -205,7 +205,6 @@
                                         {{ fee.label }}
                                         <i class="fas fa-check-circle text-emerald-500 ml-1 text-[0.7rem]"></i>
                                     </p>
-                                    {# <p class="text-xs text-slate-400">₹{{ fee.amount|floatformat:2 }}</p> #}
                                 </div>
                             </div>
                             {% if fee.points %}
@@ -220,6 +219,7 @@
                         </div>
                         {% endfor %}
                     </div>
+
 
                     <!-- Grand Total - Tiered Pricing -->
                     <div class="p-8 bg-rose-50 rounded-2xl border border-rose-100">
