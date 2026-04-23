@@ -389,6 +389,15 @@ def company_subscription(request, plan_type):
                 from django.core import signing
                 payload = signing.loads(setup_token, salt='posh-admin-setup', max_age=60*60*72)  # 72h
                 email = payload['email']
+                # Auto-populate company name from the POSH registration
+                if not comp_name:
+                    try:
+                        from home.models import POSHRegistration
+                        posh_reg = POSHRegistration.objects.get(id=payload['reg_id'])
+                        comp_name = posh_reg.company_name
+                        seats = posh_reg.employee_count or seats
+                    except Exception:
+                        pass
             except Exception:
                 messages.error(request, "Invalid or expired setup link. Please contact support.")
                 return redirect(request.path)
@@ -504,9 +513,22 @@ def add_employee(request):
             )
             return redirect("company_dashboard")
 
-        emp_name = request.POST.get("emp_name")
-        emp_email = request.POST.get("emp_email")
-        emp_password = request.POST.get("emp_password")
+        emp_name        = request.POST.get("emp_name")
+        emp_email       = request.POST.get("emp_email")
+        emp_password    = request.POST.get("emp_password")
+        emp_designation = request.POST.get("emp_designation", "").strip()
+
+        # Use employee_count from POSH registration as the seat limit if available
+        from home.models import POSHRegistration
+        posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
+        seat_limit = posh_reg.employee_count if posh_reg else org.max_users
+
+        if current_count >= seat_limit:
+            messages.error(
+                request,
+                f"Employee limit reached ({seat_limit} from registration). Contact Open Hand Solutions to expand.",
+            )
+            return redirect("company_dashboard")
 
         # Use default password if not provided in form
         if not emp_password:
@@ -529,6 +551,7 @@ def add_employee(request):
                 )
                 new_user.first_name = emp_name
                 new_user.account_type = "EMPLOYEE"
+                new_user.designation = emp_designation or None
                 new_user.force_password_change = (
                     True  # Force password change on first login
                 )
@@ -540,14 +563,20 @@ def add_employee(request):
                     organization=org, user=new_user, role="MEMBER"
                 )
 
-                # Send welcome email with credentials
+                # Send welcome email with credentials + training link
                 from home.email_utils import send_welcome_email
+                from django.conf import settings as django_settings
+                site_base = getattr(django_settings, 'SITE_URL', 'https://openhandsolutions.com')
+                training_link = f"{site_base}/login/"
+                company_name = posh_reg.company_name if posh_reg else org.name
 
                 send_welcome_email(
                     new_user,
                     emp_password,
                     is_company_employee=True,
-                    organization_name=org.name,
+                    organization_name=company_name,
+                    training_link=training_link,
+                    designation=emp_designation,
                 )
 
             messages.success(request, f"{emp_name} added successfully!")
@@ -708,24 +737,47 @@ def company_dashboard(request):
         m for m in members if hasattr(m, "has_certificate") and m.has_certificate
     ]
 
-    # Ensure organization has a default password
+    # Look up the company name from POSH registration by the org owner's email
+    from home.models import POSHRegistration
+    posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
+    posh_company_name = posh_reg.company_name if posh_reg else org.name
+
+    # If org name is still the auto-generated fallback, update it + regenerate password
+    if posh_reg and (
+        org.name == f"{org.owner.first_name}'s Organization"
+        or not org.name
+    ):
+        org.name = posh_reg.company_name
+        org.default_password = org.generate_default_password()
+        org.save()
+
+    # Ensure organization has a default password (generate if missing)
     if not org.default_password:
+        org.default_password = org.generate_default_password()
+        org.save()
+
+    # Force-regenerate password if prefix doesn't match company name
+    # (handles case where org name was corrected but old password was already saved)
+    expected_prefix = ''.join(c for c in org.name if c.isalnum())[:4].upper()
+    if org.default_password and not org.default_password.upper().startswith(expected_prefix):
         org.default_password = org.generate_default_password()
         org.save()
 
     context = {
         "organization": org,
+        "posh_company_name": posh_company_name,
+        "posh_reg_employee_count": posh_reg.employee_count if posh_reg else org.max_users,
         "active_plan": active_sub,
         "members": members,
         "seats_used": total_employees,
-        "seats_remaining": seats_remaining,
+        "seats_remaining": (posh_reg.employee_count if posh_reg else org.max_users) - total_employees,
         "total_employees": total_employees,
         "training_completed": training_completed_count,
         "training_pending": training_pending,
         "total_modules_count": total_modules_count,
         "certified_employees": certified_employees,
         "training_type": training_type,
-        "default_password": org.default_password,  # Pass default password to template
+        "default_password": org.default_password,
         "logout_url": "hr_logout",
     }
 

@@ -24,6 +24,9 @@ class User(AbstractUser):
     # Unique user ID
     user_id = models.CharField(max_length=20, unique=True, blank=True, null=True)
     
+    # Job designation / title
+    designation = models.CharField(max_length=150, blank=True, null=True)
+    
     # Force password change on first login for company employees
     force_password_change = models.BooleanField(default=False)
 

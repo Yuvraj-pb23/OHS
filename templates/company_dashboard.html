@@ -711,7 +711,7 @@
   <nav class="sidebar">
     <a href="#" class="sidebar-brand">
       <i class="bi bi-building"></i>
-      <span>{{ organization.name }}</span>
+      <span>{{ posh_company_name }}</span>
     </a>
 
     <!-- NEW CODE -->
@@ -1573,16 +1573,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
             <input class="form-control mb-3" name="emp_email" type="email" placeholder="Email" required />
 
+            <input class="form-control mb-3" name="emp_designation" placeholder="Designation (e.g. Manager, Developer)" />
+
             <div class="mb-3">
-              <label class="form-label small">Employee Limit (from Subscription)</label>
-              <input class="form-control" type="number" value="{{ organization.max_users }}" readonly style="background-color: rgba(251, 191, 36, 0.07);
+              <label class="form-label small">Employee Limit (from Registration)</label>
+              <input class="form-control" type="number" value="{{ posh_reg_employee_count|default:organization.max_users }}" readonly style="background-color: rgba(251, 191, 36, 0.07);
                             border-color: #fbbf24;
                             color: #fbbf24;
                             font-weight: 700;
                             font-size: 1.1rem;
                             text-align: center;
                             cursor: not-allowed;" />
-              <small class="text-muted">&#128274; Set during subscription. Cannot be changed.</small>
+              <small class="text-muted">&#128274; Seats used: {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }} &nbsp;|&nbsp; Remaining: {{ seats_remaining }}</small>
             </div>
 
             <div class="mb-3">

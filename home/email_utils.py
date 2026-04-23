@@ -2,12 +2,14 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
-def send_welcome_email(user, password, is_company_employee=False, organization_name=None):
+def send_welcome_email(user, password, is_company_employee=False, organization_name=None, training_link=None, designation=None):
     """Send welcome email with login credentials.
     Uses the EMPLOYEE_WELCOME EmailTemplate from DB if available, otherwise falls back to default."""
     from home.models import EmailTemplate
 
     template = EmailTemplate.objects.filter(tier_key='EMPLOYEE_WELCOME').first()
+
+    site_base = training_link or 'https://openhandsolutions.com/login'
 
     if template and template.subject and template.body:
         subject = template.subject
@@ -16,45 +18,47 @@ def send_welcome_email(user, password, is_company_employee=False, organization_n
             company_name=organization_name or 'Open Hand Solution',
             password=password,
             email=user.email,
-            login_url='https://openhandsolutions.com/login',
+            login_url=site_base,
+            designation=designation or 'Employee',
+            training_link=site_base,
         )
     elif is_company_employee:
-        subject = 'Welcome to Open Hand Solution - Your Account Details'
+        subject = 'Welcome to Open Hand Solution – Your Training Account'
         body = f"""Hello {user.first_name},
 
 Welcome to Open Hand Solution!
 
-Your account has been created by {organization_name}. Here are your login credentials:
+Your training account has been created by {organization_name}. Here are your login credentials:
 
-Name: {user.get_full_name() or user.first_name}
-Email/Username: {user.email}
+Name:               {user.get_full_name() or user.first_name}
+Designation:        {designation or 'Employee'}
+Email / Username:   {user.email}
 Temporary Password: {password}
 
-IMPORTANT: For security reasons, you will be required to change your password upon first login.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔗 Access your POSH Training Portal here:
+{site_base}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Please visit your training portal and login with these credentials.
+IMPORTANT: You will be required to change your password upon first login.
 
-If you have any questions, please contact your HR department or reply to this email.
+If you have any questions, please contact your HR department.
 
 Best regards,
 Open Hand Solution Team"""
     else:
-        subject = 'Welcome to Open Hand Solution - Your Account Details'
+        subject = 'Welcome to Open Hand Solution – Your Account Details'
         body = f"""Hello {user.first_name},
 
 Welcome to Open Hand Solution!
 
 Your account has been successfully created. Here are your login credentials:
 
-Name: {user.get_full_name() or user.first_name}
-Email/Username: {user.email}
+Name:     {user.get_full_name() or user.first_name}
+Email:    {user.email}
 Password: {password}
 
 Please keep these credentials safe and secure.
-
-You can now login and access your training materials.
-
-If you have any questions, please feel free to reply to this email.
 
 Best regards,
 Open Hand Solution Team"""
@@ -71,6 +75,7 @@ Open Hand Solution Team"""
     except Exception as e:
         print(f"Error sending email: {e}")
         return False
+
 
 
 
