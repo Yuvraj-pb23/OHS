@@ -99,7 +99,7 @@
       border-right: 1px solid var(--border-color);
       padding: var(--space-6) 0;
       z-index: 1000;
-      overflow-y: auto;
+      overflow: hidden;
       box-shadow: var(--shadow-sm);
     }
 
@@ -719,7 +719,7 @@
       <i class="bi bi-box-arrow-left"></i><span>Logout</span>
     </a>
 
-    <ul class="nav flex-column px-3 mt-3">
+    <ul class="nav flex-column px-3 mt-3" style="display: flex; flex-direction: column; height: calc(100vh - 200px);">
       <li class="nav-item">
         <a class="nav-link active" onclick="showSection('dashboard', this)">
           <i class="bi bi-speedometer2"></i>
@@ -745,6 +745,14 @@
         </a>
       </li>
     </ul>
+
+    <!-- Settings pinned to bottom -->
+    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 0 12px 16px; border-top: 1px solid var(--border-color); background: var(--bg-sidebar);">
+      <a class="nav-link" onclick="showSection('settings', this)" style="color: var(--text-secondary); display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
+        <i class="bi bi-gear"></i>
+        <span>Settings</span>
+      </a>
+    </div>
   </nav>
 
   <main class="main-content">
@@ -887,26 +895,24 @@
                 <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none">
                   <!-- PPT Pie -->
                   <div class="mini-stat-card">
-                    <h3>Quiz Health</h3>
+                    <h3>PPT Health</h3>
                     <div class="chart-container">
-                      <!-- Mock data for PPT (e.g. 60%) for demonstration -->
                       <canvas id="pie-ppts-{{ member.id }}" data-percent="{{ member.ppt_percent }}" width="35" height="35" style="display: block;"></canvas>
                     </div>
                   </div>
 
-                  <!-- PPT Time -->
+                  <!-- PPT Status -->
                   <div class="mini-stat-card">
-                    <h3>Reading Time</h3>
-                    <!-- Different color to show change -->
-                    <p class="time-text" style="color: var(--lms-pending);">
-                      (In Total)
+                    <h3>PPT Status</h3>
+                    <p class="time-text" style="color: var(--lms-pending); font-size: 0.85rem;">
+                      {% if member.ppt_percent == 100 %}✅ All Done{% else %}⏳ In Progress{% endif %}
                     </p>
-                    <small class="text-muted">Tracked in Watch Time</small>
+                    <small class="text-muted">Reading Materials</small>
                   </div>
 
-                  <!-- PPT Progress Bar -->
+                  <!-- PPT Completion % -->
                   <div class="mini-stat-card">
-                    <h3>Quiz Comp.</h3>
+                    <h3>PPT Comp.</h3>
                     <h2 style="
                           margin: 0;
                           color: var(--lms-pending);
@@ -923,15 +929,16 @@
                   </div>
                 </div>
 
+
                 <!-- === TABS === -->
                 <div class="lms-tab-header">
                   <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}"
                     onclick="switchModalTab('{{ member.id }}', 'vids')">
-                    Video Modules
+                    Videos &amp; Quiz
                   </button>
                   <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}"
                     onclick="switchModalTab('{{ member.id }}', 'ppts')">
-                    PPT & Quiz
+                    PPT
                   </button>
                 </div>
 
@@ -939,31 +946,66 @@
 
                 <!-- Video List -->
                 <div id="content-vids-{{ member.id }}">
+
                   {% for mod in member.video_modules %}
+                  {% if 'quiz' not in mod.title|lower %}
+                  <!-- Video module row -->
                   <div class="record-item">
                     <div class="record-thumb" style="background-image: url('{{ mod.thumbnail_url }}');"></div>
                     <div class="record-info">
                       <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
-                      <p>Video Lesson</p>
+                      <p>🎬 Video Lesson</p>
                     </div>
                     {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">Completed</span>
+                    <span class="lms-badge bg-complete">✅ Completed</span>
                     {% else %}
-                    <span class="lms-badge bg-pending">Pending</span>
+                    <span class="lms-badge bg-pending">⏳ Pending</span>
                     {% endif %}
                   </div>
+                  {% endif %}
                   {% empty %}
                   <div class="text-center text-muted p-2 small">
                     No video modules assigned
                   </div>
                   {% endfor %}
+
+                  <!-- Practice Quiz Status Card -->
+                  <div class="record-item" style="margin-top: 10px; background: {% if member.quiz_completed %}#eafaf1{% else %}#fef9e7{% endif %}; border: 1.5px solid {% if member.quiz_completed %}#2ecc71{% else %}#f39c12{% endif %};">
+                    <div class="record-thumb" style="background: {% if member.quiz_completed %}#d5f5e3{% else %}#fdebd0{% endif %}; display:flex;align-items:center;justify-content:center;">
+                      <i class="bi bi-patch-question-fill" style="font-size:1.5rem;color:{% if member.quiz_completed %}#27ae60{% else %}#e67e22{% endif %};"></i>
+                    </div>
+                    <div class="record-info">
+                      <h6 style="margin-bottom:2px;">📝 Quiz</h6>
+                      {% if member.quiz_completed %}
+                        <p style="color:#27ae60;font-weight:600;margin:0;">✅ Completed</p>
+                      {% else %}
+                        <p style="color:#e67e22;font-weight:600;margin:0;">⏳ Not Attempted</p>
+                      {% endif %}
+                      {% if member.quiz_score is not None %}
+                        <small style="color:#555;">Score: <strong>{{ member.quiz_score }}%</strong>
+                          {% if member.quiz_passed %}
+                            &nbsp;<span style="color:#27ae60;font-weight:700;">PASS ✔</span>
+                          {% else %}
+                            &nbsp;<span style="color:#e74c3c;font-weight:700;">FAIL ✗</span>
+                          {% endif %}
+                        </small>
+                      {% else %}
+                        <small style="color:#aaa;">No score recorded yet</small>
+                      {% endif %}
+                    </div>
+                    {% if member.quiz_completed %}
+                    <span class="lms-badge bg-complete" style="background:#d5f5e3;color:#27ae60;">Done</span>
+                    {% else %}
+                    <span class="lms-badge bg-pending" style="background:#fdebd0;color:#e67e22;">Pending</span>
+                    {% endif %}
+                  </div>
+
                 </div>
 
-                <!-- PPT List -->
+                <!-- PPT Only List -->
                 <div id="content-ppts-{{ member.id }}" style="display: none">
                   {% for mod in member.ppt_modules %}
                   <div class="record-item">
-                    <!-- Use a generic icon or thumbnail for PPT -->
                     <div class="record-thumb" style="
                           background-color: #ffeaa7;
                           display: flex;
@@ -974,14 +1016,12 @@
                     </div>
                     <div class="record-info">
                       <h6>{{ mod.title }}</h6>
-                      <p>Reading Material</p>
+                      <p>📄 Reading Material</p>
                     </div>
-                    <!-- PPTs are clickable to download/view -->
-                    {% if mod.ppt_url %}
-                    <a href="{{ mod.ppt_url }}" target="_blank" class="lms-badge bg-complete"
-                      style="text-decoration: none">View</a>
+                    {% if mod.is_completed %}
+                    <span class="lms-badge bg-complete">✅ Completed</span>
                     {% else %}
-                    <span class="lms-badge bg-locked">Locked</span>
+                    <span class="lms-badge bg-pending">⏳ Pending</span>
                     {% endif %}
                   </div>
                   {% empty %}
@@ -990,6 +1030,7 @@
                   </div>
                   {% endfor %}
                 </div>
+
               </div>
             </div>
           </div>
@@ -1035,6 +1076,27 @@
               <i class="bi bi-eye me-1"></i>View
             </a>
             <a href="{% url 'get_poster_with_logo' 'posh' %}?download=1" download class="btn btn-sm btn-action">
+              <i class="bi bi-download me-1"></i>Download
+            </a>
+            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal" data-bs-target="#fullscreenEditorModal">
+              <i class="bi bi-pencil-square me-1"></i>Edit Layout
+            </button>
+          </div>
+          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to resize. Use <b>Fullscreen Edit</b> for precision.</p>
+        </div>
+
+        <!-- Poster 2: Spot It - Stop It -->
+        <div class="poster-item">
+          <div class="d-inline-block position-relative" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-card); box-shadow: var(--shadow-lg);">
+            <img src="/media/Posters/POSH Poster 2.jpeg" alt="Spot It Stop It Poster"
+                 style="max-height: 500px; width: auto; display: block;">
+          </div>
+          <h5 class="mt-3">Spot It – Stop It</h5>
+          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+            <a href="/media/Posters/POSH Poster 2.jpeg" target="_blank" class="btn btn-sm btn-action">
+              <i class="bi bi-eye me-1"></i>View
+            </a>
+            <a href="/media/Posters/POSH Poster 2.jpeg" download="POSH_Spot_It_Stop_It.jpeg" class="btn btn-sm btn-action">
               <i class="bi bi-download me-1"></i>Download
             </a>
             <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal" data-bs-target="#fullscreenEditorModal">
@@ -1390,16 +1452,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
-        <div class="poster-item">
-          <div class="poster-placeholder">
-            <i class="bi bi-image fs-1 d-block mb-2"></i>
-            <span>Poster 2 (Landscape)</span>
-          </div>
-          <h5>Workplace Safety</h5>
-          <button class="btn btn-sm btn-action mt-2">
-            <i class="bi bi-download me-2"></i>Download
-          </button>
-        </div>
       </div>
     </div>
 
@@ -1550,6 +1602,89 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
       {% endif %}
     </div>
+
+    <!-- === SECTION: SETTINGS === -->
+    <div id="settings" class="content-section">
+      <h2 class="mb-4 section-title">
+        <i class="bi bi-gear me-2"></i>Settings
+      </h2>
+
+      <!-- Organization Settings -->
+      <div class="card mb-4" style="border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: var(--bg-card);">
+        <div class="card-body p-4">
+          <h5 style="font-weight: 700; color: var(--color-primary); margin-bottom: 20px;">
+            <i class="bi bi-building me-2"></i>Organization
+          </h5>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Company Name</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
+                {{ posh_company_name }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Employee Limit (from Registration)</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600; color: var(--color-primary);">
+                {{ posh_reg_employee_count|default:organization.max_users }} seats
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Seats Used</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
+                {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }}
+                &nbsp;
+                <span style="color: {% if seats_remaining > 0 %}var(--color-success){% else %}var(--color-danger){% endif %}; font-size: 0.85rem;">
+                  ({{ seats_remaining }} remaining)
+                </span>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Default Employee Password</label>
+              <div class="form-control" style="background: rgba(251,191,36,0.07); border-color: #fbbf24; color: #b45309; font-weight: 700; font-family: monospace; letter-spacing: 1px;">
+                {{ organization.default_password }}
+              </div>
+              <small class="text-muted">Auto-generated from company name. Used for new employee accounts.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Account Settings -->
+      <div class="card mb-4" style="border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: var(--bg-card);">
+        <div class="card-body p-4">
+          <h5 style="font-weight: 700; color: var(--color-primary); margin-bottom: 20px;">
+            <i class="bi bi-person-circle me-2"></i>Admin Account
+          </h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Admin Name</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
+                {{ request.user.get_full_name|default:request.user.first_name }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Admin Email</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
+                {{ request.user.email }}
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label small text-muted">Company ID</label>
+              <div class="form-control" style="background: var(--bg-main); font-weight: 600; font-family: monospace; color: var(--color-primary);">
+                {{ request.user.user_id|default:"—" }}
+              </div>
+            </div>
+            <div class="col-12 mt-2">
+              <a href="{% url 'hr_logout' %}" class="btn" style="background: linear-gradient(135deg,#ef4444,#dc2626); color: white; border-radius: 10px; font-weight: 600; padding: 10px 28px;">
+                <i class="bi bi-box-arrow-right me-2"></i>Logout
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- Add Single Employee Modal -->

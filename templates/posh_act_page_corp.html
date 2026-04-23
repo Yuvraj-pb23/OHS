@@ -354,10 +354,6 @@
         <div class="nav-menu">
             <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active"><span>📊 Dashboard</span></div>
             
-            <div onclick="attemptFinalQuiz()" id="nav-final-quiz" class="nav-item disabled">
-                <span>📝 Final Quiz</span>
-                <span id="quiz-lock-icon">🔒</span>
-            </div>
         </div>
         <div onclick="handleLogout()" class="nav-item logout"><span>🚪 Logout</span></div>
     </aside>
@@ -422,13 +418,27 @@
 </div>
 
 <script>
+    function getCsrfToken() {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, 10) === ('csrftoken=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(10));
+                    break;
+                }
+            }
+        }
+        return cookieValue || '';
+    }
+
     const player = document.getElementById('mainPlayer');
     let currentIdx = 0;
     let currentPPTIdx = 0;
     let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
     let furthestTime = 0;
 
-    const isFinalQuizPassed = {{ is_final_quiz_passed|yesno:"true,false"|default:"false" }}; 
 
     const modules = [
         {% for m in video_modules %}
@@ -437,7 +447,9 @@
             title: "{{ m.title|escapejs }}", 
             status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
             thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600' }}", 
-            src: "{{ m.src }}" 
+            src: "{{ m.src }}",
+            url: "{{ m.url }}",
+            isQuiz: {% if m.is_quiz %}true{% else %}false{% endif %}
         },
         {% endfor %}
     ];
@@ -575,14 +587,37 @@
         modules.forEach((mod, i) => {
             const item = document.createElement('div');
             item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
-            item.onclick = () => { 
-                if(mod.status !== 'locked') { 
-                    currentIdx = i; 
-                    playVideo(i); 
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } 
-            };
-            item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+
+            if (mod.isQuiz) {
+                // Quiz item — clicking opens the practice quiz modal
+                item.onclick = () => {
+                    if (mod.status === 'locked') {
+                        alert('🔒 Complete the video module first to unlock the Quiz.');
+                        return;
+                    }
+                    // Store the quiz module index for markComplete
+                    currentPPTIdx = ppts.length; // won't conflict with ppt indices
+                    document.getElementById('pptModal').style.display = 'flex';
+                    document.getElementById('pptFrame').style.display = 'none';
+                    document.getElementById('practiceQuizContainer').style.display = 'block';
+                    document.getElementById('quiz-timer-box').style.display = 'block';
+                    // Store quiz module id so we can mark it complete on finish
+                    window._quizModuleId = mod.id;
+                    window._quizModuleIdx = i;
+                    initQuiz();
+                };
+                item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>📝 ${mod.title}</h3><small style="color:#888">Interactive Quiz</small></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+            } else {
+                // Normal video item
+                item.onclick = () => { 
+                    if(mod.status !== 'locked') { 
+                        currentIdx = i; 
+                        playVideo(i); 
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } 
+                };
+                item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+            }
             list.appendChild(item);
         });
         updateChart();
@@ -754,17 +789,31 @@
             clearInterval(quizTimerInterval);
             document.getElementById('pq-game-area').style.display = 'none';
             document.getElementById('pq-result-area').style.display = 'block';
-            
-            ppts[currentPPTIdx].status = 'complete';
-            markComplete(ppts[currentPPTIdx].id); 
-            renderPPTList();
+
+            // Mark complete — works whether opened from video tab or PPT tab
+            if (window._quizModuleId) {
+                // Opened from Video Modules tab
+                const idx = window._quizModuleIdx;
+                if (idx !== undefined && modules[idx]) {
+                    modules[idx].status = 'complete';
+                }
+                markComplete(window._quizModuleId);
+                window._quizModuleId = null;
+                window._quizModuleIdx = null;
+                renderModules();
+            } else if (ppts[currentPPTIdx]) {
+                // Opened from PPT & Resources tab
+                ppts[currentPPTIdx].status = 'complete';
+                markComplete(ppts[currentPPTIdx].id);
+                renderPPTList();
+            }
             updateTotalStats();
         }
     }
 
     // --- ANALYTICS ---
     let lastTime = Date.now();
-    let sessionSeconds = 0; 
+ 
 
     setInterval(async () => {
         const now = Date.now();
@@ -838,12 +887,6 @@
         }, 1000);
     }
 
-    function attemptFinalQuiz() {
-        const videosPending = modules.some(m => m.status !== 'complete');
-        const pptsPending = ppts.some(p => p.status !== 'complete');
-        if (videosPending || pptsPending) alert("🔒 LOCKED: You must complete all Video Modules and Legal Resources/PPTs before you can take the Final Quiz.");
-        else window.location.href = "{% url 'posh_assessment' %}";
-    }
 
     function updateTotalStats() {
         const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
@@ -856,18 +899,7 @@
     }
     
     function checkButtonLocks() {
-        const allVideosComplete = modules.every(m => m.status === 'complete');
-        const allPPTsComplete = ppts.every(p => p.status === 'complete');
-        const quizLink = document.getElementById('nav-final-quiz');
-        const lockIcon = document.getElementById('quiz-lock-icon');
-
-        if (allVideosComplete && allPPTsComplete) {
-            quizLink.classList.remove('disabled');
-            lockIcon.innerText = "✅"; 
-        } else {
-            quizLink.classList.add('disabled');
-            lockIcon.innerText = "🔒";
-        }
+        // Final Quiz removed from corp POSH training — nothing to unlock
     }
 
     function updateChart() {
@@ -889,7 +921,7 @@
         });
     }
 
-    function handleLogout() { if (confirm("Logout?")) window.location.href = "/"; }
+    function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
 
     window.onload = () => { 
         renderModules(); 

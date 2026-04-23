@@ -188,6 +188,40 @@ def reset_logo_config(request):
     messages.success(request, "Logo position and size reset to default.")
     return redirect("company_dashboard")
 
+# --- 0. CUSTOM LOGIN VIEW ---
+def custom_login_view(request):
+    from django.contrib.auth import authenticate, login, get_user_model
+    from django.db.models import Q
+    from .models import Organization
+
+    if request.method == "POST":
+        u = request.POST.get("username")
+        p = request.POST.get("password")
+
+        # Try standard authentication first
+        user = authenticate(username=u, password=p)
+        if user is not None:
+            login(request, user)
+            if 'hr_as_employee' in request.session:
+                del request.session['hr_as_employee']
+            return redirect("custom_login_redirect")
+
+        # Check if HR is using company default password
+        User = get_user_model()
+        user_obj = User.objects.filter(Q(username=u) | Q(email=u)).first()
+        if user_obj and user_obj.account_type == "COMPANY_ADMIN":
+            org = Organization.objects.filter(owner=user_obj).first()
+            if org and org.default_password and org.default_password == p:
+                login(request, user_obj, backend='django.contrib.auth.backends.ModelBackend')
+                request.session['hr_as_employee'] = True
+                return redirect("custom_login_redirect")
+
+        # Fallback error
+        class MockForm:
+            errors = True
+        return render(request, "login.html", {"form": MockForm()})
+
+    return render(request, "login.html")
 
 # --- 1. LOGIN REDIRECT LOGIC ---
 @login_required
@@ -200,6 +234,23 @@ def custom_login_redirect(request):
 
     # 1. ADMIN -> Dashboard
     if user.account_type == "COMPANY_ADMIN":
+        if request.session.get('hr_as_employee'):
+            has_posh = Subscription.objects.filter(
+                Q(user=user) | Q(organization__organizationmember__user=user),
+                status="ACTIVE",
+                plan__type__in=["POSH", "BOTH"],
+            ).exists()
+            has_pocso = Subscription.objects.filter(
+                Q(user=user) | Q(organization__organizationmember__user=user),
+                status="ACTIVE",
+                plan__type__in=["POCSO", "BOTH"],
+            ).exists()
+            if has_posh:
+                return redirect("posh_act_page_corp")
+            if has_pocso:
+                return redirect("pocso_act_page_corp")
+            return redirect("tutorial")
+        
         return redirect("company_dashboard")
 
     # 1.5 ACCOUNTS -> Accounts Dashboard
@@ -701,8 +752,8 @@ def company_dashboard(request):
             mem_modules_status.append(item)
 
         mem.modules_status = mem_modules_status
-        mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"]]
-        mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"]]
+        mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"] or 'quiz' in m["title"].lower()]
+        mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"] and 'quiz' not in m["title"].lower()]
 
         # Calculate Total Active Time
         total_mins_agg = (
@@ -729,6 +780,24 @@ def company_dashboard(request):
             user=user_obj, assessment_type=training_type, is_passed=True
         ).exists()
         mem.has_certificate = has_passed_quiz and mem.is_training_completed
+
+        # Quiz completion — check practice quiz module progress (module titled 'quiz')
+        quiz_module = next(
+            (m for m in all_modules if 'quiz' in m.title.lower() and m.ppt_file and not m.video_file),
+            None
+        )
+        if quiz_module:
+            quiz_prog = ModuleProgress.objects.filter(user=user_obj, module=quiz_module).first()
+            mem.quiz_completed = quiz_prog.is_completed if quiz_prog else False
+        else:
+            mem.quiz_completed = False
+
+        # Assessment score (if formal assessment exists for this type)
+        assessment = AssessmentProgress.objects.filter(
+            user=user_obj, assessment_type=training_type
+        ).first()
+        mem.quiz_score  = assessment.score if assessment else None
+        mem.quiz_passed = assessment.is_passed if assessment else False
 
     training_pending = total_employees - training_completed_count
 
@@ -1293,8 +1362,11 @@ def posh_act_page_corp(request):
         video_list.append(item)
         previous_completed = is_completed
 
-    # Process PPT Sequence
-    ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
+    # Process PPT Sequence — exclude Practice Quiz (moved to video tab)
+    ppt_modules = [
+        m for m in modules
+        if m.ppt_file and not m.video_file and 'quiz' not in m.title.lower()
+    ]
 
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
@@ -1315,6 +1387,29 @@ def posh_act_page_corp(request):
         }
         ppt_list.append(item)
         previous_completed = is_completed
+
+    # Move Practice Quiz into video_list (shown under Video Modules tab, below the video)
+    quiz_modules = [
+        m for m in modules
+        if m.ppt_file and not m.video_file and 'quiz' in m.title.lower()
+    ]
+    for mod in quiz_modules:
+        is_completed = progress_map.get(mod.id, False)
+        # Lock the quiz until all video modules are completed
+        all_videos_done = all(progress_map.get(v.id, False) for v in video_modules)
+        is_locked = not all_videos_done
+
+        item = {
+            "id": mod.id,
+            "title": mod.title,
+            "is_completed": is_completed,
+            "is_locked": is_locked,
+            "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
+            "is_quiz": True,
+            "duration": mod.duration_seconds,
+        }
+        video_list.append(item)
 
     # 5. Daily Activity Stats for Chart (Last 7 days)
     today = timezone.now().date()
@@ -2040,6 +2135,8 @@ def hr_logout(request):
 def training_logout(request):
     """Logout for Training users - keeps user authenticated but removes portal access"""
     request.session['logged_out_of_training'] = True
+    if 'hr_as_employee' in request.session:
+        del request.session['hr_as_employee']
     messages.success(request, "Successfully logged out from Training Portal.")
     return redirect("home")
 

@@ -100,9 +100,7 @@ urlpatterns = [
     path("save-logo-config/", views.save_logo_config, name="save_logo_config"),
     path("reset-logo-config/", views.reset_logo_config, name="reset_logo_config"),
     # --- AUTHENTICATION & SUPERUSER ---
-    path(
-        "login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"
-    ),
+    path("login/", views.custom_login_view, name="login"),
     path("logout/", views.custom_logout, name="logout"),
     path("accounts/profile/", views.custom_login_redirect, name="login_redirect"),
     path("login-redirect/", views.custom_login_redirect, name="custom_login_redirect"),
