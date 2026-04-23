@@ -161,10 +161,16 @@
                 <div class="h-8 w-px bg-white/10"></div>
                 <p class="heading-font font-extrabold text-lg tracking-tight">Accounts Portal</p>
             </div>
-            
-            <div class="flex items-center gap-6">
-                <a href="{% url 'home' %}" class="text-sm font-semibold text-text-muted hover:text-white transition-colors">Exit Dashboard</a>
-                <form action="{% url 'logout' %}" method="post">{% csrf_token %}<button type="submit" class="p-2.5 bg-white/5 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all border border-white/5"><i class="fas fa-power-off"></i></button></form>
+
+            <div class="flex items-center gap-4">
+                <a href="{% url 'home' %}" class="text-sm font-semibold text-slate-400 hover:text-white transition-all flex items-center gap-2">
+                    <i class="fas fa-home"></i>
+                    <span>Go to Home</span>
+                </a>
+                <form action="{% url 'accounts_logout' %}" method="post" style="display:inline;">{% csrf_token %}<button type="submit" class="p-2.5 bg-white/5 hover:bg-red-500/10 hover:text-red-400 rounded-xl transition-all border border-white/5 flex items-center gap-2" title="Sign Out">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="text-xs font-semibold hidden sm:inline">Sign Out</span>
+                </button></form>
             </div>
         </div>
     </nav>
@@ -772,12 +778,27 @@
                         {% for t_key, t_label in email_tiers %}
                         <div class="bg-white/5 rounded-3xl p-6 md:p-8 border border-white/5 hover:border-indigo-500/20 transition-all">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-12 h-12 bg-indigo-500/10 rounded-2xl flex items-center justify-center text-indigo-400">
-                                    <i class="fas {% if t_key == 'PAY_NOW' %}fa-bolt{% elif t_key == 'BEFORE_15' %}fa-calendar-check{% else %}fa-clock{% endif %}"></i>
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center
+                                    {% if t_key == 'PAY_NOW' %}bg-emerald-500/10 text-emerald-400{% else %}bg-indigo-500/10 text-indigo-400{% endif %}">
+                                    <i class="fas {% if t_key == 'PAY_NOW' %}fa-receipt{% else %}fa-check-circle{% endif %} text-lg"></i>
                                 </div>
                                 <div>
                                     <h4 class="text-lg font-bold text-white">{{ t_label }}</h4>
-                                    <p class="text-[0.65rem] text-text-muted uppercase tracking-widest font-black">Trigger: {% if t_key == 'PAY_NOW' %}After "Payment Done" click{% else %}On "Register Later" click{% endif %}</p>
+                                    <p class="text-[0.65rem] text-text-muted uppercase tracking-widest font-black">
+                                        Trigger:
+                                        {% if t_key == 'PAY_NOW' %}
+                                            After client uploads payment screenshot
+                                        {% else %}
+                                            After accounts team clicks "Verify Payment"
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <div class="ml-auto">
+                                    <span class="text-[0.6rem] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest
+                                        {% if t_key == 'PAY_NOW' %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20
+                                        {% else %}bg-indigo-500/10 text-indigo-300 border border-indigo-500/20{% endif %}">
+                                        {{ t_key }}
+                                    </span>
                                 </div>
                             </div>
 
@@ -786,7 +807,7 @@
                                     <label class="text-[0.65rem] font-black text-indigo-300 uppercase tracking-widest ml-1">Email Subject</label>
                                     <input type="text" name="subject_{{ t_key }}" 
                                            value="{{ email_templates|get_item_subject:t_key }}"
-                                           placeholder="e.g. Action Required: Complete your POSH Compliance Registration"
+                                           placeholder="{% if t_key == 'PAY_NOW' %}e.g. We've received your payment – Open Hand Solutions{% else %}e.g. Payment Verified! Your POSH Compliance Journey Begins{% endif %}"
                                            class="w-full bg-slate-900 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-indigo-500 transition-all">
                                 </div>
                                 <div class="space-y-1.5">
@@ -800,6 +821,10 @@
                                         <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{company_name}')">{company_name}</code>
                                         <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{amount}')">{amount}</code>
                                         <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{invoice_url}')">{invoice_url}</code>
+                                        {% if t_key == 'PAYMENT_VERIFIED' %}
+                                        <code class="text-[0.6rem] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{setup_link}')">{setup_link}</code>
+                                        <span class="text-[0.55rem] text-text-muted italic ml-1">← secure admin setup link</span>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>

@@ -506,13 +506,6 @@
             <div class="modules-row">
                 {% if show_posh %}
                 <div class="glass-module module-posh" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="coming-soon-overlay">
-                        <div class="coming-soon-content">
-                            <i class="fas fa-lock lock-icon-glow"></i>
-                            <h3 class="coming-soon-title">Coming Soon</h3>
-                            <p class="coming-soon-sub">Platform Integration</p>
-                        </div>
-                    </div>
                     <div class="module-icon">📜</div>
                     <h2>POSH Act</h2>
                     <p>Learn how the POSH Act ensures dignity, safety, and fairness at workplaces.</p>
@@ -520,8 +513,8 @@
                         {% if user.is_authenticated %}
                         <a href="{% url 'posh_act_page' %}" class="sub-btn btn-posh-ind">Go to Training</a>
                         {% else %}
-                        <a href="{% url 'posh_i_page' %}" class="sub-btn btn-posh-ind">Individual Access</a>
-                        <a href="{% url 'posh_c_page' %}" class="sub-btn btn-posh-comp">Company License</a>
+                        <a href="#" onclick="return false;" class="sub-btn btn-posh-ind" style="opacity: 0.5; cursor: not-allowed;">Individual Access</a>
+                        <a href="{% url 'posh_registration' %}" class="sub-btn btn-posh-comp">Company License</a>
                         {% endif %}
                     </div>
                 </div>

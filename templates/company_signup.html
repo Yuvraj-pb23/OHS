@@ -3,84 +3,114 @@
 
 {% block body %}
 <style>
-    .sub-container { 
-        max-width: 600px; 
-        margin: 50px auto; 
-        padding: 40px; 
-        background: white; 
-        border-radius: 15px; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+    .sub-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-
-    /* --- BACK LINK STYLE --- */
     .back-link {
-        display: inline-flex;
-        align-items: center;
-        text-decoration: none;
-        color: #777;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
+        display: inline-flex; align-items: center;
+        text-decoration: none; color: #777;
+        font-size: 0.9rem; font-weight: 600;
+        margin-bottom: 20px; transition: all 0.3s ease;
     }
+    .back-link i { margin-right: 8px; font-size: 0.8rem; }
+    .back-link:hover { color: #26a69a; transform: translateX(-3px); }
 
-    .back-link i {
-        margin-right: 8px;
-        font-size: 0.8rem;
-    }
-
-    .back-link:hover {
-        color: #26a69a; /* Matching teal theme */
-        transform: translateX(-3px);
-    }
-
-    /* --- EXISTING STYLES --- */
     .form-header { text-align: center; margin-bottom: 30px; }
     .form-header h2 { color: #26a69a; font-weight: 800; }
-    .form-header p { color: #666; font-size: 1.1rem; }
-    
+    .form-header p  { color: #666; font-size: 1.1rem; }
+
     .form-group { margin-bottom: 20px; position: relative; }
     .form-label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; }
 
-    .form-control { 
-        width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; 
+    .form-control {
+        width: 100%; padding: 12px;
+        border: 1px solid #ddd; border-radius: 8px;
         box-sizing: border-box; transition: border-color 0.3s ease;
+        font-size: 1rem;
     }
-
     .form-control.valid {
         border-color: #26a69a;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2326a69a' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 10px center;
+        background-repeat: no-repeat; background-position: right 10px center;
     }
     .form-control.invalid { border-color: #c62828; }
-
     .error-msg { color: #c62828; font-size: 0.85rem; margin-top: 5px; display: none; }
 
-    .btn-company { 
-        width: 100%; padding: 15px; 
-        background: linear-gradient(135deg, #26a69a, #00897b); 
-        color: white; border: none; border-radius: 8px; 
-        font-weight: bold; font-size: 1.1rem; cursor: pointer; 
+    .btn-company {
+        width: 100%; padding: 15px;
+        background: linear-gradient(135deg, #26a69a, #00897b);
+        color: white; border: none; border-radius: 8px;
+        font-weight: bold; font-size: 1.1rem; cursor: pointer;
         transition: opacity 0.3s, transform 0.2s;
     }
     .btn-company:disabled { background: #b0bec5; cursor: not-allowed; opacity: 0.7; }
     .btn-company:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(38, 166, 154, 0.4);
+        box-shadow: 0 5px 15px rgba(38,166,154,0.4);
     }
-    
     .section-title {
-        margin-bottom: 15px; 
-        color: #555; 
-        border-left: 4px solid #26a69a; 
-        padding-left: 10px;
+        margin-bottom: 15px; color: #555;
+        border-left: 4px solid #26a69a; padding-left: 10px;
         font-size: 1.1rem;
     }
+
+    /* OTP UI */
+    .email-row { display: flex; gap: 10px; align-items: center; }
+    .email-row .form-control { flex: 1; margin: 0; }
+    .btn-otp {
+        flex-shrink: 0; padding: 12px 14px;
+        background: #26a69a; color: white;
+        border: none; border-radius: 8px;
+        font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; white-space: nowrap;
+        transition: background 0.3s;
+    }
+    .btn-otp:hover:not(:disabled) { background: #00897b; }
+    .btn-otp:disabled { background: #b0bec5; cursor: not-allowed; }
+
+    .otp-box { margin-top: 10px; display: none; }
+    .otp-row { display: flex; gap: 10px; align-items: center; }
+    .otp-row input {
+        flex: 1; padding: 12px; border: 1px solid #ddd;
+        border-radius: 8px; font-size: 1.2rem;
+        letter-spacing: 8px; text-align: center; font-weight: 700;
+    }
+    .btn-verify {
+        flex-shrink: 0; padding: 12px 14px;
+        background: #5c6bc0; color: white;
+        border: none; border-radius: 8px;
+        font-weight: 600; font-size: 0.85rem;
+        cursor: pointer; white-space: nowrap;
+        transition: background 0.3s;
+    }
+    .btn-verify:hover:not(:disabled) { background: #3949ab; }
+    .btn-verify:disabled { background: #b0bec5; cursor: not-allowed; }
+
+    .otp-msg { margin-top: 8px; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; display: none; }
+    .otp-msg.info    { background: #e3f2fd; color: #1565c0; display: block; }
+    .otp-msg.success { background: #e8f5e9; color: #2e7d32; display: block; }
+    .otp-msg.error   { background: #ffebee; color: #c62828; display: block; }
+
+    .otp-timer {
+        margin-top: 6px;
+        font-size: 0.82rem;
+        color: #666;
+        display: none;
+    }
+    .otp-timer.running { display: block; }
+    .otp-timer .countdown { font-weight: 700; color: #1565c0; }
+    .otp-timer.expiring .countdown { color: #c62828; }
+
+    .verified-tag { display: none; align-items: center; gap: 6px; margin-top: 6px; color: #2e7d32; font-size: 0.85rem; font-weight: 600; }
+    .verified-tag.show { display: flex; }
 </style>
 
 <div class="sub-container">
-    <!-- PREVIOUS PAGE LINK -->
     <a href="javascript:history.back()" class="back-link">
         <i class="fa-solid fa-chevron-left"></i> Back to Plan Details
     </a>
@@ -91,34 +121,18 @@
     </div>
 
     {% if messages %}
-        {% for message in messages %}
-            <div style="padding:10px; background:#ffebee; color:#c62828; margin-bottom:15px; border-radius:5px; border: 1px solid #ffcdd2;">{{ message }}</div>
-        {% endfor %}
+    {% for message in messages %}
+    {% if 'error' in message.tags %}
+    <div style="padding:10px;background:#ffebee;color:#c62828;margin-bottom:15px;border-radius:5px;border:1px solid #ffcdd2;">{{ message }}</div>
+    {% endif %}
+    {% endfor %}
     {% endif %}
 
     <form method="POST" id="companyForm" novalidate>
         {% csrf_token %}
-        
-        <h4 class="section-title">Organization Details</h4>
-        
-        <div class="form-group">
-            <label class="form-label">Company / School Name</label>
-            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="e.g. Acme Corp Inc.">
-            <div class="error-msg">Name can contain letters, numbers, spaces, and: . , & -</div>
-        </div>
-
-        <div class="form-group">
-            <label class="form-label">Number of Employees (Seats)</label>
-            <input type="number" name="seats" id="seats" class="form-control valid" value="10" min="1"
-                   readonly style="background-color: #f0fdf4; border-color: #26a69a; color: #00695c; font-weight: 700; cursor: not-allowed;">
-            <div class="error-msg">Must be a valid number (minimum 1).</div>
-            <small style="color: #26a69a; font-size: 0.82rem;">&#128274; Fixed by your selected plan. Cannot be changed here.</small>
-        </div>
-
-        <hr style="margin: 25px 0; border:0; border-top:1px dashed #ddd;">
 
         <h4 class="section-title">Admin Account Setup</h4>
-        
+
         <div class="form-group">
             <label class="form-label">Admin Full Name</label>
             <input type="text" name="fullname" id="fullname" class="form-control" placeholder="Jane Director">
@@ -127,16 +141,46 @@
 
         <div class="form-group">
             <label class="form-label">Admin Email</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="admin@company.com">
-            <div class="error-msg">Please enter a valid business email address.</div>
+            {% if locked_email %}
+                {# Email is pre-filled and locked from the verified POSH registration #}
+                <div style="display:flex;align-items:center;gap:10px;">
+                    <input type="email" name="email" id="email" class="form-control"
+                           value="{{ locked_email }}"
+                           readonly
+                           style="background:#f0fdf4;border-color:#86efac;color:#166534;font-weight:600;cursor:not-allowed;">
+                    <span style="white-space:nowrap;background:#dcfce7;color:#166534;border:1px solid #86efac;border-radius:6px;padding:6px 12px;font-size:0.8rem;font-weight:700;">✔ Verified</span>
+                </div>
+                <p style="font-size:0.75rem;color:#6b7280;margin-top:6px;">This email is locked to your POSH registration and cannot be changed.</p>
+                <input type="hidden" name="setup_token" value="{{ setup_token }}">
+            {% else %}
+                <div class="email-row">
+                    <input type="email" name="email" id="email" class="form-control" placeholder="admin@company.com" autocomplete="off">
+                    <button type="button" id="btnSendOtp" class="btn-otp" disabled>Send OTP</button>
+                </div>
+                <div class="error-msg" id="emailErrorMsg" style="display:none;">Please enter a valid email address.</div>
+
+                <div class="otp-box" id="otpBox">
+                    <div class="otp-row">
+                        <input type="text" id="otpInput" placeholder="––––––" maxlength="6" inputmode="numeric">
+                        <button type="button" id="btnVerify" class="btn-verify">Verify</button>
+                    </div>
+                </div>
+
+                <div class="otp-timer" id="otpTimer">
+                    OTP expires in <span class="countdown" id="timerCount">2:00</span>
+                </div>
+
+                <div class="otp-msg" id="otpMsg"></div>
+                <div class="verified-tag" id="verifiedTag"><i class="fa-solid fa-circle-check"></i> Email verified</div>
+            {% endif %}
         </div>
 
         <div class="form-group">
             <label class="form-label">Create Password</label>
             <input type="password" name="password" id="password" class="form-control" placeholder="********">
-            <div class="error-msg">Password must be 8+ chars, with number & symbol (@$!%*?&).</div>
+            <div class="error-msg">Password must be 8+ chars, with a number &amp; symbol (@$!%*?&amp;).</div>
         </div>
-        
+
         <div class="form-group">
             <label class="form-label">Confirm Password</label>
             <input type="password" id="confirm_password" class="form-control" placeholder="********">
@@ -148,85 +192,207 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const submitBtn = document.getElementById('submitBtn');
-        const patterns = {
-            company_name: /^[a-zA-Z0-9\s\.\,\&\-]{2,100}$/,
-            fullname: /^[a-zA-Z\s]{3,50}$/,
-            email: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-            password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
-        };
+(function () {
+    {% if locked_email %}
+    // Email is pre-verified via signed token — just enable submit when passwords are filled
+    const submitBtn = document.getElementById('submitBtn');
+    const pass      = document.getElementById('password');
+    const conf      = document.getElementById('confirm_password');
+    function checkPasswords() {
+        const ok = pass.value.length >= 8 && pass.value === conf.value;
+        submitBtn.disabled = !ok;
+    }
+    pass.addEventListener('input', checkPasswords);
+    conf.addEventListener('input', checkPasswords);
+    return; // Skip OTP JS entirely
+    {% endif %}
 
-        // ── Pre-fill seats from URL query param ──────────────────────────────
-        const urlParams = new URLSearchParams(window.location.search);
-        const seatsParam = urlParams.get('seats');
-        const seatsInput = document.getElementById('seats');
-        if (seatsParam && /^[1-9][0-9]*$/.test(seatsParam)) {
-            seatsInput.value = seatsParam;
-        }
-        // Seats is readonly; always mark it valid
-        seatsInput.classList.add('valid');
-        // ────────────────────────────────────────────────────────────────────
+    const emailInput  = document.getElementById('email');
+    const btnSendOtp  = document.getElementById('btnSendOtp');
+    const otpBox      = document.getElementById('otpBox');
+    const otpInput    = document.getElementById('otpInput');
+    const btnVerify   = document.getElementById('btnVerify');
+    const otpMsg      = document.getElementById('otpMsg');
+    const verifiedTag = document.getElementById('verifiedTag');
+    const submitBtn   = document.getElementById('submitBtn');
 
-        function validateField(field, regex) {
-            const value = field.value.trim();
-            const errorMsg = field.nextElementSibling;
+    const RE = {
+        fullname: /^[a-zA-Z\s]{3,50}$/,
+        email:    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+        password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    };
 
-            if (regex.test(value)) {
-                field.classList.remove('invalid');
-                field.classList.add('valid');
-                if (errorMsg && errorMsg.classList.contains('error-msg')) errorMsg.style.display = 'none';
-                return true;
-            } else {
-                field.classList.remove('valid');
-                field.classList.add('invalid');
-                if (errorMsg && errorMsg.classList.contains('error-msg')) errorMsg.style.display = 'block';
-                return false;
+    let verified    = false;
+    let timerHandle = null;
+    const OTP_TTL   = 120; // seconds
+
+    // ── countdown timer ──────────────────────────────────────────
+    const otpTimer  = document.getElementById('otpTimer');
+    const timerCount= document.getElementById('timerCount');
+
+    function startTimer() {
+        clearInterval(timerHandle);
+        let remaining = OTP_TTL;
+        otpTimer.classList.add('running');
+        otpTimer.classList.remove('expiring');
+        updateTimerDisplay(remaining);
+
+        timerHandle = setInterval(function () {
+            remaining--;
+            updateTimerDisplay(remaining);
+            if (remaining <= 30) otpTimer.classList.add('expiring');
+            if (remaining <= 0) {
+                clearInterval(timerHandle);
+                expireOtp();
             }
+        }, 1000);
+    }
+
+    function updateTimerDisplay(s) {
+        const m = Math.floor(s / 60);
+        const sec = s % 60;
+        timerCount.textContent = m + ':' + (sec < 10 ? '0' : '') + sec;
+    }
+
+    function expireOtp() {
+        otpInput.disabled = true;
+        btnVerify.disabled = true;
+        otpTimer.classList.remove('running', 'expiring');
+        msg('OTP expired. Please click \'Resend OTP\' to get a new one.', 'error');
+    }
+
+    function stopTimer() {
+        clearInterval(timerHandle);
+        otpTimer.classList.remove('running', 'expiring');
+    }
+
+    // ── helpers ──────────────────────────────────────────────────
+    function msg(text, type) {
+        otpMsg.textContent = text;
+        otpMsg.className = 'otp-msg ' + type;
+    }
+
+    function setValid(el, ok) {
+        el.classList.toggle('valid',   ok);
+        el.classList.toggle('invalid', !ok);
+        const err = el.parentElement && el.parentElement.querySelector('.error-msg');
+        if (err) err.style.display = ok ? 'none' : 'block';
+    }
+
+    function checkSubmit() {
+        const ok = RE.fullname.test(document.getElementById('fullname').value.trim())
+                && RE.email.test(emailInput.value.trim())
+                && RE.password.test(document.getElementById('password').value)
+                && document.getElementById('password').value === document.getElementById('confirm_password').value
+                && document.getElementById('confirm_password').value !== ''
+                && verified;
+        submitBtn.disabled = !ok;
+    }
+
+    // ── validate email live ───────────────────────────────────────
+    emailInput.addEventListener('input', function () {
+        const ok = RE.email.test(this.value.trim());
+        btnSendOtp.disabled = !ok;
+        if (verified) {                     // reset if email changed
+            verified = false;
+            verifiedTag.classList.remove('show');
+            otpBox.style.display = 'none';
+            otpInput.value = '';
+            otpMsg.className = 'otp-msg';
+            emailInput.classList.remove('valid');
         }
+        checkSubmit();
+    });
 
-        function validateMatch() {
-            const pass = document.getElementById('password');
-            const confirm = document.getElementById('confirm_password');
-            const errorMsg = confirm.nextElementSibling;
-            if (confirm.value === "") return false;
+    // ── Send OTP ─────────────────────────────────────────────────
+    btnSendOtp.addEventListener('click', async function () {
+        const email = emailInput.value.trim();
+        this.disabled = true;
+        this.textContent = 'Sending…';
+        // Reset OTP input and Verify button for a fresh attempt
+        otpInput.value = '';
+        otpInput.disabled = false;
+        btnVerify.disabled = false;
+        btnVerify.textContent = 'Verify';
+        stopTimer();
+        msg('Sending OTP to ' + email + '…', 'info');
+        otpBox.style.display = 'block';
 
-            if (pass.value === confirm.value && pass.value !== "") {
-                confirm.classList.remove('invalid');
-                confirm.classList.add('valid');
-                if (errorMsg) errorMsg.style.display = 'none';
-                return true;
-            } else {
-                confirm.classList.remove('valid');
-                confirm.classList.add('invalid');
-                if (errorMsg) errorMsg.style.display = 'block';
-                return false;
-            }
-        }
-
-        function checkFormValidity() {
-            const isCompanyValid = patterns.company_name.test(document.getElementById('company_name').value.trim());
-            const isNameValid   = patterns.fullname.test(document.getElementById('fullname').value.trim());
-            const isEmailValid  = patterns.email.test(document.getElementById('email').value.trim());
-            const isPassValid   = patterns.password.test(document.getElementById('password').value);
-            const isMatchValid  = (document.getElementById('password').value === document.getElementById('confirm_password').value
-                                    && document.getElementById('confirm_password').value !== "");
-            // Seats is always valid because it's readonly & pre-filled
-            submitBtn.disabled = !(isCompanyValid && isNameValid && isEmailValid && isPassValid && isMatchValid);
-        }
-
-        document.querySelectorAll('.form-control').forEach(input => {
-            if (input.id === 'seats') return; // skip read-only seats
-            input.addEventListener('keyup', (e) => {
-                const id = e.target.id;
-                if (id === 'company_name')    validateField(e.target, patterns.company_name);
-                if (id === 'fullname')        validateField(e.target, patterns.fullname);
-                if (id === 'email')           validateField(e.target, patterns.email);
-                if (id === 'password')        { validateField(e.target, patterns.password); validateMatch(); }
-                if (id === 'confirm_password') validateMatch();
-                checkFormValidity();
+        try {
+            const r = await fetch('/ajax/send-reg-otp/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email})
             });
+            const d = await r.json();
+            if (d.success) {
+                msg('✓ OTP sent! Check your inbox (and spam folder).', 'success');
+                this.textContent = 'Resend OTP';
+                startTimer();
+            } else {
+                msg('✗ ' + d.error, 'error');
+                this.textContent = 'Send OTP';
+                otpBox.style.display = 'none';
+            }
+        } catch (e) {
+            msg('✗ Network error — please try again.', 'error');
+            this.textContent = 'Send OTP';
+        }
+        this.disabled = false;
+    });
+
+    // ── Verify OTP ───────────────────────────────────────────────
+    btnVerify.addEventListener('click', async function () {
+        const otp = otpInput.value.trim();
+        if (otp.length !== 6) { msg('Please enter the full 6-digit OTP.', 'error'); return; }
+        this.disabled = true;
+        this.textContent = 'Verifying…';
+
+        try {
+            const r = await fetch('/ajax/verify-reg-otp/', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: emailInput.value.trim(), otp: otp})
+            });
+            const d = await r.json();
+            if (d.success) {
+                verified = true;
+                stopTimer();
+                emailInput.classList.add('valid');
+                otpBox.style.display  = 'none';
+                otpMsg.className      = 'otp-msg';
+                verifiedTag.classList.add('show');
+            } else if (d.expired) {
+                stopTimer();
+                expireOtp();
+            } else {
+                msg('✗ ' + d.error, 'error');
+                this.disabled = false;
+                this.textContent = 'Verify';
+            }
+        } catch (e) {
+            msg('✗ Network error — please try again.', 'error');
+            this.disabled = false;
+            this.textContent = 'Verify';
+        }
+        checkSubmit();
+    });
+
+    // ── Remaining fields ─────────────────────────────────────────
+    ['fullname', 'password', 'confirm_password'].forEach(function (id) {
+        document.getElementById(id).addEventListener('input', function () {
+            if (id === 'fullname') setValid(this, RE.fullname.test(this.value.trim()));
+            if (id === 'password') {
+                setValid(this, RE.password.test(this.value));
+                const cf = document.getElementById('confirm_password');
+                if (cf.value) setValid(cf, cf.value === this.value);
+            }
+            if (id === 'confirm_password') {
+                setValid(this, this.value === document.getElementById('password').value && this.value !== '');
+            }
+            checkSubmit();
         });
     });
+})();
 </script>
 {% endblock %}

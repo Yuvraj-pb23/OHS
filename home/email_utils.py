@@ -3,12 +3,24 @@ from django.conf import settings
 
 
 def send_welcome_email(user, password, is_company_employee=False, organization_name=None):
-    """Send welcome email with login credentials"""
-    subject = 'Welcome to Open Hand Solution - Your Account Details'
-    
-    if is_company_employee:
-        message = f"""
-Hello {user.first_name},
+    """Send welcome email with login credentials.
+    Uses the EMPLOYEE_WELCOME EmailTemplate from DB if available, otherwise falls back to default."""
+    from home.models import EmailTemplate
+
+    template = EmailTemplate.objects.filter(tier_key='EMPLOYEE_WELCOME').first()
+
+    if template and template.subject and template.body:
+        subject = template.subject
+        body = template.body.format(
+            name=user.first_name or user.email,
+            company_name=organization_name or 'Open Hand Solution',
+            password=password,
+            email=user.email,
+            login_url='https://openhandsolutions.com/login',
+        )
+    elif is_company_employee:
+        subject = 'Welcome to Open Hand Solution - Your Account Details'
+        body = f"""Hello {user.first_name},
 
 Welcome to Open Hand Solution!
 
@@ -25,11 +37,10 @@ Please visit your training portal and login with these credentials.
 If you have any questions, please contact your HR department or reply to this email.
 
 Best regards,
-Open Hand Solution Team
-        """
+Open Hand Solution Team"""
     else:
-        message = f"""
-Hello {user.first_name},
+        subject = 'Welcome to Open Hand Solution - Your Account Details'
+        body = f"""Hello {user.first_name},
 
 Welcome to Open Hand Solution!
 
@@ -46,13 +57,12 @@ You can now login and access your training materials.
 If you have any questions, please feel free to reply to this email.
 
 Best regards,
-Open Hand Solution Team
-        """
-    
+Open Hand Solution Team"""
+
     try:
         send_mail(
             subject,
-            message,
+            body,
             settings.DEFAULT_FROM_EMAIL,
             [user.email],
             fail_silently=False,
@@ -61,6 +71,7 @@ Open Hand Solution Team
     except Exception as e:
         print(f"Error sending email: {e}")
         return False
+
 
 
 def send_password_change_email(user):
@@ -138,6 +149,18 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
     
     invoice_url = f"https://openhandsolutions.com/billing/" # Link to billing portal
 
+    # Generate signed setup link for PAYMENT_VERIFIED emails
+    setup_link = ''
+    if tier_key == 'PAYMENT_VERIFIED':
+        from django.core import signing
+        from django.conf import settings as django_settings
+        token = signing.dumps(
+            {'email': registration.email, 'reg_id': registration.id},
+            salt='posh-admin-setup',
+        )
+        site_base = getattr(django_settings, 'SITE_URL', 'https://openhandsolutions.com')
+        setup_link = f"{site_base}/subscription/company/POSH%20Act/?setup_token={token}"
+
     # Placeholders replacement
     context = {
         'name': name,
@@ -146,6 +169,7 @@ def send_tiered_email(registration, tier_key, registration_type='POSH'):
         'type': registration_type,
         # amount removed as per user request
         'invoice_url': invoice_url,
+        'setup_link': setup_link,
     }
     
     # Dynamic placeholder replacement in body and subject

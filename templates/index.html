@@ -1253,107 +1253,11 @@
       opacity: 0;
     }
 
-    /* =========================================
-       PREMIUM TIE OFFER MARQUEE STYLES
-       ========================================= */
-    .tie-marquee-wrapper {
-      background: linear-gradient(90deg, #6200ea, #0d6efd, #6200ea);
-      background-size: 200% auto;
-      animation: tieGradientShift 5s ease infinite;
-      color: white;
-      padding: 12px 0;
-      margin-top: 62px;
-      white-space: nowrap;
-      overflow: hidden;
-      position: relative;
-      z-index: 1001; /* Above navbar if needed, but below is fine too */
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
 
-    @keyframes tieGradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .tie-marquee-content {
-      display: inline-block;
-      animation: tieMarqueeScroll 40s linear infinite;
-      font-weight: 700;
-      font-size: 1.05rem;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-    }
-
-    .tie-marquee-item {
-      display: inline-flex;
-      align-items: center;
-      padding: 0 40px;
-    }
-
-    .tie-marquee-item i {
-      margin: 0 12px;
-      color: #ffd700; /* Gold stars */
-      filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
-    }
-
-    @keyframes tieMarqueeScroll {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-
-    .tie-marquee-wrapper:hover .tie-marquee-content {
-      animation-play-state: paused;
-    }
-
-    .tie-marquee-item {
-      text-decoration: none;
-      color: inherit;
-      display: inline-flex;
-      align-items: center;
-      padding: 0 40px;
-      transition: transform 0.3s ease;
-    }
-
-    .tie-marquee-item:hover {
-      transform: scale(1.05);
-      color: #ffd700;
-    }
-
-    /* Highlight color for 'OFFER' */
-    .offer-highlight {
-      color: #ffd700;
-      font-weight: 800;
-    }
-  </style>
 </head>
 
 <body>
 
-  <!-- TIE OFFER PREMIUM MARQUEE (Relocated Above Hero Card) -->
-  <div class="tie-marquee-wrapper">
-    <div class="tie-marquee-content">
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-star"></i> TIE <span class="offer-highlight">OFFER</span>: Special Discounts on POSH & POCSO Training Sessions! <i class="fas fa-star"></i>
-      </a>
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-certificate"></i> TIE <span class="offer-highlight">OFFER</span>: Avail Exclusive Benefits for Your Organization Today! <i class="fas fa-certificate"></i>
-      </a>
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-rocket"></i> TIE <span class="offer-highlight">OFFER</span>: Limited Time Pricing for Small & Medium Enterprises! <i class="fas fa-rocket"></i>
-      </a>
-      <!-- Duplicated for seamless loop -->
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-star"></i> TIE <span class="offer-highlight">OFFER</span>: Special Discounts on POSH & POCSO Training Sessions! <i class="fas fa-star"></i>
-      </a>
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-certificate"></i> TIE <span class="offer-highlight">OFFER</span>: Avail Exclusive Benefits for Your Organization Today! <i class="fas fa-certificate"></i>
-      </a>
-      <a href="{% url 'registration_selection' %}" class="tie-marquee-item">
-        <i class="fas fa-rocket"></i> TIE <span class="offer-highlight">OFFER</span>: Limited Time Pricing for Small & Medium Enterprises! <i class="fas fa-rocket"></i>
-      </a>
-    </div>
-  </div>
 
   <!-- Hero Section -->
   <section id="hero" class="hero-section d-flex align-items-center text-center text-lg-start">

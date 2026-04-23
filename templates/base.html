@@ -132,11 +132,171 @@
             color: #6200ea !important;
         }
 
+        /* Right-aligned dropdown for user menu */
+        .user-dropdown .dropdown-content {
+            right: 0;
+            left: auto;
+            min-width: 180px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(98, 0, 234, 0.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 8px 0;
+            z-index: 2001 !important;
+        }
+
+        .user-dropdown .dropdown-content a,
+        .user-dropdown .dropdown-content .logout-btn-wrapper {
+            padding: 10px 16px;
+            color: #333 !important;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .user-dropdown .dropdown-content a:hover,
+        .user-dropdown .dropdown-content .logout-btn-wrapper:hover {
+            background: rgba(98, 0, 234, 0.05);
+            color: #6200ea !important;
+        }
+
         .user-dropdown .dropdown-content i {
             width: 16px;
             text-align: center;
         }
-         
+
+        /* ACCOUNTS BUTTON STYLES - Professional style */
+        .accounts-button-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .accounts-dropdown .dropdown-content {
+            right: 0;
+            left: auto;
+            min-width: 180px;
+            background: #fff;
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+            border-radius: 12px;
+            padding: 6px;
+            z-index: 2001 !important;
+            position: absolute;
+            top: calc(100% + 6px);
+            display: none;
+        }
+
+        /* Invisible bridge fills the gap so hover doesn't break */
+        .accounts-dropdown .dropdown-content::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            right: 0;
+            height: 10px;
+        }
+
+        .accounts-dropdown:hover .dropdown-content,
+        .accounts-dropdown.active .dropdown-content {
+            display: block;
+        }
+
+        /* Uniform item styles — both links and buttons get identical treatment */
+        .accounts-dropdown .dropdown-content a,
+        .accounts-dropdown .dropdown-content .dd-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: #1a1a2e !important;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.15s;
+            white-space: nowrap;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .accounts-dropdown .dropdown-content a:hover {
+            background: rgba(99, 102, 241, 0.07);
+            color: #6366f1 !important;
+        }
+
+        .accounts-dropdown .dropdown-content .dd-item {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #ef4444 !important;
+        }
+
+        .accounts-dropdown .dropdown-content .dd-item:hover {
+            background: rgba(239, 68, 68, 0.07);
+        }
+
+        .accounts-dropdown .dropdown-content .dd-divider {
+            height: 1px;
+            background: rgba(0,0,0,0.06);
+            margin: 4px 0;
+        }
+
+        .accounts-dropdown .dropdown-content i {
+            width: 15px;
+            font-size: 12px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        /* Accounts Button - Main */
+        .btn-accounts {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white !important;
+            padding: 9px 22px !important;
+            border-radius: 22px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            margin-left: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-accounts:hover {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            color: white !important;
+        }
+
+        .btn-accounts:active {
+            transform: translateY(0);
+        }
+
+        .btn-accounts i {
+            font-size: 14px;
+        }
+
+        .accounts-chevron {
+            font-size: 11px !important;
+            margin-left: 4px;
+            transition: transform 0.3s;
+        }
+
+        .accounts-dropdown:hover .accounts-chevron,
+        .accounts-dropdown.active .accounts-chevron {
+            transform: rotate(180deg);
+        }
+
 
         /* ========================================== */
         /*        NEW SLIDING SIDE POSTER CSS        */
@@ -293,27 +453,50 @@
         <!--        AUTHENTICATION LOGIC START          -->
         <!-- ========================================== -->
         {% if user.is_authenticated %}
-            <!-- User Dropdown -->
-            <div class="dropdown user-dropdown">
-                <a href="#" class="nav-link user-greeting">
-                    <i class="fas fa-user-circle"></i>
-                    Hi, {{ user.first_name|default:user.username }}
-                    <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 2px;"></i>
-                </a>
-                <div class="dropdown-content">
-                    <a href="{% url 'login_redirect' %}">
-                        <i class="fas fa-th-large"></i> Dashboard
-                    </a>
-                    <div class="logout-btn-wrapper">
-                        <form action="{% url 'logout' %}" method="post" style="display:contents;">
+            {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
+                <!-- ACCOUNTS USER DROPDOWN (Professional style) -->
+                <div class="dropdown accounts-dropdown user-dropdown">
+                    <button type="button" class="btn-accounts" style="border: none; cursor: pointer;">
+                        <i class="fas fa-calculator"></i>
+                        Accounts
+                        <i class="fas fa-chevron-down accounts-chevron"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="{% url 'accounts_dashboard' %}">
+                            <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                        <div class="dd-divider"></div>
+                        <form action="{% url 'accounts_logout' %}" method="post" style="display:contents;">
                             {% csrf_token %}
-                            <button type="submit" class="btn-auth-logout" style="display:flex; align-items:center; gap:10px; border:none; background:none; padding:0; width:100%; color:inherit; font:inherit;">
-                                <i class="fas fa-sign-out-alt"></i> Logout
+                            <button type="submit" class="dd-item">
+                                <i class="fas fa-sign-out-alt"></i> Sign Out
                             </button>
                         </form>
                     </div>
                 </div>
-            </div>
+            {% else %}
+                <!-- Regular User Dropdown -->
+                <div class="dropdown user-dropdown">
+                    <a href="#" class="nav-link user-greeting">
+                        <i class="fas fa-user-circle"></i>
+                        Hi, {{ user.first_name|default:user.username }}
+                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 2px;"></i>
+                    </a>
+                    <div class="dropdown-content">
+                        <a href="{% url 'login_redirect' %}">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <div class="logout-btn-wrapper">
+                            <form action="{% url logout_url|default:'logout' %}" method="post" style="display:contents;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-auth-logout" style="display:flex; align-items:center; gap:10px; border:none; background:none; padding:0; width:100%; color:inherit; font:inherit;">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         {% else %}
             <!-- If Logged Out: Show Login Button -->
             <!-- <a href="{% url 'login' %}" class="btn-auth-login">Login</a> -->
@@ -333,16 +516,6 @@
 
     <!-- Main Content -->
     <main>
-      {% if messages %}
-        <div class="container mt-3">
-          {% for message in messages %}
-            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
       {% block body %}{% endblock %}
     </main>
 

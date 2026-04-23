@@ -1,6 +1,7 @@
 import csv
 import io
 import json
+import random
 import os
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse, FileResponse
@@ -287,6 +288,89 @@ def force_password_change(request):
     return render(request, "force_password_change.html")
 
 
+# --- OTP VIEWS FOR COMPANY REGISTRATION EMAIL VERIFICATION ---
+@csrf_exempt
+def send_registration_otp(request):
+    """Generate and email a 6-digit OTP for registration email verification."""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid method.'}, status=405)
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+    except Exception:
+        email = request.POST.get('email', '').strip()
+
+    if not email or '@' not in email:
+        return JsonResponse({'success': False, 'error': 'Please enter a valid email address.'})
+    if User.objects.filter(email=email).exists():
+        return JsonResponse({'success': False, 'error': 'This email is already registered.'})
+
+    import time
+    otp = str(random.randint(100000, 999999))
+    request.session['reg_otp']         = otp
+    request.session['reg_otp_email']   = email
+    request.session['reg_otp_verified']= False
+    request.session['reg_otp_ts']      = time.time()   # store generation timestamp
+    request.session.modified = True
+
+    from django.core.mail import send_mail
+    try:
+        send_mail(
+            subject='Your OTP - Open Hand Solutions Registration',
+            message=(
+                f'Hello,\n\n'
+                f'Your one-time password (OTP) for Corporate Registration is:\n\n'
+                f'    {otp}\n\n'
+                f'This OTP is valid for 2 minutes only.\n'
+                f'Do not share it with anyone.\n\n'
+                f'Best regards,\nOpen Hand Solutions Team'
+            ),
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[email],
+            fail_silently=False,
+        )
+        return JsonResponse({'success': True, 'message': 'OTP sent to your email.'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': f'Failed to send email: {str(e)}'})
+
+
+@csrf_exempt
+def verify_registration_otp(request):
+    """Verify the submitted OTP against the session-stored OTP."""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Invalid method.'}, status=405)
+    try:
+        data = json.loads(request.body)
+        submitted = str(data.get('otp', '')).strip()
+        email     = data.get('email', '').strip()
+    except Exception:
+        submitted = str(request.POST.get('otp', '')).strip()
+        email     = request.POST.get('email', '').strip()
+
+    session_otp   = request.session.get('reg_otp', '')
+    session_email = request.session.get('reg_otp_email', '')
+    otp_ts        = request.session.get('reg_otp_ts', 0)
+
+    if not session_otp:
+        return JsonResponse({'success': False, 'error': 'No OTP found. Please request a new one.'})
+    if email != session_email:
+        return JsonResponse({'success': False, 'error': 'Email mismatch. Please request a new OTP.'})
+
+    import time
+    if time.time() - otp_ts > 120:   # 2-minute expiry
+        # Clear expired OTP
+        request.session.pop('reg_otp', None)
+        request.session.pop('reg_otp_ts', None)
+        request.session.modified = True
+        return JsonResponse({'success': False, 'error': 'OTP expired. Please request a new one.', 'expired': True})
+
+    if submitted == session_otp:
+        request.session['reg_otp_verified'] = True
+        request.session.modified = True
+        return JsonResponse({'success': True, 'message': 'Email verified successfully!'})
+    return JsonResponse({'success': False, 'error': 'Incorrect OTP. Please try again.'})
+
+
 # --- 2. COMPANY SUBSCRIPTION (FORM) ---
 def company_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
@@ -296,13 +380,34 @@ def company_subscription(request, plan_type):
         comp_name = request.POST.get("company_name", "").strip()
         seats = request.POST.get("seats", 10)
         fullname = request.POST.get("fullname", "").strip()
-        email = request.POST.get("email", "").strip()
         password = request.POST.get("password", "").strip()
 
+        # If a setup_token is in the POST, decode the email from it (tamper-proof)
+        setup_token = request.POST.get("setup_token", "").strip()
+        if setup_token:
+            try:
+                from django.core import signing
+                payload = signing.loads(setup_token, salt='posh-admin-setup', max_age=60*60*72)  # 72h
+                email = payload['email']
+            except Exception:
+                messages.error(request, "Invalid or expired setup link. Please contact support.")
+                return redirect(request.path)
+        else:
+            email = request.POST.get("email", "").strip()
+
+        if not comp_name:
+            comp_name = f"{fullname}'s Organization"
+
+        # Restriction: Email must be OTP-verified (skip if coming from verified setup link)
+        if not setup_token:
+            if not request.session.get('reg_otp_verified') or request.session.get('reg_otp_email') != email:
+                messages.error(request, 'Please verify your email with the OTP before submitting.')
+                return redirect(request.path)
+
         # Restriction: Ensure all info is compulsory
-        if not all([comp_name, fullname, email, password]):
+        if not all([fullname, email, password]):
             messages.error(
-                request, "All fields are compulsory. Please fill out the entire form."
+                request, 'All fields are compulsory. Please fill out the entire form.'
             )
             return redirect(request.path)
 
@@ -353,12 +458,26 @@ def company_subscription(request, plan_type):
             messages.error(request, f"Error: {str(e)}")
             return redirect(request.path)
 
-    # FIX FOR CACHE PROBLEM: Clear messages on a fresh GET request
+    # --- GET ---
     else:
         list(messages.get_messages(request))
 
-    response = render(request, "company_signup.html", {"plan_type": plan_type})
-    # FIX FOR CACHE PROBLEM: Disable browser caching for this page
+    # Decode setup_token on GET to pre-fill and lock the email field
+    locked_email = None
+    setup_token = request.GET.get("setup_token", "").strip()
+    if setup_token:
+        try:
+            from django.core import signing
+            payload = signing.loads(setup_token, salt='posh-admin-setup', max_age=60*60*72)
+            locked_email = payload['email']
+        except Exception:
+            messages.error(request, "This setup link has expired or is invalid. Please contact support.")
+
+    response = render(request, "company_signup.html", {
+        "plan_type": plan_type,
+        "locked_email": locked_email,
+        "setup_token": setup_token,
+    })
     response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
 
@@ -446,6 +565,10 @@ def add_employee(request):
 # --- 4. COMPANY DASHBOARD ---
 @login_required(login_url="login")
 def company_dashboard(request):
+    # Check if user logged out from HR portal
+    if request.session.get('logged_out_of_hr'):
+        request.session.pop('logged_out_of_hr', None)
+
     user = request.user
     membership = OrganizationMember.objects.filter(user=user, role="ADMIN").first()
 
@@ -603,6 +726,7 @@ def company_dashboard(request):
         "certified_employees": certified_employees,
         "training_type": training_type,
         "default_password": org.default_password,  # Pass default password to template
+        "logout_url": "hr_logout",
     }
 
     # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
@@ -1419,7 +1543,7 @@ def tutorial_view(request):
         elif has_pocso and not has_posh:
             show_posh = False
 
-    context = {"show_posh": show_posh, "show_pocso": show_pocso}
+    context = {"show_posh": show_posh, "show_pocso": show_pocso, "logout_url": "training_logout"}
     return render(request, "tutorial.html", context)
 
 
@@ -1847,6 +1971,27 @@ def custom_logout(request):
     return redirect("home")
 
 
+def accounts_logout(request):
+    """Fully log out the accounts user and clear the session."""
+    logout(request)
+    messages.success(request, "Successfully signed out from Accounts Portal.")
+    return redirect("home")
+
+
+def hr_logout(request):
+    """Logout for HR/Company Dashboard users - keeps user authenticated but removes portal access"""
+    request.session['logged_out_of_hr'] = True
+    messages.success(request, "Successfully logged out from HR Portal.")
+    return redirect("home")
+
+
+def training_logout(request):
+    """Logout for Training users - keeps user authenticated but removes portal access"""
+    request.session['logged_out_of_training'] = True
+    messages.success(request, "Successfully logged out from Training Portal.")
+    return redirect("home")
+
+
 def download_certificate(request, course_type="POSH"):
     if not request.user.is_authenticated:
         return redirect("login")
@@ -2064,6 +2209,10 @@ def accounts_login_view(request):
 @login_required(login_url="accounts_login")
 def accounts_dashboard_view(request):
     """Pricing configuration dashboard for the Accounts Department"""
+    # Check if user logged out from Accounts portal
+    if request.session.get('logged_out_of_accounts'):
+        request.session.pop('logged_out_of_accounts', None)
+
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
 
@@ -2078,9 +2227,9 @@ def accounts_dashboard_view(request):
     email_saved = request.session.pop('email_templates_saved', False)
 
     email_tiers = [
-        ("PAY_NOW", "Pay Now / Payment Done"),
-        ("BEFORE_15", "Register Later: Before 15th May"),
-        ("REGULAR", "Register Later: Regular Price"),
+        ("PAY_NOW",           "Payment Received Confirmation"),
+        ("PAYMENT_VERIFIED",  "Payment Verified – Onboarding Confirmed"),
+        ("EMPLOYEE_WELCOME",  "Employee Welcome – Account Credentials"),
     ]
     
     email_templates = {et.tier_key: et for et in EmailTemplate.objects.all()}
@@ -2105,7 +2254,7 @@ def accounts_save_email_templates_view(request):
         return redirect("home")
 
     if request.method == "POST":
-        tiers = ["PAY_NOW", "BEFORE_15", "REGULAR"]
+        tiers = ["PAY_NOW", "PAYMENT_VERIFIED", "EMPLOYEE_WELCOME"]
         for tier in tiers:
             subject = request.POST.get(f"subject_{tier}")
             body = request.POST.get(f"body_{tier}")
@@ -2161,7 +2310,14 @@ def accounts_verify_payment_view(request, registration_id):
     registration.payment_status = 'VERIFIED'
     registration.is_paid = True
     registration.save()
-    
+
+    # Send payment-verified confirmation email to the client
+    try:
+        from .email_utils import send_tiered_email
+        send_tiered_email(registration, 'PAYMENT_VERIFIED', 'POSH')
+    except Exception:
+        pass  # Don't block the verify action if email fails
+
     messages.success(request, f"Payment for {registration.company_name} verified successfully!")
     return redirect("accounts_dashboard")
 
@@ -2308,7 +2464,14 @@ def accounts_verify_pocso_payment_view(request, registration_id):
     registration = get_object_or_404(POCSORegistration, id=registration_id)
     registration.payment_status = 'VERIFIED'
     registration.save()
-    
+
+    # Send payment-verified confirmation email to the client
+    try:
+        from .email_utils import send_tiered_email
+        send_tiered_email(registration, 'PAYMENT_VERIFIED', 'POCSO')
+    except Exception:
+        pass  # Don't block the verify action if email fails
+
     messages.success(request, f"Payment for {registration.school_name} verified successfully!")
     return redirect("accounts_dashboard")
 
@@ -2538,5 +2701,7 @@ def submit_payment_view(request, registration_id):
             else:
                 return redirect("pocso_billing")
             
+    return render(request, "submit_payment.html", {"registration": registration})
+
     return render(request, "submit_payment.html", {"registration": registration})
 
