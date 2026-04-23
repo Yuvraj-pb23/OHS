@@ -731,6 +731,7 @@
     
     // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---
     let qIdx = 0;
+    let qScore = 0;
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -742,6 +743,7 @@
 
     function initQuiz() {
         qIdx = 0; 
+        qScore = 0;
         quizSeconds = 600;
         // Create a copy, shuffle, and take only 15
         currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
@@ -772,8 +774,13 @@
             btn.onclick = () => {
                 const btns = document.querySelectorAll('.pq-btn');
                 btns.forEach(b => b.classList.add('disabled'));
-                if(i === q.answer) btn.classList.add('correct');
-                else { btn.classList.add('wrong'); btns[q.answer].classList.add('correct'); }
+                if(i === q.answer) {
+                    btn.classList.add('correct');
+                    qScore++;
+                } else { 
+                    btn.classList.add('wrong'); 
+                    btns[q.answer].classList.add('correct'); 
+                }
                 document.getElementById('pq-next-btn').style.display = 'block';
             };
             grid.appendChild(btn);
@@ -788,26 +795,37 @@
         } else {
             clearInterval(quizTimerInterval);
             document.getElementById('pq-game-area').style.display = 'none';
+            
+            const passed = qScore >= 3;
+            const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
+            document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn btn-gradient mt-3" onclick="closeModal()">Finish</button>`;
             document.getElementById('pq-result-area').style.display = 'block';
 
-            // Mark complete — works whether opened from video tab or PPT tab
-            if (window._quizModuleId) {
-                // Opened from Video Modules tab
-                const idx = window._quizModuleIdx;
-                if (idx !== undefined && modules[idx]) {
-                    modules[idx].status = 'complete';
+            // Save Assessment Result to trigger certificate generation if passed
+            fetch('/ajax/submit-assessment/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+                body: JSON.stringify({ type: 'POSH', score: qScore, passed: passed })
+            }).then(() => {
+                // Mark module complete ONLY if they passed
+                if (passed) {
+                    if (window._quizModuleId) {
+                        const idx = window._quizModuleIdx;
+                        if (idx !== undefined && modules[idx]) {
+                            modules[idx].status = 'complete';
+                        }
+                        markComplete(window._quizModuleId);
+                        window._quizModuleId = null;
+                        window._quizModuleIdx = null;
+                        renderModules();
+                    } else if (ppts[currentPPTIdx]) {
+                        ppts[currentPPTIdx].status = 'complete';
+                        markComplete(ppts[currentPPTIdx].id);
+                        renderPPTList();
+                    }
                 }
-                markComplete(window._quizModuleId);
-                window._quizModuleId = null;
-                window._quizModuleIdx = null;
-                renderModules();
-            } else if (ppts[currentPPTIdx]) {
-                // Opened from PPT & Resources tab
-                ppts[currentPPTIdx].status = 'complete';
-                markComplete(ppts[currentPPTIdx].id);
-                renderPPTList();
-            }
-            updateTotalStats();
+                updateTotalStats();
+            }).catch(e => console.error(e));
         }
     }
 

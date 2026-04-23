@@ -1521,75 +1521,76 @@ document.addEventListener('DOMContentLoaded', function() {
       {% if certified_employees %}
       <div class="members-grid">
         {% for member in certified_employees %}
-        <div class="member-card certificate-card" data-bs-toggle="modal"
-          data-bs-target="#certificateModal-{{ member.id }}" style="cursor: pointer;">
-          <div class="avatar bg-success">
-            <i class="bi bi-patch-check-fill"></i>
+        <div class="member-card certificate-card text-center d-flex flex-column align-items-center" style="padding: 30px 20px;">
+          <div class="avatar mb-3" style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
+            {{ member.user.first_name|first|upper }}
           </div>
-          <h3 class="member-name">
+          
+          <h3 class="member-name" style="margin-bottom: 5px; font-weight: 700;">
             {{ member.user.get_full_name|default:member.user.first_name }}
           </h3>
-          <p class="member-email">{{ member.user.email }}</p>
-          <span class="role-badge" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
-            <i class="bi bi-award me-1"></i>Certified
+          <p class="member-email mb-2" style="font-size: 0.9rem; opacity: 0.7;">{{ member.user.email }}</p>
+          
+          {% if member.user.designation %}
+          <p class="small mb-3" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
+            <i class="bi bi-briefcase me-1"></i>{{ member.user.designation }}
+          </p>
+          {% endif %}
+          
+          <span class="role-badge mb-4" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 15px; border-radius: 20px; font-weight: 600;">
+            <i class="bi bi-patch-check-fill me-1"></i>Certified
           </span>
-        </div>
-
-        <!-- CERTIFICATE MODAL -->
-        <div class="modal fade" id="certificateModal-{{ member.id }}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-              <div class="modal-header border-0">
-                <h5 class="modal-title">
-                  <i class="bi bi-award me-2"></i>Certificate of Completion
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-              </div>
-
-              <div class="modal-body" style="padding: 40px; text-align: center;">
-                <div
-                  style="background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 60px 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
-                  <div style="background: white; padding: 40px; border-radius: 10px; border: 5px solid #f59e0b;">
-                    <h1 style="color: #1e3a8a; font-size: 2.5rem; font-weight: 700; margin-bottom: 20px;">
-                      🎉 Certificate of Completion
-                    </h1>
-                    <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 30px;">
-                      This is to certify that
-                    </p>
-                    <h2 style="color: #1e3a8a; font-size: 2rem; font-weight: 600; margin-bottom: 30px;">
-                      {{ member.user.get_full_name|default:member.user.first_name }}
-                    </h2>
-                    <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 20px;">
-                      has successfully completed the
-                    </p>
-                    <h3 style="color: #f59e0b; font-size: 1.5rem; font-weight: 600; margin-bottom: 30px;">
-                      {% if training_type == 'POSH' %}
-                      Prevention of Sexual Harassment (POSH) Training
-                      {% else %}
-                      Protection of Children from Sexual Offences (POCSO) Training
-                      {% endif %}
-                    </h3>
-                    <p style="color: #6b7280; font-size: 0.95rem; margin-top: 40px;">
-                      Awarded by {{ organization.name }}
-                    </p>
-                    <p style="color: #9ca3af; font-size: 0.85rem; margin-top: 10px;">
-                      Date: {{ member.user.date_joined|date:"F d, Y" }}
-                    </p>
-                  </div>
-                </div>
-
-                <div class="mt-4">
-                  <a href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}"
-                    class="btn btn-gradient" style="padding: 15px 40px; font-size: 1.1rem;">
-                    <i class="bi bi-download me-2"></i>Download Certificate
-                  </a>
-                </div>
-              </div>
-            </div>
+          
+          <div class="w-100 mt-auto">
+            <a href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}" 
+               class="btn download-btn-animated w-100" style="
+                 background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+                 color: white;
+                 padding: 12px;
+                 border-radius: 12px;
+                 font-weight: 600;
+                 border: none;
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+                 gap: 8px;
+                 transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                 position: relative;
+                 overflow: hidden;
+               ">
+              <i class="bi bi-download"></i>
+              <span>Download Certificate</span>
+              
+              <!-- Shine Effect Element -->
+              <div style="
+                position: absolute;
+                top: 0; left: -100%;
+                width: 50%; height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transform: skewX(-25deg);
+                animation: buttonShine 3s infinite;
+              "></div>
+            </a>
           </div>
         </div>
         {% endfor %}
       </div>
+
+      <style>
+        @keyframes buttonShine {
+          0% { left: -100%; }
+          20% { left: 150%; }
+          100% { left: 150%; }
+        }
+        .download-btn-animated:hover {
+          transform: translateY(-3px) scale(1.02);
+          box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3);
+          filter: brightness(1.1);
+        }
+        .download-btn-animated:active {
+          transform: translateY(0) scale(0.98);
+        }
+      </style>
       {% else %}
       <div class="cert-card" style="text-align: center; padding: 60px 40px;">
         <div style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">

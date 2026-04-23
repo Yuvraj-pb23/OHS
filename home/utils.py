@@ -23,15 +23,21 @@ def generate_certificate(user, course_type="POSH"):
         return None
 
     # 2. Prepare Context
+    name_str = f"{user.first_name} {user.last_name}".strip() or user.username
+    if getattr(user, 'designation', None):
+        name_str += f" ({user.designation})"
+
     context = {
-        "candidate_name": f"{user.first_name} {user.last_name}".strip() or user.username,
+        "candidate_name": name_str,
         "course_type": course_type,
         "completion_date": timezone.now().strftime("%d/%m/%Y"), # e.g. 05/02/2026
         "image_path": f"file://{image_path}", # WeasyPrint needs file:// protocol for local images
     }
 
-    # Determine date position
-    date_left = "35.5%" if course_type == "POSH" else "37%"
+    # Determine date position (adjusting based on user request to be after "held on")
+    # Tweak these percentages to align with the template's 'Held on' gap
+    date_top = "64.5%" 
+    date_left = "35.5%"
 
     # 3. Generate HTML
     # Inline CSS for pixel-perfect positioning (based on user requirement)
@@ -52,31 +58,31 @@ def generate_certificate(user, course_type="POSH"):
                 background-image: url('{context['image_path']}');
                 background-size: cover;
                 background-repeat: no-repeat;
-                font-family: 'Helvetica', 'Arial', sans-serif; /* Setup appropriate font */
+                font-family: 'Helvetica', 'Arial', sans-serif;
                 position: relative;
                 color: #333; 
             }}
             .candidate-name {{
                 position: absolute;
-                top: 47%; /* Lowered as requested */
+                top: 48%; /* Centered in the middle of the certificate */
                 left: 0;
                 width: 100%;
                 text-align: center;
-                font-size: 36pt;
+                font-size: 28pt;
                 font-weight: bold;
-                color: #000;
+                color: #1e3a8a; /* Using a professional dark blue to match template accents */
                 text-transform: uppercase;
             }}
             .date {{
                 position: absolute;
-                bottom: 33%; 
-                left: {date_left};   /* Dynamic positioning */
-                font-size: 16pt;
+                top: {date_top}; 
+                left: {date_left};
+                font-size: 14pt;
                 font-weight: bold;
                 color: #000;
+                display: inline-block;
+                width: auto;
             }}
-            /* Debug helper to find positions - remove in prod */
-            /* .grid {{ position: absolute; top:0; left:0; width:100%; height:100%; grid-template-columns: repeat(10, 1fr); display: grid; opacity: 0.2; pointer-events: none; }} */
         </style>
     </head>
     <body>
