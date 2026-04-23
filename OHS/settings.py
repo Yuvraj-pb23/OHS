@@ -28,10 +28,15 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['*', '127.0.0.1', 'openhandsolutions.com', 'www.openhandsolutions.com']
 
+# ⚠️ TEMP: set to localhost for local testing. Change to 'https://openhandsolutions.com' before production deploy.
+SITE_URL = 'http://127.0.0.1:8000'
+
 # Production Security Settings
 CSRF_TRUSTED_ORIGINS = [
     'https://openhandsolutions.com',
-    'https://www.openhandsolutions.com'
+    'https://www.openhandsolutions.com',
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
 ]
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True

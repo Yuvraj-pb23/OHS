@@ -1,4 +1,10 @@
 def posh_act_page(request):
+    # Check if user logged out from Training portal
+    if request.session.get('logged_out_of_training'):
+        request.session.delete_session_key('logged_out_of_training')
+        messages.warning(request, "Please login to Training Portal to access this page.")
+        return redirect("home")
+
     user = request.user
     has_access = Subscription.objects.filter(
         Q(user=user) | Q(organization__organizationmember__user=user),

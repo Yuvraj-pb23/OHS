@@ -187,23 +187,79 @@
             <div class="error-msg">Passwords do not match.</div>
         </div>
 
+        {% if locked_email %}
+        <button type="submit" class="btn-company" id="submitBtn">Create Organization Account</button>
+        {% else %}
         <button type="submit" class="btn-company" id="submitBtn" disabled>Create Organization Account</button>
+        {% endif %}
     </form>
 </div>
 
 <script>
 (function () {
     {% if locked_email %}
-    // Email is pre-verified via signed token — just enable submit when passwords are filled
+    // ── LOCKED EMAIL FLOW — real-time validation ─────────────────
     const submitBtn = document.getElementById('submitBtn');
+    const form      = document.getElementById('companyForm');
+    const nameInput = document.getElementById('fullname');
     const pass      = document.getElementById('password');
     const conf      = document.getElementById('confirm_password');
-    function checkPasswords() {
-        const ok = pass.value.length >= 8 && pass.value === conf.value;
-        submitBtn.disabled = !ok;
+
+    const nameErr = nameInput.nextElementSibling;   // .error-msg after fullname
+    const passErr = pass.nextElementSibling;        // .error-msg after password
+    const confErr = conf.nextElementSibling;        // .error-msg after confirm_password
+
+    function showError(input, errEl, msg) {
+        input.style.borderColor = '#c62828';
+        errEl.textContent = msg;
+        errEl.style.display = 'block';
     }
-    pass.addEventListener('input', checkPasswords);
-    conf.addEventListener('input', checkPasswords);
+    function clearError(input, errEl) {
+        input.style.borderColor = '#26a69a';
+        errEl.style.display = 'none';
+    }
+
+    // ── real-time feedback ──────────────────────────────────────
+    nameInput.addEventListener('input', function() {
+        if (this.value.trim().length < 2) showError(this, nameErr, 'Please enter your full name.');
+        else clearError(this, nameErr);
+    });
+
+    pass.addEventListener('input', function() {
+        if (this.value.length < 8) showError(this, passErr, 'Password must be at least 8 characters.');
+        else clearError(this, passErr);
+        if (conf.value && conf.value !== this.value) showError(conf, confErr, 'Passwords do not match.');
+        else if (conf.value) clearError(conf, confErr);
+    });
+
+    conf.addEventListener('input', function() {
+        if (this.value !== pass.value) showError(this, confErr, 'Passwords do not match.');
+        else clearError(this, confErr);
+    });
+
+    // ── block submit if invalid ─────────────────────────────────
+    form.addEventListener('submit', function(e) {
+        let valid = true;
+        if (nameInput.value.trim().length < 2) {
+            showError(nameInput, nameErr, 'Please enter your full name.');
+            nameInput.focus();
+            valid = false;
+        }
+        if (pass.value.length < 8) {
+            showError(pass, passErr, 'Password must be at least 8 characters.');
+            if (valid) pass.focus();
+            valid = false;
+        }
+        if (conf.value !== pass.value || conf.value === '') {
+            showError(conf, confErr, 'Passwords do not match.');
+            if (valid) conf.focus();
+            valid = false;
+        }
+        if (!valid) { e.preventDefault(); return; }
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account…';
+    });
+
     return; // Skip OTP JS entirely
     {% endif %}
 

@@ -293,18 +293,6 @@
         <form id="pocsoForm" method="POST" action="{% url 'pocso_registration' %}" onsubmit="return validateForm()" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
             {% csrf_token %}
 
-            <!-- Messages Section -->
-            {% if messages %}
-            <div class="px-6 pt-6 animate-fadeIn">
-                {% for message in messages %}
-                <div class="p-4 mb-4 rounded-2xl flex items-center gap-3 {% if message.tags == 'error' %}bg-rose-50 text-rose-700 border border-rose-100{% else %}bg-emerald-50 text-emerald-700 border border-emerald-100{% endif %}">
-                    <i class="fas {% if message.tags == 'error' %}fa-circle-exclamation{% else %}fa-circle-check{% endif %}"></i>
-                    <p class="text-sm font-semibold">{{ message }}</p>
-                </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-            
             <div class="p-6 md:p-10">
                 <!-- STEP 1: CONTACT INFO -->
                 <div class="step-content" id="section-1">
