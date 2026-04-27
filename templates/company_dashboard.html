@@ -214,6 +214,156 @@
       transform: translateY(-4px);
     }
 
+    /* MOBILE RESPONSIVENESS */
+    @media (max-width: 992px) {
+      :root {
+        --sidebar-width: 260px;
+      }
+
+      .sidebar {
+        left: calc(-1 * var(--sidebar-width));
+        transition: all 0.3s ease;
+        z-index: 1050;
+      }
+
+      .sidebar.show {
+        left: 0;
+        box-shadow: 0 0 50px rgba(0,0,0,0.5);
+      }
+
+      .main-content {
+        margin-left: 0 !important;
+        padding: var(--space-4) !important;
+        padding-top: 70px !important; /* Space for fixed hamburger */
+      }
+
+      .hamburger-btn {
+        display: flex !important;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1040;
+        backdrop-filter: blur(4px);
+      }
+
+      .sidebar-overlay.show {
+        display: block;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: var(--space-2) !important;
+      }
+
+      .stat-card {
+        padding: var(--space-2) !important;
+        gap: var(--space-1) !important;
+      }
+
+      .stat-label {
+        font-size: 0.6rem !important;
+      }
+
+      .stat-value {
+        font-size: 1.4rem !important;
+      }
+
+      .action-group {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: var(--space-2) !important;
+        justify-content: center !important;
+      }
+
+      .btn-action, .btn-gradient-action {
+        padding: 6px 12px !important;
+        font-size: 0.75rem !important;
+        width: auto !important;
+        flex: 1 1 auto !important;
+      }
+
+      .search-wrapper {
+        min-width: 100% !important;
+        order: -1; /* Search always first on mobile */
+      }
+
+      .members-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: var(--space-2) !important;
+      }
+
+      .member-card {
+        padding: var(--space-3) !important;
+      }
+
+      .avatar {
+        width: 45px !important;
+        height: 45px !important;
+        font-size: 1rem !important;
+        margin-bottom: var(--space-2) !important;
+      }
+
+      .member-name {
+        font-size: 0.85rem !important;
+      }
+
+      .member-email {
+        font-size: 0.7rem !important;
+        margin-bottom: var(--space-2) !important;
+      }
+
+      .role-badge {
+        font-size: 0.6rem !important;
+        padding: 2px 8px !important;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+      }
+
+      .stat-card {
+        padding: var(--space-4);
+      }
+      
+      .certificate-card {
+        padding: 15px 10px !important;
+      }
+      
+      .certificate-card .avatar {
+        width: 50px !important;
+        height: 50px !important;
+        font-size: 1.2rem !important;
+      }
+      
+      .certificate-card .btn {
+        padding: 8px !important;
+        font-size: 0.75rem !important;
+      }
+    }
+
+    .hamburger-btn {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1060;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+    }
+
     .stat-label {
       color: var(--text-secondary);
       font-size: 0.85rem;
@@ -647,68 +797,19 @@
       margin-bottom: var(--space-1);
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 992px) {
-      :root {
-        --sidebar-width: 70px;
-      }
+    /* Consolidated Mobile Responsiveness handled above in line 217 */
 
-      .sidebar-brand span,
-      .nav-link span,
-      .sidebar-back-btn span {
-        display: none;
-      }
-
-      .main-content {
-        margin-left: 70px;
-        padding: var(--space-4);
-      }
-
-      .stats-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 1024px) {
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-5);
-      }
-
-      .poster-grid {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .stats-grid {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
-        margin-bottom: var(--space-6);
-      }
-
-      .poster-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .members-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .glass-toolbar {
-        padding: var(--space-3);
-      }
-
-      .search-wrapper {
-        min-width: 100%;
-      }
-    }
   </style>
 </head>
 
 <body>
-  <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <!-- MOBILE HAMBURGER & OVERLAY -->
+  <button class="hamburger-btn" id="hamburgerBtn">
+    <i class="bi bi-list"></i>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <nav class="sidebar" id="sidebar">
     <a href="#" class="sidebar-brand">
       <i class="bi bi-building"></i>
       <span>{{ posh_company_name }}</span>
@@ -2009,6 +2110,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show notification when page loads after refresh
     window.addEventListener('load', function () {
+      // MOBILE SIDEBAR TOGGLE
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      const navLinks = document.querySelectorAll('.nav-link');
+
+      const toggleSidebar = () => {
+          sidebar.classList.toggle('show');
+          sidebarOverlay.classList.toggle('show');
+      };
+
+      hamburgerBtn?.addEventListener('click', toggleSidebar);
+      sidebarOverlay?.addEventListener('click', toggleSidebar);
+
+      // Close sidebar when clicking a link on mobile
+      navLinks.forEach(link => {
+          link.addEventListener('click', () => {
+              if (window.innerWidth <= 992) {
+                  toggleSidebar();
+              }
+          });
+      });
+
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('refreshed') === 'true') {
         // Remove the parameter from URL

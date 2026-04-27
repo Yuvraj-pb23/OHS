@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0012_organization_logo'),
+        ("home", "0012_organization_logo"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organization',
-            name='logo_width',
+            model_name="organization",
+            name="logo_width",
             field=models.FloatField(default=15.0),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='logo_x',
+            model_name="organization",
+            name="logo_x",
             field=models.FloatField(default=2.0),
         ),
         migrations.AddField(
-            model_name='organization',
-            name='logo_y',
+            model_name="organization",
+            name="logo_y",
             field=models.FloatField(default=2.0),
         ),
     ]

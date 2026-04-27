@@ -1,0 +1,30 @@
+stages:
+  - test
+  - security
+
+variables:
+  DJANGO_SETTINGS_MODULE: OHS.settings
+
+before_script:
+  - python -V
+  - pip install -r requirements.txt
+
+pytest:
+  stage: test
+  script:
+    - pytest
+
+django_checks:
+  stage: test
+  script:
+    - python manage.py check --deploy
+
+lint:
+  stage: test
+  script:
+    - flake8 .
+
+security:
+  stage: security
+  script:
+    - bandit -r .

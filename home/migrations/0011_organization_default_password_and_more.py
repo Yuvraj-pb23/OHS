@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0010_user_user_id'),
+        ("home", "0010_user_user_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='organization',
-            name='default_password',
+            model_name="organization",
+            name="default_password",
             field=models.CharField(blank=True, max_length=50, null=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='force_password_change',
+            model_name="user",
+            name="force_password_change",
             field=models.BooleanField(default=False),
         ),
     ]

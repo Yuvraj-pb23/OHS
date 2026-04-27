@@ -1,44 +1,27 @@
-"""
-URL configuration for myproject project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-from django.contrib import admin
-from django.urls import path,include
-from django.contrib.auth import views as auth_views # Import this
-from django.urls import path
-from home import views 
-
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include('home.urls')), 
-    path('chat/', include('chat.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-]
-
 from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import re_path
+from django.contrib import admin
+from django.contrib.auth import views as auth_views
+from django.urls import include, path, re_path
 from django.views.static import serve
 
-# Always serve media files in this environment, even when DEBUG is False
-urlpatterns += [
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+urlpatterns = [
+    path("admin/", admin.site.urls),
+    path("", include("home.urls")),
+    path("chat/", include("chat.urls")),
+    path(
+        "login/",
+        auth_views.LoginView.as_view(template_name="login.html"),
+        name="login",
+    ),
 ]
 
-handler404 = 'home.views.custom_404'
-handler403 = 'home.views.custom_403'
-handler500 = 'home.views.custom_500'
 
+# Serve media files even when DEBUG=False (useful for Docker / staging)
+urlpatterns += [
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+]
+
+
+handler404 = "home.views.custom_404"
+handler403 = "home.views.custom_403"
+handler500 = "home.views.custom_500"

@@ -6,13 +6,16 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0031_rename_fee_no_committee_t0_pocsopricingconfig_fee_no_committee_and_more'),
+        (
+            "home",
+            "0031_rename_fee_no_committee_t0_pocsopricingconfig_fee_no_committee_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshregistration',
-            name='require_ic_training',
+            model_name="poshregistration",
+            name="require_ic_training",
             field=models.BooleanField(default=False),
         ),
     ]

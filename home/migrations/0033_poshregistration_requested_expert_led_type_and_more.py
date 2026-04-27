@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0032_poshregistration_require_ic_training'),
+        ("home", "0032_poshregistration_require_ic_training"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshregistration',
-            name='requested_expert_led_type',
+            model_name="poshregistration",
+            name="requested_expert_led_type",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AddField(
-            model_name='poshregistration',
-            name='requested_ic_training_mode',
+            model_name="poshregistration",
+            name="requested_ic_training_mode",
             field=models.CharField(blank=True, max_length=20, null=True),
         ),
     ]

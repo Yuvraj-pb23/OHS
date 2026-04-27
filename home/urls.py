@@ -1,7 +1,6 @@
-from django.contrib import admin
 from django.urls import path
+
 from . import views
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # --- STATIC & INFO PAGES ---
@@ -77,8 +76,14 @@ urlpatterns = [
         name="company_subscription",
     ),
     # --- OTP ENDPOINTS FOR COMPANY REGISTRATION ---
-    path("ajax/send-reg-otp/", views.send_registration_otp, name="send_registration_otp"),
-    path("ajax/verify-reg-otp/", views.verify_registration_otp, name="verify_registration_otp"),
+    path(
+        "ajax/send-reg-otp/", views.send_registration_otp, name="send_registration_otp"
+    ),
+    path(
+        "ajax/verify-reg-otp/",
+        views.verify_registration_otp,
+        name="verify_registration_otp",
+    ),
     # --- COMPANY DASHBOARD & MANAGEMENT ---
     path("dashboard/company/", views.company_dashboard, name="company_dashboard"),
     path("dashboard/add-employee/", views.add_employee, name="add_employee"),
@@ -105,7 +110,6 @@ urlpatterns = [
     path("accounts/profile/", views.custom_login_redirect, name="login_redirect"),
     path("login-redirect/", views.custom_login_redirect, name="custom_login_redirect"),
     path("superuser/dashboard/", views.superuser_dashboard, name="superuser_dashboard"),
-    path("admin/", admin.site.urls),
     # --- CERTIFICATE ---
     path(
         "certificate/<str:course_type>/",

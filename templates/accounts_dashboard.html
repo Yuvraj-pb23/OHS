@@ -180,10 +180,12 @@
         {% if messages %}
         <div class="mb-8 space-y-4">
             {% for message in messages %}
+            {% if 'success' not in message.tags %}
             <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-emerald-500/15 border-emerald-500/30 text-emerald-400{% else %}bg-red-500/15 border-red-500/30 text-red-400{% endif %} border flex items-center gap-3">
                 <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}"></i>
                 <p class="text-sm font-semibold">{{ message }}</p>
             </div>
+            {% endif %}
             {% endfor %}
         </div>
         {% endif %}

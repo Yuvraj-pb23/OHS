@@ -4,6 +4,7 @@
 staticfiles/
 db.sqlite3
 *.sqlite3
+*.sqlite3-journal
 
 # --------------------
 # Python
@@ -15,11 +16,44 @@ __pycache__/
 env/
 venv/
 .venv/
+.pytest_cache/
 
 # --------------------
-# Node (if any)
+# Environment variables
+# --------------------
+.env
+
+# --------------------
+# SSL certificates (mkcert)
+# --------------------
+cert.pem
+key.pem
+certs/
+*.pem
+*.key
+
+# --------------------
+# Logs
+# --------------------
+logs/
+*.log
+nohup.out
+server_log.txt
+
+# --------------------
+# Node (if used)
 # --------------------
 node_modules/
+package-lock.json
+
+# --------------------
+# Playwright
+# --------------------
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
 
 # --------------------
 # OS / Editor
@@ -30,6 +64,19 @@ Thumbs.db
 .idea/
 
 # --------------------
-# Logs
+# Coverage / testing
 # --------------------
-*.log
+htmlcov/
+.coverage
+
+# --------------------
+# Backup files
+# --------------------
+*.bak
+backups/
+
+# --------------------
+# Docker local cert copies
+# --------------------
+docker/*.pem
+docker/*.key

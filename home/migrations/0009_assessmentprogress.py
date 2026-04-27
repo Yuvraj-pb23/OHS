@@ -8,22 +8,43 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0008_dailyactivity_seconds_watched'),
+        ("home", "0008_dailyactivity_seconds_watched"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AssessmentProgress',
+            name="AssessmentProgress",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('assessment_type', models.CharField(choices=[('POSH', 'POSH Act'), ('POCSO', 'POCSO Act')], max_length=10)),
-                ('is_passed', models.BooleanField(default=False)),
-                ('score', models.IntegerField(default=0)),
-                ('timestamp', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='assessment_progress', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "assessment_type",
+                    models.CharField(
+                        choices=[("POSH", "POSH Act"), ("POCSO", "POCSO Act")],
+                        max_length=10,
+                    ),
+                ),
+                ("is_passed", models.BooleanField(default=False)),
+                ("score", models.IntegerField(default=0)),
+                ("timestamp", models.DateTimeField(auto_now=True)),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="assessment_progress",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('user', 'assessment_type')},
+                "unique_together": {("user", "assessment_type")},
             },
         ),
     ]

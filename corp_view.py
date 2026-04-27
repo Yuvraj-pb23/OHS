@@ -1,3 +1,20 @@
+import json
+from datetime import timedelta
+
+from django.contrib import messages
+from django.db.models import Q, Sum
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from home.models import (
+    AssessmentProgress,
+    DailyActivity,
+    ModuleProgress,
+    Subscription,
+    TrainingModule,
+)
+
+
 def posh_act_page_corp(request):
     """Same as posh_act_page but for company employees - no certificate option."""
     user = request.user
@@ -43,7 +60,11 @@ def posh_act_page_corp(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training%20videos/Demo%20video.mp4"
+            ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
         }
@@ -70,19 +91,31 @@ def posh_act_page_corp(request):
 
     today = timezone.now().date()
     total_mins_agg = (
-        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))["minutes_watched__sum"] or 0
+        DailyActivity.objects.filter(user=user).aggregate(Sum("minutes_watched"))[
+            "minutes_watched__sum"
+        ]
+        or 0
     )
     total_secs_agg = (
-        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))["seconds_watched__sum"] or 0
+        DailyActivity.objects.filter(user=user).aggregate(Sum("seconds_watched"))[
+            "seconds_watched__sum"
+        ]
+        or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
-    formatted_total_time = f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}"
+    hours = total_seconds_watched // 3600
+    minutes = (total_seconds_watched % 3600) // 60
+    seconds = total_seconds_watched % 60
+    formatted_total_time = f"{hours:02}:{minutes:02}:{seconds:02}"
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
     chart_data = [
-        (DailyActivity.objects.filter(user=user, date=d).first().minutes_watched
-         if DailyActivity.objects.filter(user=user, date=d).exists() else 0)
+        (
+            DailyActivity.objects.filter(user=user, date=d).first().minutes_watched
+            if DailyActivity.objects.filter(user=user, date=d).exists()
+            else 0
+        )
         for d in last_7_days
     ]
 

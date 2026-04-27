@@ -6,42 +6,50 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0020_alter_user_account_type_poshpricingconfig'),
+        ("home", "0020_alter_user_account_type_poshpricingconfig"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='poshpricingconfig',
-            name='price_tier_5_rate',
+            model_name="poshpricingconfig",
+            name="price_tier_5_rate",
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='price_tier_0_max',
-            field=models.IntegerField(default=10, help_text='Max employees for Tier 1 (1-10)'),
+            model_name="poshpricingconfig",
+            name="price_tier_0_max",
+            field=models.IntegerField(
+                default=10, help_text="Max employees for Tier 1 (1-10)"
+            ),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='price_tier_0_rate',
+            model_name="poshpricingconfig",
+            name="price_tier_0_rate",
             field=models.DecimalField(decimal_places=2, default=200.0, max_digits=8),
         ),
         migrations.AlterField(
-            model_name='poshpricingconfig',
-            name='price_tier_1_max',
-            field=models.IntegerField(default=25, help_text='Max employees for Tier 2'),
+            model_name="poshpricingconfig",
+            name="price_tier_1_max",
+            field=models.IntegerField(default=25, help_text="Max employees for Tier 2"),
         ),
         migrations.AlterField(
-            model_name='poshpricingconfig',
-            name='price_tier_2_max',
-            field=models.IntegerField(default=100, help_text='Max employees for Tier 3'),
+            model_name="poshpricingconfig",
+            name="price_tier_2_max",
+            field=models.IntegerField(
+                default=100, help_text="Max employees for Tier 3"
+            ),
         ),
         migrations.AlterField(
-            model_name='poshpricingconfig',
-            name='price_tier_3_max',
-            field=models.IntegerField(default=200, help_text='Max employees for Tier 4'),
+            model_name="poshpricingconfig",
+            name="price_tier_3_max",
+            field=models.IntegerField(
+                default=200, help_text="Max employees for Tier 4"
+            ),
         ),
         migrations.AlterField(
-            model_name='poshpricingconfig',
-            name='price_tier_4_max',
-            field=models.IntegerField(default=500, help_text='Max employees for Tier 5'),
+            model_name="poshpricingconfig",
+            name="price_tier_4_max",
+            field=models.IntegerField(
+                default=500, help_text="Max employees for Tier 5"
+            ),
         ),
     ]

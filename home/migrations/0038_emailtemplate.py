@@ -6,18 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0037_pocsopricingconfig_staff_rate_elearning_and_more'),
+        ("home", "0037_pocsopricingconfig_staff_rate_elearning_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='EmailTemplate',
+            name="EmailTemplate",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('tier_key', models.CharField(choices=[('PAY_NOW', 'Pay Now'), ('BEFORE_15', 'Before 15th May'), ('REGULAR', 'Regular Price')], max_length=20, unique=True)),
-                ('subject', models.CharField(max_length=255)),
-                ('body', models.TextField(help_text='Placeholders: {name}, {company_name}, {amount}, {invoice_url}, {id}')),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "tier_key",
+                    models.CharField(
+                        choices=[
+                            ("PAY_NOW", "Pay Now"),
+                            ("BEFORE_15", "Before 15th May"),
+                            ("REGULAR", "Regular Price"),
+                        ],
+                        max_length=20,
+                        unique=True,
+                    ),
+                ),
+                ("subject", models.CharField(max_length=255)),
+                (
+                    "body",
+                    models.TextField(
+                        help_text="Placeholders: {name}, {company_name}, {amount}, {invoice_url}, {id}"
+                    ),
+                ),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
     ]

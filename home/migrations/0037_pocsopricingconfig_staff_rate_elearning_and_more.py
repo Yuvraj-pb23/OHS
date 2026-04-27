@@ -6,38 +6,38 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0036_remove_pocsoregistration_housekeeping_staff_count'),
+        ("home", "0036_remove_pocsoregistration_housekeeping_staff_count"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='staff_rate_elearning',
+            model_name="pocsopricingconfig",
+            name="staff_rate_elearning",
             field=models.DecimalField(decimal_places=2, default=91.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='staff_rate_offline',
+            model_name="pocsopricingconfig",
+            name="staff_rate_offline",
             field=models.DecimalField(decimal_places=2, default=91.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='staff_rate_online',
+            model_name="pocsopricingconfig",
+            name="staff_rate_online",
             field=models.DecimalField(decimal_places=2, default=91.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='teacher_rate_elearning',
+            model_name="pocsopricingconfig",
+            name="teacher_rate_elearning",
             field=models.DecimalField(decimal_places=2, default=136.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='teacher_rate_offline',
+            model_name="pocsopricingconfig",
+            name="teacher_rate_offline",
             field=models.DecimalField(decimal_places=2, default=136.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='pocsopricingconfig',
-            name='teacher_rate_online',
+            model_name="pocsopricingconfig",
+            name="teacher_rate_online",
             field=models.DecimalField(decimal_places=2, default=136.0, max_digits=10),
         ),
     ]

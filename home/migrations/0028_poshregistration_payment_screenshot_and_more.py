@@ -6,18 +6,26 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0027_poshregistration_annual_report_submitted'),
+        ("home", "0027_poshregistration_annual_report_submitted"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshregistration',
-            name='payment_screenshot',
-            field=models.ImageField(blank=True, null=True, upload_to='posh_payments/'),
+            model_name="poshregistration",
+            name="payment_screenshot",
+            field=models.ImageField(blank=True, null=True, upload_to="posh_payments/"),
         ),
         migrations.AddField(
-            model_name='poshregistration',
-            name='payment_status',
-            field=models.CharField(choices=[('PENDING', 'Pending'), ('SUBMITTED', 'Submitted'), ('VERIFIED', 'Verified')], default='PENDING', max_length=20),
+            model_name="poshregistration",
+            name="payment_status",
+            field=models.CharField(
+                choices=[
+                    ("PENDING", "Pending"),
+                    ("SUBMITTED", "Submitted"),
+                    ("VERIFIED", "Verified"),
+                ],
+                default="PENDING",
+                max_length=20,
+            ),
         ),
     ]

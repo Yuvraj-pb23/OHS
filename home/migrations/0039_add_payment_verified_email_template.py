@@ -6,13 +6,20 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0038_emailtemplate'),
+        ("home", "0038_emailtemplate"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='emailtemplate',
-            name='tier_key',
-            field=models.CharField(choices=[('PAY_NOW', 'Payment Received Confirmation'), ('PAYMENT_VERIFIED', 'Payment Verified – Onboarding Confirmed')], max_length=20, unique=True),
+            model_name="emailtemplate",
+            name="tier_key",
+            field=models.CharField(
+                choices=[
+                    ("PAY_NOW", "Payment Received Confirmation"),
+                    ("PAYMENT_VERIFIED", "Payment Verified – Onboarding Confirmed"),
+                ],
+                max_length=20,
+                unique=True,
+            ),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0025_poshpricingconfig_fee_ic_no_specialized_training_t0_and_more'),
+        ("home", "0025_poshpricingconfig_fee_ic_no_specialized_training_t0_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshregistration',
-            name='require_external_member_support',
+            model_name="poshregistration",
+            name="require_external_member_support",
             field=models.BooleanField(default=False),
         ),
     ]

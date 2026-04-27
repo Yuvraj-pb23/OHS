@@ -6,43 +6,48 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0022_remove_poshpricingconfig_fee_annual_report_not_submitted_and_more'),
+        (
+            "home",
+            "0022_remove_poshpricingconfig_fee_annual_report_not_submitted_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_annual_report_t4',
+            model_name="poshpricingconfig",
+            name="fee_annual_report_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_no_external_member_t4',
+            model_name="poshpricingconfig",
+            name="fee_no_external_member_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_no_ic_t4',
+            model_name="poshpricingconfig",
+            name="fee_no_ic_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_no_posh_policy_t4',
+            model_name="poshpricingconfig",
+            name="fee_no_posh_policy_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_not_she_box_t4',
+            model_name="poshpricingconfig",
+            name="fee_not_she_box_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='price_tier_4_max',
-            field=models.IntegerField(default=500, help_text='Max employees for Tier 5 (201-500)'),
+            model_name="poshpricingconfig",
+            name="price_tier_4_max",
+            field=models.IntegerField(
+                default=500, help_text="Max employees for Tier 5 (201-500)"
+            ),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='price_tier_4_rate',
+            model_name="poshpricingconfig",
+            name="price_tier_4_rate",
             field=models.DecimalField(decimal_places=2, default=127.0, max_digits=8),
         ),
     ]

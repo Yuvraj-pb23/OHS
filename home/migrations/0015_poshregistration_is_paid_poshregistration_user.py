@@ -8,18 +8,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0014_poshregistration'),
+        ("home", "0014_poshregistration"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshregistration',
-            name='is_paid',
+            model_name="poshregistration",
+            name="is_paid",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='poshregistration',
-            name='user',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='posh_registrations', to=settings.AUTH_USER_MODEL),
+            model_name="poshregistration",
+            name="user",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="posh_registrations",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]

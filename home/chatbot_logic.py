@@ -1,15 +1,18 @@
 # Handles chatbot response
-import joblib
 import os
-from sentence_transformers import SentenceTransformer, util
+
+import joblib
 import torch
+from sentence_transformers import SentenceTransformer, util
 
 # === Load saved components ===
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
+
 # Load SVM classifier and label encoder
 model = joblib.load(os.path.join(BASE_DIR, "chatbot_model.pkl"))
 label_encoder = joblib.load(os.path.join(BASE_DIR, "label_encoder.pkl"))
+
 
 # Load semantic data (questions, answers, embeddings)
 semantic_data = joblib.load(os.path.join(BASE_DIR, "semantic_data.pkl"))
@@ -17,14 +20,24 @@ questions = semantic_data["questions"]
 answers = semantic_data["answers"]
 embeddings = torch.tensor(semantic_data["embeddings"])  # Convert to tensor
 
+
 # Load sentence transformer model
-semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+semantic_model = None
+
+
+def get_semantic_model():
+    global semantic_model
+    if semantic_model is None:
+        semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
+    return semantic_model
+
 
 # === Hybrid Predict Function ===
 
 
 # === Fallback memory for suggested questions ===
 last_suggestions = []
+
 
 # === Match user input to previous suggestions ===
 def match_followup(user_input):
@@ -46,12 +59,16 @@ def match_followup(user_input):
 
     return None
 
+
 # === Suggest top N similar questions ===
 def get_question_suggestions(user_question, top_n=3):
-    user_embedding = semantic_model.encode(user_question, convert_to_tensor=True)
+    user_embedding = get_semantic_model().encode(user_question, convert_to_tensor=True)
     cosine_scores = util.pytorch_cos_sim(user_embedding, embeddings)[0]
     top_indices = torch.topk(cosine_scores, k=top_n).indices.tolist()
-    return [(questions[i], answers[i]) for i in top_indices], float(torch.max(cosine_scores))
+    return [(questions[i], answers[i]) for i in top_indices], float(
+        torch.max(cosine_scores)
+    )
+
 
 # === Hybrid Predict Function with fallback ===
 def predict_answer(user_question, threshold=0.5):
@@ -72,6 +89,6 @@ def predict_answer(user_question, threshold=0.5):
         last_suggestions = suggestions
         options = "\n".join([f"{i+1}. {q}" for i, (q, _) in enumerate(suggestions)])
         return (
-            f"Apologies I could not understand \"{user_question}\" since it is not related to OHS,\n"
-            f"Did you mean one of these?\n\n{options}\n\n" 
+            f'Apologies I could not understand "{user_question}" since it is not related to OHS,\n'
+            f"Did you mean one of these?\n\n{options}\n\n"
         )

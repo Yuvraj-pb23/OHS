@@ -1,45 +1,44 @@
 import csv
 import io
 import json
-import random
+import logging
 import os
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, HttpResponse, FileResponse
-from django.views.decorators.csrf import csrf_exempt
+import secrets
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.decorators import login_required
-from django.utils import timezone
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db import transaction
 from django.db.models import Q, Sum
-from django.contrib.auth.decorators import user_passes_test
-from datetime import timedelta
-from django.contrib.auth import logout
+from django.http import FileResponse, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
-from django.conf import settings
+
+from home.models import POCSORegistration, POSHRegistration
+
+# Ensure this file exists in your app or adjust import accordingly
+from .chatbot_logic import predict_answer
 
 # Models
 # Ensure your User model has 'phone' and 'department' fields if you want to save them to the DB.
 from .models import (
-    User,
-    SubscriptionPlan,
-    Subscription,
-    Payment,
+    AssessmentProgress,
+    DailyActivity,
+    EmailTemplate,
+    ModuleProgress,
     Organization,
     OrganizationMember,
-    TrainingModule,
-    ModuleProgress,
-    DailyActivity,
-    AssessmentProgress,
-    POSHRegistration,
-    POSHPricingConfig,
-    POCSORegistration,
     POCSOPricingConfig,
-    EmailTemplate,
+    POSHPricingConfig,
+    Subscription,
+    SubscriptionPlan,
+    TrainingModule,
+    User,
 )
-
-# Ensure this file exists in your app or adjust import accordingly
-from .chatbot_logic import predict_answer
 from .utils import generate_certificate
 
 
@@ -60,7 +59,7 @@ def upload_company_logo(request):
         if logo:
             org.logo = logo
             org.save()
-            messages.success(request, "Company logo uploaded successfully!")
+            # messages.success(request, "Company logo uploaded successfully!")
         else:
             messages.error(request, "No logo file selected.")
 
@@ -185,13 +184,15 @@ def reset_logo_config(request):
     org.logo_y = 2.0
     org.logo_width = 15.0
     org.save()
-    messages.success(request, "Logo position and size reset to default.")
+    # messages.success(request, "Logo position and size reset to default.")
     return redirect("company_dashboard")
+
 
 # --- 0. CUSTOM LOGIN VIEW ---
 def custom_login_view(request):
-    from django.contrib.auth import authenticate, login, get_user_model
+    from django.contrib.auth import authenticate, get_user_model, login
     from django.db.models import Q
+
     from .models import Organization
 
     if request.method == "POST":
@@ -202,8 +203,8 @@ def custom_login_view(request):
         user = authenticate(username=u, password=p)
         if user is not None:
             login(request, user)
-            if 'hr_as_employee' in request.session:
-                del request.session['hr_as_employee']
+            if "hr_as_employee" in request.session:
+                del request.session["hr_as_employee"]
             return redirect("custom_login_redirect")
 
         # Check if HR is using company default password
@@ -212,16 +213,22 @@ def custom_login_view(request):
         if user_obj and user_obj.account_type == "COMPANY_ADMIN":
             org = Organization.objects.filter(owner=user_obj).first()
             if org and org.default_password and org.default_password == p:
-                login(request, user_obj, backend='django.contrib.auth.backends.ModelBackend')
-                request.session['hr_as_employee'] = True
+                login(
+                    request,
+                    user_obj,
+                    backend="django.contrib.auth.backends.ModelBackend",
+                )
+                request.session["hr_as_employee"] = True
                 return redirect("custom_login_redirect")
 
         # Fallback error
         class MockForm:
             errors = True
+
         return render(request, "login.html", {"form": MockForm()})
 
     return render(request, "login.html")
+
 
 # --- 1. LOGIN REDIRECT LOGIC ---
 @login_required
@@ -234,7 +241,7 @@ def custom_login_redirect(request):
 
     # 1. ADMIN -> Dashboard
     if user.account_type == "COMPANY_ADMIN":
-        if request.session.get('hr_as_employee'):
+        if request.session.get("hr_as_employee"):
             has_posh = Subscription.objects.filter(
                 Q(user=user) | Q(organization__organizationmember__user=user),
                 status="ACTIVE",
@@ -250,7 +257,7 @@ def custom_login_redirect(request):
             if has_pocso:
                 return redirect("pocso_act_page_corp")
             return redirect("tutorial")
-        
+
         return redirect("company_dashboard")
 
     # 1.5 ACCOUNTS -> Accounts Dashboard
@@ -333,7 +340,7 @@ def force_password_change(request):
 
         update_session_auth_hash(request, user)
 
-        messages.success(request, "Password changed successfully!")
+        # messages.success(request, "Password changed successfully!")
         return redirect("custom_login_redirect")
 
     return render(request, "force_password_change.html")
@@ -343,83 +350,104 @@ def force_password_change(request):
 @csrf_exempt
 def send_registration_otp(request):
     """Generate and email a 6-digit OTP for registration email verification."""
-    if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Invalid method.'}, status=405)
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Invalid method."}, status=405)
     try:
         data = json.loads(request.body)
-        email = data.get('email', '').strip()
+        email = data.get("email", "").strip()
     except Exception:
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get("email", "").strip()
 
-    if not email or '@' not in email:
-        return JsonResponse({'success': False, 'error': 'Please enter a valid email address.'})
+    if not email or "@" not in email:
+        return JsonResponse(
+            {"success": False, "error": "Please enter a valid email address."}
+        )
     if User.objects.filter(email=email).exists():
-        return JsonResponse({'success': False, 'error': 'This email is already registered.'})
+        return JsonResponse(
+            {"success": False, "error": "This email is already registered."}
+        )
 
     import time
-    otp = str(random.randint(100000, 999999))
-    request.session['reg_otp']         = otp
-    request.session['reg_otp_email']   = email
-    request.session['reg_otp_verified']= False
-    request.session['reg_otp_ts']      = time.time()   # store generation timestamp
+
+    otp = str(secrets.randbelow(900000) + 100000)
+    request.session["reg_otp"] = otp
+    request.session["reg_otp_email"] = email
+    request.session["reg_otp_verified"] = False
+    request.session["reg_otp_ts"] = time.time()  # store generation timestamp
     request.session.modified = True
 
     from django.core.mail import send_mail
+
     try:
         send_mail(
-            subject='Your OTP - Open Hand Solutions Registration',
+            subject="Your OTP - Open Hand Solutions Registration",
             message=(
-                f'Hello,\n\n'
-                f'Your one-time password (OTP) for Corporate Registration is:\n\n'
-                f'    {otp}\n\n'
-                f'This OTP is valid for 2 minutes only.\n'
-                f'Do not share it with anyone.\n\n'
-                f'Best regards,\nOpen Hand Solutions Team'
+                f"Hello,\n\n"
+                f"Your one-time password (OTP) for Corporate Registration is:\n\n"
+                f"    {otp}\n\n"
+                f"This OTP is valid for 2 minutes only.\n"
+                f"Do not share it with anyone.\n\n"
+                f"Best regards,\nOpen Hand Solutions Team"
             ),
             from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[email],
             fail_silently=False,
         )
-        return JsonResponse({'success': True, 'message': 'OTP sent to your email.'})
+        return JsonResponse({"success": True, "message": "OTP sent to your email."})
     except Exception as e:
-        return JsonResponse({'success': False, 'error': f'Failed to send email: {str(e)}'})
+        return JsonResponse(
+            {"success": False, "error": f"Failed to send email: {str(e)}"}
+        )
 
 
 @csrf_exempt
 def verify_registration_otp(request):
     """Verify the submitted OTP against the session-stored OTP."""
-    if request.method != 'POST':
-        return JsonResponse({'success': False, 'error': 'Invalid method.'}, status=405)
+    if request.method != "POST":
+        return JsonResponse({"success": False, "error": "Invalid method."}, status=405)
     try:
         data = json.loads(request.body)
-        submitted = str(data.get('otp', '')).strip()
-        email     = data.get('email', '').strip()
+        submitted = str(data.get("otp", "")).strip()
+        email = data.get("email", "").strip()
     except Exception:
-        submitted = str(request.POST.get('otp', '')).strip()
-        email     = request.POST.get('email', '').strip()
+        submitted = str(request.POST.get("otp", "")).strip()
+        email = request.POST.get("email", "").strip()
 
-    session_otp   = request.session.get('reg_otp', '')
-    session_email = request.session.get('reg_otp_email', '')
-    otp_ts        = request.session.get('reg_otp_ts', 0)
+    session_otp = request.session.get("reg_otp", "")
+    session_email = request.session.get("reg_otp_email", "")
+    otp_ts = request.session.get("reg_otp_ts", 0)
 
     if not session_otp:
-        return JsonResponse({'success': False, 'error': 'No OTP found. Please request a new one.'})
+        return JsonResponse(
+            {"success": False, "error": "No OTP found. Please request a new one."}
+        )
     if email != session_email:
-        return JsonResponse({'success': False, 'error': 'Email mismatch. Please request a new OTP.'})
+        return JsonResponse(
+            {"success": False, "error": "Email mismatch. Please request a new OTP."}
+        )
 
     import time
-    if time.time() - otp_ts > 120:   # 2-minute expiry
+
+    if time.time() - otp_ts > 120:  # 2-minute expiry
         # Clear expired OTP
-        request.session.pop('reg_otp', None)
-        request.session.pop('reg_otp_ts', None)
+        request.session.pop("reg_otp", None)
+        request.session.pop("reg_otp_ts", None)
         request.session.modified = True
-        return JsonResponse({'success': False, 'error': 'OTP expired. Please request a new one.', 'expired': True})
+        return JsonResponse(
+            {
+                "success": False,
+                "error": "OTP expired. Please request a new one.",
+                "expired": True,
+            }
+        )
 
     if submitted == session_otp:
-        request.session['reg_otp_verified'] = True
+        request.session["reg_otp_verified"] = True
         request.session.modified = True
-        return JsonResponse({'success': True, 'message': 'Email verified successfully!'})
-    return JsonResponse({'success': False, 'error': 'Incorrect OTP. Please try again.'})
+        return JsonResponse(
+            {"success": True, "message": "Email verified successfully!"}
+        )
+    return JsonResponse({"success": False, "error": "Incorrect OTP. Please try again."})
 
 
 # --- 2. COMPANY SUBSCRIPTION (FORM) ---
@@ -438,19 +466,37 @@ def company_subscription(request, plan_type):
         if setup_token:
             try:
                 from django.core import signing
-                payload = signing.loads(setup_token, salt='posh-admin-setup', max_age=60*60*72)  # 72h
-                email = payload['email']
+
+                payload = signing.loads(
+                    setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
+                )  # 72h
+                email = payload["email"]
                 # Auto-populate company name from the POSH registration
+                logger = logging.getLogger(__name__)
                 if not comp_name:
+
                     try:
-                        from home.models import POSHRegistration
-                        posh_reg = POSHRegistration.objects.get(id=payload['reg_id'])
+
+                        posh_reg = POSHRegistration.objects.get(id=payload["reg_id"])
                         comp_name = posh_reg.company_name
                         seats = posh_reg.employee_count or seats
-                    except Exception:
-                        pass
-            except Exception:
-                messages.error(request, "Invalid or expired setup link. Please contact support.")
+
+                    except POSHRegistration.DoesNotExist:
+                        logger.warning(
+                            f"POSHRegistration not found for reg_id={payload.get('reg_id')}"
+                        )
+
+                    except Exception as e:
+                        logger.exception(
+                            f"Unexpected error while fetching POSHRegistration: {e}"
+                        )
+
+            except Exception as e:
+                logger.exception(f"Invalid setup link payload: {e}")
+
+                messages.error(
+                    request, "Invalid or expired setup link. Please contact support."
+                )
                 return redirect(request.path)
         else:
             email = request.POST.get("email", "").strip()
@@ -460,14 +506,19 @@ def company_subscription(request, plan_type):
 
         # Restriction: Email must be OTP-verified (skip if coming from verified setup link)
         if not setup_token:
-            if not request.session.get('reg_otp_verified') or request.session.get('reg_otp_email') != email:
-                messages.error(request, 'Please verify your email with the OTP before submitting.')
+            if (
+                not request.session.get("reg_otp_verified")
+                or request.session.get("reg_otp_email") != email
+            ):
+                messages.error(
+                    request, "Please verify your email with the OTP before submitting."
+                )
                 return redirect(request.path)
 
         # Restriction: Ensure all info is compulsory
         if not all([fullname, email, password]):
             messages.error(
-                request, 'All fields are compulsory. Please fill out the entire form.'
+                request, "All fields are compulsory. Please fill out the entire form."
             )
             return redirect(request.path)
 
@@ -528,16 +579,26 @@ def company_subscription(request, plan_type):
     if setup_token:
         try:
             from django.core import signing
-            payload = signing.loads(setup_token, salt='posh-admin-setup', max_age=60*60*72)
-            locked_email = payload['email']
-        except Exception:
-            messages.error(request, "This setup link has expired or is invalid. Please contact support.")
 
-    response = render(request, "company_signup.html", {
-        "plan_type": plan_type,
-        "locked_email": locked_email,
-        "setup_token": setup_token,
-    })
+            payload = signing.loads(
+                setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
+            )
+            locked_email = payload["email"]
+        except Exception:
+            messages.error(
+                request,
+                "This setup link has expired or is invalid. Please contact support.",
+            )
+
+    response = render(
+        request,
+        "company_signup.html",
+        {
+            "plan_type": plan_type,
+            "locked_email": locked_email,
+            "setup_token": setup_token,
+        },
+    )
     response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return response
 
@@ -556,7 +617,9 @@ def add_employee(request):
             return redirect("tutorial")
 
         org = membership.organization
-        current_count = OrganizationMember.objects.filter(organization=org).count()
+        current_count = OrganizationMember.objects.filter(
+            organization=org, role="MEMBER"
+        ).count()
         if current_count >= org.max_users:
             messages.error(
                 request,
@@ -564,13 +627,13 @@ def add_employee(request):
             )
             return redirect("company_dashboard")
 
-        emp_name        = request.POST.get("emp_name")
-        emp_email       = request.POST.get("emp_email")
-        emp_password    = request.POST.get("emp_password")
+        emp_name = request.POST.get("emp_name")
+        emp_email = request.POST.get("emp_email")
+        emp_password = request.POST.get("emp_password")
         emp_designation = request.POST.get("emp_designation", "").strip()
 
         # Use employee_count from POSH registration as the seat limit if available
-        from home.models import POSHRegistration
+
         posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
         seat_limit = posh_reg.employee_count if posh_reg else org.max_users
 
@@ -615,9 +678,13 @@ def add_employee(request):
                 )
 
                 # Send welcome email with credentials + training link
-                from home.email_utils import send_welcome_email
                 from django.conf import settings as django_settings
-                site_base = getattr(django_settings, 'SITE_URL', 'https://openhandsolutions.com')
+
+                from home.email_utils import send_welcome_email
+
+                site_base = getattr(
+                    django_settings, "SITE_URL", "https://openhandsolutions.com"
+                )
                 training_link = f"{site_base}/login/"
                 company_name = posh_reg.company_name if posh_reg else org.name
 
@@ -630,7 +697,7 @@ def add_employee(request):
                     designation=emp_designation,
                 )
 
-            messages.success(request, f"{emp_name} added successfully!")
+            # messages.success(request, f"{emp_name} added successfully!")
         except Exception as e:
             print(f"Error adding employee: {str(e)}")
             import traceback
@@ -646,8 +713,8 @@ def add_employee(request):
 @login_required(login_url="login")
 def company_dashboard(request):
     # Check if user logged out from HR portal
-    if request.session.get('logged_out_of_hr'):
-        request.session.pop('logged_out_of_hr', None)
+    if request.session.get("logged_out_of_hr"):
+        request.session.pop("logged_out_of_hr", None)
 
     user = request.user
     membership = OrganizationMember.objects.filter(user=user, role="ADMIN").first()
@@ -658,11 +725,12 @@ def company_dashboard(request):
 
     org = membership.organization
     active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
-    members = OrganizationMember.objects.filter(organization=org).select_related("user")
+    members = OrganizationMember.objects.filter(
+        organization=org, role="MEMBER"
+    ).select_related("user")
 
     # --- DATA CALCULATION FOR HTML ---
     total_employees = members.count()
-    seats_remaining = org.max_users - total_employees
 
     # Identify Training Type based on Plan
     training_type = "POSH"  # Default
@@ -752,8 +820,16 @@ def company_dashboard(request):
             mem_modules_status.append(item)
 
         mem.modules_status = mem_modules_status
-        mem.video_modules = [m for m in mem_modules_status if not m["is_ppt"] or 'quiz' in m["title"].lower()]
-        mem.ppt_modules = [m for m in mem_modules_status if m["is_ppt"] and 'quiz' not in m["title"].lower()]
+        mem.video_modules = [
+            m
+            for m in mem_modules_status
+            if not m["is_ppt"] or "quiz" in m["title"].lower()
+        ]
+        mem.ppt_modules = [
+            m
+            for m in mem_modules_status
+            if m["is_ppt"] and "quiz" not in m["title"].lower()
+        ]
 
         # Calculate Total Active Time
         total_mins_agg = (
@@ -783,11 +859,17 @@ def company_dashboard(request):
 
         # Quiz completion — check practice quiz module progress (module titled 'quiz')
         quiz_module = next(
-            (m for m in all_modules if 'quiz' in m.title.lower() and m.ppt_file and not m.video_file),
-            None
+            (
+                m
+                for m in all_modules
+                if "quiz" in m.title.lower() and m.ppt_file and not m.video_file
+            ),
+            None,
         )
         if quiz_module:
-            quiz_prog = ModuleProgress.objects.filter(user=user_obj, module=quiz_module).first()
+            quiz_prog = ModuleProgress.objects.filter(
+                user=user_obj, module=quiz_module
+            ).first()
             mem.quiz_completed = quiz_prog.is_completed if quiz_prog else False
         else:
             mem.quiz_completed = False
@@ -796,7 +878,7 @@ def company_dashboard(request):
         assessment = AssessmentProgress.objects.filter(
             user=user_obj, assessment_type=training_type
         ).first()
-        mem.quiz_score  = assessment.score if assessment else None
+        mem.quiz_score = assessment.score if assessment else None
         mem.quiz_passed = assessment.is_passed if assessment else False
 
     training_pending = total_employees - training_completed_count
@@ -807,14 +889,13 @@ def company_dashboard(request):
     ]
 
     # Look up the company name from POSH registration by the org owner's email
-    from home.models import POSHRegistration
+
     posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
     posh_company_name = posh_reg.company_name if posh_reg else org.name
 
     # If org name is still the auto-generated fallback, update it + regenerate password
     if posh_reg and (
-        org.name == f"{org.owner.first_name}'s Organization"
-        or not org.name
+        org.name == f"{org.owner.first_name}'s Organization" or not org.name
     ):
         org.name = posh_reg.company_name
         org.default_password = org.generate_default_password()
@@ -827,19 +908,23 @@ def company_dashboard(request):
 
     # Force-regenerate password if prefix doesn't match company name
     # (handles case where org name was corrected but old password was already saved)
-    expected_prefix = ''.join(c for c in org.name if c.isalnum())[:4].upper()
-    if org.default_password and not org.default_password.upper().startswith(expected_prefix):
+    expected_prefix = "".join(c for c in org.name if c.isalnum())[:4].upper()
+    if org.default_password and not org.default_password.upper().startswith(
+        expected_prefix
+    ):
         org.default_password = org.generate_default_password()
         org.save()
+
+    seat_limit = posh_reg.employee_count if posh_reg else org.max_users
 
     context = {
         "organization": org,
         "posh_company_name": posh_company_name,
-        "posh_reg_employee_count": posh_reg.employee_count if posh_reg else org.max_users,
+        "posh_reg_employee_count": seat_limit,
         "active_plan": active_sub,
         "members": members,
         "seats_used": total_employees,
-        "seats_remaining": (posh_reg.employee_count if posh_reg else org.max_users) - total_employees,
+        "seats_remaining": max(seat_limit - total_employees, 0),
         "total_employees": total_employees,
         "training_completed": training_completed_count,
         "training_pending": training_pending,
@@ -1037,10 +1122,13 @@ def posh_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        "chart_data": json.dumps(chart_data),
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
-        "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
+        "formatted_total_time": (
+            f"{total_seconds_watched // 3600:02}:"
+            f"{(total_seconds_watched % 3600) // 60:02}:"
+            f"{total_seconds_watched % 60:02}"
+        ),
         "is_final_quiz_passed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
@@ -1245,7 +1333,6 @@ def pocso_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else None,
-            "thumb": mod.thumbnail.url if mod.thumbnail else None,
             # UPDATED: Use new hardcoded path
             "src": "/media/training ppt/Posh Video PPT.pptx",
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
@@ -1271,7 +1358,11 @@ def pocso_act_page(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
-    formatted_total_time = f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}"
+    formatted_total_time = (
+        f"{total_seconds_watched // 3600:02}:"
+        f"{(total_seconds_watched % 3600) // 60:02}:"
+        f"{total_seconds_watched % 60:02}"
+    )
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
@@ -1364,8 +1455,9 @@ def posh_act_page_corp(request):
 
     # Process PPT Sequence — exclude Practice Quiz (moved to video tab)
     ppt_modules = [
-        m for m in modules
-        if m.ppt_file and not m.video_file and 'quiz' not in m.title.lower()
+        m
+        for m in modules
+        if m.ppt_file and not m.video_file and "quiz" not in m.title.lower()
     ]
 
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
@@ -1390,8 +1482,9 @@ def posh_act_page_corp(request):
 
     # Move Practice Quiz into video_list (shown under Video Modules tab, below the video)
     quiz_modules = [
-        m for m in modules
-        if m.ppt_file and not m.video_file and 'quiz' in m.title.lower()
+        m
+        for m in modules
+        if m.ppt_file and not m.video_file and "quiz" in m.title.lower()
     ]
     for mod in quiz_modules:
         is_completed = progress_map.get(mod.id, False)
@@ -1447,7 +1540,11 @@ def posh_act_page_corp(request):
         "chart_data": json.dumps(chart_data),
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
-        "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
+        "formatted_total_time": (
+            f"{total_seconds_watched // 3600:02}:"
+            f"{(total_seconds_watched % 3600) // 60:02}:"
+            f"{total_seconds_watched % 60:02}"
+        ),
         "is_final_quiz_passed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
@@ -1568,7 +1665,11 @@ def pocso_act_page_corp(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
-    formatted_total_time = f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}"
+    formatted_total_time = (
+        f"{total_seconds_watched // 3600:02}:"
+        f"{(total_seconds_watched % 3600) // 60:02}:"
+        f"{total_seconds_watched % 60:02}"
+    )
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
@@ -1690,7 +1791,11 @@ def tutorial_view(request):
         elif has_pocso and not has_posh:
             show_posh = False
 
-    context = {"show_posh": show_posh, "show_pocso": show_pocso, "logout_url": "training_logout"}
+    context = {
+        "show_posh": show_posh,
+        "show_pocso": show_pocso,
+        "logout_url": "training_logout",
+    }
     return render(request, "tutorial.html", context)
 
 
@@ -1734,7 +1839,7 @@ def chatbot_response(request):
 
             ml_resp = predict_answer(msg)
             return JsonResponse({"response": ml_resp})
-        except:
+        except Exception:
             return JsonResponse({"error": "Error"}, status=500)
     return JsonResponse({"error": "Post only"}, status=405)
 
@@ -1745,24 +1850,16 @@ def chatbot_response(request):
 @login_required
 @login_required(login_url="login")
 def download_employee_template(request):
-    # Get user's organization to include the default password
-    membership = OrganizationMember.objects.filter(
-        user=request.user, role="ADMIN"
-    ).first()
-
-    default_password = "Welcome@123"  # Fallback
-    if membership and membership.organization.default_password:
-        default_password = membership.organization.default_password
-
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = 'attachment; filename="employee_template.csv"'
+    response["Content-Disposition"] = (
+        'attachment; filename="employee_template_no_password.csv"'
+    )
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
     writer = csv.writer(response)
-    writer.writerow(
-        ["Name", "Last name", "Department", "Email", "Phone no", "Default password"]
-    )
-    writer.writerow(
-        ["John", "Doe", "IT", "john.doe@company.com", "9876543210", default_password]
-    )
+    writer.writerow(["Name", "Last name", "Department", "Email", "Phone no"])
+    writer.writerow(["John", "Doe", "IT", "john.doe@company.com", "9876543210"])
     return response
 
 
@@ -1778,6 +1875,8 @@ def upload_employee_bulk(request):
             return redirect("company_dashboard")
 
         org = membership.organization
+        posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
+        seat_limit = posh_reg.employee_count if posh_reg else org.max_users
         csv_file = request.FILES["employee_file"]
 
         if not csv_file.name.endswith(".csv"):
@@ -1796,12 +1895,12 @@ def upload_employee_bulk(request):
 
             for row in reader:
                 current_count = OrganizationMember.objects.filter(
-                    organization=org
+                    organization=org, role="MEMBER"
                 ).count()
-                if current_count >= org.max_users:
+                if current_count >= seat_limit:
                     messages.warning(
                         request,
-                        f"Limit reached. Stopped after adding {added_count} users.",
+                        f"Limit reached ({seat_limit} from registration). Stopped after adding {added_count} users.",
                     )
                     break
 
@@ -1859,12 +1958,14 @@ def upload_employee_bulk(request):
 
                     added_count += 1
                 except Exception as e:
+                    logger.warning(f"Skipping employee import row: {e}")
                     continue
 
             if added_count > 0:
-                messages.success(
-                    request, f"Successfully imported {added_count} employees."
-                )
+                # messages.success(
+                #     request, f"Successfully imported {added_count} employees."
+                # )
+                pass
             else:
                 messages.warning(
                     request, "No new employees were added (check emails or duplicates)."
@@ -1880,10 +1981,11 @@ def upload_employee_bulk(request):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def superuser_dashboard(request):
-    from django.db.models import Count, Q, Max
+    import datetime
+
+    from django.db.models import Count, Max, Q
     from django.db.models.functions import TruncMonth
     from django.utils import timezone
-    import datetime
 
     def get_monthly_counts(queryset):
         today = timezone.now().date()
@@ -2114,30 +2216,30 @@ def superuser_dashboard(request):
 
 def custom_logout(request):
     logout(request)
-    messages.success(request, "Successfully logged out.")
+    # messages.success(request, "Successfully logged out.")
     return redirect("home")
 
 
 def accounts_logout(request):
     """Fully log out the accounts user and clear the session."""
     logout(request)
-    messages.success(request, "Successfully signed out from Accounts Portal.")
+    # messages.success(request, "Successfully signed out from Accounts Portal.")
     return redirect("home")
 
 
 def hr_logout(request):
     """Logout for HR/Company Dashboard users - keeps user authenticated but removes portal access"""
-    request.session['logged_out_of_hr'] = True
-    messages.success(request, "Successfully logged out from HR Portal.")
+    request.session["logged_out_of_hr"] = True
+    # messages.success(request, "Successfully logged out from HR Portal.")
     return redirect("home")
 
 
 def training_logout(request):
     """Logout for Training users - keeps user authenticated but removes portal access"""
-    request.session['logged_out_of_training'] = True
-    if 'hr_as_employee' in request.session:
-        del request.session['hr_as_employee']
-    messages.success(request, "Successfully logged out from Training Portal.")
+    request.session["logged_out_of_training"] = True
+    if "hr_as_employee" in request.session:
+        del request.session["hr_as_employee"]
+    # messages.success(request, "Successfully logged out from Training Portal.")
     return redirect("home")
 
 
@@ -2287,57 +2389,75 @@ def custom_402(request, exception=None):
     return render(request, "hh.html", status=402)
 
 
-
 def get_posh_pricing_context(registration):
     """Refactored helper to calculate POSH billing context for both billing_view and admin review"""
     from .utils import get_posh_billing_data
-    billing_data = get_posh_billing_data(registration)
-    
-    # Add view-specific context that isn't in billing_data
-    config = POSHPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
-    if not config: config = POSHPricingConfig()
-    
-    emp_count = registration.employee_count
-    if emp_count <= config.price_tier_0_max: tier_label = f'Tier 1 (1-{config.price_tier_0_max})'
-    elif emp_count <= config.price_tier_1_max: tier_label = f'Tier 2 ({config.price_tier_0_max + 1}-{config.price_tier_1_max})'
-    elif emp_count <= config.price_tier_2_max: tier_label = f'Tier 3 ({config.price_tier_1_max + 1}-{config.price_tier_2_max})'
-    elif emp_count <= config.price_tier_3_max: tier_label = f'Tier 4 ({config.price_tier_2_max + 1}-{config.price_tier_3_max})'
-    else: tier_label = f'Tier 5 ({config.price_tier_3_max}+)'
 
-    per_employee_rate = billing_data['training_total'] / emp_count if emp_count > 0 else 0
+    billing_data = get_posh_billing_data(registration)
+
+    # Add view-specific context that isn't in billing_data
+    config = (
+        POSHPricingConfig.objects.filter(is_active=True).order_by("-updated_at").first()
+    )
+    if not config:
+        config = POSHPricingConfig()
+
+    emp_count = registration.employee_count
+    if emp_count <= config.price_tier_0_max:
+        tier_label = f"Tier 1 (1-{config.price_tier_0_max})"
+    elif emp_count <= config.price_tier_1_max:
+        tier_label = f"Tier 2 ({config.price_tier_0_max + 1}-{config.price_tier_1_max})"
+    elif emp_count <= config.price_tier_2_max:
+        tier_label = f"Tier 3 ({config.price_tier_1_max + 1}-{config.price_tier_2_max})"
+    elif emp_count <= config.price_tier_3_max:
+        tier_label = f"Tier 4 ({config.price_tier_2_max + 1}-{config.price_tier_3_max})"
+    else:
+        tier_label = f"Tier 5 ({config.price_tier_3_max}+)"
+
+    per_employee_rate = (
+        billing_data["training_total"] / emp_count if emp_count > 0 else 0
+    )
 
     return {
         "reg": registration,
         "registration": registration,
-        "addon_fees": billing_data['addon_fees'],
-        "subtotal": billing_data['subtotal'],
-        "tax": billing_data['gst_amount'],
-        "total": billing_data['total_amount'],
-        "total_tier_3": billing_data['total_amount'],
-        "total_tier_2": billing_data['total_amount'] * 0.9,
-        "total_tier_1": billing_data['total_amount'] * 0.8,
-        "gst_percentage": billing_data['gst_percentage'],
+        "addon_fees": billing_data["addon_fees"],
+        "subtotal": billing_data["subtotal"],
+        "tax": billing_data["gst_amount"],
+        "total": billing_data["total_amount"],
+        "total_tier_3": billing_data["total_amount"],
+        "total_tier_2": billing_data["total_amount"] * 0.9,
+        "total_tier_1": billing_data["total_amount"] * 0.8,
+        "gst_percentage": billing_data["gst_percentage"],
         "company_name": registration.company_name,
         "payment_status": registration.payment_status,
         "tier_label": tier_label,
         "per_emp": per_employee_rate,
-        "training_cost": billing_data['training_total'],
+        "training_cost": billing_data["training_total"],
     }
+
 
 def billing_view(request):
     """Calculate and show POSH billing summary with tiered pricing"""
     # Prioritize recent session registration for immediate post-reg experience
-    reg_id = request.session.get('last_registration_id')
-    registration = POSHRegistration.objects.filter(id=reg_id).first() if reg_id else None
-    
+    reg_id = request.session.get("last_registration_id")
+    registration = (
+        POSHRegistration.objects.filter(id=reg_id).first() if reg_id else None
+    )
+
     if not registration and request.user.is_authenticated:
-        registration = POSHRegistration.objects.filter(user=request.user).order_by('-created_at').first()
-    
+        registration = (
+            POSHRegistration.objects.filter(user=request.user)
+            .order_by("-created_at")
+            .first()
+        )
+
     if not registration:
         return redirect("posh_registration")
-    
+
     context = get_posh_pricing_context(registration)
     return render(request, "billing.html", context)
+
 
 def accounts_login_view(request):
     """Custom login for accounts department"""
@@ -2349,8 +2469,11 @@ def accounts_login_view(request):
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("accounts_dashboard")
         else:
-            from django import forms as dj_forms
-            return render(request, "accounts_login.html", {"form": type('F', (), {'errors': True})()})
+            return render(
+                request,
+                "accounts_login.html",
+                {"form": type("F", (), {"errors": True})()},
+            )
 
     return render(request, "accounts_login.html", {})
 
@@ -2359,41 +2482,51 @@ def accounts_login_view(request):
 def accounts_dashboard_view(request):
     """Pricing configuration dashboard for the Accounts Department"""
     # Check if user logged out from Accounts portal
-    if request.session.get('logged_out_of_accounts'):
-        request.session.pop('logged_out_of_accounts', None)
+    if request.session.get("logged_out_of_accounts"):
+        request.session.pop("logged_out_of_accounts", None)
 
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
 
-    config = POSHPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
-    pocso_config = POCSOPricingConfig.objects.filter(is_active=True).order_by('-updated_at').first()
-    
-    registrations = POSHRegistration.objects.all().order_by('-created_at')
-    pocso_registrations = POCSORegistration.objects.all().order_by('-created_at')
-    
-    saved = request.session.pop('pricing_saved', False)
-    pocso_saved = request.session.pop('pocso_pricing_saved', False)
-    email_saved = request.session.pop('email_templates_saved', False)
+    config = (
+        POSHPricingConfig.objects.filter(is_active=True).order_by("-updated_at").first()
+    )
+    pocso_config = (
+        POCSOPricingConfig.objects.filter(is_active=True)
+        .order_by("-updated_at")
+        .first()
+    )
+
+    registrations = POSHRegistration.objects.all().order_by("-created_at")
+    pocso_registrations = POCSORegistration.objects.all().order_by("-created_at")
+
+    saved = request.session.pop("pricing_saved", False)
+    pocso_saved = request.session.pop("pocso_pricing_saved", False)
+    email_saved = request.session.pop("email_templates_saved", False)
 
     email_tiers = [
-        ("PAY_NOW",           "Payment Received Confirmation"),
-        ("PAYMENT_VERIFIED",  "Payment Verified – Onboarding Confirmed"),
-        ("EMPLOYEE_WELCOME",  "Employee Welcome – Account Credentials"),
+        ("PAY_NOW", "Payment Received Confirmation"),
+        ("PAYMENT_VERIFIED", "Payment Verified – Onboarding Confirmed"),
+        ("EMPLOYEE_WELCOME", "Employee Welcome – Account Credentials"),
     ]
-    
+
     email_templates = {et.tier_key: et for et in EmailTemplate.objects.all()}
-    
-    return render(request, "accounts_dashboard.html", {
-        "config": config,
-        "pocso_config": pocso_config,
-        "registrations": registrations,
-        "pocso_registrations": pocso_registrations,
-        "saved": saved,
-        "pocso_saved": pocso_saved,
-        "email_saved": email_saved,
-        "email_tiers": email_tiers,
-        "email_templates": email_templates,
-    })
+
+    return render(
+        request,
+        "accounts_dashboard.html",
+        {
+            "config": config,
+            "pocso_config": pocso_config,
+            "registrations": registrations,
+            "pocso_registrations": pocso_registrations,
+            "saved": saved,
+            "pocso_saved": pocso_saved,
+            "email_saved": email_saved,
+            "email_tiers": email_tiers,
+            "email_templates": email_templates,
+        },
+    )
 
 
 @login_required(login_url="accounts_login")
@@ -2407,67 +2540,88 @@ def accounts_save_email_templates_view(request):
         for tier in tiers:
             subject = request.POST.get(f"subject_{tier}")
             body = request.POST.get(f"body_{tier}")
-            
+
             if subject or body:
                 template, created = EmailTemplate.objects.get_or_create(tier_key=tier)
-                if subject: template.subject = subject
-                if body: template.body = body
+                if subject:
+                    template.subject = subject
+                if body:
+                    template.body = body
                 template.save()
 
-        request.session['email_templates_saved'] = True
-        messages.success(request, "Email templates updated successfully!")
-    
+        request.session["email_templates_saved"] = True
+        # messages.success(request, "Email templates updated successfully!")
+
     from django.urls import reverse
+
     return redirect(f"{reverse('accounts_dashboard')}?active_tab=emails")
+
 
 @csrf_exempt
 def trigger_tier_email_view(request):
     """AJAX view to trigger a tiered email based on user selection"""
     if request.method == "POST":
         import json
+
         try:
             data = json.loads(request.body)
-            registration_id = data.get('registration_id')
-            tier_key = data.get('tier_key')
-            registration_type = data.get('registration_type', 'POSH')
-            
-            if registration_type == 'POSH':
+            registration_id = data.get("registration_id")
+            tier_key = data.get("tier_key")
+            registration_type = data.get("registration_type", "POSH")
+
+            if registration_type == "POSH":
                 registration = get_object_or_404(POSHRegistration, id=registration_id)
             else:
                 registration = get_object_or_404(POCSORegistration, id=registration_id)
-            
+
             from .email_utils import send_tiered_email
+
             success = send_tiered_email(registration, tier_key, registration_type)
-            
+
             if success:
                 return JsonResponse({"status": "success"})
             else:
-                return JsonResponse({"status": "error", "message": "Email failed to send"}, status=500)
+                return JsonResponse(
+                    {"status": "error", "message": "Email failed to send"}, status=500
+                )
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=400)
-    
+
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
+
+
+logger = logging.getLogger(__name__)
 
 
 @login_required(login_url="accounts_login")
 def accounts_verify_payment_view(request, registration_id):
     """Mark a registration as verified by the accounts department"""
+
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
 
     registration = get_object_or_404(POSHRegistration, id=registration_id)
-    registration.payment_status = 'VERIFIED'
+
+    registration.payment_status = "VERIFIED"
     registration.is_paid = True
     registration.save()
 
-    # Send payment-verified confirmation email to the client
+    # Send payment verification email
     try:
         from .email_utils import send_tiered_email
-        send_tiered_email(registration, 'PAYMENT_VERIFIED', 'POSH')
-    except Exception:
-        pass  # Don't block the verify action if email fails
 
-    messages.success(request, f"Payment for {registration.company_name} verified successfully!")
+        send_tiered_email(registration, "PAYMENT_VERIFIED", "POSH")
+
+    except Exception as e:
+        logger.warning(
+            f"Payment verified but email failed for {registration.company_name}: {e}"
+        )
+
+    # messages.success(
+    #     request,
+    #     f"Payment for {registration.company_name} verified successfully!",
+    # )
+
     return redirect("accounts_dashboard")
 
 
@@ -2478,9 +2632,9 @@ def accounts_reject_payment_view(request, registration_id):
         return redirect("home")
 
     registration = get_object_or_404(POSHRegistration, id=registration_id)
-    registration.payment_status = 'PENDING'
+    registration.payment_status = "PENDING"
     registration.save()
-    
+
     messages.warning(request, f"Payment for {registration.company_name} rejected.")
     return redirect("accounts_dashboard")
 
@@ -2504,62 +2658,85 @@ def accounts_save_pricing_view(request):
 
     if request.method == "POST":
         from decimal import Decimal
+
         def to_dec(val, default="0.00"):
             try:
                 return Decimal(str(val))
-            except:
+            except Exception:
                 return Decimal(default)
 
         p = request.POST.get
-        
+
         try:
             # Create a NEW config as the active one
             config = POSHPricingConfig(
                 base_platform_fee=to_dec(p("base_platform_fee", 5000.00)),
                 gst_percentage=to_dec(p("gst_percentage", 18.00)),
-
                 price_tier_0_rate=to_dec(p("price_tier_0_rate", 200.00)),
                 price_tier_1_rate=to_dec(p("price_tier_1_rate", 163.00)),
                 price_tier_2_rate=to_dec(p("price_tier_2_rate", 154.00)),
                 price_tier_3_rate=to_dec(p("price_tier_3_rate", 145.00)),
                 price_tier_4_rate=to_dec(p("price_tier_4_rate", 127.00)),
-
                 fee_no_posh_policy_t0=to_dec(p("fee_no_posh_policy_t0", 0.00)),
                 fee_no_posh_policy_t1=to_dec(p("fee_no_posh_policy_t1", 0.00)),
                 fee_no_posh_policy_t2=to_dec(p("fee_no_posh_policy_t2", 0.00)),
                 fee_no_posh_policy_t3=to_dec(p("fee_no_posh_policy_t3", 0.00)),
                 fee_no_posh_policy_t4=to_dec(p("fee_no_posh_policy_t4", 0.00)),
-
                 fee_no_ic_t0=to_dec(p("fee_no_ic_t0", 0.00)),
                 fee_no_ic_t1=to_dec(p("fee_no_ic_t1", 0.00)),
                 fee_no_ic_t2=to_dec(p("fee_no_ic_t2", 0.00)),
                 fee_no_ic_t3=to_dec(p("fee_no_ic_t3", 0.00)),
                 fee_no_ic_t4=to_dec(p("fee_no_ic_t4", 0.00)),
-
                 fee_no_external_member_t0=to_dec(p("fee_no_external_member_t0", 0.00)),
                 fee_no_external_member_t1=to_dec(p("fee_no_external_member_t1", 0.00)),
                 fee_no_external_member_t2=to_dec(p("fee_no_external_member_t2", 0.00)),
                 fee_no_external_member_t3=to_dec(p("fee_no_external_member_t3", 0.00)),
                 fee_no_external_member_t4=to_dec(p("fee_no_external_member_t4", 0.00)),
-
-                fee_ic_requested_online_t0=to_dec(p("fee_ic_requested_online_t0", 0.00)),
-                fee_ic_requested_online_t1=to_dec(p("fee_ic_requested_online_t1", 0.00)),
-                fee_ic_requested_online_t2=to_dec(p("fee_ic_requested_online_t2", 0.00)),
-                fee_ic_requested_online_t3=to_dec(p("fee_ic_requested_online_t3", 0.00)),
-                fee_ic_requested_online_t4=to_dec(p("fee_ic_requested_online_t4", 0.00)),
-
-                fee_ic_requested_physical_t0=to_dec(p("fee_ic_requested_physical_t0", 0.00)),
-                fee_ic_requested_physical_t1=to_dec(p("fee_ic_requested_physical_t1", 0.00)),
-                fee_ic_requested_physical_t2=to_dec(p("fee_ic_requested_physical_t2", 0.00)),
-                fee_ic_requested_physical_t3=to_dec(p("fee_ic_requested_physical_t3", 0.00)),
-                fee_ic_requested_physical_t4=to_dec(p("fee_ic_requested_physical_t4", 0.00)),
-
-                fee_ic_requested_virtual_t0=to_dec(p("fee_ic_requested_virtual_t0", 0.00)),
-                fee_ic_requested_virtual_t1=to_dec(p("fee_ic_requested_virtual_t1", 0.00)),
-                fee_ic_requested_virtual_t2=to_dec(p("fee_ic_requested_virtual_t2", 0.00)),
-                fee_ic_requested_virtual_t3=to_dec(p("fee_ic_requested_virtual_t3", 0.00)),
-                fee_ic_requested_virtual_t4=to_dec(p("fee_ic_requested_virtual_t4", 0.00)),
-
+                fee_ic_requested_online_t0=to_dec(
+                    p("fee_ic_requested_online_t0", 0.00)
+                ),
+                fee_ic_requested_online_t1=to_dec(
+                    p("fee_ic_requested_online_t1", 0.00)
+                ),
+                fee_ic_requested_online_t2=to_dec(
+                    p("fee_ic_requested_online_t2", 0.00)
+                ),
+                fee_ic_requested_online_t3=to_dec(
+                    p("fee_ic_requested_online_t3", 0.00)
+                ),
+                fee_ic_requested_online_t4=to_dec(
+                    p("fee_ic_requested_online_t4", 0.00)
+                ),
+                fee_ic_requested_physical_t0=to_dec(
+                    p("fee_ic_requested_physical_t0", 0.00)
+                ),
+                fee_ic_requested_physical_t1=to_dec(
+                    p("fee_ic_requested_physical_t1", 0.00)
+                ),
+                fee_ic_requested_physical_t2=to_dec(
+                    p("fee_ic_requested_physical_t2", 0.00)
+                ),
+                fee_ic_requested_physical_t3=to_dec(
+                    p("fee_ic_requested_physical_t3", 0.00)
+                ),
+                fee_ic_requested_physical_t4=to_dec(
+                    p("fee_ic_requested_physical_t4", 0.00)
+                ),
+                fee_ic_requested_virtual_t0=to_dec(
+                    p("fee_ic_requested_virtual_t0", 0.00)
+                ),
+                fee_ic_requested_virtual_t1=to_dec(
+                    p("fee_ic_requested_virtual_t1", 0.00)
+                ),
+                fee_ic_requested_virtual_t2=to_dec(
+                    p("fee_ic_requested_virtual_t2", 0.00)
+                ),
+                fee_ic_requested_virtual_t3=to_dec(
+                    p("fee_ic_requested_virtual_t3", 0.00)
+                ),
+                fee_ic_requested_virtual_t4=to_dec(
+                    p("fee_ic_requested_virtual_t4", 0.00)
+                ),
                 fee_ic_history_21_23_t0=to_dec(p("fee_ic_history_21_23_t0", 0.00)),
                 fee_ic_history_21_23_t1=to_dec(p("fee_ic_history_21_23_t1", 0.00)),
                 fee_ic_history_21_23_t2=to_dec(p("fee_ic_history_21_23_t2", 0.00)),
@@ -2575,7 +2752,6 @@ def accounts_save_pricing_view(request):
                 fee_ic_history_other_t2=to_dec(p("fee_ic_history_other_t2", 0.00)),
                 fee_ic_history_other_t3=to_dec(p("fee_ic_history_other_t3", 0.00)),
                 fee_ic_history_other_t4=to_dec(p("fee_ic_history_other_t4", 0.00)),
-
                 fee_not_she_box_t0=to_dec(p("fee_not_she_box_t0", 0.00)),
                 fee_not_she_box_t1=to_dec(p("fee_not_she_box_t1", 0.00)),
                 fee_not_she_box_t2=to_dec(p("fee_not_she_box_t2", 0.00)),
@@ -2586,7 +2762,6 @@ def accounts_save_pricing_view(request):
                 fee_nodal_officer_t2=to_dec(p("fee_nodal_officer_t2", 0.00)),
                 fee_nodal_officer_t3=to_dec(p("fee_nodal_officer_t3", 0.00)),
                 fee_nodal_officer_t4=to_dec(p("fee_nodal_officer_t4", 0.00)),
-
                 created_by=request.user,
                 is_active=True,
             )
@@ -2595,33 +2770,47 @@ def accounts_save_pricing_view(request):
             # Now deactivate others (safely)
             POSHPricingConfig.objects.exclude(id=config.id).update(is_active=False)
 
-            request.session['pricing_saved'] = True
-            messages.success(request, "POSH Billing Engine updated successfully!")
+            request.session["pricing_saved"] = True
+            # messages.success(request, "POSH Billing Engine updated successfully!")
         except Exception as e:
             messages.error(request, f"Error updating pricing: {str(e)}")
 
     from django.urls import reverse
+
     return redirect(f"{reverse('accounts_dashboard')}?active_tab=pricing")
+
+
+logger = logging.getLogger(__name__)
 
 
 @login_required(login_url="accounts_login")
 def accounts_verify_pocso_payment_view(request, registration_id):
     """Mark a POCSO registration as verified by the accounts department"""
+
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
 
     registration = get_object_or_404(POCSORegistration, id=registration_id)
-    registration.payment_status = 'VERIFIED'
+
+    registration.payment_status = "VERIFIED"
     registration.save()
 
-    # Send payment-verified confirmation email to the client
+    # Send payment verification email
     try:
         from .email_utils import send_tiered_email
-        send_tiered_email(registration, 'PAYMENT_VERIFIED', 'POCSO')
-    except Exception:
-        pass  # Don't block the verify action if email fails
 
-    messages.success(request, f"Payment for {registration.school_name} verified successfully!")
+        send_tiered_email(registration, "PAYMENT_VERIFIED", "POCSO")
+
+    except Exception as e:
+        logger.warning(
+            f"Payment verified but email failed for {registration.school_name}: {e}"
+        )
+
+    # messages.success(
+    #     request,
+    #     f"Payment for {registration.school_name} verified successfully!",
+    # )
+
     return redirect("accounts_dashboard")
 
 
@@ -2631,30 +2820,34 @@ def accounts_reject_pocso_payment_view(request, registration_id):
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
     registration = get_object_or_404(POCSORegistration, id=registration_id)
-    registration.payment_status = 'PENDING'
+    registration.payment_status = "PENDING"
     registration.save()
-    messages.warning(request, f"Payment for {registration.school_name} has been rejected.")
+    messages.warning(
+        request, f"Payment for {registration.school_name} has been rejected."
+    )
     return redirect("accounts_dashboard")
 
 
 def get_pocso_pricing_context(registration):
     """Refactored helper to calculate POCSO billing context for both customer billing and admin review"""
     from .utils import get_pocso_billing_data
+
     billing_data = get_pocso_billing_data(registration)
 
     return {
         "reg": registration,
         "registration": registration,
-        "addon_fees": billing_data['addon_fees'],
-        "subtotal": billing_data['subtotal'],
-        "gst_percentage": billing_data['gst_percentage'],
-        "tax": billing_data['gst_amount'],
-        "total": billing_data['total_amount'],
-        "total_tier_1": billing_data['total_amount'] * 0.8,
-        "total_tier_2": billing_data['total_amount'] * 0.9,
-        "total_tier_3": billing_data['total_amount'],
+        "addon_fees": billing_data["addon_fees"],
+        "subtotal": billing_data["subtotal"],
+        "gst_percentage": billing_data["gst_percentage"],
+        "tax": billing_data["gst_amount"],
+        "total": billing_data["total_amount"],
+        "total_tier_1": billing_data["total_amount"] * 0.8,
+        "total_tier_2": billing_data["total_amount"] * 0.9,
+        "total_tier_3": billing_data["total_amount"],
         "payment_status": registration.payment_status,
     }
+
 
 @login_required(login_url="accounts_login")
 def accounts_pocso_registration_detail_view(request, registration_id):
@@ -2675,6 +2868,7 @@ def accounts_save_pocso_pricing_view(request):
 
     if request.method == "POST":
         from decimal import Decimal
+
         # Deactivate all existing configs
         POCSOPricingConfig.objects.update(is_active=False)
 
@@ -2690,27 +2884,25 @@ def accounts_save_pocso_pricing_view(request):
             fee_no_policy=p("fee_no_policy", 5000.00),
             fee_no_committee=p("fee_no_committee", 5000.00),
             # Redundant gap fees removed in favor of granular per-head rates
-
             # Granular Training Rates
             teacher_rate_online=p("teacher_rate_online", 136.00),
             teacher_rate_offline=p("teacher_rate_offline", 136.00),
             teacher_rate_elearning=p("teacher_rate_elearning", 136.00),
-            
             staff_rate_online=p("staff_rate_online", 91.00),
             staff_rate_offline=p("staff_rate_offline", 91.00),
             staff_rate_elearning=p("staff_rate_elearning", 91.00),
-
             student_rate=p("student_rate", 55.00),
-            
             gst_percentage=gst_percentage,
             created_by=request.user,
             is_active=True,
         )
         config.save()
-        request.session['pocso_pricing_saved'] = True
+        request.session["pocso_pricing_saved"] = True
 
     from django.urls import reverse
+
     return redirect(f"{reverse('accounts_dashboard')}?active_tab=pocso_pricing")
+
 
 def registration_selection_view(request):
     """Simple selection page between POSH and POCSO registration"""
@@ -2721,11 +2913,11 @@ def posh_registration_view(request):
     """Handle POSH compliance registration submission"""
     if request.method == "POST":
         data = request.POST
-        
+
         # Determine IC training mode from hidden fields or radio
         ic_training_mode = data.get("requested_ic_training_mode")
         expert_led_type = data.get("requested_expert_led_type")
-        
+
         reg = POSHRegistration(
             contact_person=data.get("contact_person"),
             designation=data.get("designation"),
@@ -2735,7 +2927,7 @@ def posh_registration_view(request):
             website=data.get("website"),
             company_name=data.get("company_name"),
             employee_count=int(data.get("employee_count", 0)),
-            trained_employee_count=0, # Defaulting to 0 for now as it's required by model
+            trained_employee_count=0,  # Defaulting to 0 for now as it's required by model
             last_training_year=data.get("last_training_year"),
             has_posh_policy=data.get("has_posh_policy") == "yes",
             has_ic=data.get("has_ic") == "yes",
@@ -2745,22 +2937,28 @@ def posh_registration_view(request):
             requested_ic_training_mode=ic_training_mode,
             requested_expert_led_type=expert_led_type,
             external_member_support=data.get("external_member_support") == "yes",
-            require_external_member_support=data.get("require_external_member_support") == "yes",
+            require_external_member_support=data.get("require_external_member_support")
+            == "yes",
             she_box_registered=data.get("she_box_registered") == "yes",
             nodal_officer_appointed=data.get("nodal_officer_appointed") == "yes",
             annual_report_submitted=data.get("annual_report_submitted") == "yes",
-            require_nodal_officer_support=data.get("require_nodal_officer_support") == "yes",
+            require_nodal_officer_support=data.get("require_nodal_officer_support")
+            == "yes",
         )
         reg.save()
-        request.session['last_registration_id'] = reg.id
+        request.session["last_registration_id"] = reg.id
         return redirect("billing")
 
     registration = None
-    if request.GET.get('edit') == 'true':
+    if request.GET.get("edit") == "true":
         if request.user.is_authenticated:
-            registration = POSHRegistration.objects.filter(user=request.user).order_by('-created_at').first()
+            registration = (
+                POSHRegistration.objects.filter(user=request.user)
+                .order_by("-created_at")
+                .first()
+            )
         else:
-            reg_id = request.session.get('last_registration_id')
+            reg_id = request.session.get("last_registration_id")
             if reg_id:
                 registration = POSHRegistration.objects.filter(id=reg_id).first()
 
@@ -2793,15 +2991,19 @@ def pocso_registration_view(request):
             non_teaching_training_mode=data.get("non_teaching_staff_training_pref"),
         )
         reg.save()
-        request.session['last_pocso_registration_id'] = reg.id
+        request.session["last_pocso_registration_id"] = reg.id
         return redirect("pocso_billing")
 
     registration = None
-    if request.GET.get('edit') == 'true':
+    if request.GET.get("edit") == "true":
         if request.user.is_authenticated:
-            registration = POCSORegistration.objects.filter(user=request.user).order_by('-created_at').first()
+            registration = (
+                POCSORegistration.objects.filter(user=request.user)
+                .order_by("-created_at")
+                .first()
+            )
         else:
-            reg_id = request.session.get('last_pocso_registration_id')
+            reg_id = request.session.get("last_pocso_registration_id")
             if reg_id:
                 registration = POCSORegistration.objects.filter(id=reg_id).first()
 
@@ -2810,15 +3012,21 @@ def pocso_registration_view(request):
 
 def pocso_billing_view(request):
     """Show billing breakdown for POCSO with calculated context"""
-    reg_id = request.session.get('last_pocso_registration_id')
-    registration = POCSORegistration.objects.filter(id=reg_id).first() if reg_id else None
-    
+    reg_id = request.session.get("last_pocso_registration_id")
+    registration = (
+        POCSORegistration.objects.filter(id=reg_id).first() if reg_id else None
+    )
+
     if not registration and request.user.is_authenticated:
-        registration = POCSORegistration.objects.filter(user=request.user).order_by('-created_at').first()
-    
+        registration = (
+            POCSORegistration.objects.filter(user=request.user)
+            .order_by("-created_at")
+            .first()
+        )
+
     if not registration:
         return redirect("pocso_registration")
-        
+
     context = get_pocso_pricing_context(registration)
     return render(request, "pocso_billing.html", context)
 
@@ -2827,30 +3035,30 @@ def submit_payment_view(request, registration_id):
     """Handle payment screenshot upload for POSH/POCSO"""
     # Detect type from URL or session if possible, or try both models
     registration = POSHRegistration.objects.filter(id=registration_id).first()
-    reg_type = 'POSH'
-    
+    reg_type = "POSH"
+
     if not registration:
         registration = get_object_or_404(POCSORegistration, id=registration_id)
-        reg_type = 'POCSO'
-        
+        reg_type = "POCSO"
+
     if request.method == "POST":
         screenshot = request.FILES.get("payment_screenshot")
         if screenshot:
             registration.payment_screenshot = screenshot
-            registration.payment_status = 'SUBMITTED'
+            registration.payment_status = "SUBMITTED"
             registration.save()
-            
+
             # Send 'PAY_NOW' email
             from .email_utils import send_tiered_email
-            send_tiered_email(registration, 'PAY_NOW', reg_type)
-            
+
+            send_tiered_email(registration, "PAY_NOW", reg_type)
+
             # Redirect to the respective billing page to show the success screen
-            if reg_type == 'POSH':
+            if reg_type == "POSH":
                 return redirect("billing")
             else:
                 return redirect("pocso_billing")
-            
-    return render(request, "submit_payment.html", {"registration": registration})
 
     return render(request, "submit_payment.html", {"registration": registration})
 
+    return render(request, "submit_payment.html", {"registration": registration})

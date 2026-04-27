@@ -6,20 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0004_remove_subscription_subscription_owner_constraint_and_more'),
+        ("home", "0004_remove_subscription_subscription_owner_constraint_and_more"),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='subscription',
-            name='check_end_date_after_start_date',
+            model_name="subscription",
+            name="check_end_date_after_start_date",
         ),
         migrations.RemoveConstraint(
-            model_name='subscription',
-            name='subscription_owner_constraint',
+            model_name="subscription",
+            name="subscription_owner_constraint",
         ),
         migrations.AddConstraint(
-            model_name='subscription',
-            constraint=models.CheckConstraint(condition=models.Q(('end_date__gt', models.F('start_date'))), name='subscription_owner_constraint'),
+            model_name="subscription",
+            constraint=models.CheckConstraint(
+                condition=models.Q(("end_date__gt", models.F("start_date"))),
+                name="subscription_owner_constraint",
+            ),
         ),
     ]

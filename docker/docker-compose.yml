@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: ohs-web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app
+      - ../certs:/app/certs
+    working_dir: /app
+    command: >
+      gunicorn OHS.wsgi:application
+      --bind 0.0.0.0:8000
+      --certfile /app/certs/localhost+1.pem
+      --keyfile /app/certs/localhost+1-key.pem
+      --timeout 120
+    restart: always
+    networks:
+      - ohs-network
+
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.59.1-jammy
+    container_name: ohs-playwright
+    working_dir: /app
+    volumes:
+      - ..:/app
+    depends_on:
+      - web
+    networks:
+      - ohs-network
+    entrypoint: ["npx", "playwright", "test"]
+
+networks:
+  ohs-network:

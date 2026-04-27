@@ -1,0 +1,12 @@
+[flake8]
+
+exclude =
+    env,
+    venv,
+    __pycache__,
+    migrations,
+    node_modules,
+    staticfiles,
+    .git,
+    *.egg-info
+max-line-length = 120

@@ -6,18 +6,36 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0034_poshpricingconfig_fee_ic_history_21_23_t0_and_more'),
+        ("home", "0034_poshpricingconfig_fee_ic_history_21_23_t0_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='pocsoregistration',
-            name='non_teaching_training_mode',
-            field=models.CharField(blank=True, choices=[('E_LEARNING', 'E-Learning'), ('OFFLINE', 'Offline'), ('ONLINE', 'Online')], max_length=20, null=True),
+            model_name="pocsoregistration",
+            name="non_teaching_training_mode",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("E_LEARNING", "E-Learning"),
+                    ("OFFLINE", "Offline"),
+                    ("ONLINE", "Online"),
+                ],
+                max_length=20,
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='pocsoregistration',
-            name='teaching_training_mode',
-            field=models.CharField(blank=True, choices=[('E_LEARNING', 'E-Learning'), ('OFFLINE', 'Offline'), ('ONLINE', 'Online')], max_length=20, null=True),
+            model_name="pocsoregistration",
+            name="teaching_training_mode",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("E_LEARNING", "E-Learning"),
+                    ("OFFLINE", "Offline"),
+                    ("ONLINE", "Online"),
+                ],
+                max_length=20,
+                null=True,
+            ),
         ),
     ]

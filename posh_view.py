@@ -1,8 +1,29 @@
+import json
+from datetime import timedelta
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q, Sum
+from django.shortcuts import redirect, render
+from django.utils import timezone
+
+from home.models import (
+    AssessmentProgress,
+    DailyActivity,
+    ModuleProgress,
+    Subscription,
+    TrainingModule,
+)
+
+
+@login_required
 def posh_act_page(request):
     # Check if user logged out from Training portal
-    if request.session.get('logged_out_of_training'):
-        request.session.delete_session_key('logged_out_of_training')
-        messages.warning(request, "Please login to Training Portal to access this page.")
+    if request.session.get("logged_out_of_training"):
+        request.session.delete_session_key("logged_out_of_training")
+        messages.warning(
+            request, "Please login to Training Portal to access this page."
+        )
         return redirect("home")
 
     user = request.user
@@ -56,7 +77,11 @@ def posh_act_page(request):
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             # Use video file path with URL-encoded spaces
-            "src": mod.video_file.url if mod.video_file else "/media/training%20videos/Demo%20video.mp4",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training%20videos/Demo%20video.mp4"
+            ),
             "duration": mod.duration_seconds,
         }
         video_list.append(item)
@@ -64,7 +89,7 @@ def posh_act_page(request):
 
     # Process PPT Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
-    
+
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
     for mod in ppt_modules:
@@ -119,15 +144,16 @@ def posh_act_page(request):
         "total_modules": total_modules,
         "chart_labels": json.dumps(chart_labels),
         "chart_data": json.dumps(chart_data),
-        "chart_data": json.dumps(chart_data),
         # Remove duplicate key if present
         "total_seconds_watched": total_seconds_watched,
-        "formatted_total_time": f"{total_seconds_watched // 3600:02}:{(total_seconds_watched % 3600) // 60:02}:{total_seconds_watched % 60:02}",
-        "is_final_quiz_passed": AssessmentProgress.objects.filter(user=user, assessment_type="POSH", is_passed=True).exists(),
+        "formatted_total_time": (
+            f"{total_seconds_watched // 3600:02}:"
+            f"{(total_seconds_watched % 3600) // 60:02}:"
+            f"{total_seconds_watched % 60:02}"
+        ),
+        "is_final_quiz_passed": AssessmentProgress.objects.filter(
+            user=user, assessment_type="POSH", is_passed=True
+        ).exists(),
     }
 
     return render(request, "posh_act_page.html", context)
-
-
-@csrf_exempt
-@login_required

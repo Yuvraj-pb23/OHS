@@ -6,38 +6,38 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0023_poshpricingconfig_fee_annual_report_t4_and_more'),
+        ("home", "0023_poshpricingconfig_fee_annual_report_t4_and_more"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='poshpricingconfig',
-            old_name='fee_annual_report_t0',
-            new_name='fee_nodal_officer_t0',
+            model_name="poshpricingconfig",
+            old_name="fee_annual_report_t0",
+            new_name="fee_nodal_officer_t0",
         ),
         migrations.RenameField(
-            model_name='poshpricingconfig',
-            old_name='fee_annual_report_t1',
-            new_name='fee_nodal_officer_t1',
+            model_name="poshpricingconfig",
+            old_name="fee_annual_report_t1",
+            new_name="fee_nodal_officer_t1",
         ),
         migrations.RenameField(
-            model_name='poshpricingconfig',
-            old_name='fee_annual_report_t2',
-            new_name='fee_nodal_officer_t2',
+            model_name="poshpricingconfig",
+            old_name="fee_annual_report_t2",
+            new_name="fee_nodal_officer_t2",
         ),
         migrations.RenameField(
-            model_name='poshpricingconfig',
-            old_name='fee_annual_report_t3',
-            new_name='fee_nodal_officer_t3',
+            model_name="poshpricingconfig",
+            old_name="fee_annual_report_t3",
+            new_name="fee_nodal_officer_t3",
         ),
         migrations.RenameField(
-            model_name='poshpricingconfig',
-            old_name='fee_annual_report_t4',
-            new_name='fee_nodal_officer_t4',
+            model_name="poshpricingconfig",
+            old_name="fee_annual_report_t4",
+            new_name="fee_nodal_officer_t4",
         ),
         migrations.RenameField(
-            model_name='poshregistration',
-            old_name='annual_report_submitted',
-            new_name='require_nodal_officer_support',
+            model_name="poshregistration",
+            old_name="annual_report_submitted",
+            new_name="require_nodal_officer_support",
         ),
     ]

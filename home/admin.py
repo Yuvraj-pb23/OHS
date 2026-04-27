@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import User, SubscriptionPlan, Subscription, Organization, Payment
+
+from .models import Organization, Payment, Subscription, SubscriptionPlan, User
 
 admin.site.register(User)
 admin.site.register(SubscriptionPlan)

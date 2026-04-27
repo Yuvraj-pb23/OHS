@@ -6,63 +6,66 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0024_rename_fee_annual_report_t0_poshpricingconfig_fee_nodal_officer_t0_and_more'),
+        (
+            "home",
+            "0024_rename_fee_annual_report_t0_poshpricingconfig_fee_nodal_officer_t0_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_no_specialized_training_t0',
+            model_name="poshpricingconfig",
+            name="fee_ic_no_specialized_training_t0",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_no_specialized_training_t1',
+            model_name="poshpricingconfig",
+            name="fee_ic_no_specialized_training_t1",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_no_specialized_training_t2',
+            model_name="poshpricingconfig",
+            name="fee_ic_no_specialized_training_t2",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_no_specialized_training_t3',
+            model_name="poshpricingconfig",
+            name="fee_ic_no_specialized_training_t3",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_no_specialized_training_t4',
+            model_name="poshpricingconfig",
+            name="fee_ic_no_specialized_training_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_training_outdated_t0',
+            model_name="poshpricingconfig",
+            name="fee_ic_training_outdated_t0",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_training_outdated_t1',
+            model_name="poshpricingconfig",
+            name="fee_ic_training_outdated_t1",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_training_outdated_t2',
+            model_name="poshpricingconfig",
+            name="fee_ic_training_outdated_t2",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_training_outdated_t3',
+            model_name="poshpricingconfig",
+            name="fee_ic_training_outdated_t3",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshpricingconfig',
-            name='fee_ic_training_outdated_t4',
+            model_name="poshpricingconfig",
+            name="fee_ic_training_outdated_t4",
             field=models.DecimalField(decimal_places=2, default=0.0, max_digits=10),
         ),
         migrations.AddField(
-            model_name='poshregistration',
-            name='ic_specialized_training',
+            model_name="poshregistration",
+            name="ic_specialized_training",
             field=models.BooleanField(default=False),
         ),
     ]
