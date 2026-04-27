@@ -158,8 +158,8 @@
         .bg-pending { background: #ffebee; color: #c62828; }
         .bg-locked { background: #eeeeee; color: #757575; }
 
-        .ppt-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        .ppt-content { width: 90%; height: 85%; background: white; border-radius: 20px; overflow: hidden; position: relative; }
+        .training-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
+        .training-content { width: 90%; height: 85%; background: white; border-radius: 20px; overflow: hidden; position: relative; }
 
         .practice-quiz-container { padding: 40px; height: 100%; overflow-y: auto; box-sizing: border-box; background: #fdfdfd; position: relative; z-index: 110; }
         .pq-question { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--primary); }
@@ -318,11 +318,9 @@
 
 <div id="presence-indicator">● Protected System Active</div>
 
-<div class="ppt-modal" id="pptModal">
-    <div class="ppt-content">
+<div class="training-modal" id="trainingModal">
+    <div class="training-content">
         <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 1100; font-size: 24px; display: flex; align-items: center; justify-content: center;">&times;</button>
-        <div id="ppt-timer-badge" style="position: absolute; left: 20px; top: 10px; background: var(--primary); color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; z-index: 1100; display: none;">Time: 0s</div>
-        <iframe id="pptFrame" src="" style="width: 100%; height: 100%; border: none; display: none;" oncontextmenu="return false;"></iframe>
 
         <div id="practiceQuizContainer" class="practice-quiz-container" style="display: none;">
             <h2 style="text-align: center; margin-bottom: 30px;">POSH Practice Assessment</h2>
@@ -375,25 +373,13 @@
                         </video>
                     </div>
                 </div>
-
-                <div id="ppt-stage" style="display: none;">
-                    <div class="stage-container">
-                        <div id="ppt-main-cover" class="content-cover">
-                            <div class="cover-overlay"></div>
-                            <h2 id="ppt-main-title">Resource Title</h2>
-                            <button class="btn-start" id="ppt-start-btn" onclick="triggerPPTAction()">📖 Open Resource</button>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="tab-header">
-                <button class="tab-btn active" id="tab-vids" onclick="switchTab('vids')">Video Modules</button>
-                <button class="tab-btn" id="tab-ppts" onclick="switchTab('ppts')">PPT & Resources</button>
+                <button class="tab-btn active" id="tab-vids">Video Modules & Quiz</button>
             </div>
 
             <div id="vids-section"><div id="module-list"></div></div>
-            <div id="ppts-section" style="display: none;"><div id="ppt-list"></div></div>
 
             <div class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px;">
                 <div class="section-card">
@@ -435,7 +421,6 @@
 
     const player = document.getElementById('mainPlayer');
     let currentIdx = 0;
-    let currentPPTIdx = 0;
     let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
     let furthestTime = 0;
 
@@ -456,19 +441,6 @@
     
     console.log('Modules loaded:', modules);
     console.log('First module src:', modules.length > 0 ? modules[0].src : 'No modules');
-
-    const ppts = [
-        {% for m in ppt_modules %}
-        { 
-            id: {{ m.id }}, 
-            type: 'slide', 
-            title: "{{ m.title|escapejs }}", 
-            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
-            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600' }}", 
-            url: "{{ m.url }}" 
-        },
-        {% endfor %}
-    ];
 
     const questionBank = [
         { question: "The POSH Act was enacted in which year?", options: ["2010", "2011", "2013", "2015"], answer: 2 },
@@ -552,29 +524,9 @@
         document.getElementById('nav-dash').classList.remove('active');
         if(v === 'dashboard') {
             document.getElementById('nav-dash').classList.add('active');
-            // Re-render modules and PPTs to refresh the UI state
+            // Re-render modules to refresh the UI state
             renderModules();
-            renderPPTList();
             updateTotalStats();
-        }
-    }
-
-    function switchTab(type) {
-        document.getElementById('tab-vids').classList.toggle('active', type === 'vids');
-        document.getElementById('tab-ppts').classList.toggle('active', type === 'ppts');
-        document.getElementById('vids-section').style.display = type === 'vids' ? 'block' : 'none';
-        document.getElementById('ppts-section').style.display = type === 'ppts' ? 'block' : 'none';
-        document.getElementById('video-stage').style.display = type === 'vids' ? 'block' : 'none';
-        document.getElementById('ppt-stage').style.display = type === 'ppts' ? 'block' : 'none';
-
-        if (type === 'ppts') {
-            player.pause(); 
-            renderPPTList();
-            selectResource(currentPPTIdx); 
-        } else {
-            closeModal(); 
-            renderModules();
-            playVideo(currentIdx); 
         }
     }
 
@@ -595,10 +547,7 @@
                         alert('🔒 Complete the video module first to unlock the Quiz.');
                         return;
                     }
-                    // Store the quiz module index for markComplete
-                    currentPPTIdx = ppts.length; // won't conflict with ppt indices
-                    document.getElementById('pptModal').style.display = 'flex';
-                    document.getElementById('pptFrame').style.display = 'none';
+                    document.getElementById('trainingModal').style.display = 'flex';
                     document.getElementById('practiceQuizContainer').style.display = 'block';
                     document.getElementById('quiz-timer-box').style.display = 'block';
                     // Store quiz module id so we can mark it complete on finish
@@ -618,23 +567,6 @@
                 };
                 item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
             }
-            list.appendChild(item);
-        });
-        updateChart();
-    }
-
-    function renderPPTList() {
-        const list = document.getElementById('ppt-list'); list.innerHTML = '';
-        ppts.forEach((ppt, i) => {
-            const item = document.createElement('div');
-            item.className = `record-item ${ppt.status === 'locked' ? 'locked' : ''}`;
-            item.onclick = () => { 
-                if(ppt.status !== 'locked') {
-                    selectResource(i); 
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            };
-            item.innerHTML = `<div class="thumb-box" style="background-image:url('${ppt.thumb}')"></div><div><h3>${ppt.title}</h3></div><span class="badge bg-${ppt.status}">${ppt.status}</span>`;
             list.appendChild(item);
         });
         updateChart();
@@ -682,13 +614,6 @@
         furthestTime = 0;
     }
 
-    function selectResource(idx) {
-        currentPPTIdx = idx;
-        const res = ppts[idx];
-        document.getElementById('ppt-main-cover').style.backgroundImage = `url('${res.thumb}')`;
-        document.getElementById('ppt-main-title').innerText = res.title;
-    }
-
     function startVideo() {
         console.log('startVideo called');
         console.log('Player src:', player.src);
@@ -700,32 +625,11 @@
         });
     }
 
-    function triggerPPTAction() {
-        const res = ppts[currentPPTIdx];
-        if (res.status === 'locked') return alert("This resource is locked!");
-        document.getElementById('pptModal').style.display = 'flex';
-        
-        if(res.title.toLowerCase().includes('quiz')) {
-            document.getElementById('pptFrame').style.display = 'none';
-            document.getElementById('practiceQuizContainer').style.display = 'block';
-            document.getElementById('quiz-timer-box').style.display = 'block';
-            initQuiz();
-        } else {
-            document.getElementById('practiceQuizContainer').style.display = 'none';
-            document.getElementById('quiz-timer-box').style.display = 'none';
-            document.getElementById('pptFrame').style.display = 'block';
-            document.getElementById('pptFrame').src = res.url;
-            startPPTTimer();
-        }
-    }
-
     function closeModal() {
-        document.getElementById('pptModal').style.display = 'none';
-        document.getElementById('pptFrame').src = "";
+        document.getElementById('trainingModal').style.display = 'none';
         clearInterval(quizTimerInterval);
         // Refresh the UI state when closing modal
         renderModules();
-        renderPPTList();
         updateTotalStats();
     }
     
@@ -818,10 +722,6 @@
                         window._quizModuleId = null;
                         window._quizModuleIdx = null;
                         renderModules();
-                    } else if (ppts[currentPPTIdx]) {
-                        ppts[currentPPTIdx].status = 'complete';
-                        markComplete(ppts[currentPPTIdx].id);
-                        renderPPTList();
                     }
                 }
                 updateTotalStats();
@@ -839,9 +739,9 @@
         lastTime = now;
 
         const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
-        const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; 
+        const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex'; 
 
-        if ((isVideoPlaying || isPPTOpen) && deltaSeconds > 0) {
+        if ((isVideoPlaying || isQuizOpen) && deltaSeconds > 0) {
              try {
                 const res = await fetch(`/ajax/update-watch-time/`, { 
                     method: 'POST',
@@ -868,9 +768,7 @@
         if (modules[currentIdx].status !== 'complete') {
             modules[currentIdx].status = 'complete';
             if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
-            else if(ppts[0]) ppts[0].status = 'pending';
             renderModules(); 
-            renderPPTList(); 
             updateTotalStats();
             markComplete(modules[currentIdx].id); 
         }
@@ -887,28 +785,9 @@
         }
     };
 
-    function startPPTTimer() {
-        let viewed = 0;
-        const interval = setInterval(() => {
-            if (document.getElementById('pptModal').style.display !== 'flex') { clearInterval(interval); return; }
-            viewed++;
-            document.getElementById('ppt-timer-badge').style.display = 'block';
-            document.getElementById('ppt-timer-badge').innerText = `Time: ${viewed}s`;
-            if (viewed >= 10 && ppts[currentPPTIdx].status !== 'complete') {
-                console.log('Marking PPT complete:', ppts[currentPPTIdx]);
-                ppts[currentPPTIdx].status = 'complete';
-                console.log('Calling markComplete with id:', ppts[currentPPTIdx].id);
-                markComplete(ppts[currentPPTIdx].id); 
-                if(ppts[currentPPTIdx+1]) ppts[currentPPTIdx+1].status = 'pending';
-                renderPPTList(); updateTotalStats();
-            }
-        }, 1000);
-    }
-
-
     function updateTotalStats() {
-        const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
-        const total = modules.length + ppts.length;
+        const done = modules.filter(i => i.status === 'complete').length;
+        const total = modules.length;
         const perc = Math.round((done / total) * 100) || 0;
         document.getElementById('perc-text').innerText = perc + "%";
         document.getElementById('perc-bar').style.width = perc + "%";
@@ -922,7 +801,7 @@
 
     function updateChart() {
         const ctx = document.getElementById('statusChart').getContext('2d');
-        const dataSet = document.getElementById('tab-vids').classList.contains('active') ? modules : ppts;
+        const dataSet = modules;
         const counts = [
             dataSet.filter(i => i.status === 'complete').length, 
             dataSet.filter(i => i.status === 'pending').length, 

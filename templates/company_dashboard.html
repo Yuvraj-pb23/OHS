@@ -992,54 +992,10 @@
                   </div>
                 </div>
 
-                <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
-                <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none">
-                  <!-- PPT Pie -->
-                  <div class="mini-stat-card">
-                    <h3>PPT Health</h3>
-                    <div class="chart-container">
-                      <canvas id="pie-ppts-{{ member.id }}" data-percent="{{ member.ppt_percent }}" width="35" height="35" style="display: block;"></canvas>
-                    </div>
-                  </div>
-
-                  <!-- PPT Status -->
-                  <div class="mini-stat-card">
-                    <h3>PPT Status</h3>
-                    <p class="time-text" style="color: var(--lms-pending); font-size: 0.85rem;">
-                      {% if member.ppt_percent == 100 %}✅ All Done{% else %}⏳ In Progress{% endif %}
-                    </p>
-                    <small class="text-muted">Reading Materials</small>
-                  </div>
-
-                  <!-- PPT Completion % -->
-                  <div class="mini-stat-card">
-                    <h3>PPT Comp.</h3>
-                    <h2 style="
-                          margin: 0;
-                          color: var(--lms-pending);
-                          font-size: 0.95rem;
-                          font-weight: 800;
-                          line-height: 1.1;
-                        ">
-                      {{ member.ppt_percent }}%
-                    </h2>
-                    <div class="progress-track">
-                      <div class="progress-fill"
-                        style="width: {{ member.ppt_percent }}%; background: var(--lms-pending)"></div>
-                    </div>
-                  </div>
-                </div>
-
-
-                <!-- === TABS === -->
+                <!-- === LIST HEADER === -->
                 <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}"
-                    onclick="switchModalTab('{{ member.id }}', 'vids')">
+                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}">
                     Videos &amp; Quiz
-                  </button>
-                  <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}"
-                    onclick="switchModalTab('{{ member.id }}', 'ppts')">
-                    PPT
                   </button>
                 </div>
 
@@ -1101,35 +1057,6 @@
                     {% endif %}
                   </div>
 
-                </div>
-
-                <!-- PPT Only List -->
-                <div id="content-ppts-{{ member.id }}" style="display: none">
-                  {% for mod in member.ppt_modules %}
-                  <div class="record-item">
-                    <div class="record-thumb" style="
-                          background-color: #ffeaa7;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        ">
-                      <i class="bi bi-file-earmark-text" style="font-size: 1.5rem; color: #fdcb6e"></i>
-                    </div>
-                    <div class="record-info">
-                      <h6>{{ mod.title }}</h6>
-                      <p>📄 Reading Material</p>
-                    </div>
-                    {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">✅ Completed</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending">⏳ Pending</span>
-                    {% endif %}
-                  </div>
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">
-                    No PPT modules assigned
-                  </div>
-                  {% endfor %}
                 </div>
 
               </div>
@@ -1993,41 +1920,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // UPDATED FUNCTION: Switches Content Lists AND Chart Rows
-    function switchModalTab(memberId, tab) {
-      // Content lists
-      const vidContent = document.getElementById(`content-vids-${memberId}`);
-      const pptContent = document.getElementById(`content-ppts-${memberId}`);
-      // Buttons
-      const vidBtn = document.getElementById(`btn-vids-${memberId}`);
-      const pptBtn = document.getElementById(`btn-ppts-${memberId}`);
-      // Stats Rows
-      const vidStats = document.getElementById(`stats-vids-${memberId}`);
-      const pptStats = document.getElementById(`stats-ppts-${memberId}`);
-
-      if (tab === "vids") {
-        vidBtn.classList.add("active");
-        pptBtn.classList.remove("active");
-
-        vidContent.style.display = "block";
-        pptContent.style.display = "none";
-
-        // Show Video Charts, Hide PPT Charts
-        vidStats.style.display = "grid";
-        pptStats.style.display = "none";
-      } else {
-        pptBtn.classList.add("active");
-        vidBtn.classList.remove("active");
-
-        pptContent.style.display = "block";
-        vidContent.style.display = "none";
-
-        // Hide Video Charts, Show PPT Charts
-        pptStats.style.display = "grid";
-        vidStats.style.display = "none";
-      }
-    }
-
     // Helper to draw chart safely
     function drawChart(canvasId, colorHex) {
       const canvas = document.getElementById(canvasId);
@@ -2072,9 +1964,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 1. Draw Video Chart (Primary Blue)
         drawChart(`pie-vids-${memberId}`, "#4e54c8");
-
-        // 2. Draw PPT Chart (Warning Yellow/Orange)
-        drawChart(`pie-ppts-${memberId}`, "#f1c40f");
       }
     });
 

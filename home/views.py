@@ -1413,17 +1413,22 @@ def posh_act_page_corp(request):
 
     # 2. Fetch User Progress
     progress_map = {}
-    completed_count = 0
 
     # Initialize progress for all modules if not exists
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
         progress_map[mod.id] = prog.is_completed
-        if prog.is_completed:
-            completed_count += 1
+
+    # Only video and quiz modules are part of corp training flow now.
+    visible_modules = [
+        m
+        for m in modules
+        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+    ]
+    completed_count = sum(1 for m in visible_modules if progress_map.get(m.id, False))
 
     # 3. Calculate Overall Status
-    total_modules = modules.count()
+    total_modules = len(visible_modules)
     percent_complete = (
         int((completed_count / total_modules) * 100) if total_modules > 0 else 0
     )
@@ -1453,32 +1458,7 @@ def posh_act_page_corp(request):
         video_list.append(item)
         previous_completed = is_completed
 
-    # Process PPT Sequence — exclude Practice Quiz (moved to video tab)
-    ppt_modules = [
-        m
-        for m in modules
-        if m.ppt_file and not m.video_file and "quiz" not in m.title.lower()
-    ]
-
-    # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
-    previous_completed = True
-    for mod in ppt_modules:
-        is_completed = progress_map.get(mod.id, False)
-        is_locked = not previous_completed
-
-        item = {
-            "id": mod.id,
-            "title": mod.title,
-            "is_completed": is_completed,
-            "is_locked": is_locked,
-            "thumb": mod.thumbnail.url if mod.thumbnail else "",
-            "src": "",
-            # UPDATED: Use new hardcoded path for PPT
-            "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
-            "duration": mod.duration_seconds,
-        }
-        ppt_list.append(item)
-        previous_completed = is_completed
+    # PPT modules intentionally excluded for corp flow (video + quiz only).
 
     # Move Practice Quiz into video_list (shown under Video Modules tab, below the video)
     quiz_modules = [
