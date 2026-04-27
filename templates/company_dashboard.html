@@ -1,1088 +1,1231 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ organization.name }} Dashboard</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>{{ organization.name }} Dashboard</title>
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
+    />
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-    rel="stylesheet" />
-
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    :root {
-      /* LIGHT THEME - PROFESSIONAL CORPORATE */
-      --sidebar-width: 280px;
-
-      /* Primary Colors - Indigo & Professional */
-      --color-primary: #4f46e5;
-      --color-primary-light: #a5b4fc;
-      --color-primary-dark: #4338ca;
-
-      /* Backgrounds - Light & Clean */
-      --bg-main: #ffffff;
-      --bg-secondary: #f9fafb;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f3f4f6;
-      --bg-sidebar: #ffffff;
-
-      /* Borders - Subtle */
-      --border-color: #e5e7eb;
-      --border-soft: #f3f4f6;
-
-      /* Text Colors */
-      --text-primary: #1f2937;
-      --text-secondary: #6b7280;
-      --text-muted: #9ca3af;
-
-      /* Status Colors */
-      --color-success: #10b981;
-      --color-warning: #f59e0b;
-      --color-danger: #ef4444;
-      --color-info: #4f46e5;
-
-      /* LMS Colors */
-      --lms-primary: #4f46e5;
-      --lms-pending: #f59e0b;
-
-      /* Shadows - Refined */
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
-
-      /* Border Radius */
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-xl: 16px;
-
-      /* Spacing */
-      --space-1: 4px;
-      --space-2: 8px;
-      --space-3: 12px;
-      --space-4: 16px;
-      --space-5: 20px;
-      --space-6: 24px;
-      --space-8: 32px;
-    }
-
-    body {
-      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-      color: var(--text-primary);
-      font-family: "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif;
-      margin: 0;
-      overflow-x: hidden;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    /* SIDEBAR */
-    .sidebar {
-      position: fixed;
-      width: var(--sidebar-width);
-      height: 100vh;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-color);
-      padding: var(--space-6) 0;
-      z-index: 1000;
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .sidebar-brand {
-      padding: var(--space-4) var(--space-5);
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--color-primary);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: var(--space-4);
-    }
-
-    .sidebar-brand i {
-      font-size: 1.8rem;
-      color: var(--color-primary);
-    }
-
-    .nav-link,
-    .sidebar-back-btn {
-      color: var(--text-secondary) !important;
-      padding: var(--space-3) var(--space-5);
-      margin: var(--space-1) var(--space-2);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      transition: all 0.2s ease;
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 0.95rem;
-    }
-
-    .nav-link:hover,
-    .sidebar-back-btn:hover {
-      background: var(--bg-secondary);
-      color: var(--color-primary) !important;
-    }
-
-    .nav-link.active {
-      background: rgba(79, 70, 229, 0.1);
-      color: var(--color-primary) !important;
-      border-left: 3px solid var(--color-primary);
-      padding-left: calc(var(--space-5) - 3px);
-    }
-
-    /* MAIN */
-    .main-content {
-      margin-left: var(--sidebar-width);
-      padding: var(--space-8);
-      min-height: 100vh;
-      background: var(--bg-main);
-    }
-
-    .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: var(--space-6);
-    }
-
-    .content-section {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .content-section.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
 
-    /* STATS GRID - 3 COLUMN RESPONSIVE LAYOUT */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
-      margin-bottom: var(--space-8);
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: var(--space-6);
-      text-align: center;
-      transition: all 0.3s ease;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: var(--space-4);
-    }
-
-    .stat-card:hover {
-      background: var(--bg-card-hover);
-      box-shadow: var(--shadow-md);
-      border-color: var(--color-primary);
-      transform: translateY(-4px);
-    }
-
-    /* MOBILE RESPONSIVENESS */
-    @media (max-width: 992px) {
       :root {
-        --sidebar-width: 260px;
+        /* LIGHT THEME - PROFESSIONAL CORPORATE */
+        --sidebar-width: 280px;
+
+        /* Primary Colors - Indigo & Professional */
+        --color-primary: #4f46e5;
+        --color-primary-light: #a5b4fc;
+        --color-primary-dark: #4338ca;
+
+        /* Backgrounds - Light & Clean */
+        --bg-main: #ffffff;
+        --bg-secondary: #f9fafb;
+        --bg-card: #ffffff;
+        --bg-card-hover: #f3f4f6;
+        --bg-sidebar: #ffffff;
+
+        /* Borders - Subtle */
+        --border-color: #e5e7eb;
+        --border-soft: #f3f4f6;
+
+        /* Text Colors */
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+
+        /* Status Colors */
+        --color-success: #10b981;
+        --color-warning: #f59e0b;
+        --color-danger: #ef4444;
+        --color-info: #4f46e5;
+
+        /* LMS Colors */
+        --lms-primary: #4f46e5;
+        --lms-pending: #f59e0b;
+
+        /* Shadows - Refined */
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+        --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+        /* Border Radius */
+        --radius-sm: 6px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+        --radius-xl: 16px;
+
+        /* Spacing */
+        --space-1: 4px;
+        --space-2: 8px;
+        --space-3: 12px;
+        --space-4: 16px;
+        --space-5: 20px;
+        --space-6: 24px;
+        --space-8: 32px;
       }
 
+      body {
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        color: var(--text-primary);
+        font-family:
+          "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif;
+        margin: 0;
+        overflow-x: hidden;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      /* SIDEBAR */
       .sidebar {
-        left: calc(-1 * var(--sidebar-width));
-        transition: all 0.3s ease;
-        z-index: 1050;
-      }
-
-      .sidebar.show {
-        left: 0;
-        box-shadow: 0 0 50px rgba(0,0,0,0.5);
-      }
-
-      .main-content {
-        margin-left: 0 !important;
-        padding: var(--space-4) !important;
-        padding-top: 70px !important; /* Space for fixed hamburger */
-      }
-
-      .hamburger-btn {
-        display: flex !important;
-      }
-
-      .sidebar-overlay {
-        display: none;
         position: fixed;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
-        backdrop-filter: blur(4px);
+        width: var(--sidebar-width);
+        height: 100vh;
+        background: var(--bg-sidebar);
+        border-right: 1px solid var(--border-color);
+        padding: var(--space-6) 0;
+        z-index: 1000;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
       }
 
-      .sidebar-overlay.show {
-        display: block;
+      .sidebar-brand {
+        padding: var(--space-4) var(--space-5);
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: var(--space-4);
       }
 
-      .stats-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: var(--space-2) !important;
+      .sidebar-brand i {
+        font-size: 1.8rem;
+        color: var(--color-primary);
       }
 
-      .stat-card {
-        padding: var(--space-2) !important;
-        gap: var(--space-1) !important;
+      .nav-link,
+      .sidebar-back-btn {
+        color: var(--text-secondary) !important;
+        padding: var(--space-3) var(--space-5);
+        margin: var(--space-1) var(--space-2);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.95rem;
       }
 
-      .stat-label {
-        font-size: 0.6rem !important;
+      .nav-link:hover,
+      .sidebar-back-btn:hover {
+        background: var(--bg-secondary);
+        color: var(--color-primary) !important;
       }
 
-      .stat-value {
-        font-size: 1.4rem !important;
+      .nav-link.active {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--color-primary) !important;
+        border-left: 3px solid var(--color-primary);
+        padding-left: calc(var(--space-5) - 3px);
       }
 
-      .action-group {
-        display: flex !important;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: var(--space-2) !important;
-        justify-content: center !important;
-      }
-
-      .btn-action, .btn-gradient-action {
-        padding: 6px 12px !important;
-        font-size: 0.75rem !important;
-        width: auto !important;
-        flex: 1 1 auto !important;
-      }
-
-      .search-wrapper {
-        min-width: 100% !important;
-        order: -1; /* Search always first on mobile */
-      }
-
-      .members-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: var(--space-2) !important;
-      }
-
-      .member-card {
-        padding: var(--space-3) !important;
-      }
-
-      .avatar {
-        width: 45px !important;
-        height: 45px !important;
-        font-size: 1rem !important;
-        margin-bottom: var(--space-2) !important;
-      }
-
-      .member-name {
-        font-size: 0.85rem !important;
-      }
-
-      .member-email {
-        font-size: 0.7rem !important;
-        margin-bottom: var(--space-2) !important;
-      }
-
-      .role-badge {
-        font-size: 0.6rem !important;
-        padding: 2px 8px !important;
+      /* MAIN */
+      .main-content {
+        margin-left: var(--sidebar-width);
+        padding: var(--space-8);
+        min-height: 100vh;
+        background: var(--bg-main);
       }
 
       .section-title {
-        font-size: 1.1rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: var(--space-6);
+      }
+
+      .content-section {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .content-section.active {
+        display: block;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* STATS GRID - 3 COLUMN RESPONSIVE LAYOUT */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-6);
+        margin-bottom: var(--space-8);
       }
 
       .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: var(--space-6);
+        text-align: center;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+      }
+
+      .stat-card:hover {
+        background: var(--bg-card-hover);
+        box-shadow: var(--shadow-md);
+        border-color: var(--color-primary);
+        transform: translateY(-4px);
+      }
+
+      /* MOBILE RESPONSIVENESS */
+      @media (max-width: 992px) {
+        :root {
+          --sidebar-width: 260px;
+        }
+
+        .sidebar {
+          left: calc(-1 * var(--sidebar-width));
+          transition: all 0.3s ease;
+          z-index: 1050;
+        }
+
+        .sidebar.show {
+          left: 0;
+          box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-content {
+          margin-left: 0 !important;
+          padding: var(--space-4) !important;
+          padding-top: 70px !important; /* Space for fixed hamburger */
+        }
+
+        .hamburger-btn {
+          display: flex !important;
+        }
+
+        .sidebar-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0, 0, 0, 0.5);
+          z-index: 1040;
+          backdrop-filter: blur(4px);
+        }
+
+        .sidebar-overlay.show {
+          display: block;
+        }
+
+        .stats-grid {
+          grid-template-columns: repeat(3, 1fr) !important;
+          gap: var(--space-2) !important;
+        }
+
+        .stat-card {
+          padding: var(--space-2) !important;
+          gap: var(--space-1) !important;
+        }
+
+        .stat-label {
+          font-size: 0.6rem !important;
+        }
+
+        .stat-value {
+          font-size: 1.4rem !important;
+        }
+
+        .action-group {
+          display: flex !important;
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: var(--space-2) !important;
+          justify-content: center !important;
+        }
+
+        .btn-action,
+        .btn-gradient-action {
+          padding: 6px 12px !important;
+          font-size: 0.75rem !important;
+          width: auto !important;
+          flex: 1 1 auto !important;
+        }
+
+        .search-wrapper {
+          min-width: 100% !important;
+          order: -1; /* Search always first on mobile */
+        }
+
+        .members-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: var(--space-2) !important;
+        }
+
+        .member-card {
+          padding: var(--space-3) !important;
+        }
+
+        .avatar {
+          width: 45px !important;
+          height: 45px !important;
+          font-size: 1rem !important;
+          margin-bottom: var(--space-2) !important;
+        }
+
+        .member-name {
+          font-size: 0.85rem !important;
+        }
+
+        .member-email {
+          font-size: 0.7rem !important;
+          margin-bottom: var(--space-2) !important;
+        }
+
+        .role-badge {
+          font-size: 0.6rem !important;
+          padding: 2px 8px !important;
+        }
+
+        .section-title {
+          font-size: 1.1rem;
+        }
+
+        .stat-card {
+          padding: var(--space-4);
+        }
+
+        .certificate-card {
+          padding: 15px 10px !important;
+        }
+
+        .certificate-card .avatar {
+          width: 50px !important;
+          height: 50px !important;
+          font-size: 1.2rem !important;
+        }
+
+        .certificate-card .btn {
+          padding: 8px !important;
+          font-size: 0.75rem !important;
+        }
+      }
+
+      .hamburger-btn {
+        display: none;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 1060;
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .stat-value {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        line-height: 1.2;
+      }
+
+      /* POSTER GRID */
+      .poster-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: var(--space-8);
+        margin-bottom: var(--space-8);
+      }
+
+      .poster-item {
+        padding: var(--space-4);
+        border-radius: var(--radius-lg);
+        transition: all 0.3s ease;
+      }
+
+      .poster-item h5 {
+        color: var(--text-primary);
+        font-weight: 700;
+        margin-top: var(--space-4) !important;
+      }
+
+      .poster-item p {
+        color: var(--text-muted);
+      }
+
+      .poster-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 500px;
+        background: var(--bg-secondary);
+        border: 2px dashed var(--border-color);
+        border-radius: var(--radius-lg);
+        color: var(--text-muted);
+      }
+
+      /* POLICY TEXT */
+      .policy-text {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: var(--space-8);
+        color: var(--text-primary);
+        line-height: 1.8;
+      }
+
+      .policy-text h3 {
+        color: var(--color-primary);
+        font-weight: 700;
+      }
+
+      .policy-text strong {
+        color: var(--text-primary);
+        font-weight: 700;
+      }
+
+      /* MEMBERS GRID */
+      .members-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: var(--space-6);
+      }
+
+      .member-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: var(--space-5);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .member-card:hover {
+        transform: translateY(-6px);
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-lg);
+        background: var(--bg-card-hover);
+      }
+
+      .avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-light)
+        );
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: white;
+        margin-bottom: var(--space-4);
+        font-size: 1.3rem;
+      }
+
+      .member-name {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1.05rem;
+        margin-bottom: var(--space-1);
+      }
+
+      .member-email {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        margin-bottom: var(--space-3);
+      }
+
+      .role-badge {
+        background: rgba(79, 70, 229, 0.1);
+        color: var(--color-primary);
+        padding: var(--space-1) var(--space-3);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        border: 1px solid rgba(79, 70, 229, 0.3);
+        display: inline-block;
+        margin-top: var(--space-3);
+      }
+
+      /* GLASS TOOLBAR */
+      .glass-toolbar {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-lg);
+        padding: var(--space-4) var(--space-6);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: var(--space-6);
+      }
+
+      /* BUTTONS */
+      .btn-action {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-4);
+        font-weight: 600;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .btn-action:hover {
+        background: var(--bg-secondary);
+        color: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+
+      .btn-gradient-action {
+        background: var(--color-primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-5);
+        font-weight: 700;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .btn-gradient-action:hover {
+        background: var(--color-primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      }
+
+      /* FORM CONTROLS */
+      .form-control {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary) !important;
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-3);
+        font-size: 0.95rem;
+        transition: all 0.2s ease;
+      }
+
+      .form-control:focus {
+        background: var(--bg-card);
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        outline: none;
+      }
+
+      /* SEARCH INPUT */
+      .search-wrapper {
+        position: relative;
+        min-width: 250px;
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+      }
+
+      .search-input {
+        background: var(--bg-secondary) !important;
+        border: 1px solid var(--border-color) !important;
+        border-radius: var(--radius-md) !important;
+        padding: var(--space-2) var(--space-3) var(--space-2) 2.5rem !important;
+        color: var(--text-primary) !important;
+      }
+
+      .search-input:focus {
+        background: var(--bg-card) !important;
+        border-color: var(--color-primary) !important;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+      }
+
+      /* MODAL & LMS STYLES */
+      .modal-content {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .modal-header {
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-dark)
+        );
+        color: white;
+        border-bottom: none;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        padding: var(--space-5);
+      }
+
+      .lms-tab-btn {
+        background: var(--bg-secondary);
+        border: 2px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: var(--space-2) var(--space-4);
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+      }
+
+      .lms-tab-btn.active {
+        background: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+      }
+
+      .lms-tab-header {
+        display: flex;
+        gap: var(--space-3);
+        margin: var(--space-4) 0 var(--space-3) 0;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: var(--space-3);
+      }
+
+      .mini-stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: var(--space-2) var(--space-3);
+        box-shadow: var(--shadow-sm);
+        text-align: center;
+        min-height: 65px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 2px;
+      }
+
+      .mini-stat-card h3 {
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.15px;
+        margin: 0;
+        line-height: 1;
+      }
+
+      .mini-stat-card small {
+        font-size: 0.6rem;
+        color: var(--text-muted);
+        line-height: 1.2;
+        margin: 0;
+      }
+
+      .time-text {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--color-primary);
+        line-height: 1.1;
+        margin: 1px 0;
+      }
+
+      .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-3);
+        margin-bottom: var(--space-3);
+      }
+
+      .chart-container {
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .chart-container canvas {
+        max-width: 100% !important;
+        max-height: 100% !important;
+      }
+
+      .progress-track {
+        width: 100%;
+        height: 2px;
+        background: var(--bg-secondary);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-top: 2px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          var(--color-primary),
+          var(--color-primary-light)
+        );
+        border-radius: 2px;
+        transition: width 0.3s ease;
+      }
+
+      /* BADGES */
+      .bg-complete {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--color-success);
+      }
+
+      .bg-pending {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--color-warning);
+      }
+
+      .bg-locked {
+        background: var(--bg-secondary);
+        color: var(--text-muted);
+      }
+
+      .lms-badge {
+        padding: var(--space-1) var(--space-2);
+        border-radius: var(--radius-sm);
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .alert {
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-color);
+        background: var(--bg-secondary);
+        color: var(--text-primary);
+        font-size: 0.95rem;
         padding: var(--space-4);
       }
-      
-      .certificate-card {
-        padding: 15px 10px !important;
+
+      /* ICON BOX */
+      .icon-box {
+        background: linear-gradient(
+          135deg,
+          var(--color-primary),
+          var(--color-primary-light)
+        );
+        width: 50px;
+        height: 50px;
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.3rem;
       }
-      
-      .certificate-card .avatar {
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 1.2rem !important;
+
+      .title-main {
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: var(--text-primary);
       }
-      
-      .certificate-card .btn {
-        padding: 8px !important;
-        font-size: 0.75rem !important;
+
+      .refresh-timestamp {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 600;
+        text-transform: uppercase;
       }
-    }
 
-    .hamburger-btn {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1060;
-      background: var(--color-primary);
-      color: white;
-      border: none;
-      width: 45px;
-      height: 45px;
-      border-radius: 12px;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
-    }
+      /* RECORD ITEM */
+      .record-item {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 12px;
+        background: var(--bg-secondary);
+        padding: var(--space-3);
+        border-radius: var(--radius-md);
+        border: 1px solid var(--border-color);
+        margin-bottom: var(--space-3);
+        transition: all 0.2s ease;
+      }
 
-    .stat-label {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      .record-item:hover {
+        background: var(--bg-card);
+        border-color: var(--color-primary);
+      }
 
-    .stat-value {
-      font-size: 2.8rem;
-      font-weight: 800;
-      color: var(--color-primary);
-      line-height: 1.2;
-    }
+      .record-info h6 {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: var(--space-1);
+      }
 
-    /* POSTER GRID */
-    .poster-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-      gap: var(--space-8);
-      margin-bottom: var(--space-8);
-    }
+      /* Consolidated Mobile Responsiveness handled above in line 217 */
+    </style>
+  </head>
 
-    .poster-item {
-      padding: var(--space-4);
-      border-radius: var(--radius-lg);
-      transition: all 0.3s ease;
-    }
+  <body>
+    <!-- MOBILE HAMBURGER & OVERLAY -->
+    <button class="hamburger-btn" id="hamburgerBtn">
+      <i class="bi bi-list"></i>
+    </button>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    .poster-item h5 {
-      color: var(--text-primary);
-      font-weight: 700;
-      margin-top: var(--space-4) !important;
-    }
-
-    .poster-item p {
-      color: var(--text-muted);
-    }
-
-    .poster-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 500px;
-      background: var(--bg-secondary);
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-lg);
-      color: var(--text-muted);
-    }
-
-    /* POLICY TEXT */
-    .policy-text {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: var(--space-8);
-      color: var(--text-primary);
-      line-height: 1.8;
-    }
-
-    .policy-text h3 {
-      color: var(--color-primary);
-      font-weight: 700;
-    }
-
-    .policy-text strong {
-      color: var(--text-primary);
-      font-weight: 700;
-    }
-
-    /* MEMBERS GRID */
-    .members-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: var(--space-6);
-    }
-
-    .member-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: var(--space-5);
-      transition: all 0.3s ease;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .member-card:hover {
-      transform: translateY(-6px);
-      border-color: var(--color-primary);
-      box-shadow: var(--shadow-lg);
-      background: var(--bg-card-hover);
-    }
-
-    .avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      color: white;
-      margin-bottom: var(--space-4);
-      font-size: 1.3rem;
-    }
-
-    .member-name {
-      font-weight: 700;
-      color: var(--text-primary);
-      font-size: 1.05rem;
-      margin-bottom: var(--space-1);
-    }
-
-    .member-email {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: var(--space-3);
-    }
-
-    .role-badge {
-      background: rgba(79, 70, 229, 0.1);
-      color: var(--color-primary);
-      padding: var(--space-1) var(--space-3);
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      border: 1px solid rgba(79, 70, 229, 0.3);
-      display: inline-block;
-      margin-top: var(--space-3);
-    }
-
-    /* GLASS TOOLBAR */
-    .glass-toolbar {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      padding: var(--space-4) var(--space-6);
-      box-shadow: var(--shadow-sm);
-      margin-bottom: var(--space-6);
-    }
-
-    /* BUTTONS */
-    .btn-action {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-4);
-      font-weight: 600;
-      transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .btn-action:hover {
-      background: var(--bg-secondary);
-      color: var(--color-primary);
-      border-color: var(--color-primary);
-    }
-
-    .btn-gradient-action {
-      background: var(--color-primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-5);
-      font-weight: 700;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-    }
-
-    .btn-gradient-action:hover {
-      background: var(--color-primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
-    }
-
-    /* FORM CONTROLS */
-    .form-control {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary) !important;
-      border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-3);
-      font-size: 0.95rem;
-      transition: all 0.2s ease;
-    }
-
-    .form-control:focus {
-      background: var(--bg-card);
-      border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-      outline: none;
-    }
-
-    /* SEARCH INPUT */
-    .search-wrapper {
-      position: relative;
-      min-width: 250px;
-    }
-
-    .search-icon {
-      position: absolute;
-      left: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    .search-input {
-      background: var(--bg-secondary) !important;
-      border: 1px solid var(--border-color) !important;
-      border-radius: var(--radius-md) !important;
-      padding: var(--space-2) var(--space-3) var(--space-2) 2.5rem !important;
-      color: var(--text-primary) !important;
-    }
-
-    .search-input:focus {
-      background: var(--bg-card) !important;
-      border-color: var(--color-primary) !important;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
-    }
-
-    /* MODAL & LMS STYLES */
-    .modal-content {
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-      color: white;
-      border-bottom: none;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      padding: var(--space-5);
-    }
-
-    .lms-tab-btn {
-      background: var(--bg-secondary);
-      border: 2px solid var(--border-color);
-      color: var(--text-secondary);
-      padding: var(--space-2) var(--space-4);
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      font-size: 0.85rem;
-    }
-
-    .lms-tab-btn.active {
-      background: var(--color-primary);
-      color: white;
-      border-color: var(--color-primary);
-    }
-
-    .lms-tab-header {
-      display: flex;
-      gap: var(--space-3);
-      margin: var(--space-4) 0 var(--space-3) 0;
-      border-bottom: 1px solid var(--border-color);
-      padding-bottom: var(--space-3);
-    }
-
-    .mini-stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-3);
-      box-shadow: var(--shadow-sm);
-      text-align: center;
-      min-height: 65px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2px;
-    }
-
-    .mini-stat-card h3 {
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.15px;
-      margin: 0;
-      line-height: 1;
-    }
-
-    .mini-stat-card small {
-      font-size: 0.6rem;
-      color: var(--text-muted);
-      line-height: 1.2;
-      margin: 0;
-    }
-
-    .time-text {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--color-primary);
-      line-height: 1.1;
-      margin: 1px 0;
-    }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-      margin-bottom: var(--space-3);
-    }
-
-    .chart-container {
-      height: 35px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .chart-container canvas {
-      max-width: 100% !important;
-      max-height: 100% !important;
-    }
-
-    .progress-track {
-      width: 100%;
-      height: 2px;
-      background: var(--bg-secondary);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 2px;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
-      border-radius: 2px;
-      transition: width 0.3s ease;
-    }
-
-    /* BADGES */
-    .bg-complete {
-      background: rgba(16, 185, 129, 0.1);
-      color: var(--color-success);
-    }
-
-    .bg-pending {
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--color-warning);
-    }
-
-    .bg-locked {
-      background: var(--bg-secondary);
-      color: var(--text-muted);
-    }
-
-    .lms-badge {
-      padding: var(--space-1) var(--space-2);
-      border-radius: var(--radius-sm);
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-    }
-
-    .alert {
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      font-size: 0.95rem;
-      padding: var(--space-4);
-    }
-
-    /* ICON BOX */
-    .icon-box {
-      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-      width: 50px;
-      height: 50px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.3rem;
-    }
-
-    .title-main {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--text-primary);
-    }
-
-    .refresh-timestamp {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    /* RECORD ITEM */
-    .record-item {
-      display: grid;
-      grid-template-columns: 80px 1fr auto;
-      gap: 12px;
-      background: var(--bg-secondary);
-      padding: var(--space-3);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-color);
-      margin-bottom: var(--space-3);
-      transition: all 0.2s ease;
-    }
-
-    .record-item:hover {
-      background: var(--bg-card);
-      border-color: var(--color-primary);
-    }
-
-    .record-info h6 {
-      color: var(--text-primary);
-      font-weight: 600;
-      margin-bottom: var(--space-1);
-    }
-
-    /* Consolidated Mobile Responsiveness handled above in line 217 */
-
-  </style>
-</head>
-
-<body>
-  <!-- MOBILE HAMBURGER & OVERLAY -->
-  <button class="hamburger-btn" id="hamburgerBtn">
-    <i class="bi bi-list"></i>
-  </button>
-  <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-  <nav class="sidebar" id="sidebar">
-    <a href="#" class="sidebar-brand">
-      <i class="bi bi-building"></i>
-      <span>{{ posh_company_name }}</span>
-    </a>
-
-    <!-- NEW CODE -->
-    <a href="{% url 'hr_logout' %}" class="sidebar-back-btn">
-      <i class="bi bi-box-arrow-left"></i><span>Logout</span>
-    </a>
-
-    <ul class="nav flex-column px-3 mt-3" style="display: flex; flex-direction: column; height: calc(100vh - 200px);">
-      <li class="nav-item">
-        <a class="nav-link active" onclick="showSection('dashboard', this)">
-          <i class="bi bi-speedometer2"></i>
-          <span>Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="showSection('posters', this)">
-          <i class="bi bi-images"></i>
-          <span>Posters</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="showSection('policy', this)">
-          <i class="bi bi-file-earmark-text"></i>
-          <span>POSH Policy</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" onclick="showSection('certificates', this)">
-          <i class="bi bi-award"></i>
-          <span>Certificates</span>
-        </a>
-      </li>
-    </ul>
-
-    <!-- Settings pinned to bottom -->
-    <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 0 12px 16px; border-top: 1px solid var(--border-color); background: var(--bg-sidebar);">
-      <a class="nav-link" onclick="showSection('settings', this)" style="color: var(--text-secondary); display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-radius: 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='var(--bg-hover)'" onmouseout="this.style.background='transparent'">
-        <i class="bi bi-gear"></i>
-        <span>Settings</span>
+    <nav class="sidebar" id="sidebar">
+      <a href="#" class="sidebar-brand">
+        <i class="bi bi-building"></i>
+        <span>{{ posh_company_name }}</span>
       </a>
-    </div>
-  </nav>
 
-  <main class="main-content">
+      <!-- NEW CODE -->
+      <a href="{% url 'hr_logout' %}" class="sidebar-back-btn">
+        <i class="bi bi-box-arrow-left"></i><span>Logout</span>
+      </a>
 
-    <!-- === SECTION 1: DASHBOARD === -->
-    <div id="dashboard" class="content-section active">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Total Employees</div>
-          <div class="stat-value">{{ total_employees }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Training Completed</div>
-          <div class="stat-value" style="color: #4ade80">
-            {{ training_completed }}
-          </div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Training Pending</div>
-          <div class="stat-value" style="color: #fb923c">
-            {{ training_pending }}
-          </div>
-        </div>
+      <ul
+        class="nav flex-column px-3 mt-3"
+        style="
+          display: flex;
+          flex-direction: column;
+          height: calc(100vh - 200px);
+        "
+      >
+        <li class="nav-item">
+          <a class="nav-link active" onclick="showSection('dashboard', this)">
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('posters', this)">
+            <i class="bi bi-images"></i>
+            <span>Posters</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('policy', this)">
+            <i class="bi bi-file-earmark-text"></i>
+            <span>POSH Policy</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('certificates', this)">
+            <i class="bi bi-award"></i>
+            <span>Certificates</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Settings pinned to bottom -->
+      <div
+        style="
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 0 12px 16px;
+          border-top: 1px solid var(--border-color);
+          background: var(--bg-sidebar);
+        "
+      >
+        <a
+          class="nav-link"
+          onclick="showSection('settings', this)"
+          style="
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+          "
+          onmouseover="this.style.background = 'var(--bg-hover)'"
+          onmouseout="this.style.background = 'transparent'"
+        >
+          <i class="bi bi-gear"></i>
+          <span>Settings</span>
+        </a>
       </div>
+    </nav>
 
-      <div class="glass-toolbar animate__animated animate__fadeInDown mb-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
-
-          <!-- Title Section -->
-          <div class="title-group">
-            <h2 class="section-title mb-0 d-flex align-items-center">
-              <div class="icon-box me-3">
-                <i class="bi bi-people-fill"></i>
-              </div>
-              <div>
-                <span class="title-main">Team Members</span>
-                <small class="refresh-timestamp d-block" id="lastRefreshTime">
-                  <i class="bi bi-clock-history me-1"></i> Loading...
-                </small>
-              </div>
-            </h2>
+    <main class="main-content">
+      <!-- === SECTION 1: DASHBOARD === -->
+      <div id="dashboard" class="content-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Employees</div>
+            <div class="stat-value">{{ total_employees }}</div>
           </div>
+          <div class="stat-card">
+            <div class="stat-label">Training Completed</div>
+            <div class="stat-value" style="color: #4ade80">
+              {{ training_completed }}
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Training Pending</div>
+            <div class="stat-value" style="color: #fb923c">
+              {{ training_pending }}
+            </div>
+          </div>
+        </div>
 
-          <!-- Actions Section -->
-          <div class="action-group d-flex flex-wrap gap-3 align-items-center">
-
-            <!-- Refresh Button -->
-            <button class="btn btn-action btn-refresh" onclick="refreshDashboard()" id="refreshBtn"
-              title="Refresh employee progress">
-              <i class="bi bi-arrow-clockwise"></i>
-              <span>Refresh</span>
-            </button>
-
-            <!-- Animated Search -->
-            <div class="search-wrapper">
-              <i class="bi bi-search search-icon"></i>
-              <input type="text" id="memberSearch" class="form-control search-input" placeholder="Search user..." />
+        <div class="glass-toolbar animate__animated animate__fadeInDown mb-5">
+          <div
+            class="d-flex flex-wrap justify-content-between align-items-center gap-4"
+          >
+            <!-- Title Section -->
+            <div class="title-group">
+              <h2 class="section-title mb-0 d-flex align-items-center">
+                <div class="icon-box me-3">
+                  <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                  <span class="title-main">Team Members</span>
+                  <small class="refresh-timestamp d-block" id="lastRefreshTime">
+                    <i class="bi bi-clock-history me-1"></i> Loading...
+                  </small>
+                </div>
+              </h2>
             </div>
 
-            <!-- Bulk Import Button -->
-            <button class="btn btn-action btn-import" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
-              <i class="bi bi-file-earmark-spreadsheet me-2"></i>
-              <span>Bulk Import</span>
-            </button>
+            <!-- Actions Section -->
+            <div class="action-group d-flex flex-wrap gap-3 align-items-center">
+              <!-- Refresh Button -->
+              <button
+                class="btn btn-action btn-refresh"
+                onclick="refreshDashboard()"
+                id="refreshBtn"
+                title="Refresh employee progress"
+              >
+                <i class="bi bi-arrow-clockwise"></i>
+                <span>Refresh</span>
+              </button>
 
-            <!-- Add Employee Button -->
-            <button class="btn btn-gradient-action" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-              <i class="bi bi-person-plus-fill me-2"></i>
-              <span>Add Employee</span>
-            </button>
-
-          </div>
-        </div>
-      </div>
-
-      <div class="members-grid" id="membersGrid">
-        {% for member in members %}
-        <div class="member-card" data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}">
-          <div class="avatar">{{ member.user.first_name|first|upper }}</div>
-          <h3 class="member-name">
-            {{ member.user.get_full_name|default:member.user.first_name }}
-          </h3>
-          <p class="member-email">{{ member.user.email }}</p>
-          {% if member.user.user_id %}
-          <p class="small mb-1" style="font-size: 0.9rem; color: #fbbf24; font-weight: 600;">
-            <i class="bi bi-credit-card-2-front me-1"></i>ID: {{ member.user.user_id }}
-          </p>
-          {% endif %}
-          <span class="role-badge">{{ member.role }}</span>
-        </div>
-
-        <!-- EMPLOYEE MODAL (Dynamic Charts) -->
-        <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header border-0">
-                <h5 class="modal-title">
-                  {{ member.user.first_name }}'s Status
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              <!-- Animated Search -->
+              <div class="search-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input
+                  type="text"
+                  id="memberSearch"
+                  class="form-control search-input"
+                  placeholder="Search user..."
+                />
               </div>
 
-              <div class="modal-body" style="padding: 16px">
-                <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
-                <div class="stats-row" id="stats-vids-{{ member.id }}">
-                  <!-- Video Pie -->
-                  <div class="mini-stat-card">
-                    <h3>Video Health</h3>
-                    <div class="chart-container">
-                      <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.video_percent }}" width="35" height="35" style="display: block;"></canvas>
+              <!-- Bulk Import Button -->
+              <button
+                class="btn btn-action btn-import"
+                data-bs-toggle="modal"
+                data-bs-target="#bulkImportModal"
+              >
+                <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+                <span>Bulk Import</span>
+              </button>
+
+              <!-- Add Employee Button -->
+              <button
+                class="btn btn-gradient-action"
+                data-bs-toggle="modal"
+                data-bs-target="#addEmployeeModal"
+              >
+                <i class="bi bi-person-plus-fill me-2"></i>
+                <span>Add Employee</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="members-grid" id="membersGrid">
+          {% for member in members %}
+          <div
+            class="member-card"
+            data-bs-toggle="modal"
+            data-bs-target="#userProgressModal-{{ member.id }}"
+          >
+            <div class="avatar">{{ member.user.first_name|first|upper }}</div>
+            <h3 class="member-name">
+              {{ member.user.get_full_name|default:member.user.first_name }}
+            </h3>
+            <p class="member-email">{{ member.user.email }}</p>
+            {% if member.user.user_id %}
+            <p
+              class="small mb-1"
+              style="font-size: 0.9rem; color: #fbbf24; font-weight: 600"
+            >
+              <i class="bi bi-credit-card-2-front me-1"></i>ID: {{
+              member.user.user_id }}
+            </p>
+            {% endif %}
+            <span class="role-badge">{{ member.role }}</span>
+          </div>
+
+          <!-- EMPLOYEE MODAL (Dynamic Charts) -->
+          <div
+            class="modal fade"
+            id="userProgressModal-{{ member.id }}"
+            tabindex="-1"
+          >
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header border-0">
+                  <h5 class="modal-title">
+                    {{ member.user.first_name }}'s Status
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                  ></button>
+                </div>
+
+                <div class="modal-body" style="padding: 16px">
+                  <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+                  <div class="stats-row" id="stats-vids-{{ member.id }}">
+                    <!-- Video Pie -->
+                    <div class="mini-stat-card">
+                      <h3>Video Health</h3>
+                      <div class="chart-container">
+                        <canvas
+                          id="pie-vids-{{ member.id }}"
+                          data-percent="{{ member.video_percent }}"
+                          width="35"
+                          height="35"
+                          style="display: block"
+                        ></canvas>
+                      </div>
                     </div>
-                  </div>
 
-                  <!-- Video Time -->
-                  <div class="mini-stat-card">
-                    <h3>Watch Time</h3>
-                    <p class="time-text">{{ member.total_active_time }}</p>
-                    <small class="text-muted">Total Activity</small>
-                  </div>
+                    <!-- Video Time -->
+                    <div class="mini-stat-card">
+                      <h3>Watch Time</h3>
+                      <p class="time-text">{{ member.total_active_time }}</p>
+                      <small class="text-muted">Total Activity</small>
+                    </div>
 
-                  <!-- Video Progress Bar -->
-                  <div class="mini-stat-card">
-                    <h3>Video Comp.</h3>
-                    <h2 style="
+                    <!-- Video Progress Bar -->
+                    <div class="mini-stat-card">
+                      <h3>Video Comp.</h3>
+                      <h2
+                        style="
                           margin: 0;
                           color: var(--lms-primary);
                           font-size: 0.95rem;
                           font-weight: 800;
                           line-height: 1.1;
-                        ">
-                      {{ member.video_percent }}%
-                    </h2>
-                    <div class="progress-track">
-                      <div class="progress-fill" style="width: {{ member.video_percent }}%;"></div>
+                        "
+                      >
+                        {{ member.video_percent }}%
+                      </h2>
+                      <div class="progress-track">
+                        <div
+                          class="progress-fill"
+                          style="width: {{ member.video_percent }}%;"
+                        ></div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- === LIST HEADER === -->
-                <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}">
-                    Videos &amp; Quiz
-                  </button>
-                </div>
-
-                <!-- === CONTENT LISTS === -->
-
-                <!-- Video List -->
-                <div id="content-vids-{{ member.id }}">
-
-                  {% for mod in member.video_modules %}
-                  {% if 'quiz' not in mod.title|lower %}
-                  <!-- Video module row -->
-                  <div class="record-item">
-                    <div class="record-thumb" style="background-image: url('{{ mod.thumbnail_url }}');"></div>
-                    <div class="record-info">
-                      <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
-                      <p>🎬 Video Lesson</p>
-                    </div>
-                    {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">✅ Completed</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending">⏳ Pending</span>
-                    {% endif %}
+                  <!-- === LIST HEADER === -->
+                  <div class="lms-tab-header">
+                    <button
+                      class="lms-tab-btn active"
+                      id="btn-vids-{{ member.id }}"
+                    >
+                      Videos &amp; Quiz
+                    </button>
                   </div>
-                  {% endif %}
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">
-                    No video modules assigned
-                  </div>
-                  {% endfor %}
 
-                  <!-- Practice Quiz Status Card -->
-                  <div class="record-item" style="margin-top: 10px; background: {% if member.quiz_completed %}#eafaf1{% else %}#fef9e7{% endif %}; border: 1.5px solid {% if member.quiz_completed %}#2ecc71{% else %}#f39c12{% endif %};">
-                    <div class="record-thumb" style="background: {% if member.quiz_completed %}#d5f5e3{% else %}#fdebd0{% endif %}; display:flex;align-items:center;justify-content:center;">
-                      <i class="bi bi-patch-question-fill" style="font-size:1.5rem;color:{% if member.quiz_completed %}#27ae60{% else %}#e67e22{% endif %};"></i>
-                    </div>
-                    <div class="record-info">
-                      <h6 style="margin-bottom:2px;">📝 Quiz</h6>
-                      {% if member.quiz_completed %}
-                        <p style="color:#27ae60;font-weight:600;margin:0;">✅ Completed</p>
+                  <!-- === CONTENT LISTS === -->
+
+                  <!-- Video List -->
+                  <div id="content-vids-{{ member.id }}">
+                    {% for mod in member.video_modules %} {% if 'quiz' not in
+                    mod.title|lower %}
+                    <!-- Video module row -->
+                    <div class="record-item">
+                      <div
+                        class="record-thumb"
+                        style="background-image: url('{{ mod.thumbnail_url }}');"
+                      ></div>
+                      <div class="record-info">
+                        <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                        <p>🎬 Video Lesson</p>
+                      </div>
+                      {% if mod.is_completed %}
+                      <span class="lms-badge bg-complete">✅ Completed</span>
                       {% else %}
-                        <p style="color:#e67e22;font-weight:600;margin:0;">⏳ Not Attempted</p>
+                      <span class="lms-badge bg-pending">⏳ Pending</span>
                       {% endif %}
-                      {% if member.quiz_score is not None %}
-                        <small style="color:#555;">Score: <strong>{{ member.quiz_score }}%</strong>
-                          {% if member.quiz_passed %}
-                            &nbsp;<span style="color:#27ae60;font-weight:700;">PASS ✔</span>
-                          {% else %}
-                            &nbsp;<span style="color:#e74c3c;font-weight:700;">FAIL ✗</span>
+                    </div>
+                    {% endif %} {% empty %}
+                    <div class="text-center text-muted p-2 small">
+                      No video modules assigned
+                    </div>
+                    {% endfor %}
+
+                    <!-- Practice Quiz Status Card -->
+                    <div
+                      class="record-item"
+                      style="margin-top: 10px; background: {% if member.quiz_completed %}#eafaf1{% else %}#fef9e7{% endif %}; border: 1.5px solid {% if member.quiz_completed %}#2ecc71{% else %}#f39c12{% endif %};"
+                    >
+                      <div
+                        class="record-thumb"
+                        style="background: {% if member.quiz_completed %}#d5f5e3{% else %}#fdebd0{% endif %}; display:flex;align-items:center;justify-content:center;"
+                      >
+                        <i
+                          class="bi bi-patch-question-fill"
+                          style="font-size:1.5rem;color:{% if member.quiz_completed %}#27ae60{% else %}#e67e22{% endif %};"
+                        ></i>
+                      </div>
+                      <div class="record-info">
+                        <h6 style="margin-bottom: 2px">📝 Quiz</h6>
+                        {% if member.quiz_completed %}
+                        <p style="color: #27ae60; font-weight: 600; margin: 0">
+                          ✅ Completed
+                        </p>
+                        {% else %}
+                        <p style="color: #e67e22; font-weight: 600; margin: 0">
+                          ⏳ Not Attempted
+                        </p>
+                        {% endif %} {% if member.quiz_score is not None %}
+                        <small style="color: #555"
+                          >Score: <strong>{{ member.quiz_score }}%</strong> {%
+                          if member.quiz_passed %} &nbsp;<span
+                            style="color: #27ae60; font-weight: 700"
+                            >PASS ✔</span
+                          >
+                          {% else %} &nbsp;<span
+                            style="color: #e74c3c; font-weight: 700"
+                            >FAIL ✗</span
+                          >
                           {% endif %}
                         </small>
+                        {% else %}
+                        <small style="color: #aaa">No score recorded yet</small>
+                        {% endif %}
+                      </div>
+                      {% if member.quiz_completed %}
+                      <span
+                        class="lms-badge bg-complete"
+                        style="background: #d5f5e3; color: #27ae60"
+                        >Done</span
+                      >
                       {% else %}
-                        <small style="color:#aaa;">No score recorded yet</small>
+                      <span
+                        class="lms-badge bg-pending"
+                        style="background: #fdebd0; color: #e67e22"
+                        >Pending</span
+                      >
                       {% endif %}
                     </div>
-                    {% if member.quiz_completed %}
-                    <span class="lms-badge bg-complete" style="background:#d5f5e3;color:#27ae60;">Done</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending" style="background:#fdebd0;color:#e67e22;">Pending</span>
-                    {% endif %}
                   </div>
-
                 </div>
-
               </div>
             </div>
           </div>
+          {% endfor %}
         </div>
-        {% endfor %}
       </div>
-    </div>
 
-    <!-- === SECTION 2: POSTERS === -->
-    <div id="posters" class="content-section">
-      <h2 class="mb-4 section-title">
-        <i class="bi bi-images me-2"></i>Awareness Posters
-      </h2>
-      <div class="poster-grid">
-        <div class="poster-item">
-          <div class="d-inline-block position-relative" id="poster-editor-container" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-card); box-shadow: var(--shadow-lg);">
-            <!-- Base Poster Image -->
-            <img src="/media/Posters/POSH Poster.jpeg" alt="POSH Poster"
-                 style="max-height: 500px; width: auto; display: block;" id="base-poster-posh">
-            
-            {% if organization.logo %}
-            <!-- Draggable Logo Container -->
-            <div id="draggable-logo" 
-                 style="position: absolute; 
+      <!-- === SECTION 2: POSTERS === -->
+      <div id="posters" class="content-section">
+        <h2 class="mb-4 section-title">
+          <i class="bi bi-images me-2"></i>Awareness Posters
+        </h2>
+        <div class="poster-grid">
+          <div class="poster-item">
+            <div
+              class="d-inline-block position-relative"
+              id="poster-editor-container"
+              style="
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid var(--border-color);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+              "
+            >
+              <!-- Base Poster Image -->
+              <img
+                src="/media/Posters/POSH Poster.jpeg"
+                alt="POSH Poster"
+                style="max-height: 500px; width: auto; display: block"
+                id="base-poster-posh"
+              />
+
+              {% if organization.logo %}
+              <!-- Draggable Logo Container -->
+              <div
+                id="draggable-logo"
+                style="position: absolute; 
                         top: {{ organization.logo_y }}%; 
                         left: {{ organization.logo_x }}%; 
                         width: {{ organization.logo_width }}%; 
@@ -1091,204 +1234,316 @@
                         touch-action: none;
                         border: 2px dashed transparent;
                         transition: border 0.2s;
-                        z-index: 10;">
-              <img src="{{ organization.logo.url }}" alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
-              <!-- Resize handle removed from dashboard view -->
+                        z-index: 10;"
+              >
+                <img
+                  src="{{ organization.logo.url }}"
+                  alt="Company Logo"
+                  style="
+                    width: 100%;
+                    height: auto;
+                    pointer-events: none;
+                    display: block;
+                  "
+                />
+                <!-- Resize handle removed from dashboard view -->
+              </div>
+              {% endif %}
             </div>
-            {% endif %}
+
+            <h5 class="mt-3">POSH Awareness 1</h5>
+            <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+              <a
+                href="{% url 'get_poster_with_logo' 'posh' %}"
+                target="_blank"
+                class="btn btn-sm btn-action"
+              >
+                <i class="bi bi-eye me-1"></i>View
+              </a>
+              <a
+                href="{% url 'get_poster_with_logo' 'posh' %}?download=1"
+                download
+                class="btn btn-sm btn-action"
+              >
+                <i class="bi bi-download me-1"></i>Download
+              </a>
+              <button
+                class="btn btn-sm btn-gradient-action"
+                data-bs-toggle="modal"
+                data-bs-target="#fullscreenEditorModal"
+              >
+                <i class="bi bi-pencil-square me-1"></i>Edit Layout
+              </button>
+            </div>
+            <p class="text-muted small mt-2">
+              <i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move.
+              Hover to resize. Use <b>Fullscreen Edit</b> for precision.
+            </p>
           </div>
 
-          <h5 class="mt-3">POSH Awareness 1</h5>
-          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="{% url 'get_poster_with_logo' 'posh' %}" target="_blank" class="btn btn-sm btn-action">
-              <i class="bi bi-eye me-1"></i>View
-            </a>
-            <a href="{% url 'get_poster_with_logo' 'posh' %}?download=1" download class="btn btn-sm btn-action">
-              <i class="bi bi-download me-1"></i>Download
-            </a>
-            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal" data-bs-target="#fullscreenEditorModal">
-              <i class="bi bi-pencil-square me-1"></i>Edit Layout
-            </button>
+          <!-- Poster 2: Spot It - Stop It -->
+          <div class="poster-item">
+            <div
+              class="d-inline-block position-relative"
+              style="
+                border-radius: 12px;
+                overflow: hidden;
+                border: 1px solid var(--border-color);
+                background: var(--bg-card);
+                box-shadow: var(--shadow-lg);
+              "
+            >
+              <img
+                src="/media/Posters/POSH Poster 2.jpeg"
+                alt="Spot It Stop It Poster"
+                style="max-height: 500px; width: auto; display: block"
+              />
+            </div>
+            <h5 class="mt-3">Spot It – Stop It</h5>
+            <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
+              <a
+                href="/media/Posters/POSH Poster 2.jpeg"
+                target="_blank"
+                class="btn btn-sm btn-action"
+              >
+                <i class="bi bi-eye me-1"></i>View
+              </a>
+              <a
+                href="/media/Posters/POSH Poster 2.jpeg"
+                download="POSH_Spot_It_Stop_It.jpeg"
+                class="btn btn-sm btn-action"
+              >
+                <i class="bi bi-download me-1"></i>Download
+              </a>
+              <button
+                class="btn btn-sm btn-gradient-action"
+                data-bs-toggle="modal"
+                data-bs-target="#fullscreenEditorModal"
+              >
+                <i class="bi bi-pencil-square me-1"></i>Edit Layout
+              </button>
+            </div>
+            <p class="text-muted small mt-2">
+              <i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move.
+              Hover to resize. Use <b>Fullscreen Edit</b> for precision.
+            </p>
           </div>
-          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to resize. Use <b>Fullscreen Edit</b> for precision.</p>
-        </div>
 
-        <!-- Poster 2: Spot It - Stop It -->
-        <div class="poster-item">
-          <div class="d-inline-block position-relative" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); background: var(--bg-card); box-shadow: var(--shadow-lg);">
-            <img src="/media/Posters/POSH Poster 2.jpeg" alt="Spot It Stop It Poster"
-                 style="max-height: 500px; width: auto; display: block;">
-          </div>
-          <h5 class="mt-3">Spot It – Stop It</h5>
-          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="/media/Posters/POSH Poster 2.jpeg" target="_blank" class="btn btn-sm btn-action">
-              <i class="bi bi-eye me-1"></i>View
-            </a>
-            <a href="/media/Posters/POSH Poster 2.jpeg" download="POSH_Spot_It_Stop_It.jpeg" class="btn btn-sm btn-action">
-              <i class="bi bi-download me-1"></i>Download
-            </a>
-            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal" data-bs-target="#fullscreenEditorModal">
-              <i class="bi bi-pencil-square me-1"></i>Edit Layout
-            </button>
-          </div>
-          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to resize. Use <b>Fullscreen Edit</b> for precision.</p>
-        </div>
+          <style>
+            /* Studio Dark Editor Theme */
+            #fullscreenEditorModal .modal-content {
+              background-color: #121212 !important;
+              border: none;
+              font-family:
+                "Inter",
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                sans-serif;
+            }
 
-<style>
-/* Studio Dark Editor Theme */
-#fullscreenEditorModal .modal-content {
-    background-color: #121212 !important;
-    border: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+            #fullscreenEditorModal .editor-top-bar {
+              background: linear-gradient(
+                135deg,
+                var(--color-primary),
+                var(--color-primary-dark)
+              );
+              border-bottom: 1px solid var(--color-primary-dark);
+              padding: 8px 16px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              z-index: 1050;
+            }
 
-#fullscreenEditorModal .editor-top-bar {
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-    border-bottom: 1px solid var(--color-primary-dark);
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1050;
-}
+            #fullscreenEditorModal .editor-toolbar {
+              background: var(--bg-secondary);
+              border-bottom: 1px solid var(--border-color);
+              padding: 6px 16px;
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              box-shadow: var(--shadow-sm);
+              z-index: 1049;
+            }
 
-#fullscreenEditorModal .editor-toolbar {
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-color);
-    padding: 6px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: var(--shadow-sm);
-    z-index: 1049;
-}
+            #fullscreenEditorModal .editor-canvas {
+              background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+              background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+              background-size: 20px 20px;
+              height: calc(100vh - 100px);
+              overflow: auto;
+              position: relative;
+              cursor: grab;
+            }
 
-#fullscreenEditorModal .editor-canvas {
-    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
-    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
-    background-size: 20px 20px;
-    height: calc(100vh - 100px);
-    overflow: auto;
-    position: relative;
-    cursor: grab;
-}
+            #fullscreenEditorModal .editor-canvas:active {
+              cursor: grabbing;
+            }
 
-#fullscreenEditorModal .editor-canvas:active { cursor: grabbing; }
+            #fullscreenEditorModal .tool-group {
+              display: flex;
+              align-items: center;
+              background: var(--bg-card);
+              border: 1px solid var(--border-color);
+              border-radius: 6px;
+              padding: 2px;
+            }
 
-#fullscreenEditorModal .tool-group {
-    display: flex;
-    align-items: center;
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 2px;
-}
+            #fullscreenEditorModal .tool-btn {
+              background: transparent;
+              border: none;
+              color: var(--text-secondary);
+              padding: 4px 12px;
+              border-radius: 4px;
+              font-size: 0.85rem;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              transition: all 0.2s;
+            }
 
-#fullscreenEditorModal .tool-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-secondary);
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-}
+            #fullscreenEditorModal .tool-btn:hover {
+              background: var(--bg-secondary);
+              color: var(--color-primary);
+            }
 
-#fullscreenEditorModal .tool-btn:hover {
-    background: var(--bg-secondary);
-    color: var(--color-primary);
-}
+            #fullscreenEditorModal .tool-btn.active {
+              background: var(--color-primary);
+              color: white;
+            }
 
-#fullscreenEditorModal .tool-btn.active {
-    background: var(--color-primary);
-    color: white;
-}
+            #fullscreenEditorModal .btn-save-project {
+              background: var(--color-success);
+              color: white;
+              font-weight: 600;
+              padding: 6px 20px;
+              border-radius: 6px;
+              border: none;
+              box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+              transition:
+                transform 0.2s,
+                background 0.2s;
+            }
 
-#fullscreenEditorModal .btn-save-project {
-    background: var(--color-success);
-    color: white;
-    font-weight: 600;
-    padding: 6px 20px;
-    border-radius: 6px;
-    border: none;
-    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
-    transition: transform 0.2s, background 0.2s;
-}
+            #fullscreenEditorModal .btn-save-project:hover {
+              background: #059669;
+              transform: translateY(-1px);
+            }
 
-#fullscreenEditorModal .btn-save-project:hover {
-    background: #059669;
-    transform: translateY(-1px);
-}
+            #fullscreenEditorModal .status-bar {
+              background: var(--color-primary);
+              color: white;
+              padding: 2px 16px;
+              font-size: 0.75rem;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
 
-#fullscreenEditorModal .status-bar {
-    background: var(--color-primary);
-    color: white;
-    padding: 2px 16px;
-    font-size: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+            #modal-poster-container {
+              box-shadow: var(--shadow-lg);
+              border: 1px solid var(--border-color);
+              background: white;
+            }
+          </style>
 
-#modal-poster-container {
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
-    background: white;
-}
-</style>
+          <!-- Fullscreen Editor Modal -->
+          <div
+            class="modal fade"
+            id="fullscreenEditorModal"
+            tabindex="-1"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog modal-fullscreen">
+              <div class="modal-content">
+                <!-- Editor Top Bar -->
+                <div class="editor-top-bar">
+                  <div class="d-flex align-items-center gap-3">
+                    <h6 class="mb-0 fw-bold" style="color: white">
+                      <i class="bi bi-layers-half me-2"></i>Branding Workshop
+                    </h6>
+                    <span
+                      class="badge"
+                      style="
+                        background: var(--bg-secondary);
+                        color: var(--text-secondary);
+                        border: 1px solid var(--border-color);
+                      "
+                      >v2.0 Professional</span
+                    >
+                  </div>
+                  <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
 
-<!-- Fullscreen Editor Modal -->
-<div class="modal fade" id="fullscreenEditorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content">
-      <!-- Editor Top Bar -->
-      <div class="editor-top-bar">
-        <div class="d-flex align-items-center gap-3">
-          <h6 class="mb-0 fw-bold" style="color: white;"><i class="bi bi-layers-half me-2"></i>Branding Workshop</h6>
-          <span class="badge" style="background: var(--bg-secondary); color: var(--text-secondary); border: 1px solid var(--border-color);">v2.0 Professional</span>
-        </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+                <!-- Editor Toolbar -->
+                <div class="editor-toolbar">
+                  <div class="tool-group">
+                    <button
+                      class="tool-btn"
+                      data-bs-toggle="modal"
+                      data-bs-target="#uploadLogoModal"
+                    >
+                      <i class="bi bi-image"></i> Change Logo
+                    </button>
+                    <a
+                      href="{% url 'reset_logo_config' %}"
+                      class="tool-btn text-decoration-none"
+                    >
+                      <i class="bi bi-arrow-counterclockwise"></i> Reset
+                    </a>
+                  </div>
 
-      <!-- Editor Toolbar -->
-      <div class="editor-toolbar">
-        <div class="tool-group">
-          <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#uploadLogoModal">
-            <i class="bi bi-image"></i> Change Logo
-          </button>
-          <a href="{% url 'reset_logo_config' %}" class="tool-btn text-decoration-none">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset
-          </a>
-        </div>
+                  <div class="tool-group">
+                    <button class="tool-btn" id="reset-zoom-btn">
+                      <i class="bi bi-zoom-in"></i> 100%
+                    </button>
+                    <div class="px-2 text-secondary" style="font-size: 0.7rem">
+                      <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
+                    </div>
+                  </div>
 
-        <div class="tool-group">
-          <button class="tool-btn" id="reset-zoom-btn">
-            <i class="bi bi-zoom-in"></i> 100%
-          </button>
-          <div class="px-2 text-secondary" style="font-size: 0.7rem;">
-            <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
-          </div>
-        </div>
+                  <div class="ms-auto">
+                    <button
+                      type="button"
+                      class="btn-save-project"
+                      id="modal-save-btn"
+                    >
+                      <i class="bi bi-cloud-arrow-up me-2"></i>Save Layout
+                    </button>
+                  </div>
+                </div>
 
-        <div class="ms-auto">
-          <button type="button" class="btn-save-project" id="modal-save-btn">
-            <i class="bi bi-cloud-arrow-up me-2"></i>Save Layout
-          </button>
-        </div>
-      </div>
+                <!-- Main Canvas -->
+                <div
+                  class="editor-canvas d-flex justify-content-center p-5"
+                  id="modal-body-zoom"
+                >
+                  <div
+                    id="modal-poster-container"
+                    class="position-relative d-inline-block align-self-start"
+                    style="
+                      transform-origin: top center;
+                      transition: transform 0.1s ease-out;
+                    "
+                  >
+                    <img
+                      src="/media/Posters/POSH Poster.jpeg"
+                      alt="POSH Poster"
+                      style="max-height: 85vh; width: auto; display: block"
+                      id="modal-base-poster"
+                    />
 
-      <!-- Main Canvas -->
-      <div class="editor-canvas d-flex justify-content-center p-5" id="modal-body-zoom">
-        <div id="modal-poster-container" class="position-relative d-inline-block align-self-start" 
-             style="transform-origin: top center; transition: transform 0.1s ease-out;">
-          <img src="/media/Posters/POSH Poster.jpeg" alt="POSH Poster" style="max-height: 85vh; width: auto; display: block;" id="modal-base-poster">
-          
-          {% if organization.logo %}
-          <div id="modal-draggable-logo" 
-               style="position: absolute; 
+                    {% if organization.logo %}
+                    <div
+                      id="modal-draggable-logo"
+                      style="position: absolute; 
                       top: {{ organization.logo_y }}%; 
                       left: {{ organization.logo_x }}%; 
                       width: {{ organization.logo_width }}%; 
@@ -1296,739 +1551,1066 @@
                       user-select: none;
                       touch-action: none;
                       border: 2px dashed rgba(255,193,7,0.8);
-                      z-index: 100;">
-              <img src="{{ organization.logo.url }}" style="width: 100%; height: auto; pointer-events: none; display: block;">
-              <div id="modal-resize-handle" style="position: absolute; right: -8px; bottom: -8px; width: 18px; height: 18px; background: #ffc107; border-radius: 2px; cursor: nwse-resize; border: 2px solid #000; z-index: 101;"></div>
+                      z-index: 100;"
+                    >
+                      <img
+                        src="{{ organization.logo.url }}"
+                        style="
+                          width: 100%;
+                          height: auto;
+                          pointer-events: none;
+                          display: block;
+                        "
+                      />
+                      <div
+                        id="modal-resize-handle"
+                        style="
+                          position: absolute;
+                          right: -8px;
+                          bottom: -8px;
+                          width: 18px;
+                          height: 18px;
+                          background: #ffc107;
+                          border-radius: 2px;
+                          cursor: nwse-resize;
+                          border: 2px solid #000;
+                          z-index: 101;
+                        "
+                      ></div>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <!-- Status Bar -->
+                <div class="status-bar">
+                  <div>
+                    <i class="bi bi-info-circle me-1"></i> Drag to move. Hold
+                    Resize handle for scaling.
+                  </div>
+                  <div id="editor-zoom-status">Scale: 100%</div>
+                </div>
+              </div>
+            </div>
           </div>
-          {% endif %}
+
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              let modalZoomScale = 1.0;
+
+              const initDraggable = (
+                logoId,
+                containerId,
+                saveBtnId,
+                resizeHandleId,
+                isModal = false,
+              ) => {
+                const logo = document.getElementById(logoId);
+                const container = logo ? logo.parentElement : null;
+                const saveBtn = document.getElementById(saveBtnId);
+                const resizeHandle = document.getElementById(resizeHandleId);
+
+                if (!logo || !container) return;
+
+                let isDragging = false;
+                let isResizing = false;
+                let startX, startY, startLeft, startTop, startWidth;
+
+                logo.addEventListener("mousedown", function (e) {
+                  if (!isModal) return; // Only allow editing in the modal Fullscreen version
+
+                  if (e.target === resizeHandle) {
+                    isResizing = true;
+                    startWidth = logo.offsetWidth;
+                  } else {
+                    isDragging = true;
+                    startLeft = logo.offsetLeft;
+                    startTop = logo.offsetTop;
+                  }
+                  startX = e.clientX;
+                  startY = e.clientY;
+                  logo.style.transition = "none";
+                  document.addEventListener("mousemove", onMouseMove);
+                  document.addEventListener("mouseup", onMouseUp);
+                  e.preventDefault();
+                });
+
+                const onMouseMove = (e) => {
+                  // Recalibrate movement based on zoom level
+                  const currentScale = isModal ? modalZoomScale : 1.0;
+                  const dx = (e.clientX - startX) / currentScale;
+                  const dy = (e.clientY - startY) / currentScale;
+
+                  if (isDragging) {
+                    let newX = startLeft + dx;
+                    let newY = startTop + dy;
+
+                    // Extremely relaxed constraints: allow moving up to 95% of the logo width/height outside
+                    const limitXMin = -(logo.offsetWidth * 0.95);
+                    const limitXMax =
+                      container.offsetWidth - logo.offsetWidth * 0.05;
+                    const limitYMin = -(logo.offsetHeight * 0.95);
+                    const limitYMax =
+                      container.offsetHeight - logo.offsetHeight * 0.05;
+
+                    newX = Math.max(limitXMin, Math.min(newX, limitXMax));
+                    newY = Math.max(limitYMin, Math.min(newY, limitYMax));
+
+                    const leftPct = (newX / container.offsetWidth) * 100;
+                    const topPct = (newY / container.offsetHeight) * 100;
+
+                    logo.style.left = leftPct + "%";
+                    logo.style.top = topPct + "%";
+                    syncLogo(leftPct, topPct, null, isModal);
+                  } else if (isResizing) {
+                    let newWidth = startWidth + dx;
+                    newWidth = Math.max(
+                      20,
+                      Math.min(newWidth, container.offsetWidth * 0.9),
+                    );
+
+                    const widthPct = (newWidth / container.offsetWidth) * 100;
+                    logo.style.width = widthPct + "%";
+                    syncLogo(null, null, widthPct, isModal);
+                  }
+                  if (saveBtn) saveBtn.style.display = "inline-block";
+                  document.getElementById("save-logo-btn").style.display =
+                    "inline-block";
+                };
+
+                const onMouseUp = () => {
+                  isDragging = false;
+                  isResizing = false;
+                  document.removeEventListener("mousemove", onMouseMove);
+                  document.removeEventListener("mouseup", onMouseUp);
+                };
+              };
+
+              const syncLogo = (x, y, w, fromModal) => {
+                const targetLogo = fromModal
+                  ? document.getElementById("draggable-logo")
+                  : document.getElementById("modal-draggable-logo");
+                if (!targetLogo) return;
+                if (x !== null) targetLogo.style.left = x + "%";
+                if (y !== null) targetLogo.style.top = y + "%";
+                if (w !== null) targetLogo.style.width = w + "%";
+              };
+
+              initDraggable(
+                "draggable-logo",
+                "poster-editor-container",
+                "save-logo-btn",
+                "resize-handle",
+              );
+              initDraggable(
+                "modal-draggable-logo",
+                "modal-poster-container",
+                "modal-save-btn",
+                "modal-resize-handle",
+                true,
+              );
+
+              // --- ZOOM LOGIC ---
+              const modalBody = document.getElementById("modal-body-zoom");
+              const zoomContainer = document.getElementById(
+                "modal-poster-container",
+              );
+              const resetZoomBtn = document.getElementById("reset-zoom-btn");
+
+              if (modalBody && zoomContainer) {
+                const updateZoomUI = () => {
+                  const zoomPct = Math.round(modalZoomScale * 100);
+                  const statusElem =
+                    document.getElementById("editor-zoom-status");
+                  if (statusElem) statusElem.innerHTML = `Scale: ${zoomPct}%`;
+                  if (resetZoomBtn)
+                    resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
+                };
+
+                modalBody.addEventListener(
+                  "wheel",
+                  function (e) {
+                    if (e.ctrlKey) {
+                      e.preventDefault();
+                      const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                      modalZoomScale = Math.max(
+                        0.3,
+                        Math.min(modalZoomScale + delta, 4.0),
+                      );
+                      zoomContainer.style.transform = `scale(${modalZoomScale})`;
+                      updateZoomUI();
+                    }
+                  },
+                  { passive: false },
+                );
+
+                resetZoomBtn?.addEventListener("click", () => {
+                  modalZoomScale = 1.0;
+                  zoomContainer.style.transform = "scale(1)";
+                  updateZoomUI();
+                });
+              }
+
+              const handleSave = (btn) => {
+                const logo = document.getElementById("draggable-logo");
+                const x_pct = parseFloat(logo.style.left);
+                const y_pct = parseFloat(logo.style.top);
+                const width_pct = parseFloat(logo.style.width);
+
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML =
+                  '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+
+                fetch("{% url 'save_logo_config' %}", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCsrfToken(),
+                  },
+                  body: JSON.stringify({
+                    x: x_pct,
+                    y: y_pct,
+                    width: width_pct,
+                  }),
+                })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    if (data.status === "success") {
+                      btn.innerHTML =
+                        '<i class="bi bi-check-all me-1"></i>Saved!';
+                      setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        if (btn.id === "save-logo-btn")
+                          btn.style.display = "none";
+                        // If in modal, maybe close it or just show success
+                        const modal = bootstrap.Modal.getInstance(
+                          document.getElementById("fullscreenEditorModal"),
+                        );
+                        if (modal && btn.id === "modal-save-btn") {
+                          setTimeout(() => {
+                            // modal.hide();
+                            // location.reload(); // Reload to see watermarked preview updated
+                          }, 500);
+                        }
+                      }, 1500);
+                    }
+                  });
+              };
+
+              document
+                .getElementById("save-logo-btn")
+                ?.addEventListener("click", function () {
+                  handleSave(this);
+                });
+              document
+                .getElementById("modal-save-btn")
+                ?.addEventListener("click", function () {
+                  handleSave(this);
+                });
+
+              // Disable hover-resize and change-layout button on dashboard
+              const dLogo = document.getElementById("draggable-logo");
+              if (dLogo) {
+                // dLogo.addEventListener('mouseenter', () => document.getElementById('resize-handle').style.display = 'block');
+              }
+            });
+          </script>
         </div>
       </div>
 
-      <!-- Status Bar -->
-      <div class="status-bar">
-        <div><i class="bi bi-info-circle me-1"></i> Drag to move. Hold Resize handle for scaling.</div>
-        <div id="editor-zoom-status">Scale: 100%</div>
+      <!-- === SECTION 3: POLICY === -->
+      <div id="policy" class="content-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title">
+            <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
+          </h2>
+          <button class="btn btn-action">
+            <i class="bi bi-printer me-2"></i>Print Policy
+          </button>
+        </div>
+        <div class="policy-text">
+          <h3 class="text-center mb-4">
+            Prevention of Sexual Harassment (POSH) Policy
+          </h3>
+          <p>
+            <strong>1. Introduction</strong><br />
+            This policy has been framed in accordance with the provisions of
+            "The Sexual Harassment of Women at Workplace (Prevention,
+            Prohibition and Redressal) Act, 2013". Our organization is committed
+            to providing a safe environment for all employees.
+          </p>
+          <p>
+            <strong>2. Scope</strong><br />
+            This policy is applicable to all employees, including permanent,
+            temporary, contractual, and trainees.
+          </p>
+          <p>
+            <strong>3. Definition of Sexual Harassment</strong><br />
+            Sexual harassment includes any one or more of the following
+            unwelcome acts or behavior (whether directly or by implication):<br />
+            - Physical contact and advances.<br />
+            - A demand or request for sexual favors.<br />
+            - Making sexually colored remarks.<br />
+            - Showing pornography.<br />
+            - Any other unwelcome physical, verbal or non-verbal conduct of
+            sexual nature.
+          </p>
+          <p>
+            <strong>4. Internal Complaints Committee (ICC)</strong><br />
+            An Internal Complaints Committee has been constituted to address
+            grievances. Any aggrieved woman may make, in writing, a complaint of
+            sexual harassment at workplace to the Internal Committee within a
+            period of three months from the date of incident.
+          </p>
+          <p class="text-muted text-center mt-5">-- End of Policy --</p>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let modalZoomScale = 1.0;
+      <!-- === SECTION 4: CERTIFICATES === -->
+      <div id="certificates" class="content-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="section-title mb-0">
+            <i class="bi bi-award me-2"></i>Certificates
+          </h2>
+          {% if certified_employees %}
+          <div class="position-relative">
+            <i
+              class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+            ></i>
+            <input
+              type="text"
+              id="certificateSearch"
+              class="form-control ps-5"
+              placeholder="Search by employee name..."
+              style="min-width: 300px"
+            />
+          </div>
+          {% endif %}
+        </div>
 
-    const initDraggable = (logoId, containerId, saveBtnId, resizeHandleId, isModal = false) => {
-        const logo = document.getElementById(logoId);
-        const container = logo ? logo.parentElement : null;
-        const saveBtn = document.getElementById(saveBtnId);
-        const resizeHandle = document.getElementById(resizeHandleId);
-        
-        if (!logo || !container) return;
-
-        let isDragging = false;
-        let isResizing = false;
-        let startX, startY, startLeft, startTop, startWidth;
-
-        logo.addEventListener('mousedown', function(e) {
-            if (!isModal) return; // Only allow editing in the modal Fullscreen version
-            
-            if (e.target === resizeHandle) {
-                isResizing = true;
-                startWidth = logo.offsetWidth;
-            } else {
-                isDragging = true;
-                startLeft = logo.offsetLeft;
-                startTop = logo.offsetTop;
-            }
-            startX = e.clientX;
-            startY = e.clientY;
-            logo.style.transition = 'none';
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-            e.preventDefault();
-        });
-
-        const onMouseMove = (e) => {
-            // Recalibrate movement based on zoom level
-            const currentScale = isModal ? modalZoomScale : 1.0;
-            const dx = (e.clientX - startX) / currentScale;
-            const dy = (e.clientY - startY) / currentScale;
-            
-            if (isDragging) {
-                let newX = startLeft + dx;
-                let newY = startTop + dy;
-                
-                // Extremely relaxed constraints: allow moving up to 95% of the logo width/height outside
-                const limitXMin = -(logo.offsetWidth * 0.95);
-                const limitXMax = container.offsetWidth - (logo.offsetWidth * 0.05);
-                const limitYMin = -(logo.offsetHeight * 0.95);
-                const limitYMax = container.offsetHeight - (logo.offsetHeight * 0.05);
-                
-                newX = Math.max(limitXMin, Math.min(newX, limitXMax));
-                newY = Math.max(limitYMin, Math.min(newY, limitYMax));
-                
-                const leftPct = (newX / container.offsetWidth * 100);
-                const topPct = (newY / container.offsetHeight * 100);
-                
-                logo.style.left = leftPct + '%';
-                logo.style.top = topPct + '%';
-                syncLogo(leftPct, topPct, null, isModal);
-            } else if (isResizing) {
-                let newWidth = startWidth + dx;
-                newWidth = Math.max(20, Math.min(newWidth, container.offsetWidth * 0.9));
-                
-                const widthPct = (newWidth / container.offsetWidth * 100);
-                logo.style.width = widthPct + '%';
-                syncLogo(null, null, widthPct, isModal);
-            }
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            document.getElementById('save-logo-btn').style.display = 'inline-block';
-        };
-
-        const onMouseUp = () => {
-            isDragging = false;
-            isResizing = false;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-        };
-    };
-
-    const syncLogo = (x, y, w, fromModal) => {
-        const targetLogo = fromModal ? document.getElementById('draggable-logo') : document.getElementById('modal-draggable-logo');
-        if (!targetLogo) return;
-        if (x !== null) targetLogo.style.left = x + '%';
-        if (y !== null) targetLogo.style.top = y + '%';
-        if (w !== null) targetLogo.style.width = w + '%';
-    };
-
-    initDraggable('draggable-logo', 'poster-editor-container', 'save-logo-btn', 'resize-handle');
-    initDraggable('modal-draggable-logo', 'modal-poster-container', 'modal-save-btn', 'modal-resize-handle', true);
-
-    // --- ZOOM LOGIC ---
-    const modalBody = document.getElementById('modal-body-zoom');
-    const zoomContainer = document.getElementById('modal-poster-container');
-    const resetZoomBtn = document.getElementById('reset-zoom-btn');
-
-    if (modalBody && zoomContainer) {
-        const updateZoomUI = () => {
-             const zoomPct = Math.round(modalZoomScale * 100);
-             const statusElem = document.getElementById('editor-zoom-status');
-             if (statusElem) statusElem.innerHTML = `Scale: ${zoomPct}%`;
-             if (resetZoomBtn) resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
-        };
-
-        modalBody.addEventListener('wheel', function(e) {
-            if (e.ctrlKey) {
-                e.preventDefault();
-                const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                modalZoomScale = Math.max(0.3, Math.min(modalZoomScale + delta, 4.0));
-                zoomContainer.style.transform = `scale(${modalZoomScale})`;
-                updateZoomUI();
-            }
-        }, { passive: false });
-
-        resetZoomBtn?.addEventListener('click', () => {
-            modalZoomScale = 1.0;
-            zoomContainer.style.transform = 'scale(1)';
-            updateZoomUI();
-        });
-    }
-
-    const handleSave = (btn) => {
-        const logo = document.getElementById('draggable-logo');
-        const x_pct = parseFloat(logo.style.left);
-        const y_pct = parseFloat(logo.style.top);
-        const width_pct = parseFloat(logo.style.width);
-
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
-
-        fetch("{% url 'save_logo_config' %}", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
-            body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                btn.innerHTML = '<i class="bi bi-check-all me-1"></i>Saved!';
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    if (btn.id === 'save-logo-btn') btn.style.display = 'none';
-                    // If in modal, maybe close it or just show success
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('fullscreenEditorModal'));
-                    if (modal && btn.id === 'modal-save-btn') {
-                        setTimeout(() => {
-                           // modal.hide();
-                           // location.reload(); // Reload to see watermarked preview updated
-                        }, 500);
-                    }
-                }, 1500);
-            }
-        });
-    };
-
-    document.getElementById('save-logo-btn')?.addEventListener('click', function() { handleSave(this); });
-    document.getElementById('modal-save-btn')?.addEventListener('click', function() { handleSave(this); });
-
-    // Disable hover-resize and change-layout button on dashboard
-    const dLogo = document.getElementById('draggable-logo');
-    if (dLogo) {
-        // dLogo.addEventListener('mouseenter', () => document.getElementById('resize-handle').style.display = 'block');
-    }
-});
-</script>
-      </div>
-    </div>
-
-    <!-- === SECTION 3: POLICY === -->
-    <div id="policy" class="content-section">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title">
-          <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
-        </h2>
-        <button class="btn btn-action">
-          <i class="bi bi-printer me-2"></i>Print Policy
-        </button>
-      </div>
-      <div class="policy-text">
-        <h3 class="text-center mb-4">
-          Prevention of Sexual Harassment (POSH) Policy
-        </h3>
-        <p>
-          <strong>1. Introduction</strong><br />
-          This policy has been framed in accordance with the provisions of
-          "The Sexual Harassment of Women at Workplace (Prevention,
-          Prohibition and Redressal) Act, 2013". Our organization is committed
-          to providing a safe environment for all employees.
-        </p>
-        <p>
-          <strong>2. Scope</strong><br />
-          This policy is applicable to all employees, including permanent,
-          temporary, contractual, and trainees.
-        </p>
-        <p>
-          <strong>3. Definition of Sexual Harassment</strong><br />
-          Sexual harassment includes any one or more of the following
-          unwelcome acts or behavior (whether directly or by implication):<br />
-          - Physical contact and advances.<br />
-          - A demand or request for sexual favors.<br />
-          - Making sexually colored remarks.<br />
-          - Showing pornography.<br />
-          - Any other unwelcome physical, verbal or non-verbal conduct of
-          sexual nature.
-        </p>
-        <p>
-          <strong>4. Internal Complaints Committee (ICC)</strong><br />
-          An Internal Complaints Committee has been constituted to address
-          grievances. Any aggrieved woman may make, in writing, a complaint of
-          sexual harassment at workplace to the Internal Committee within a
-          period of three months from the date of incident.
-        </p>
-        <p class="text-muted text-center mt-5">-- End of Policy --</p>
-      </div>
-    </div>
-
-    <!-- === SECTION 4: CERTIFICATES === -->
-    <div id="certificates" class="content-section">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="section-title mb-0">
-          <i class="bi bi-award me-2"></i>Certificates
-        </h2>
         {% if certified_employees %}
-        <div class="position-relative">
-          <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-          <input type="text" id="certificateSearch" class="form-control ps-5" placeholder="Search by employee name..."
-            style="min-width: 300px" />
+        <div class="members-grid">
+          {% for member in certified_employees %}
+          <div
+            class="member-card certificate-card text-center d-flex flex-column align-items-center"
+            style="padding: 30px 20px"
+          >
+            <div
+              class="avatar mb-3"
+              style="
+                background: linear-gradient(135deg, #10b981, #059669);
+                color: white;
+                width: 65px;
+                height: 65px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                font-size: 1.5rem;
+                box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+              "
+            >
+              {{ member.user.first_name|first|upper }}
+            </div>
+
+            <h3
+              class="member-name"
+              style="margin-bottom: 5px; font-weight: 700"
+            >
+              {{ member.user.get_full_name|default:member.user.first_name }}
+            </h3>
+            <p
+              class="member-email mb-2"
+              style="font-size: 0.9rem; opacity: 0.7"
+            >
+              {{ member.user.email }}
+            </p>
+
+            {% if member.user.designation %}
+            <p
+              class="small mb-3"
+              style="
+                font-size: 0.85rem;
+                color: var(--text-muted);
+                font-weight: 500;
+              "
+            >
+              <i class="bi bi-briefcase me-1"></i>{{ member.user.designation }}
+            </p>
+            {% endif %}
+
+            <span
+              class="role-badge mb-4"
+              style="
+                background: rgba(16, 185, 129, 0.1);
+                color: #10b981;
+                padding: 6px 15px;
+                border-radius: 20px;
+                font-weight: 600;
+              "
+            >
+              <i class="bi bi-patch-check-fill me-1"></i>Certified
+            </span>
+
+            <div class="w-100 mt-auto">
+              <a
+                href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}"
+                class="btn download-btn-animated w-100"
+                style="
+                  background: linear-gradient(135deg, #3b82f6, #1e3a8a);
+                  color: white;
+                  padding: 12px;
+                  border-radius: 12px;
+                  font-weight: 600;
+                  border: none;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                  position: relative;
+                  overflow: hidden;
+                "
+              >
+                <i class="bi bi-download"></i>
+                <span>Download Certificate</span>
+
+                <!-- Shine Effect Element -->
+                <div
+                  style="
+                    position: absolute;
+                    top: 0;
+                    left: -100%;
+                    width: 50%;
+                    height: 100%;
+                    background: linear-gradient(
+                      90deg,
+                      transparent,
+                      rgba(255, 255, 255, 0.2),
+                      transparent
+                    );
+                    transform: skewX(-25deg);
+                    animation: buttonShine 3s infinite;
+                  "
+                ></div>
+              </a>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <style>
+          @keyframes buttonShine {
+            0% {
+              left: -100%;
+            }
+            20% {
+              left: 150%;
+            }
+            100% {
+              left: 150%;
+            }
+          }
+          .download-btn-animated:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3);
+            filter: brightness(1.1);
+          }
+          .download-btn-animated:active {
+            transform: translateY(0) scale(0.98);
+          }
+        </style>
+        {% else %}
+        <div class="cert-card" style="text-align: center; padding: 60px 40px">
+          <div
+            style="
+              font-size: 4rem;
+              color: var(--text-muted);
+              margin-bottom: 20px;
+            "
+          >
+            <i class="bi bi-award"></i>
+          </div>
+          <h4 style="color: var(--text-primary); margin-bottom: 15px">
+            No Certificates Yet
+          </h4>
+          <p class="text-muted">
+            Certificates will appear here once employees complete their training
+            and pass the final quiz.
+          </p>
         </div>
         {% endif %}
       </div>
 
-      {% if certified_employees %}
-      <div class="members-grid">
-        {% for member in certified_employees %}
-        <div class="member-card certificate-card text-center d-flex flex-column align-items-center" style="padding: 30px 20px;">
-          <div class="avatar mb-3" style="background: linear-gradient(135deg, #10b981, #059669); color: white; width: 65px; height: 65px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 1.5rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);">
-            {{ member.user.first_name|first|upper }}
-          </div>
-          
-          <h3 class="member-name" style="margin-bottom: 5px; font-weight: 700;">
-            {{ member.user.get_full_name|default:member.user.first_name }}
-          </h3>
-          <p class="member-email mb-2" style="font-size: 0.9rem; opacity: 0.7;">{{ member.user.email }}</p>
-          
-          {% if member.user.designation %}
-          <p class="small mb-3" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">
-            <i class="bi bi-briefcase me-1"></i>{{ member.user.designation }}
-          </p>
-          {% endif %}
-          
-          <span class="role-badge mb-4" style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 15px; border-radius: 20px; font-weight: 600;">
-            <i class="bi bi-patch-check-fill me-1"></i>Certified
-          </span>
-          
-          <div class="w-100 mt-auto">
-            <a href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}" 
-               class="btn download-btn-animated w-100" style="
-                 background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-                 color: white;
-                 padding: 12px;
-                 border-radius: 12px;
-                 font-weight: 600;
-                 border: none;
-                 display: flex;
-                 align-items: center;
-                 justify-content: center;
-                 gap: 8px;
-                 transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                 position: relative;
-                 overflow: hidden;
-               ">
-              <i class="bi bi-download"></i>
-              <span>Download Certificate</span>
-              
-              <!-- Shine Effect Element -->
-              <div style="
-                position: absolute;
-                top: 0; left: -100%;
-                width: 50%; height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-                transform: skewX(-25deg);
-                animation: buttonShine 3s infinite;
-              "></div>
-            </a>
-          </div>
-        </div>
-        {% endfor %}
-      </div>
+      <!-- === SECTION: SETTINGS === -->
+      <div id="settings" class="content-section">
+        <h2 class="mb-4 section-title">
+          <i class="bi bi-gear me-2"></i>Settings
+        </h2>
 
-      <style>
-        @keyframes buttonShine {
-          0% { left: -100%; }
-          20% { left: 150%; }
-          100% { left: 150%; }
-        }
-        .download-btn-animated:hover {
-          transform: translateY(-3px) scale(1.02);
-          box-shadow: 0 10px 20px rgba(30, 58, 138, 0.3);
-          filter: brightness(1.1);
-        }
-        .download-btn-animated:active {
-          transform: translateY(0) scale(0.98);
-        }
-      </style>
-      {% else %}
-      <div class="cert-card" style="text-align: center; padding: 60px 40px;">
-        <div style="font-size: 4rem; color: var(--text-muted); margin-bottom: 20px;">
-          <i class="bi bi-award"></i>
-        </div>
-        <h4 style="color: var(--text-primary); margin-bottom: 15px;">No Certificates Yet</h4>
-        <p class="text-muted">
-          Certificates will appear here once employees complete their training and pass the final quiz.
-        </p>
-      </div>
-      {% endif %}
-    </div>
+        <!-- Organization Settings -->
+        <div
+          class="card mb-4"
+          style="
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            background: var(--bg-card);
+          "
+        >
+          <div class="card-body p-4">
+            <h5
+              style="
+                font-weight: 700;
+                color: var(--color-primary);
+                margin-bottom: 20px;
+              "
+            >
+              <i class="bi bi-building me-2"></i>Organization
+            </h5>
 
-    <!-- === SECTION: SETTINGS === -->
-    <div id="settings" class="content-section">
-      <h2 class="mb-4 section-title">
-        <i class="bi bi-gear me-2"></i>Settings
-      </h2>
-
-      <!-- Organization Settings -->
-      <div class="card mb-4" style="border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: var(--bg-card);">
-        <div class="card-body p-4">
-          <h5 style="font-weight: 700; color: var(--color-primary); margin-bottom: 20px;">
-            <i class="bi bi-building me-2"></i>Organization
-          </h5>
-
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Company Name</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
-                {{ posh_company_name }}
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small text-muted">Company Name</label>
+                <div
+                  class="form-control"
+                  style="background: var(--bg-main); font-weight: 600"
+                >
+                  {{ posh_company_name }}
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Employee Limit (from Registration)</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600; color: var(--color-primary);">
-                {{ posh_reg_employee_count|default:organization.max_users }} seats
+              <div class="col-md-6">
+                <label class="form-label small text-muted"
+                  >Employee Limit (from Registration)</label
+                >
+                <div
+                  class="form-control"
+                  style="
+                    background: var(--bg-main);
+                    font-weight: 600;
+                    color: var(--color-primary);
+                  "
+                >
+                  {{ posh_reg_employee_count|default:organization.max_users }}
+                  seats
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Seats Used</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
-                {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }}
-                &nbsp;
-                <span style="color: {% if seats_remaining > 0 %}var(--color-success){% else %}var(--color-danger){% endif %}; font-size: 0.85rem;">
-                  ({{ seats_remaining }} remaining)
-                </span>
+              <div class="col-md-6">
+                <label class="form-label small text-muted">Seats Used</label>
+                <div
+                  class="form-control"
+                  style="background: var(--bg-main); font-weight: 600"
+                >
+                  {{ seats_used }} / {{
+                  posh_reg_employee_count|default:organization.max_users }}
+                  &nbsp;
+                  <span
+                    style="color: {% if seats_remaining > 0 %}var(--color-success){% else %}var(--color-danger){% endif %}; font-size: 0.85rem;"
+                  >
+                    ({{ seats_remaining }} remaining)
+                  </span>
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Default Employee Password</label>
-              <div class="form-control" style="background: rgba(251,191,36,0.07); border-color: #fbbf24; color: #b45309; font-weight: 700; font-family: monospace; letter-spacing: 1px;">
-                {{ organization.default_password }}
+              <div class="col-md-6">
+                <label class="form-label small text-muted"
+                  >Default Employee Password</label
+                >
+                <div
+                  class="form-control"
+                  style="
+                    background: rgba(251, 191, 36, 0.07);
+                    border-color: #fbbf24;
+                    color: #b45309;
+                    font-weight: 700;
+                    font-family: monospace;
+                    letter-spacing: 1px;
+                  "
+                >
+                  {{ organization.default_password }}
+                </div>
+                <small class="text-muted"
+                  >Auto-generated from company name. Used for new employee
+                  accounts.</small
+                >
               </div>
-              <small class="text-muted">Auto-generated from company name. Used for new employee accounts.</small>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Account Settings -->
-      <div class="card mb-4" style="border-radius: 16px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); background: var(--bg-card);">
-        <div class="card-body p-4">
-          <h5 style="font-weight: 700; color: var(--color-primary); margin-bottom: 20px;">
-            <i class="bi bi-person-circle me-2"></i>Admin Account
-          </h5>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Admin Name</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
-                {{ request.user.get_full_name|default:request.user.first_name }}
+        <!-- Account Settings -->
+        <div
+          class="card mb-4"
+          style="
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            background: var(--bg-card);
+          "
+        >
+          <div class="card-body p-4">
+            <h5
+              style="
+                font-weight: 700;
+                color: var(--color-primary);
+                margin-bottom: 20px;
+              "
+            >
+              <i class="bi bi-person-circle me-2"></i>Admin Account
+            </h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label small text-muted">Admin Name</label>
+                <div
+                  class="form-control"
+                  style="background: var(--bg-main); font-weight: 600"
+                >
+                  {{ request.user.get_full_name|default:request.user.first_name
+                  }}
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Admin Email</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600;">
-                {{ request.user.email }}
+              <div class="col-md-6">
+                <label class="form-label small text-muted">Admin Email</label>
+                <div
+                  class="form-control"
+                  style="background: var(--bg-main); font-weight: 600"
+                >
+                  {{ request.user.email }}
+                </div>
               </div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small text-muted">Company ID</label>
-              <div class="form-control" style="background: var(--bg-main); font-weight: 600; font-family: monospace; color: var(--color-primary);">
-                {{ request.user.user_id|default:"—" }}
+              <div class="col-md-6">
+                <label class="form-label small text-muted">Company ID</label>
+                <div
+                  class="form-control"
+                  style="
+                    background: var(--bg-main);
+                    font-weight: 600;
+                    font-family: monospace;
+                    color: var(--color-primary);
+                  "
+                >
+                  {{ request.user.user_id|default:"—" }}
+                </div>
               </div>
-            </div>
-            <div class="col-12 mt-2">
-              <a href="{% url 'hr_logout' %}" class="btn" style="background: linear-gradient(135deg,#ef4444,#dc2626); color: white; border-radius: 10px; font-weight: 600; padding: 10px 28px;">
-                <i class="bi bi-box-arrow-right me-2"></i>Logout
-              </a>
+              <div class="col-12 mt-2">
+                <a
+                  href="{% url 'hr_logout' %}"
+                  class="btn"
+                  style="
+                    background: linear-gradient(135deg, #ef4444, #dc2626);
+                    color: white;
+                    border-radius: 10px;
+                    font-weight: 600;
+                    padding: 10px 28px;
+                  "
+                >
+                  <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
-  </main>
-
-  <!-- Add Single Employee Modal -->
-  <!-- ADD EMPLOYEE MODAL -->
-  <div class="modal fade" id="addEmployeeModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-
-        <!-- HEADER -->
-        <div class="modal-header border-0">
-          <h5 class="modal-title">Add New Employee</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-
-        <!-- BODY -->
-        <div class="modal-body">
-          <form method="POST" action="{% url 'add_employee' %}">
-            {% csrf_token %}
-
-            <input class="form-control mb-3" name="emp_name" placeholder="Full Name" required />
-
-            <input class="form-control mb-3" name="emp_email" type="email" placeholder="Email" required />
-
-            <input class="form-control mb-3" name="emp_designation" placeholder="Designation (e.g. Manager, Developer)" />
-
-            <div class="mb-3">
-              <label class="form-label small">Employee Limit (from Registration)</label>
-              <input class="form-control" type="number" value="{{ posh_reg_employee_count|default:organization.max_users }}" readonly style="background-color: rgba(251, 191, 36, 0.07);
-                            border-color: #fbbf24;
-                            color: #fbbf24;
-                            font-weight: 700;
-                            font-size: 1.1rem;
-                            text-align: center;
-                            cursor: not-allowed;" />
-              <small class="text-muted">&#128274; Seats used: {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }} &nbsp;|&nbsp; Remaining: {{ seats_remaining }}</small>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label small">
-                Default Password (Auto-filled)
-              </label>
-
-              <input class="form-control" name="emp_password" type="text" value="{{ default_password }}" readonly style="background-color: rgba(251, 191, 36, 0.1);
-                     border-color: #fbbf24;
-                     color: #fbbf24;
-                     font-weight: 600;
-                     font-size: 1.1rem;
-                     text-align: center;" />
-
-              <small class="text-muted">
-                This password will be used for the new employee
-              </small>
-            </div>
-
-            <button class="btn btn-gradient w-100">Add Employee</button>
-          </form>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-
-  <!-- BULK IMPORT MODAL -->
-  <div class="modal fade" id="bulkImportModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-
-        <!-- HEADER -->
-        <div class="modal-header border-0">
-          <h5 class="modal-title">
-            <i class="bi bi-file-earmark-spreadsheet me-2"></i>
-            Bulk Import Employees
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-
-        <!-- BODY -->
-        <div class="modal-body">
-
-          <!-- STEP 1 -->
-          <div class="mb-4 pb-4 border-bottom" style="border-color: var(--border-soft) !important">
-            <h6 class="mb-2">Step 1: Get the Format</h6>
-
-            <p class="small text-muted mb-3">
-              Download the standard Excel/CSV template to ensure your data is formatted correctly.
-            </p>
-
-            <a href="{% url 'download_employee_template' %}" class="btn btn-sm btn-outline-warning w-100">
-              <i class="bi bi-download me-2"></i>Download Template
-            </a>
+    <!-- Add Single Employee Modal -->
+    <!-- ADD EMPLOYEE MODAL -->
+    <div class="modal fade" id="addEmployeeModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- HEADER -->
+          <div class="modal-header border-0">
+            <h5 class="modal-title">Add New Employee</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
 
-          <!-- STEP 2 -->
-          <div>
-            <h6 class="mb-2">Step 2: Upload Data</h6>
-
-            <p class="small text-muted mb-3">
-              Upload the filled template file here.
-            </p>
-
-            <form method="POST" action="{% url 'upload_employee_bulk' %}" enctype="multipart/form-data">
+          <!-- BODY -->
+          <div class="modal-body">
+            <form method="POST" action="{% url 'add_employee' %}">
               {% csrf_token %}
 
+              <input
+                class="form-control mb-3"
+                name="emp_name"
+                placeholder="Full Name"
+                required
+              />
+
+              <input
+                class="form-control mb-3"
+                name="emp_email"
+                type="email"
+                placeholder="Email"
+                required
+              />
+
+              <input
+                class="form-control mb-3"
+                name="emp_designation"
+                placeholder="Designation (e.g. Manager, Developer)"
+              />
+
               <div class="mb-3">
-                <input class="form-control" type="file" name="employee_file" accept=".csv" required />
+                <label class="form-label small"
+                  >Employee Limit (from Registration)</label
+                >
+                <input
+                  class="form-control"
+                  type="number"
+                  value="{{ posh_reg_employee_count|default:organization.max_users }}"
+                  readonly
+                  style="
+                    background-color: rgba(251, 191, 36, 0.07);
+                    border-color: #fbbf24;
+                    color: #fbbf24;
+                    font-weight: 700;
+                    font-size: 1.1rem;
+                    text-align: center;
+                    cursor: not-allowed;
+                  "
+                />
+                <small class="text-muted"
+                  >&#128274; Seats used: {{ seats_used }} / {{
+                  posh_reg_employee_count|default:organization.max_users }}
+                  &nbsp;|&nbsp; Remaining: {{ seats_remaining }}</small
+                >
               </div>
 
-              <button type="submit" class="btn btn-gradient w-100">
-                <i class="bi bi-cloud-upload me-2"></i>
-                Upload & Create Cards
-              </button>
-            </form>
+              <div class="mb-3">
+                <label class="form-label small">
+                  Default Password (Auto-filled)
+                </label>
 
+                <input
+                  class="form-control"
+                  name="emp_password"
+                  type="text"
+                  value="{{ default_password }}"
+                  readonly
+                  style="
+                    background-color: rgba(251, 191, 36, 0.1);
+                    border-color: #fbbf24;
+                    color: #fbbf24;
+                    font-weight: 600;
+                    font-size: 1.1rem;
+                    text-align: center;
+                  "
+                />
+
+                <small class="text-muted">
+                  This password will be used for the new employee
+                </small>
+              </div>
+
+              <button class="btn btn-gradient w-100">Add Employee</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BULK IMPORT MODAL -->
+    <div class="modal fade" id="bulkImportModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <!-- HEADER -->
+          <div class="modal-header border-0">
+            <h5 class="modal-title">
+              <i class="bi bi-file-earmark-spreadsheet me-2"></i>
+              Bulk Import Employees
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
 
-        </div>
-      </div>
-    </div>
-  </div>
+          <!-- BODY -->
+          <div class="modal-body">
+            <!-- STEP 1 -->
+            <div
+              class="mb-4 pb-4 border-bottom"
+              style="border-color: var(--border-soft) !important"
+            >
+              <h6 class="mb-2">Step 1: Get the Format</h6>
 
-  <!-- UPLOAD COMPANY LOGO MODAL -->
-  <div class="modal fade" id="uploadLogoModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content" style="background: #020617; border: 1px solid var(--border-soft); color: white;">
-        <div class="modal-header border-0">
-          <h5 class="modal-title">
-            <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{% else %}Add{% endif %} Company Logo
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form method="POST" action="{% url 'upload_company_logo' %}" enctype="multipart/form-data">
-            {% csrf_token %}
-            <p class="text-muted small mb-4">
-              This logo will be displayed on the top-left of your awareness posters.
-            </p>
-            <div class="mb-4">
-              <input class="form-control" type="file" name="company_logo" accept="image/*" required 
-                     style="background: rgba(248, 250, 252, 0.95); color: #020617;">
+              <p class="small text-muted mb-3">
+                Download the standard Excel/CSV template to ensure your data is
+                formatted correctly.
+              </p>
+
+              <a
+                href="{% url 'download_employee_template' %}"
+                class="btn btn-sm btn-outline-warning w-100"
+              >
+                <i class="bi bi-download me-2"></i>Download Template
+              </a>
             </div>
-            <button type="submit" class="btn btn-gradient w-100">
-              Upload Logo
-            </button>
-          </form>
+
+            <!-- STEP 2 -->
+            <div>
+              <h6 class="mb-2">Step 2: Upload Data</h6>
+
+              <p class="small text-muted mb-3">
+                Upload the filled template file here.
+              </p>
+
+              <form
+                method="POST"
+                action="{% url 'upload_employee_bulk' %}"
+                enctype="multipart/form-data"
+              >
+                {% csrf_token %}
+
+                <div class="mb-3">
+                  <input
+                    class="form-control"
+                    type="file"
+                    name="employee_file"
+                    accept=".csv"
+                    required
+                  />
+                </div>
+
+                <button type="submit" class="btn btn-gradient w-100">
+                  <i class="bi bi-cloud-upload me-2"></i>
+                  Upload & Create Cards
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- UPLOAD COMPANY LOGO MODAL -->
+    <div class="modal fade" id="uploadLogoModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div
+          class="modal-content"
+          style="
+            background: #020617;
+            border: 1px solid var(--border-soft);
+            color: white;
+          "
+        >
+          <div class="modal-header border-0">
+            <h5 class="modal-title">
+              <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{%
+              else %}Add{% endif %} Company Logo
+            </h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form
+              method="POST"
+              action="{% url 'upload_company_logo' %}"
+              enctype="multipart/form-data"
+            >
+              {% csrf_token %}
+              <p class="text-muted small mb-4">
+                This logo will be displayed on the top-left of your awareness
+                posters.
+              </p>
+              <div class="mb-4">
+                <input
+                  class="form-control"
+                  type="file"
+                  name="company_logo"
+                  accept="image/*"
+                  required
+                  style="background: rgba(248, 250, 252, 0.95); color: #020617"
+                />
+              </div>
+              <button type="submit" class="btn btn-gradient w-100">
+                Upload Logo
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <script>
-    function showSection(sectionId, element) {
-      document
-        .querySelectorAll(".content-section")
-        .forEach((sec) => sec.classList.remove("active"));
-      document.getElementById(sectionId).classList.add("active");
-      document
-        .querySelectorAll(".nav-link")
-        .forEach((link) => link.classList.remove("active"));
-      element.classList.add("active");
-    }
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    document
-      .getElementById("memberSearch")
-      .addEventListener("input", function () {
-        const filter = this.value.toLowerCase();
-        const cards = document.querySelectorAll("#membersGrid .member-card");
-        cards.forEach((card) => {
-          const name = card
-            .querySelector(".member-name")
-            .innerText.toLowerCase();
-          const email = card
-            .querySelector(".member-email")
-            .innerText.toLowerCase();
-          if (name.includes(filter) || email.includes(filter)) {
-            card.style.display = "";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      });
-
-    // Certificate search functionality
-    const certSearchInput = document.getElementById("certificateSearch");
-    if (certSearchInput) {
-      certSearchInput.addEventListener("input", function () {
-        const filter = this.value.toLowerCase();
-        const cards = document.querySelectorAll("#certificates .certificate-card");
-        cards.forEach((card) => {
-          const name = card
-            .querySelector(".member-name")
-            .innerText.toLowerCase();
-          const email = card
-            .querySelector(".member-email")
-            .innerText.toLowerCase();
-          if (name.includes(filter) || email.includes(filter)) {
-            card.style.display = "";
-          } else {
-            card.style.display = "none";
-          }
-        });
-      });
-    }
-
-    // Helper to draw chart safely
-    function drawChart(canvasId, colorHex) {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
-
-      // Clean up previous instance to prevent glitches
-      if (canvas.chartInstance) canvas.chartInstance.destroy();
-
-      const percent = parseInt(canvas.getAttribute("data-percent")) || 0;
-      const remaining = 100 - percent;
-
-      canvas.chartInstance = new Chart(canvas, {
-        type: "doughnut",
-        data: {
-          labels: ["Done", "Pending"],
-          datasets: [
-            {
-              data: [percent, remaining],
-              backgroundColor: [colorHex, "#eee"],
-              borderWidth: 0,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: "70%",
-          plugins: {
-            legend: { display: false },
-            tooltip: { enabled: false },
-          },
-          animation: { duration: 1000 },
-        },
-      });
-    }
-
-    // Initialize BOTH charts when the modal opens
-    document.addEventListener("shown.bs.modal", function (event) {
-      const modalId = event.target.id;
-      if (modalId.startsWith("userProgressModal-")) {
-        const memberId = modalId.split("-")[1];
-
-        // 1. Draw Video Chart (Primary Blue)
-        drawChart(`pie-vids-${memberId}`, "#4e54c8");
+    <script>
+      function showSection(sectionId, element) {
+        document
+          .querySelectorAll(".content-section")
+          .forEach((sec) => sec.classList.remove("active"));
+        document.getElementById(sectionId).classList.add("active");
+        document
+          .querySelectorAll(".nav-link")
+          .forEach((link) => link.classList.remove("active"));
+        element.classList.add("active");
       }
-    });
 
-    // === DASHBOARD REFRESH FUNCTIONALITY ===
-    function refreshDashboard() {
-      const btn = document.getElementById('refreshBtn');
-      const icon = btn.querySelector('i');
-
-      // Show loading state
-      btn.disabled = true;
-      icon.classList.add('fa-spin');
-
-      // Reload the page to fetch fresh data
-      location.reload();
-    }
-
-    // Update last refresh time
-    function updateRefreshTime() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-      });
-      const elem = document.getElementById('lastRefreshTime');
-      if (elem) {
-        elem.textContent = `Last updated: ${timeStr}`;
-      }
-    }
-
-    // Set initial refresh time
-    updateRefreshTime();
-
-    // Show notification when page loads after refresh
-    window.addEventListener('load', function () {
-      // MOBILE SIDEBAR TOGGLE
-      const hamburgerBtn = document.getElementById('hamburgerBtn');
-      const sidebar = document.getElementById('sidebar');
-      const sidebarOverlay = document.getElementById('sidebarOverlay');
-      const navLinks = document.querySelectorAll('.nav-link');
-
-      const toggleSidebar = () => {
-          sidebar.classList.toggle('show');
-          sidebarOverlay.classList.toggle('show');
-      };
-
-      hamburgerBtn?.addEventListener('click', toggleSidebar);
-      sidebarOverlay?.addEventListener('click', toggleSidebar);
-
-      // Close sidebar when clicking a link on mobile
-      navLinks.forEach(link => {
-          link.addEventListener('click', () => {
-              if (window.innerWidth <= 992) {
-                  toggleSidebar();
-              }
+      document
+        .getElementById("memberSearch")
+        .addEventListener("input", function () {
+          const filter = this.value.toLowerCase();
+          const cards = document.querySelectorAll("#membersGrid .member-card");
+          cards.forEach((card) => {
+            const name = card
+              .querySelector(".member-name")
+              .innerText.toLowerCase();
+            const email = card
+              .querySelector(".member-email")
+              .innerText.toLowerCase();
+            if (name.includes(filter) || email.includes(filter)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
           });
+        });
+
+      // Certificate search functionality
+      const certSearchInput = document.getElementById("certificateSearch");
+      if (certSearchInput) {
+        certSearchInput.addEventListener("input", function () {
+          const filter = this.value.toLowerCase();
+          const cards = document.querySelectorAll(
+            "#certificates .certificate-card",
+          );
+          cards.forEach((card) => {
+            const name = card
+              .querySelector(".member-name")
+              .innerText.toLowerCase();
+            const email = card
+              .querySelector(".member-email")
+              .innerText.toLowerCase();
+            if (name.includes(filter) || email.includes(filter)) {
+              card.style.display = "";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        });
+      }
+
+      // Helper to draw chart safely
+      function drawChart(canvasId, colorHex) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        // Clean up previous instance to prevent glitches
+        if (canvas.chartInstance) canvas.chartInstance.destroy();
+
+        const percent = parseInt(canvas.getAttribute("data-percent")) || 0;
+        const remaining = 100 - percent;
+
+        canvas.chartInstance = new Chart(canvas, {
+          type: "doughnut",
+          data: {
+            labels: ["Done", "Pending"],
+            datasets: [
+              {
+                data: [percent, remaining],
+                backgroundColor: [colorHex, "#eee"],
+                borderWidth: 0,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "70%",
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: false },
+            },
+            animation: { duration: 1000 },
+          },
+        });
+      }
+
+      // Initialize BOTH charts when the modal opens
+      document.addEventListener("shown.bs.modal", function (event) {
+        const modalId = event.target.id;
+        if (modalId.startsWith("userProgressModal-")) {
+          const memberId = modalId.split("-")[1];
+
+          // 1. Draw Video Chart (Primary Blue)
+          drawChart(`pie-vids-${memberId}`, "#4e54c8");
+        }
       });
 
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('refreshed') === 'true') {
-        // Remove the parameter from URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    });
-  </script>
-</body>
+      // === DASHBOARD REFRESH FUNCTIONALITY ===
+      function refreshDashboard() {
+        const btn = document.getElementById("refreshBtn");
+        const icon = btn.querySelector("i");
 
+        // Show loading state
+        btn.disabled = true;
+        icon.classList.add("fa-spin");
+
+        // Reload the page to fetch fresh data
+        location.reload();
+      }
+
+      // Update last refresh time
+      function updateRefreshTime() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        const elem = document.getElementById("lastRefreshTime");
+        if (elem) {
+          elem.textContent = `Last updated: ${timeStr}`;
+        }
+      }
+
+      // Set initial refresh time
+      updateRefreshTime();
+
+      // Show notification when page loads after refresh
+      window.addEventListener("load", function () {
+        // MOBILE SIDEBAR TOGGLE
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const sidebar = document.getElementById("sidebar");
+        const sidebarOverlay = document.getElementById("sidebarOverlay");
+        const navLinks = document.querySelectorAll(".nav-link");
+
+        const toggleSidebar = () => {
+          sidebar.classList.toggle("show");
+          sidebarOverlay.classList.toggle("show");
+        };
+
+        hamburgerBtn?.addEventListener("click", toggleSidebar);
+        sidebarOverlay?.addEventListener("click", toggleSidebar);
+
+        // Close sidebar when clicking a link on mobile
+        navLinks.forEach((link) => {
+          link.addEventListener("click", () => {
+            if (window.innerWidth <= 992) {
+              toggleSidebar();
+            }
+          });
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("refreshed") === "true") {
+          // Remove the parameter from URL
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+        }
+      });
+    </script>
+  </body>
 </html>

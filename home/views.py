@@ -1423,7 +1423,8 @@ def posh_act_page_corp(request):
     visible_modules = [
         m
         for m in modules
-        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+        if m.video_file
+        or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
     ]
     completed_count = sum(1 for m in visible_modules if progress_map.get(m.id, False))
 

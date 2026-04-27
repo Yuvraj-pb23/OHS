@@ -1,836 +1,1179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POSH Mastery Dashboard</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <style>
-        :root {
-            --primary: #4e54c8;
-            --primary-gradient: linear-gradient(135deg, #4e54c8, #8f94fb);
-            --complete: #3498db;
-            --pending: #ff4757;
-            --locked: #636e72;
-            --glass-surface: rgba(255, 255, 255, 0.95);
-            --text-dark: #2d3436;
-            --danger: #ff4757;
-            --success: #2ecc71;
-        }
+      :root {
+        --primary: #4e54c8;
+        --primary-gradient: linear-gradient(135deg, #4e54c8, #8f94fb);
+        --complete: #3498db;
+        --pending: #ff4757;
+        --locked: #636e72;
+        --glass-surface: rgba(255, 255, 255, 0.95);
+        --text-dark: #2d3436;
+        --danger: #ff4757;
+        --success: #2ecc71;
+      }
 
-        body {
-            font-family: "Poppins", sans-serif;
-            margin: 0;
-            background: linear-gradient(rgba(78, 84, 200, 0.9), rgba(143, 148, 251, 0.9)),
-                url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000");
-            background-attachment: fixed;
-            background-size: cover;
-            color: var(--text-dark);
-            min-height: 100vh;
-            -webkit-user-select: none; 
-            user-select: none;
-        }
+      body {
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+        background:
+          linear-gradient(rgba(78, 84, 200, 0.9), rgba(143, 148, 251, 0.9)),
+          url("https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=2000");
+        background-attachment: fixed;
+        background-size: cover;
+        color: var(--text-dark);
+        min-height: 100vh;
+        -webkit-user-select: none;
+        user-select: none;
+      }
 
-        video::-internal-media-controls-download-button { display:none; }
-        video::-webkit-media-controls-enclosure { overflow:hidden; }
-        video::-webkit-media-controls-panel { width: calc(100% + 30px); }
+      video::-internal-media-controls-download-button {
+        display: none;
+      }
+      video::-webkit-media-controls-enclosure {
+        overflow: hidden;
+      }
+      video::-webkit-media-controls-panel {
+        width: calc(100% + 30px);
+      }
 
-        .lms-container {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            max-width: 1600px;
-            margin: 0 auto;
-            gap: 20px;
-            padding: 20px;
-        }
+      .lms-container {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        max-width: 1600px;
+        margin: 0 auto;
+        gap: 20px;
+        padding: 20px;
+      }
 
-        .sidebar {
-            background: var(--glass-surface);
-            border-radius: 20px;
-            padding: 30px;
-            height: calc(100vh - 40px);
-            position: sticky;
-            top: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column; 
-        }
+      .sidebar {
+        background: var(--glass-surface);
+        border-radius: 20px;
+        padding: 30px;
+        height: calc(100vh - 40px);
+        position: sticky;
+        top: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+      }
 
-        .nav-menu { flex-grow: 1; }
-        .nav-item {
-            display: flex; align-items: center;
-            padding: 12px; border-radius: 10px;
-            text-decoration: none; color: var(--text-dark);
-            margin-bottom: 10px; transition: 0.3s;
-            cursor: pointer;
-            justify-content: space-between;
-        }
-        .nav-item:hover { background: rgba(78, 84, 200, 0.1); }
-        
-        .nav-item.active { 
-            background: var(--primary-gradient); 
-            color: white; 
-            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.3);
-        }
-        
-        .nav-item.disabled {
-            opacity: 0.6;
-            filter: grayscale(100%);
-            cursor: not-allowed;
-            background: #f1f2f6;
-        }
-        
-        .btn-disabled {
-            background-color: #bdc3c7 !important;
-            color: #7f8c8d !important;
-            pointer-events: none;
-            cursor: not-allowed;
-            border: 1px solid #bdc3c7 !important;
-        }
+      .nav-menu {
+        flex-grow: 1;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 12px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+        transition: 0.3s;
+        cursor: pointer;
+        justify-content: space-between;
+      }
+      .nav-item:hover {
+        background: rgba(78, 84, 200, 0.1);
+      }
 
-        .nav-item.logout {
-            margin-top: auto; color: var(--danger);
-            border: 1px solid transparent; font-weight: 600;
-        }
-        .nav-item.logout:hover { background: rgba(255, 71, 87, 0.1); border-color: var(--danger); }
+      .nav-item.active {
+        background: var(--primary-gradient);
+        color: white;
+        box-shadow: 0 4px 15px rgba(78, 84, 200, 0.3);
+      }
 
-        .section-card {
-            background: white; border-radius: 24px;
-            padding: 25px; margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            position: relative; overflow: hidden;
-        }
+      .nav-item.disabled {
+        opacity: 0.6;
+        filter: grayscale(100%);
+        cursor: not-allowed;
+        background: #f1f2f6;
+      }
 
-        .stage-container {
-            background: #000; border-radius: 20px;
-            overflow: hidden; aspect-ratio: 16/9;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            position: relative;
-        }
-        video { width: 100%; height: 100%; object-fit: cover; }
+      .btn-disabled {
+        background-color: #bdc3c7 !important;
+        color: #7f8c8d !important;
+        pointer-events: none;
+        cursor: not-allowed;
+        border: 1px solid #bdc3c7 !important;
+      }
 
-        .content-cover {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 10; color: white; text-align: center;
-            transition: 0.5s;
-        }
-        .cover-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: -1;
-        }
+      .nav-item.logout {
+        margin-top: auto;
+        color: var(--danger);
+        border: 1px solid transparent;
+        font-weight: 600;
+      }
+      .nav-item.logout:hover {
+        background: rgba(255, 71, 87, 0.1);
+        border-color: var(--danger);
+      }
 
-        .btn-start {
-            background: var(--primary-gradient); color: white;
-            padding: 15px 40px; border-radius: 50px;
-            border: none; font-weight: 700; cursor: pointer;
-            margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: 0.3s; z-index: 11; font-size: 1rem;
-        }
+      .section-card {
+        background: white;
+        border-radius: 24px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
 
-        .tab-header { display: flex; gap: 15px; margin-bottom: 20px; }
-        .tab-btn {
-            background: rgba(255, 255, 255, 0.2); border: 2px solid white;
-            color: white; padding: 10px 25px;
-            border-radius: 30px; cursor: pointer; font-weight: 600;
-        }
-        .tab-btn.active { background: white; color: var(--primary); }
+      .stage-container {
+        background: #000;
+        border-radius: 20px;
+        overflow: hidden;
+        aspect-ratio: 16/9;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        position: relative;
+      }
+      video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        .record-item {
-            display: grid; grid-template-columns: 180px 1fr auto;
-            gap: 20px; background: #f8f9fa;
-            padding: 15px; border-radius: 15px;
-            margin-bottom: 15px; cursor: pointer;
-            transition: 0.3s; border: 2px solid transparent;
-        }
-        .record-item:hover { transform: translateX(10px); background: #fff; border-color: var(--primary); }
-        .record-item.locked { opacity: 0.6; cursor: not-allowed; }
-        
-        .thumb-box { width: 100%; height: 100px; background: #ddd; border-radius: 10px; background-size: cover; background-position: center; }
-        .badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-        
-        .bg-complete { background: #e3f2fd; color: #1976d2; }
-        .bg-pending { background: #ffebee; color: #c62828; }
-        .bg-locked { background: #eeeeee; color: #757575; }
+      .content-cover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+        color: white;
+        text-align: center;
+        transition: 0.5s;
+      }
+      .cover-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+      }
 
-        .training-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; justify-content: center; align-items: center; }
-        .training-content { width: 90%; height: 85%; background: white; border-radius: 20px; overflow: hidden; position: relative; }
+      .btn-start {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        transition: 0.3s;
+        z-index: 11;
+        font-size: 1rem;
+      }
 
-        .practice-quiz-container { padding: 40px; height: 100%; overflow-y: auto; box-sizing: border-box; background: #fdfdfd; position: relative; z-index: 110; }
-        .pq-question { font-size: 1.5rem; font-weight: 600; margin-bottom: 20px; color: var(--primary); }
-        .pq-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .pq-btn { padding: 20px; border: 2px solid #ddd; border-radius: 12px; background: white; font-size: 1.1rem; text-align: left; cursor: pointer; transition: 0.2s; font-family: "Poppins", sans-serif; }
-        .pq-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
-        .pq-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        .pq-btn.disabled { cursor: default; pointer-events: none; }
-        .pq-next-btn { background: var(--primary); color: white; border: none; padding: 10px 30px; border-radius: 30px; margin-top: 30px; font-size: 1rem; cursor: pointer; float: right; display: none; }
-        
-        #presence-indicator { position: fixed; bottom: 20px; right: 20px; background: #2ecc71; color: white; padding: 5px 15px; border-radius: 20px; font-size: 12px; font-weight: bold; z-index: 9999; }
+      .tab-header {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .tab-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .tab-btn.active {
+        background: white;
+        color: var(--primary);
+      }
+
+      .record-item {
+        display: grid;
+        grid-template-columns: 180px 1fr auto;
+        gap: 20px;
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+        border: 2px solid transparent;
+      }
+      .record-item:hover {
+        transform: translateX(10px);
+        background: #fff;
+        border-color: var(--primary);
+      }
+      .record-item.locked {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .thumb-box {
+        width: 100%;
+        height: 100px;
+        background: #ddd;
+        border-radius: 10px;
+        background-size: cover;
+        background-position: center;
+      }
+      .badge {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .bg-complete {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+      .bg-pending {
+        background: #ffebee;
+        color: #c62828;
+      }
+      .bg-locked {
+        background: #eeeeee;
+        color: #757575;
+      }
+
+      .training-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        justify-content: center;
+        align-items: center;
+      }
+      .training-content {
+        width: 90%;
+        height: 85%;
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .practice-quiz-container {
+        padding: 40px;
+        height: 100%;
+        overflow-y: auto;
+        box-sizing: border-box;
+        background: #fdfdfd;
+        position: relative;
+        z-index: 110;
+      }
+      .pq-question {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        color: var(--primary);
+      }
+      .pq-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+      .pq-btn {
+        padding: 20px;
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        background: white;
+        font-size: 1.1rem;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.2s;
+        font-family: "Poppins", sans-serif;
+      }
+      .pq-btn.correct {
+        background: #d4edda;
+        border-color: #28a745;
+        color: #155724;
+      }
+      .pq-btn.wrong {
+        background: #f8d7da;
+        border-color: #dc3545;
+        color: #721c24;
+      }
+      .pq-btn.disabled {
+        cursor: default;
+        pointer-events: none;
+      }
+      .pq-next-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 30px;
+        margin-top: 30px;
+        font-size: 1rem;
+        cursor: pointer;
+        float: right;
+        display: none;
+      }
+
+      #presence-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #2ecc71;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        z-index: 9999;
+      }
     </style>
 
     {% if force_password_change %}
     <!-- ===== FIRST-LOGIN PASSWORD CHANGE MODAL STYLES ===== -->
     <style>
-        #pwChangeOverlay {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(10, 10, 30, 0.55);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+      #pwChangeOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 99999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 10, 30, 0.55);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+      #pwChangeBox {
+        background: #fff;
+        border-radius: 22px;
+        padding: 40px 36px 32px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 24px 60px rgba(78, 84, 200, 0.25);
+        position: relative;
+        animation: modalSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-30px) scale(0.97);
         }
-        #pwChangeBox {
-            background: #fff;
-            border-radius: 22px;
-            padding: 40px 36px 32px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 24px 60px rgba(78,84,200,0.25);
-            position: relative;
-            animation: modalSlideIn 0.4s cubic-bezier(.22,1,.36,1);
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
         }
-        @keyframes modalSlideIn {
-            from { opacity:0; transform: translateY(-30px) scale(0.97); }
-            to   { opacity:1; transform: translateY(0) scale(1); }
-        }
-        #pwChangeBox h2 {
-            color: #4e54c8;
-            margin: 0 0 6px;
-            font-size: 1.5rem;
-        }
-        #pwChangeBox p.sub { color: #636e72; font-size: 0.9rem; margin-bottom: 24px; }
-        #pwChangeBox label { display:block; font-weight:600; color:#444; margin-bottom:5px; font-size:0.88rem; }
-        #pwChangeBox input[type=password] {
-            width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0;
-            border-radius: 10px; font-size: 1rem; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
-            margin-bottom: 16px;
-        }
-        #pwChangeBox input[type=password]:focus { border-color: #4e54c8; outline: none; }
-        #pwChangeSaveBtn {
-            width: 100%; padding: 13px;
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 700; cursor: pointer;
-            transition: opacity 0.2s;
-            font-family: 'Poppins', sans-serif;
-        }
-        #pwChangeSaveBtn:hover { opacity: 0.9; }
-        #pwChangeSaveBtn:disabled { background: #b2bec3; cursor: not-allowed; }
-        #pwChangeMsg { margin-top: 12px; font-size: 0.88rem; text-align: center; min-height: 20px; }
-        .pw-icon { font-size: 2.5rem; margin-bottom: 10px; display:block; }
+      }
+      #pwChangeBox h2 {
+        color: #4e54c8;
+        margin: 0 0 6px;
+        font-size: 1.5rem;
+      }
+      #pwChangeBox p.sub {
+        color: #636e72;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+      }
+      #pwChangeBox label {
+        display: block;
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 5px;
+        font-size: 0.88rem;
+      }
+      #pwChangeBox input[type="password"] {
+        width: 100%;
+        padding: 11px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        transition: border-color 0.2s;
+        margin-bottom: 16px;
+      }
+      #pwChangeBox input[type="password"]:focus {
+        border-color: #4e54c8;
+        outline: none;
+      }
+      #pwChangeSaveBtn {
+        width: 100%;
+        padding: 13px;
+        background: linear-gradient(135deg, #4e54c8, #8f94fb);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        font-family: "Poppins", sans-serif;
+      }
+      #pwChangeSaveBtn:hover {
+        opacity: 0.9;
+      }
+      #pwChangeSaveBtn:disabled {
+        background: #b2bec3;
+        cursor: not-allowed;
+      }
+      #pwChangeMsg {
+        margin-top: 12px;
+        font-size: 0.88rem;
+        text-align: center;
+        min-height: 20px;
+      }
+      .pw-icon {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        display: block;
+      }
     </style>
     {% endif %}
-</head>
-<body oncontextmenu="return false;">
-
-{% if force_password_change %}
-<!-- ===== FIRST-LOGIN PASSWORD CHANGE MODAL ===== -->
-<div id="pwChangeOverlay">
-    <div id="pwChangeBox">
+  </head>
+  <body oncontextmenu="return false;">
+    {% if force_password_change %}
+    <!-- ===== FIRST-LOGIN PASSWORD CHANGE MODAL ===== -->
+    <div id="pwChangeOverlay">
+      <div id="pwChangeBox">
         <span class="pw-icon">🔐</span>
         <h2>Set Your New Password</h2>
-        <p class="sub">Welcome! Your HR has assigned a temporary password.<br>Please set a new password to continue.</p>
+        <p class="sub">
+          Welcome! Your HR has assigned a temporary password.<br />Please set a
+          new password to continue.
+        </p>
 
         <label for="newPw">New Password</label>
-        <input type="password" id="newPw" placeholder="Min. 8 characters" autocomplete="new-password">
+        <input
+          type="password"
+          id="newPw"
+          placeholder="Min. 8 characters"
+          autocomplete="new-password"
+        />
 
         <label for="confirmPw">Confirm Password</label>
-        <input type="password" id="confirmPw" placeholder="Repeat your new password">
+        <input
+          type="password"
+          id="confirmPw"
+          placeholder="Repeat your new password"
+        />
 
         <div id="pwChangeMsg"></div>
 
-        <button id="pwChangeSaveBtn" onclick="submitPwChange()">Save & Continue Training ▶</button>
+        <button id="pwChangeSaveBtn" onclick="submitPwChange()">
+          Save & Continue Training ▶
+        </button>
+      </div>
     </div>
-</div>
 
-<script>
-    function submitPwChange() {
-        const newPw = document.getElementById('newPw').value;
-        const confirmPw = document.getElementById('confirmPw').value;
-        const msg = document.getElementById('pwChangeMsg');
-        const btn = document.getElementById('pwChangeSaveBtn');
+    <script>
+      function submitPwChange() {
+        const newPw = document.getElementById("newPw").value;
+        const confirmPw = document.getElementById("confirmPw").value;
+        const msg = document.getElementById("pwChangeMsg");
+        const btn = document.getElementById("pwChangeSaveBtn");
 
         if (newPw.length < 8) {
-            msg.style.color = '#c62828';
-            msg.textContent = '⚠ Password must be at least 8 characters.';
-            return;
+          msg.style.color = "#c62828";
+          msg.textContent = "⚠ Password must be at least 8 characters.";
+          return;
         }
         if (newPw !== confirmPw) {
-            msg.style.color = '#c62828';
-            msg.textContent = '⚠ Passwords do not match.';
-            return;
+          msg.style.color = "#c62828";
+          msg.textContent = "⚠ Passwords do not match.";
+          return;
         }
 
         btn.disabled = true;
-        btn.textContent = 'Saving...';
-        msg.textContent = '';
+        btn.textContent = "Saving...";
+        msg.textContent = "";
 
         // Build a form and POST to force_password_change URL
         const formData = new FormData();
-        formData.append('new_password', newPw);
-        formData.append('confirm_password', confirmPw);
+        formData.append("new_password", newPw);
+        formData.append("confirm_password", confirmPw);
         // CSRF handled via header
 
         fetch("{% url 'force_password_change' %}", {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin',
-            headers: { 
-                'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': getCsrfToken()
-            }
+          method: "POST",
+          body: formData,
+          credentials: "same-origin",
+          headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken(),
+          },
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                msg.style.color = '#27ae60';
-                msg.textContent = '✓ Password changed! Starting training...';
-                setTimeout(() => {
-                    document.getElementById('pwChangeOverlay').style.display = 'none';
-                }, 900);
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.status === "success") {
+              msg.style.color = "#27ae60";
+              msg.textContent = "✓ Password changed! Starting training...";
+              setTimeout(() => {
+                document.getElementById("pwChangeOverlay").style.display =
+                  "none";
+              }, 900);
             } else {
-                msg.style.color = '#c62828';
-                msg.textContent = '⚠ ' + (data.message || 'Something went wrong.');
-                btn.disabled = false;
-                btn.textContent = 'Save & Continue Training ▶';
+              msg.style.color = "#c62828";
+              msg.textContent =
+                "⚠ " + (data.message || "Something went wrong.");
+              btn.disabled = false;
+              btn.textContent = "Save & Continue Training ▶";
             }
-        })
-        .catch(() => {
+          })
+          .catch(() => {
             window.location.href = "{% url 'force_password_change' %}";
+          });
+      }
+
+      // Block Enter key from bypassing the modal
+      document
+        .getElementById("confirmPw")
+        .addEventListener("keydown", function (e) {
+          if (e.key === "Enter") submitPwChange();
         });
-    }
+    </script>
+    {% endif %}
 
-    // Block Enter key from bypassing the modal
-    document.getElementById('confirmPw').addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') submitPwChange();
-    });
-</script>
-{% endif %}
+    <div id="presence-indicator">● Protected System Active</div>
 
-<div id="presence-indicator">● Protected System Active</div>
+    <div class="training-modal" id="trainingModal">
+      <div class="training-content">
+        <button
+          onclick="closeModal()"
+          style="
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 40px;
+            height: 40px;
+            background: #ff4757;
+            color: white;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            z-index: 1100;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          "
+        >
+          &times;
+        </button>
 
-<div class="training-modal" id="trainingModal">
-    <div class="training-content">
-        <button onclick="closeModal()" style="position: absolute; right: 20px; top: 20px; width: 40px; height: 40px; background: #ff4757; color: white; border-radius: 50%; border: none; cursor: pointer; z-index: 1100; font-size: 24px; display: flex; align-items: center; justify-content: center;">&times;</button>
+        <div
+          id="practiceQuizContainer"
+          class="practice-quiz-container"
+          style="display: none"
+        >
+          <h2 style="text-align: center; margin-bottom: 30px">
+            POSH Practice Assessment
+          </h2>
 
-        <div id="practiceQuizContainer" class="practice-quiz-container" style="display: none;">
-            <h2 style="text-align: center; margin-bottom: 30px;">POSH Practice Assessment</h2>
-            
-            <div id="quiz-timer-box" style="text-align:center; font-size:1.5rem; font-weight:700; color:var(--danger); margin-bottom:20px; display:none;">
-                Time Left: <span id="quiz-time">10:00</span>
+          <div
+            id="quiz-timer-box"
+            style="
+              text-align: center;
+              font-size: 1.5rem;
+              font-weight: 700;
+              color: var(--danger);
+              margin-bottom: 20px;
+              display: none;
+            "
+          >
+            Time Left: <span id="quiz-time">10:00</span>
+          </div>
+
+          <div id="pq-game-area">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                color: #666;
+              "
+            >
+              <span id="pq-counter">Question 1/15</span>
             </div>
-
-            <div id="pq-game-area">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #666;">
-                    <span id="pq-counter">Question 1/15</span>
-                </div>
-                <div id="pq-question-text" class="pq-question">Loading...</div>
-                <div id="pq-options-grid" class="pq-options"></div>
-                <button id="pq-next-btn" class="pq-next-btn" onclick="nextPracticeQuestion()">Next Question ➜</button>
-            </div>
-            <div id="pq-result-area" style="text-align: center; display: none; padding-top: 50px;">
-                <h1>Practice Complete!</h1>
-                <p>You have reviewed the questions.</p>
-                <button class="btn-start" onclick="closeModal()">Close Quiz</button>
-            </div>
+            <div id="pq-question-text" class="pq-question">Loading...</div>
+            <div id="pq-options-grid" class="pq-options"></div>
+            <button
+              id="pq-next-btn"
+              class="pq-next-btn"
+              onclick="nextPracticeQuestion()"
+            >
+              Next Question ➜
+            </button>
+          </div>
+          <div
+            id="pq-result-area"
+            style="text-align: center; display: none; padding-top: 50px"
+          >
+            <h1>Practice Complete!</h1>
+            <p>You have reviewed the questions.</p>
+            <button class="btn-start" onclick="closeModal()">Close Quiz</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<div class="lms-container">
-    <aside class="sidebar">
-        <h2 style="color: var(--primary); margin-bottom: 20px; padding-left: 10px;">POSH Training</h2>
+    <div class="lms-container">
+      <aside class="sidebar">
+        <h2
+          style="color: var(--primary); margin-bottom: 20px; padding-left: 10px"
+        >
+          POSH Training
+        </h2>
         <div class="nav-menu">
-            <div onclick="showView('dashboard')" id="nav-dash" class="nav-item active"><span>📊 Dashboard</span></div>
-            
+          <div
+            onclick="showView('dashboard')"
+            id="nav-dash"
+            class="nav-item active"
+          >
+            <span>📊 Dashboard</span>
+          </div>
         </div>
-        <div onclick="handleLogout()" class="nav-item logout"><span>🚪 Logout</span></div>
-    </aside>
+        <div onclick="handleLogout()" class="nav-item logout">
+          <span>🚪 Logout</span>
+        </div>
+      </aside>
 
-    <main class="main-content">
+      <main class="main-content">
         <div id="dashboard-view">
-            <h1 style="color: white;">Course Dashboard</h1>
-            
+          <h1 style="color: white">Course Dashboard</h1>
+
+          <div class="section-card">
+            <div id="video-stage">
+              <div class="stage-container">
+                <div id="video-cover" class="content-cover">
+                  <div class="cover-overlay"></div>
+                  <h2 id="cover-title">Module Title</h2>
+                  <button class="btn-start" onclick="startVideo()">
+                    ▶ Start Private Video
+                  </button>
+                </div>
+                <video
+                  id="mainPlayer"
+                  controls
+                  controlsList="nodownload"
+                  oncontextmenu="return false;"
+                  style="display: none"
+                >
+                  <source
+                    src="/media/training%20videos/Demo%20video.mp4"
+                    type="video/mp4"
+                  />
+                </video>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-header">
+            <button class="tab-btn active" id="tab-vids">
+              Video Modules & Quiz
+            </button>
+          </div>
+
+          <div id="vids-section"><div id="module-list"></div></div>
+
+          <div
+            class="report-grid"
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr 1fr;
+              gap: 20px;
+              margin-top: 40px;
+            "
+          >
             <div class="section-card">
-                <div id="video-stage">
-                    <div class="stage-container">
-                        <div id="video-cover" class="content-cover">
-                            <div class="cover-overlay"></div>
-                            <h2 id="cover-title">Module Title</h2>
-                            <button class="btn-start" onclick="startVideo()">▶ Start Private Video</button>
-                        </div>
-                        <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none;">
-                            <source src="/media/training%20videos/Demo%20video.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                </div>
+              <h3 style="color: var(--primary)">Activity Health</h3>
+              <div style="height: 200px">
+                <canvas id="statusChart"></canvas>
+              </div>
             </div>
-
-            <div class="tab-header">
-                <button class="tab-btn active" id="tab-vids">Video Modules & Quiz</button>
+            <div class="section-card" style="text-align: center">
+              <h3>Study Time</h3>
+              <h1
+                id="watch-time-display"
+                style="font-size: 3.5rem; color: var(--primary); margin: 20px 0"
+              >
+                {{ formatted_total_time|default:"00:00" }}
+              </h1>
             </div>
-
-            <div id="vids-section"><div id="module-list"></div></div>
-
-            <div class="report-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 40px;">
-                <div class="section-card">
-                    <h3 style="color: var(--primary);">Activity Health</h3>
-                    <div style="height: 200px;"><canvas id="statusChart"></canvas></div>
-                </div>
-                <div class="section-card" style="text-align: center;">
-                    <h3>Study Time</h3>
-                    <h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">{{ formatted_total_time|default:"00:00" }}</h1>
-                </div>
-                <div class="section-card">
-                    <h3>Completion</h3>
-                    <h2 id="perc-text">0%</h2>
-                    <div style="width: 100%; height: 15px; background: #eee; border-radius: 10px; overflow: hidden;">
-                        <div id="perc-bar" style="width: 0%; height: 100%; background: var(--complete); transition: 1s;"></div>
-                    </div>
-                </div>
+            <div class="section-card">
+              <h3>Completion</h3>
+              <h2 id="perc-text">0%</h2>
+              <div
+                style="
+                  width: 100%;
+                  height: 15px;
+                  background: #eee;
+                  border-radius: 10px;
+                  overflow: hidden;
+                "
+              >
+                <div
+                  id="perc-bar"
+                  style="
+                    width: 0%;
+                    height: 100%;
+                    background: var(--complete);
+                    transition: 1s;
+                  "
+                ></div>
+              </div>
             </div>
+          </div>
         </div>
-        
-    </main>
-</div>
+      </main>
+    </div>
 
-<script>
-    function getCsrfToken() {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, 10) === ('csrftoken=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(10));
-                    break;
-                }
-            }
-        }
-        return cookieValue || '';
-    }
+    <script>
+      function getCsrfToken() {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, 10) === ('csrftoken=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(10));
+                      break;
+                  }
+              }
+          }
+          return cookieValue || '';
+      }
 
-    const player = document.getElementById('mainPlayer');
-    let currentIdx = 0;
-    let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
-    let furthestTime = 0;
+      const player = document.getElementById('mainPlayer');
+      let currentIdx = 0;
+      let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
+      let furthestTime = 0;
 
 
-    const modules = [
-        {% for m in video_modules %}
-        { 
-            id: {{ m.id }}, 
-            title: "{{ m.title|escapejs }}", 
-            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}", 
-            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600' }}", 
-            src: "{{ m.src }}",
-            url: "{{ m.url }}",
-            isQuiz: {% if m.is_quiz %}true{% else %}false{% endif %}
-        },
-        {% endfor %}
-    ];
-    
-    console.log('Modules loaded:', modules);
-    console.log('First module src:', modules.length > 0 ? modules[0].src : 'No modules');
+      const modules = [
+          {% for m in video_modules %}
+          {
+              id: {{ m.id }},
+              title: "{{ m.title|escapejs }}",
+              status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
+              thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=600' }}",
+              src: "{{ m.src }}",
+              url: "{{ m.url }}",
+              isQuiz: {% if m.is_quiz %}true{% else %}false{% endif %}
+          },
+          {% endfor %}
+      ];
 
-    const questionBank = [
-        { question: "The POSH Act was enacted in which year?", options: ["2010", "2011", "2013", "2015"], answer: 2 },
-        { question: "What does POSH stand for?", options: ["Prevention of Sexual Harm", "Protection of Safety at Home", "Prevention, Prohibition and Redressal of Sexual Harassment", "Public Order and Safety Handling"], answer: 2 },
-        { question: "The primary objective of the POSH Act is to:", options: ["Punish offenders only", "Promote discipline", "Prevent, prohibit and redress sexual harassment", "Improve productivity"], answer: 2 },
-        { question: "POSH Act applies to which workplaces?", options: ["Only private companies", "Only government offices", "All workplaces in India", "Only IT companies"], answer: 2 },
-        { question: "Which of the following is NOT a pillar of the POSH Act?", options: ["Prevention", "Prohibition", "Redressal", "Promotion"], answer: 3 },
-        { question: "Who is protected under the POSH Act?", options: ["Only permanent employees", "Only women employees", "Any aggrieved woman at the workplace", "Only interns"], answer: 2 },
-        { question: "“Workplace” under POSH includes:", options: ["Office premises only", "Client locations and official travel", "Employer-owned buildings only", "Factories only"], answer: 1 },
-        { question: "Sexual harassment is judged from whose perspective?", options: ["Employer", "Accused", "Woman affected", "Internal Committee"], answer: 2 },
-        { question: "Which behaviour can qualify as sexual harassment?", options: ["Friendly greeting", "Unwelcome physical contact", "Professional feedback", "Formal discussion"], answer: 1 },
-        { question: "A single incident can amount to sexual harassment if it is:", options: ["Accidental", "Serious", "Informal", "Mutual"], answer: 1 },
-        { question: "Repeatedly asking for dates after refusal is considered:", options: ["Casual behaviour", "Harmless flirting", "Sexual harassment", "Social interaction"], answer: 2 },
-        { question: "Sending late-night personal messages to junior colleagues is:", options: ["Acceptable", "Friendly", "Unwelcome behaviour", "Professional"], answer: 2 },
-        { question: "Which of the following is non-verbal sexual harassment?", options: ["Email complaint", "Inappropriate staring", "Formal warning", "Work reminder"], answer: 1 },
-        { question: "Displaying explicit images at the workplace is:", options: ["Personal choice", "Entertainment", "Sexual harassment", "Free expression"], answer: 2 },
-        { question: "Creating a hostile or intimidating work environment amounts to:", options: ["Discipline", "Miscommunication", "Sexual harassment", "Performance issue"], answer: 2 },
-        { question: "Employers’ duties are defined under which section of POSH Act?", options: ["Section 5", "Section 10", "Section 19", "Section 25"], answer: 2 },
-        { question: "Employers must display which information at the workplace?", options: ["Salary details", "POSH policy and IC details", "Personal contacts", "Attendance rules"], answer: 1 },
-        { question: "Which of the following is an employer responsibility?", options: ["Ignore complaints", "Conduct awareness programmes", "Discourage reporting", "Delay inquiry"], answer: 1 },
-        { question: "Organizations with how many employees must form an Internal Committee?", options: ["5", "8", "10", "20"], answer: 2 },
-        { question: "Who must be the Presiding Officer of the Internal Committee?", options: ["HR Manager", "External NGO member", "Senior woman employee", "Legal advisor"], answer: 2 },
-        { question: "Minimum percentage of women members in IC should be:", options: ["25%", "30%", "50%", "75%"], answer: 2 },
-        { question: "External member of IC should be from:", options: ["Police department", "NGO or professional body", "Company board", "Legal firm only"], answer: 1 },
-        { question: "Maximum tenure of IC members is:", options: ["1 year", "2 years", "3 years", "5 years"], answer: 2 },
-        { question: "A complaint should be filed within how many months of the incident?", options: ["1 month", "2 months", "3 months", "6 months"], answer: 2 },
-        { question: "IC can extend the complaint filing period by:", options: ["1 month", "2 months", "3 months", "No extension"], answer: 2 },
-        { question: "Conciliation can be initiated only when requested by:", options: ["Employer", "Respondent", "Complainant", "IC"], answer: 2 },
-        { question: "Which settlement is NOT allowed during conciliation?", options: ["Apology", "Warning", "Monetary settlement", "Transfer"], answer: 2 },
-        { question: "Inquiry must be completed within how many days?", options: ["60", "75", "90", "120"], answer: 2 },
-        { question: "Inquiry report must be submitted within how many days after completion?", options: ["5 days", "7 days", "10 days", "15 days"], answer: 2 },
-        { question: "Employer must act on IC recommendations within:", options: ["30 days", "45 days", "60 days", "90 days"], answer: 2 },
-        { question: "Confidentiality during POSH proceedings is:", options: ["Optional", "Mandatory", "Conditional", "Recommended"], answer: 1 },
-        { question: "Which is a right of the complainant?", options: ["Public disclosure", "Non-retaliatory environment", "Anonymous punishment", "Immediate termination"], answer: 1 },
-        { question: "Which is a right of the respondent?", options: ["Presumed guilt", "No hearing", "Opportunity to respond", "Immediate penalty"], answer: 2 },
-        { question: "IC can recommend which interim relief?", options: ["Salary deduction", "Transfer", "Termination", "Promotion"], answer: 1 },
-        { question: "Maximum leave allowed as interim relief is:", options: ["1 month", "2 months", "3 months", "6 months"], answer: 2 },
-        { question: "If allegations are proved, IC may recommend:", options: ["No action", "Disciplinary action", "Informal warning only", "Case closure"], answer: 1 },
-        { question: "Compensation to the complainant may be recovered from:", options: ["Employer funds", "Government", "Respondent’s salary", "Insurance"], answer: 2 },
-        { question: "Which action supports POSH compliance?", options: ["Ignoring complaints", "Regular training", "Discouraging reporting", "Informal handling"], answer: 1 },
-        { question: "Gender sensitisation helps identify:", options: ["Technical errors", "Unconscious biases", "Financial gaps", "Legal loopholes"], answer: 1 },
-        { question: "Gender sensitisation encourages questioning of:", options: ["Authority", "Company rules", "Stereotypes", "Performance metrics"], answer: 2 },
-        { question: "Which guidelines preceded the POSH Act?", options: ["IPC Guidelines", "RTI Guidelines", "Vishaka Guidelines", "Labour Code"], answer: 2 },
-        { question: "Vishaka Guidelines were issued in which year?", options: ["1995", "1997", "2000", "2003"], answer: 1 },
-        { question: "POSH Act shifted accountability from individual to:", options: ["Government", "Police", "Institution", "Court"], answer: 2 },
-        { question: "Which is an example of unwelcome behaviour?", options: ["Mutual conversation", "Continued conduct after refusal", "Consensual interaction", "Professional feedback"], answer: 1 },
-        { question: "Blocking someone’s path deliberately can be categorized as:", options: ["Accident", "Non-verbal harassment", "Team conflict", "Discipline"], answer: 1 },
-        { question: "Making sexual jokes in meetings is:", options: ["Team bonding", "Friendly humour", "Sexual harassment", "Informal talk"], answer: 2 },
-        { question: "POSH training aims to:", options: ["Increase sales", "Build awareness and respect", "Enforce punishment", "Reduce workforce"], answer: 1 },
-        { question: "Employees should refrain from sharing:", options: ["Work updates", "Meeting notes", "Sexist jokes", "Feedback"], answer: 2 },
-        { question: "Bystander intervention should always be:", options: ["Aggressive", "Public", "Safe", "Mandatory"], answer: 2 },
-        { question: "Which sector is covered under POSH Act?", options: ["Only IT", "Only government", "All sectors", "Only private"], answer: 2 },
-        { question: "Domestic workers are covered under POSH Act when employed in:", options: ["Offices", "Factories", "Dwelling places", "Shops"], answer: 2 },
-        { question: "Which behaviour shows power imbalance?", options: ["Mutual consent", "Pressure from senior", "Equal discussion", "Team feedback"], answer: 1 },
-        { question: "Staring or smirking sexually is classified as:", options: ["Verbal harassment", "Non-verbal harassment", "Written misconduct", "Casual behaviour"], answer: 1 },
-        { question: "POSH Act promotes which type of workplace?", options: ["Competitive", "Disciplined", "Safe and respectful", "Hierarchical"], answer: 2 },
-        { question: "Every employee has a responsibility to:", options: ["Stay silent", "Support respectful culture", "Avoid reporting", "Ignore misconduct"], answer: 1 }
-    ];
-    
-    let quizSeconds = 600; 
-    let quizTimerInterval;
-    let currentQuizSet = []; // To store the 15 shuffled questions
+      console.log('Modules loaded:', modules);
+      console.log('First module src:', modules.length > 0 ? modules[0].src : 'No modules');
 
-    function markComplete(moduleId) {
-        console.log('markComplete called with moduleId:', moduleId);
-        fetch(`/ajax/mod-complete/${moduleId}/`, {
-            method: 'POST',
-            headers: { 'X-CSRFToken': getCsrfToken() }
-        })
-        .then(r => r.json())
-        .then(d => { 
-            console.log(`Module ${moduleId} response:`, d); 
-            if(d.status === 'success') console.log(`Module ${moduleId} saved successfully.`);
-            else console.error(`Module ${moduleId} save failed:`, d);
-        })
-        .catch(e => { console.error("Save failed for module", moduleId, e); });
-    }
+      const questionBank = [
+          { question: "The POSH Act was enacted in which year?", options: ["2010", "2011", "2013", "2015"], answer: 2 },
+          { question: "What does POSH stand for?", options: ["Prevention of Sexual Harm", "Protection of Safety at Home", "Prevention, Prohibition and Redressal of Sexual Harassment", "Public Order and Safety Handling"], answer: 2 },
+          { question: "The primary objective of the POSH Act is to:", options: ["Punish offenders only", "Promote discipline", "Prevent, prohibit and redress sexual harassment", "Improve productivity"], answer: 2 },
+          { question: "POSH Act applies to which workplaces?", options: ["Only private companies", "Only government offices", "All workplaces in India", "Only IT companies"], answer: 2 },
+          { question: "Which of the following is NOT a pillar of the POSH Act?", options: ["Prevention", "Prohibition", "Redressal", "Promotion"], answer: 3 },
+          { question: "Who is protected under the POSH Act?", options: ["Only permanent employees", "Only women employees", "Any aggrieved woman at the workplace", "Only interns"], answer: 2 },
+          { question: "“Workplace” under POSH includes:", options: ["Office premises only", "Client locations and official travel", "Employer-owned buildings only", "Factories only"], answer: 1 },
+          { question: "Sexual harassment is judged from whose perspective?", options: ["Employer", "Accused", "Woman affected", "Internal Committee"], answer: 2 },
+          { question: "Which behaviour can qualify as sexual harassment?", options: ["Friendly greeting", "Unwelcome physical contact", "Professional feedback", "Formal discussion"], answer: 1 },
+          { question: "A single incident can amount to sexual harassment if it is:", options: ["Accidental", "Serious", "Informal", "Mutual"], answer: 1 },
+          { question: "Repeatedly asking for dates after refusal is considered:", options: ["Casual behaviour", "Harmless flirting", "Sexual harassment", "Social interaction"], answer: 2 },
+          { question: "Sending late-night personal messages to junior colleagues is:", options: ["Acceptable", "Friendly", "Unwelcome behaviour", "Professional"], answer: 2 },
+          { question: "Which of the following is non-verbal sexual harassment?", options: ["Email complaint", "Inappropriate staring", "Formal warning", "Work reminder"], answer: 1 },
+          { question: "Displaying explicit images at the workplace is:", options: ["Personal choice", "Entertainment", "Sexual harassment", "Free expression"], answer: 2 },
+          { question: "Creating a hostile or intimidating work environment amounts to:", options: ["Discipline", "Miscommunication", "Sexual harassment", "Performance issue"], answer: 2 },
+          { question: "Employers’ duties are defined under which section of POSH Act?", options: ["Section 5", "Section 10", "Section 19", "Section 25"], answer: 2 },
+          { question: "Employers must display which information at the workplace?", options: ["Salary details", "POSH policy and IC details", "Personal contacts", "Attendance rules"], answer: 1 },
+          { question: "Which of the following is an employer responsibility?", options: ["Ignore complaints", "Conduct awareness programmes", "Discourage reporting", "Delay inquiry"], answer: 1 },
+          { question: "Organizations with how many employees must form an Internal Committee?", options: ["5", "8", "10", "20"], answer: 2 },
+          { question: "Who must be the Presiding Officer of the Internal Committee?", options: ["HR Manager", "External NGO member", "Senior woman employee", "Legal advisor"], answer: 2 },
+          { question: "Minimum percentage of women members in IC should be:", options: ["25%", "30%", "50%", "75%"], answer: 2 },
+          { question: "External member of IC should be from:", options: ["Police department", "NGO or professional body", "Company board", "Legal firm only"], answer: 1 },
+          { question: "Maximum tenure of IC members is:", options: ["1 year", "2 years", "3 years", "5 years"], answer: 2 },
+          { question: "A complaint should be filed within how many months of the incident?", options: ["1 month", "2 months", "3 months", "6 months"], answer: 2 },
+          { question: "IC can extend the complaint filing period by:", options: ["1 month", "2 months", "3 months", "No extension"], answer: 2 },
+          { question: "Conciliation can be initiated only when requested by:", options: ["Employer", "Respondent", "Complainant", "IC"], answer: 2 },
+          { question: "Which settlement is NOT allowed during conciliation?", options: ["Apology", "Warning", "Monetary settlement", "Transfer"], answer: 2 },
+          { question: "Inquiry must be completed within how many days?", options: ["60", "75", "90", "120"], answer: 2 },
+          { question: "Inquiry report must be submitted within how many days after completion?", options: ["5 days", "7 days", "10 days", "15 days"], answer: 2 },
+          { question: "Employer must act on IC recommendations within:", options: ["30 days", "45 days", "60 days", "90 days"], answer: 2 },
+          { question: "Confidentiality during POSH proceedings is:", options: ["Optional", "Mandatory", "Conditional", "Recommended"], answer: 1 },
+          { question: "Which is a right of the complainant?", options: ["Public disclosure", "Non-retaliatory environment", "Anonymous punishment", "Immediate termination"], answer: 1 },
+          { question: "Which is a right of the respondent?", options: ["Presumed guilt", "No hearing", "Opportunity to respond", "Immediate penalty"], answer: 2 },
+          { question: "IC can recommend which interim relief?", options: ["Salary deduction", "Transfer", "Termination", "Promotion"], answer: 1 },
+          { question: "Maximum leave allowed as interim relief is:", options: ["1 month", "2 months", "3 months", "6 months"], answer: 2 },
+          { question: "If allegations are proved, IC may recommend:", options: ["No action", "Disciplinary action", "Informal warning only", "Case closure"], answer: 1 },
+          { question: "Compensation to the complainant may be recovered from:", options: ["Employer funds", "Government", "Respondent’s salary", "Insurance"], answer: 2 },
+          { question: "Which action supports POSH compliance?", options: ["Ignoring complaints", "Regular training", "Discouraging reporting", "Informal handling"], answer: 1 },
+          { question: "Gender sensitisation helps identify:", options: ["Technical errors", "Unconscious biases", "Financial gaps", "Legal loopholes"], answer: 1 },
+          { question: "Gender sensitisation encourages questioning of:", options: ["Authority", "Company rules", "Stereotypes", "Performance metrics"], answer: 2 },
+          { question: "Which guidelines preceded the POSH Act?", options: ["IPC Guidelines", "RTI Guidelines", "Vishaka Guidelines", "Labour Code"], answer: 2 },
+          { question: "Vishaka Guidelines were issued in which year?", options: ["1995", "1997", "2000", "2003"], answer: 1 },
+          { question: "POSH Act shifted accountability from individual to:", options: ["Government", "Police", "Institution", "Court"], answer: 2 },
+          { question: "Which is an example of unwelcome behaviour?", options: ["Mutual conversation", "Continued conduct after refusal", "Consensual interaction", "Professional feedback"], answer: 1 },
+          { question: "Blocking someone’s path deliberately can be categorized as:", options: ["Accident", "Non-verbal harassment", "Team conflict", "Discipline"], answer: 1 },
+          { question: "Making sexual jokes in meetings is:", options: ["Team bonding", "Friendly humour", "Sexual harassment", "Informal talk"], answer: 2 },
+          { question: "POSH training aims to:", options: ["Increase sales", "Build awareness and respect", "Enforce punishment", "Reduce workforce"], answer: 1 },
+          { question: "Employees should refrain from sharing:", options: ["Work updates", "Meeting notes", "Sexist jokes", "Feedback"], answer: 2 },
+          { question: "Bystander intervention should always be:", options: ["Aggressive", "Public", "Safe", "Mandatory"], answer: 2 },
+          { question: "Which sector is covered under POSH Act?", options: ["Only IT", "Only government", "All sectors", "Only private"], answer: 2 },
+          { question: "Domestic workers are covered under POSH Act when employed in:", options: ["Offices", "Factories", "Dwelling places", "Shops"], answer: 2 },
+          { question: "Which behaviour shows power imbalance?", options: ["Mutual consent", "Pressure from senior", "Equal discussion", "Team feedback"], answer: 1 },
+          { question: "Staring or smirking sexually is classified as:", options: ["Verbal harassment", "Non-verbal harassment", "Written misconduct", "Casual behaviour"], answer: 1 },
+          { question: "POSH Act promotes which type of workplace?", options: ["Competitive", "Disciplined", "Safe and respectful", "Hierarchical"], answer: 2 },
+          { question: "Every employee has a responsibility to:", options: ["Stay silent", "Support respectful culture", "Avoid reporting", "Ignore misconduct"], answer: 1 }
+      ];
 
-    function showView(v) {
-        document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
-        document.getElementById('nav-dash').classList.remove('active');
-        if(v === 'dashboard') {
-            document.getElementById('nav-dash').classList.add('active');
-            // Re-render modules to refresh the UI state
-            renderModules();
-            updateTotalStats();
-        }
-    }
+      let quizSeconds = 600;
+      let quizTimerInterval;
+      let currentQuizSet = []; // To store the 15 shuffled questions
 
-    document.addEventListener('visibilitychange', () => {
-        if (document.hidden) player.pause();
-    });
+      function markComplete(moduleId) {
+          console.log('markComplete called with moduleId:', moduleId);
+          fetch(`/ajax/mod-complete/${moduleId}/`, {
+              method: 'POST',
+              headers: { 'X-CSRFToken': getCsrfToken() }
+          })
+          .then(r => r.json())
+          .then(d => {
+              console.log(`Module ${moduleId} response:`, d);
+              if(d.status === 'success') console.log(`Module ${moduleId} saved successfully.`);
+              else console.error(`Module ${moduleId} save failed:`, d);
+          })
+          .catch(e => { console.error("Save failed for module", moduleId, e); });
+      }
 
-    function renderModules() {
-        const list = document.getElementById('module-list'); list.innerHTML = '';
-        modules.forEach((mod, i) => {
-            const item = document.createElement('div');
-            item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
+      function showView(v) {
+          document.getElementById('dashboard-view').style.display = v === 'dashboard' ? 'block' : 'none';
+          document.getElementById('nav-dash').classList.remove('active');
+          if(v === 'dashboard') {
+              document.getElementById('nav-dash').classList.add('active');
+              // Re-render modules to refresh the UI state
+              renderModules();
+              updateTotalStats();
+          }
+      }
 
-            if (mod.isQuiz) {
-                // Quiz item — clicking opens the practice quiz modal
-                item.onclick = () => {
-                    if (mod.status === 'locked') {
-                        alert('🔒 Complete the video module first to unlock the Quiz.');
-                        return;
-                    }
-                    document.getElementById('trainingModal').style.display = 'flex';
-                    document.getElementById('practiceQuizContainer').style.display = 'block';
-                    document.getElementById('quiz-timer-box').style.display = 'block';
-                    // Store quiz module id so we can mark it complete on finish
-                    window._quizModuleId = mod.id;
-                    window._quizModuleIdx = i;
-                    initQuiz();
-                };
-                item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>📝 ${mod.title}</h3><small style="color:#888">Interactive Quiz</small></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
-            } else {
-                // Normal video item
-                item.onclick = () => { 
-                    if(mod.status !== 'locked') { 
-                        currentIdx = i; 
-                        playVideo(i); 
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    } 
-                };
-                item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
-            }
-            list.appendChild(item);
-        });
-        updateChart();
-    }
+      document.addEventListener('visibilitychange', () => {
+          if (document.hidden) player.pause();
+      });
 
-    function playVideo(idx) {
-        console.log('playVideo called with idx:', idx);
-        console.log('Total modules:', modules.length);
-        
-        if (!modules || modules.length === 0) {
-            console.error('No modules available!');
-            return;
-        }
-        
-        if (idx >= modules.length) {
-            console.error('Invalid module index:', idx);
-            return;
-        }
-        
-        currentIdx = idx;
-        const mod = modules[idx];
-        console.log('Loading module:', mod);
-        
-        if (!mod.src) {
-            console.error('Module has no src:', mod);
-            return;
-        }
-        
-        player.pause();
-        player.style.display = 'none';
-        document.getElementById('video-cover').style.display = 'flex';
-        document.getElementById('video-cover').style.backgroundImage = `url('${mod.thumb}')`;
-        document.getElementById('cover-title').innerText = mod.title;
-        
-        // Clear existing source and set new one
-        player.innerHTML = '';
-        const source = document.createElement('source');
-        source.src = mod.src;
-        source.type = 'video/mp4';
-        player.appendChild(source);
-        
-        console.log('Player source set to:', mod.src);
-        player.load();
-        player.currentTime = 0;
-        furthestTime = 0;
-    }
+      function renderModules() {
+          const list = document.getElementById('module-list'); list.innerHTML = '';
+          modules.forEach((mod, i) => {
+              const item = document.createElement('div');
+              item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
 
-    function startVideo() {
-        console.log('startVideo called');
-        console.log('Player src:', player.src);
-        console.log('Player readyState:', player.readyState);
-        document.getElementById('video-cover').style.display = 'none';
-        player.style.display = 'block';
-        player.play().catch(err => {
-            console.error('Play failed:', err);
-        });
-    }
+              if (mod.isQuiz) {
+                  // Quiz item — clicking opens the practice quiz modal
+                  item.onclick = () => {
+                      if (mod.status === 'locked') {
+                          alert('🔒 Complete the video module first to unlock the Quiz.');
+                          return;
+                      }
+                      document.getElementById('trainingModal').style.display = 'flex';
+                      document.getElementById('practiceQuizContainer').style.display = 'block';
+                      document.getElementById('quiz-timer-box').style.display = 'block';
+                      // Store quiz module id so we can mark it complete on finish
+                      window._quizModuleId = mod.id;
+                      window._quizModuleIdx = i;
+                      initQuiz();
+                  };
+                  item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>📝 ${mod.title}</h3><small style="color:#888">Interactive Quiz</small></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+              } else {
+                  // Normal video item
+                  item.onclick = () => {
+                      if(mod.status !== 'locked') {
+                          currentIdx = i;
+                          playVideo(i);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                  };
+                  item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+              }
+              list.appendChild(item);
+          });
+          updateChart();
+      }
 
-    function closeModal() {
-        document.getElementById('trainingModal').style.display = 'none';
-        clearInterval(quizTimerInterval);
-        // Refresh the UI state when closing modal
-        renderModules();
-        updateTotalStats();
-    }
-    
-    // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---
-    let qIdx = 0;
-    let qScore = 0;
+      function playVideo(idx) {
+          console.log('playVideo called with idx:', idx);
+          console.log('Total modules:', modules.length);
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
+          if (!modules || modules.length === 0) {
+              console.error('No modules available!');
+              return;
+          }
 
-    function initQuiz() {
-        qIdx = 0; 
-        qScore = 0;
-        quizSeconds = 600;
-        // Create a copy, shuffle, and take only 15
-        currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
-        
-        document.getElementById('pq-game-area').style.display = 'block';
-        document.getElementById('pq-result-area').style.display = 'none';
-        loadQuestion();
-        clearInterval(quizTimerInterval);
-        quizTimerInterval = setInterval(updateTimer, 1000);
-    }
+          if (idx >= modules.length) {
+              console.error('Invalid module index:', idx);
+              return;
+          }
 
-    function updateTimer() {
-        quizSeconds--;
-        let m = Math.floor(quizSeconds/60);
-        let s = quizSeconds%60;
-        document.getElementById('quiz-time').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-        if(quizSeconds <= 0) { clearInterval(quizTimerInterval); closeModal(); alert("Time is up!"); }
-    }
+          currentIdx = idx;
+          const mod = modules[idx];
+          console.log('Loading module:', mod);
 
-    function loadQuestion() {
-        const q = currentQuizSet[qIdx];
-        document.getElementById('pq-counter').innerText = `Question ${qIdx+1}/15`;
-        document.getElementById('pq-question-text').innerText = q.question;
-        const grid = document.getElementById('pq-options-grid'); grid.innerHTML = '';
-        q.options.forEach((opt, i) => {
-            const btn = document.createElement('button');
-            btn.className = 'pq-btn'; btn.innerText = opt;
-            btn.onclick = () => {
-                const btns = document.querySelectorAll('.pq-btn');
-                btns.forEach(b => b.classList.add('disabled'));
-                if(i === q.answer) {
-                    btn.classList.add('correct');
-                    qScore++;
-                } else { 
-                    btn.classList.add('wrong'); 
-                    btns[q.answer].classList.add('correct'); 
-                }
-                document.getElementById('pq-next-btn').style.display = 'block';
-            };
-            grid.appendChild(btn);
-        });
-    }
+          if (!mod.src) {
+              console.error('Module has no src:', mod);
+              return;
+          }
 
-    function nextPracticeQuestion() {
-        qIdx++;
-        document.getElementById('pq-next-btn').style.display = 'none';
-        if(qIdx < 15) {
-            loadQuestion();
-        } else {
-            clearInterval(quizTimerInterval);
-            document.getElementById('pq-game-area').style.display = 'none';
-            
-            const passed = qScore >= 3;
-            const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
-            document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn btn-gradient mt-3" onclick="closeModal()">Finish</button>`;
-            document.getElementById('pq-result-area').style.display = 'block';
+          player.pause();
+          player.style.display = 'none';
+          document.getElementById('video-cover').style.display = 'flex';
+          document.getElementById('video-cover').style.backgroundImage = `url('${mod.thumb}')`;
+          document.getElementById('cover-title').innerText = mod.title;
 
-            // Save Assessment Result to trigger certificate generation if passed
-            fetch('/ajax/submit-assessment/', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
-                body: JSON.stringify({ type: 'POSH', score: qScore, passed: passed })
-            }).then(() => {
-                // Mark module complete ONLY if they passed
-                if (passed) {
-                    if (window._quizModuleId) {
-                        const idx = window._quizModuleIdx;
-                        if (idx !== undefined && modules[idx]) {
-                            modules[idx].status = 'complete';
-                        }
-                        markComplete(window._quizModuleId);
-                        window._quizModuleId = null;
-                        window._quizModuleIdx = null;
-                        renderModules();
-                    }
-                }
-                updateTotalStats();
-            }).catch(e => console.error(e));
-        }
-    }
+          // Clear existing source and set new one
+          player.innerHTML = '';
+          const source = document.createElement('source');
+          source.src = mod.src;
+          source.type = 'video/mp4';
+          player.appendChild(source);
 
-    // --- ANALYTICS ---
-    let lastTime = Date.now();
- 
+          console.log('Player source set to:', mod.src);
+          player.load();
+          player.currentTime = 0;
+          furthestTime = 0;
+      }
 
-    setInterval(async () => {
-        const now = Date.now();
-        const deltaSeconds = Math.floor((now - lastTime) / 1000);
-        lastTime = now;
+      function startVideo() {
+          console.log('startVideo called');
+          console.log('Player src:', player.src);
+          console.log('Player readyState:', player.readyState);
+          document.getElementById('video-cover').style.display = 'none';
+          player.style.display = 'block';
+          player.play().catch(err => {
+              console.error('Play failed:', err);
+          });
+      }
 
-        const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
-        const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex'; 
+      function closeModal() {
+          document.getElementById('trainingModal').style.display = 'none';
+          clearInterval(quizTimerInterval);
+          // Refresh the UI state when closing modal
+          renderModules();
+          updateTotalStats();
+      }
 
-        if ((isVideoPlaying || isQuizOpen) && deltaSeconds > 0) {
-             try {
-                const res = await fetch(`/ajax/update-watch-time/`, { 
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': getCsrfToken(), 
-                        'Content-Type': 'application/json' 
-                    },
-                    body: JSON.stringify({ seconds: deltaSeconds }),
-                    credentials: 'same-origin'
-                });
-                if (res.ok) {
-                    totalActivitySeconds += deltaSeconds;
-                    const h = Math.floor(totalActivitySeconds / 3600);
-                    const m = Math.floor((totalActivitySeconds % 3600) / 60);
-                    const s = totalActivitySeconds % 60;
-                    document.getElementById('watch-time-display').innerText = 
-                        `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-                }
-             } catch (e) { console.error(e); }
-        }
-    }, 5000); 
+      // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---
+      let qIdx = 0;
+      let qScore = 0;
 
-    function handleVideoComplete() {
-        if (modules[currentIdx].status !== 'complete') {
-            modules[currentIdx].status = 'complete';
-            if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
-            renderModules(); 
-            updateTotalStats();
-            markComplete(modules[currentIdx].id); 
-        }
-    }
+      function shuffleArray(array) {
+          for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
+      }
 
-    player.onended = handleVideoComplete;
+      function initQuiz() {
+          qIdx = 0;
+          qScore = 0;
+          quizSeconds = 600;
+          // Create a copy, shuffle, and take only 15
+          currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
 
-    player.ontimeupdate = () => {
-        if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
-        player.lastTime = player.currentTime;
-        if (player.duration > 0) {
-            const thresh = player.duration * 0.95;
-            if (player.currentTime > thresh) handleVideoComplete();
-        }
-    };
+          document.getElementById('pq-game-area').style.display = 'block';
+          document.getElementById('pq-result-area').style.display = 'none';
+          loadQuestion();
+          clearInterval(quizTimerInterval);
+          quizTimerInterval = setInterval(updateTimer, 1000);
+      }
 
-    function updateTotalStats() {
-        const done = modules.filter(i => i.status === 'complete').length;
-        const total = modules.length;
-        const perc = Math.round((done / total) * 100) || 0;
-        document.getElementById('perc-text').innerText = perc + "%";
-        document.getElementById('perc-bar').style.width = perc + "%";
-        updateChart();
-        checkButtonLocks();
-    }
-    
-    function checkButtonLocks() {
-        // Final Quiz removed from corp POSH training — nothing to unlock
-    }
+      function updateTimer() {
+          quizSeconds--;
+          let m = Math.floor(quizSeconds/60);
+          let s = quizSeconds%60;
+          document.getElementById('quiz-time').innerText = `${m}:${s.toString().padStart(2, '0')}`;
+          if(quizSeconds <= 0) { clearInterval(quizTimerInterval); closeModal(); alert("Time is up!"); }
+      }
 
-    function updateChart() {
-        const ctx = document.getElementById('statusChart').getContext('2d');
-        const dataSet = modules;
-        const counts = [
-            dataSet.filter(i => i.status === 'complete').length, 
-            dataSet.filter(i => i.status === 'pending').length, 
-            dataSet.filter(i => i.status === 'locked').length
-        ];
-        if (window.myChart) window.myChart.destroy();
-        window.myChart = new Chart(ctx, { 
-            type: 'pie', 
-            data: { 
-                labels: ['Done', 'Pending', 'Locked'], 
-                datasets: [{ data: counts, backgroundColor: ['#3498db', '#ff4757', '#636e72'] }] 
-            }, 
-            options: { maintainAspectRatio: false } 
-        });
-    }
+      function loadQuestion() {
+          const q = currentQuizSet[qIdx];
+          document.getElementById('pq-counter').innerText = `Question ${qIdx+1}/15`;
+          document.getElementById('pq-question-text').innerText = q.question;
+          const grid = document.getElementById('pq-options-grid'); grid.innerHTML = '';
+          q.options.forEach((opt, i) => {
+              const btn = document.createElement('button');
+              btn.className = 'pq-btn'; btn.innerText = opt;
+              btn.onclick = () => {
+                  const btns = document.querySelectorAll('.pq-btn');
+                  btns.forEach(b => b.classList.add('disabled'));
+                  if(i === q.answer) {
+                      btn.classList.add('correct');
+                      qScore++;
+                  } else {
+                      btn.classList.add('wrong');
+                      btns[q.answer].classList.add('correct');
+                  }
+                  document.getElementById('pq-next-btn').style.display = 'block';
+              };
+              grid.appendChild(btn);
+          });
+      }
 
-    function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
+      function nextPracticeQuestion() {
+          qIdx++;
+          document.getElementById('pq-next-btn').style.display = 'none';
+          if(qIdx < 15) {
+              loadQuestion();
+          } else {
+              clearInterval(quizTimerInterval);
+              document.getElementById('pq-game-area').style.display = 'none';
 
-    window.onload = () => { 
-        renderModules(); 
-        playVideo(0);
-        updateTotalStats(); 
-        const h = Math.floor(totalActivitySeconds / 3600);
-        const m = Math.floor((totalActivitySeconds % 3600) / 60);
-        const s = totalActivitySeconds % 60;
-        const timeStr = `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-        const disp = document.getElementById('watch-time-display');
-        if(disp) disp.innerText = timeStr;
-    };
-</script>
-</body>
+              const passed = qScore >= 3;
+              const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
+              document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn btn-gradient mt-3" onclick="closeModal()">Finish</button>`;
+              document.getElementById('pq-result-area').style.display = 'block';
+
+              // Save Assessment Result to trigger certificate generation if passed
+              fetch('/ajax/submit-assessment/', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+                  body: JSON.stringify({ type: 'POSH', score: qScore, passed: passed })
+              }).then(() => {
+                  // Mark module complete ONLY if they passed
+                  if (passed) {
+                      if (window._quizModuleId) {
+                          const idx = window._quizModuleIdx;
+                          if (idx !== undefined && modules[idx]) {
+                              modules[idx].status = 'complete';
+                          }
+                          markComplete(window._quizModuleId);
+                          window._quizModuleId = null;
+                          window._quizModuleIdx = null;
+                          renderModules();
+                      }
+                  }
+                  updateTotalStats();
+              }).catch(e => console.error(e));
+          }
+      }
+
+      // --- ANALYTICS ---
+      let lastTime = Date.now();
+
+
+      setInterval(async () => {
+          const now = Date.now();
+          const deltaSeconds = Math.floor((now - lastTime) / 1000);
+          lastTime = now;
+
+          const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
+          const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex';
+
+          if ((isVideoPlaying || isQuizOpen) && deltaSeconds > 0) {
+               try {
+                  const res = await fetch(`/ajax/update-watch-time/`, {
+                      method: 'POST',
+                      headers: {
+                          'X-CSRFToken': getCsrfToken(),
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ seconds: deltaSeconds }),
+                      credentials: 'same-origin'
+                  });
+                  if (res.ok) {
+                      totalActivitySeconds += deltaSeconds;
+                      const h = Math.floor(totalActivitySeconds / 3600);
+                      const m = Math.floor((totalActivitySeconds % 3600) / 60);
+                      const s = totalActivitySeconds % 60;
+                      document.getElementById('watch-time-display').innerText =
+                          `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+                  }
+               } catch (e) { console.error(e); }
+          }
+      }, 5000);
+
+      function handleVideoComplete() {
+          if (modules[currentIdx].status !== 'complete') {
+              modules[currentIdx].status = 'complete';
+              if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
+              renderModules();
+              updateTotalStats();
+              markComplete(modules[currentIdx].id);
+          }
+      }
+
+      player.onended = handleVideoComplete;
+
+      player.ontimeupdate = () => {
+          if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
+          player.lastTime = player.currentTime;
+          if (player.duration > 0) {
+              const thresh = player.duration * 0.95;
+              if (player.currentTime > thresh) handleVideoComplete();
+          }
+      };
+
+      function updateTotalStats() {
+          const done = modules.filter(i => i.status === 'complete').length;
+          const total = modules.length;
+          const perc = Math.round((done / total) * 100) || 0;
+          document.getElementById('perc-text').innerText = perc + "%";
+          document.getElementById('perc-bar').style.width = perc + "%";
+          updateChart();
+          checkButtonLocks();
+      }
+
+      function checkButtonLocks() {
+          // Final Quiz removed from corp POSH training — nothing to unlock
+      }
+
+      function updateChart() {
+          const ctx = document.getElementById('statusChart').getContext('2d');
+          const dataSet = modules;
+          const counts = [
+              dataSet.filter(i => i.status === 'complete').length,
+              dataSet.filter(i => i.status === 'pending').length,
+              dataSet.filter(i => i.status === 'locked').length
+          ];
+          if (window.myChart) window.myChart.destroy();
+          window.myChart = new Chart(ctx, {
+              type: 'pie',
+              data: {
+                  labels: ['Done', 'Pending', 'Locked'],
+                  datasets: [{ data: counts, backgroundColor: ['#3498db', '#ff4757', '#636e72'] }]
+              },
+              options: { maintainAspectRatio: false }
+          });
+      }
+
+      function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
+
+      window.onload = () => {
+          renderModules();
+          playVideo(0);
+          updateTotalStats();
+          const h = Math.floor(totalActivitySeconds / 3600);
+          const m = Math.floor((totalActivitySeconds % 3600) / 60);
+          const s = totalActivitySeconds % 60;
+          const timeStr = `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
+          const disp = document.getElementById('watch-time-display');
+          if(disp) disp.innerText = timeStr;
+      };
+    </script>
+  </body>
 </html>
