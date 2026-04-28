@@ -1015,13 +1015,12 @@
               {{ member.user.get_full_name|default:member.user.first_name }}
             </h3>
             <p class="member-email">{{ member.user.email }}</p>
-            {% if member.user.user_id %}
+            {% if member.employee_id %}
             <p
               class="small mb-1"
               style="font-size: 0.9rem; color: #fbbf24; font-weight: 600"
             >
-              <i class="bi bi-credit-card-2-front me-1"></i>ID: {{
-              member.user.user_id }}
+              <i class="bi bi-credit-card-2-front me-1"></i>ID: {{ member.employee_id }}
             </p>
             {% endif %}
             <span class="role-badge">{{ member.role }}</span>
@@ -1107,8 +1106,7 @@
 
                   <!-- Video List -->
                   <div id="content-vids-{{ member.id }}">
-                    {% for mod in member.video_modules %} {% if 'quiz' not in
-                    mod.title|lower %}
+                    {% for mod in member.video_lesson_modules %}
                     <!-- Video module row -->
                     <div class="record-item">
                       <div
@@ -1125,7 +1123,7 @@
                       <span class="lms-badge bg-pending">⏳ Pending</span>
                       {% endif %}
                     </div>
-                    {% endif %} {% empty %}
+                    {% empty %}
                     <div class="text-center text-muted p-2 small">
                       No video modules assigned
                     </div>
@@ -1155,10 +1153,9 @@
                         <p style="color: #e67e22; font-weight: 600; margin: 0">
                           ⏳ Not Attempted
                         </p>
-                        {% endif %} {% if member.quiz_score is not None %}
-                        <small style="color: #555"
-                          >Score: <strong>{{ member.quiz_score }}%</strong> {%
-                          if member.quiz_passed %} &nbsp;<span
+                        {% endif %} {% if member.quiz_score != None %}
+                        <small style="color: #555">
+                          Score: <strong>{{ member.quiz_score }}%</strong> {% if member.quiz_passed %} &nbsp;<span
                             style="color: #27ae60; font-weight: 700"
                             >PASS ✔</span
                           >
@@ -2103,8 +2100,7 @@
                   class="form-control"
                   style="background: var(--bg-main); font-weight: 600"
                 >
-                  {{ seats_used }} / {{
-                  posh_reg_employee_count|default:organization.max_users }}
+                  {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }}
                   &nbsp;
                   <span
                     style="color: {% if seats_remaining > 0 %}var(--color-success){% else %}var(--color-danger){% endif %}; font-size: 0.85rem;"
@@ -2275,8 +2271,7 @@
                   "
                 />
                 <small class="text-muted"
-                  >&#128274; Seats used: {{ seats_used }} / {{
-                  posh_reg_employee_count|default:organization.max_users }}
+                  >&#128274; Seats used: {{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }}
                   &nbsp;|&nbsp; Remaining: {{ seats_remaining }}</small
                 >
               </div>

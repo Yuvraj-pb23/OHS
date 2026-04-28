@@ -712,6 +712,7 @@ def add_employee(request):
 # --- 4. COMPANY DASHBOARD ---
 @login_required(login_url="login")
 def company_dashboard(request):
+    print("COMPANY DASHBOARD VIEW IS CALLED!!!")
     # Check if user logged out from HR portal
     if request.session.get("logged_out_of_hr"):
         request.session.pop("logged_out_of_hr", None)
@@ -825,6 +826,9 @@ def company_dashboard(request):
             for m in mem_modules_status
             if not m["is_ppt"] or "quiz" in m["title"].lower()
         ]
+        mem.video_lesson_modules = [
+            m for m in mem.video_modules if "quiz" not in m["title"].lower()
+        ]
         mem.ppt_modules = [
             m
             for m in mem_modules_status
@@ -850,7 +854,7 @@ def company_dashboard(request):
         hours = grand_total_seconds // 3600
         minutes = (grand_total_seconds % 3600) // 60
         mem.total_active_time = f"{hours}h {minutes}m"
-
+        mem.employee_id = user_obj.user_id if user_obj else None
         # Check if employee has passed the final quiz (for certificate eligibility)
         has_passed_quiz = AssessmentProgress.objects.filter(
             user=user_obj, assessment_type=training_type, is_passed=True
@@ -1058,6 +1062,11 @@ def posh_act_page(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training_videos/POSH_Training_Video.mp4"
+            ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
@@ -1228,6 +1237,14 @@ def submit_assessment(request):
             progress.score = score
             progress.is_passed = passed
             progress.save()
+
+            # If failed, reset module progress so they have to watch videos again
+            if not passed:
+                from home.models import ModuleProgress, TrainingModule
+                ModuleProgress.objects.filter(
+                    user=request.user,
+                    module__module_type=assessment_type
+                ).delete()
 
             return JsonResponse({"status": "success", "message": "Result saved"})
         except Exception as e:
@@ -1452,6 +1469,11 @@ def posh_act_page_corp(request):
             "is_completed": is_completed,
             "is_locked": is_locked,
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
+            "src": (
+                mod.video_file.url
+                if mod.video_file
+                else "/media/training_videos/POSH_Training_Video.mp4"
+            ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,

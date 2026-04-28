@@ -37,8 +37,8 @@ def generate_certificate(user, course_type="POSH"):
 
     # Determine date position (adjusting based on user request to be after "held on")
     # Tweak these percentages to align with the template's 'Held on' gap
-    date_top = "64.5%"
-    date_left = "35.5%"
+    date_top = "64.3%"
+    date_left = "35.3%"
 
     # 3. Generate HTML
     # Inline CSS for pixel-perfect positioning (based on user requirement)

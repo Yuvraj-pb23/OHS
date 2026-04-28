@@ -86,6 +86,12 @@ urlpatterns = [
     ),
     # --- COMPANY DASHBOARD & MANAGEMENT ---
     path("dashboard/company/", views.company_dashboard, name="company_dashboard"),
+    path("dashboard/company", views.company_dashboard),
+    # Backward-compatible aliases for older bookmarks/links
+    path("company-dashboard/", views.company_dashboard),
+    path("company-dashboard", views.company_dashboard),
+    path("company_dashboard/", views.company_dashboard),
+    path("company_dashboard", views.company_dashboard),
     path("dashboard/add-employee/", views.add_employee, name="add_employee"),
     path(
         "download-template/",

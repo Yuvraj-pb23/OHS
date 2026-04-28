@@ -293,47 +293,32 @@
 
 <script>
     const questionPool = [
-        /* ... (Keep your 40 questions here as per previous code) ... */
-        { q: "What is the full name of the POSH Act?", a: ["Sexual Harassment of Women at Workplace Act, 2013", "Prevention of Sexual Harassment Bill", "Women Safety Act, 2012", "Workplace Conduct Act"], c: 0 },
-        { q: "The POSH Act applies to any workplace with at least how many employees?", a: ["5", "10", "15", "20"], c: 1 },
-        { q: "Who can be an 'Aggrieved Woman' under the POSH Act?", a: ["Only full-time employees", "Only women working in offices", "Any woman of any age, employed or not", "Only interns"], c: 2 },
-        { q: "What does IC stand for in POSH?", a: ["Inquiry Committee", "Internal Committee", "Investigation Council", "Internal Commission"], c: 1 },
-        { q: "A complaint must be filed within how many months of the incident?", a: ["1 month", "2 months", "3 months", "6 months"], c: 2 },
-        { q: "Who must head the Internal Committee (IC)?", a: ["The CEO", "A senior-level woman employee", "A male HR manager", "An external lawyer"], c: 1 },
-        { q: "The IC must have at least one external member from:", a: ["The Police", "An NGO or association committed to women's causes", "The Labor Union", "A different company"], c: 1 },
-        { q: "The inquiry into a complaint must be completed within:", a: ["30 days", "60 days", "90 days", "180 days"], c: 2 },
-        { q: "Can the IC settle the matter through monetary compensation?", a: ["Yes", "No, monetary settlement is prohibited", "Only if HR agrees", "Only for small amounts"], c: 1 },
-        { q: "If the workplace has fewer than 10 employees, complaints go to:", a: ["Local Committee (LC)", "Police", "Labor Court", "HR"], c: 0 },
-        { q: "What is 'Quid Pro Quo' harassment?", a: ["Friendly joking", "Favors in exchange for work benefits", "Hostile environment", "Workplace bullying"], c: 1 },
-        { q: "What is 'Hostile Work Environment'?", a: ["Loud machinery", "Intimidating or offensive behavior", "Lack of AC", "Long working hours"], c: 1 },
-        { q: "The IC has the same powers as a:", a: ["Criminal Court", "Civil Court", "High Court", "Supreme Court"], c: 1 },
-        { q: "How many members must the IC have at minimum?", a: ["2", "3", "4", "5"], c: 2 },
-        { q: "At least half of the IC members must be women.", a: ["True", "False", "Only if the CEO is a woman", "Optional"], c: 0 },
-        { q: "Does POSH cover the 'extended workplace' (e.g. office parties, transport)?", a: ["No", "Yes", "Only during office hours", "Only on office premises"], c: 1 },
-        { q: "If a complaint is found to be malicious, the IC can recommend action against:", a: ["The Respondent", "The Complainant", "The CEO", "The NGO member"], c: 1 },
-        { q: "Can a legal practitioner represent either party during the inquiry?", a: ["Yes", "No, legal practitioners are not allowed", "Only for the victim", "Only if the IC allows"], c: 1 },
-        { q: "The employer must act on IC recommendations within:", a: ["10 days", "30 days", "60 days", "90 days"], c: 2 },
-        { q: "Is the employer required to conduct orientation for the IC?", a: ["No", "Yes, it is a legal duty", "Only if the IC asks", "Only once a year"], c: 1 },
-        { q: "The external member of the IC is paid an allowance.", a: ["True", "False", "Only if they find someone guilty", "Only in government jobs"], c: 0 },
-        { q: "A woman can file a complaint even if she is a visitor to the office.", a: ["Yes", "No", "Only if she is a client", "Only if she stays more than 1 hour"], c: 0 },
-        { q: "Conciliation is possible before starting the inquiry.", a: ["No", "Yes, at the request of the aggrieved woman", "Only if the man requests", "Only if HR orders"], c: 1 },
-        { q: "The IC must submit an Annual Report to:", a: ["The Police", "The Employer and District Officer", "The News Media", "The Labor Union"], c: 1 },
-        { q: "Can a colleague assist the woman in filing the complaint?", a: ["No", "Yes", "Only her Manager", "Only if she is illiterate"], c: 1 },
-        { q: "Sexual harassment includes showing pornography.", a: ["No", "Yes", "Only if physical", "Only if online"], c: 1 },
-        { q: "A complaint can be filed by a legal heir if the woman is deceased.", a: ["No", "Yes", "Only by her husband", "Only by her children"], c: 1 },
-        { q: "The District Officer is responsible for forming the Local Committee (LC).", a: ["True", "False", "Only in cities", "Only in villages"], c: 0 },
-        { q: "The IC can recommend transferring the woman during the inquiry.", a: ["No", "Yes, for her safety", "Only if she resigns", "Only if the Respondent agrees"], c: 1 },
-        { q: "Displaying the penal consequences of sexual harassment is mandatory.", a: ["No", "Yes, in a prominent place", "Only in the HR cabin", "Optional"], c: 1 },
-        { q: "An appeal against the IC decision must be made within:", a: ["30 days", "60 days", "90 days", "1 year"], c: 2 },
-        { q: "Confidentiality breach regarding the case carries a penalty.", a: ["No", "Yes, as per service rules", "Only for the victim", "Only for the accused"], c: 1 },
-        { q: "What happens if an employer fails to constitute an IC?", a: ["Fine up to 50k", "License cancellation on 2nd offense", "Both of the above", "No penalty"], c: 2 },
-        { q: "Can sexual harassment be non-verbal?", a: ["No", "Yes (e.g. staring, leering)", "Only if recorded", "Only if witnesses are present"], c: 1 },
-        { q: "The POSH Act is applicable to both formal and informal sectors.", a: ["True", "False", "Only corporate", "Only factories"], c: 0 },
-        { q: "Physical contact and advances are the only forms of harassment.", a: ["True", "False", "Only if repetitive", "Only if forced"], c: 1 },
-        { q: "Who is the external member usually?", a: ["Police", "Lawyer/NGO worker", "Celebrity", "Ex-employee"], c: 1 },
-        { q: "Does POSH protect men?", a: ["Yes", "No, it is for women (Workplace policies may differ)", "Only in Delhi", "Only in IT companies"], c: 1 },
-        { q: "Which case led to the Vishaka Guidelines?", a: ["Nirbhaya Case", "Vishaka vs State of Rajasthan", "Bhanwari Devi vs India", "Maneka Gandhi Case"], c: 1 },
-        { q: "Can the IC conduct the inquiry in any language?", a: ["Only English", "Only Hindi", "Any language the parties are comfortable with", "Only the state language"], c: 2 }
+        { q: "What does POSH stand for?", a: ["Prevention of Social Harassment Act", "Prevention of Sexual Harassment Act", "Protection of Sexual Harassment Act", "Policy on Safety and Harassment Act"], c: 1 },
+        { q: "In which year was the POSH Act enacted in India?", a: ["2010", "2012", "2013", "2015"], c: 2 },
+        { q: "What is considered sexual harassment under the POSH Act?", a: ["Only physical contact of a sexual nature", "Only verbal abuse of a sexual nature", "Only non-verbal conduct of a sexual nature", "All of the above"], c: 2 },
+        { q: "Which of the following is an example of sexual harassment?", a: ["Asking about work deadlines", "Making sexually coloured remarks", "Assigning tasks", "Giving performance feedback"], c: 1 },
+        { q: "What is the name of the committee formed at the workplace under POSH?", a: ["Safety Committee", "Internal Committee", "Ethics Committee", "HR Committee"], c: 1 },
+        { q: "POSH Act is mandatory for organizations with how many employees?", a: ["5 or more", "10 or more", "15 or more", "20 or more"], c: 1 },
+        { q: "What is the time limit to file a complaint under POSH?", a: ["1 month", "3 months", "6 months", "1 year"], c: 1 },
+        { q: "Is a verbal complaint valid under POSH?", a: ["No, only written complaints are accepted", "IC can assist in writing it down", "Only email complaints are valid", "All of the above"], c: 1 },
+        { q: "Who can file a complaint under POSH?", a: ["Only female employees", "Only permanent staff", "Any aggrieved employee, including interns or visitors", "Only manager"], c: 2 },
+        { q: "Can men file complaints under POSH to the IC?", a: ["Yes", "No", "Only if approved by HR", "Only in government offices"], c: 1 },
+        { q: "What is the role of the Internal Committee (IC)?", a: ["Punish employees directly", "Conduct inquiry and recommend action", "File FIR automatically", "Terminate employees"], c: 1 },
+        { q: "What is the timeline for completing an inquiry under POSH?", a: ["30 days", "60 days", "90 days", "120 days"], c: 2 },
+        { q: "What type of workplace is covered under POSH?", a: ["Only offices", "Only government workplaces", "All workplaces including virtual/work-from-home", "Only factories"], c: 2 },
+        { q: "Does repeatedly sending personal, suggestive messages after the employee ignores them considered sexual harassment?", a: ["No, it’s just friendly chatting.", "Yes, if the messages are unwanted and persistent.", "Only if they contain explicit words.", "No, messages are outside the POSH Act’s scope."], c: 1 },
+        { q: "Under the POSH Act, can harassment come from a colleague at the same level?", a: ["Only from managers or seniors.", "Yes, harassment can come from any colleague, regardless of position.", "Only from people outside the company.", "It cannot happen between peers."], c: 1 },
+        { q: "True or False: Unwanted messages must be clearly sexual to be harassment.", a: ["True", "False – any unwelcome, suggestive, or boundary‑crossing communication that causes discomfort can be harassment.", "Only messages with emojis count.", "Only messages sent after office hours count."], c: 1 },
+        { q: "Can online harassment count as sexual harassment under POSH?", a: ["No, POSH only covers physical behaviour.", "Only if the post is personal and unrelated to work.", "Only if it happens on public social media.", "Yes, harassment can be verbal or non‑verbal, online or offline."], c: 3 },
+        { q: "True or False: If the comments are “just compliments,” they cannot be harassment.", a: ["True", "False – if the comments are unwelcome and make the person uncomfortable, they can still be harassment.", "Only when they are repeated 10 times.", "Only when they are sent by a senior."], c: 1 },
+        { q: "What is the most relevant factor in assessing non-verbal conduct?", a: ["Whether others noticed it", "Whether it was intentional", "Whether it created discomfort or unease", "Whether it was reported immediately"], c: 2 },
+        { q: "True or False: If a relationship was consensual, anything shared later is acceptable.", a: ["True", "False – consent to a relationship does not mean consent to share private details at work.", "Only true if they dated for a long time.", "Only true if they were married."], c: 1 },
+        { q: "When someone responds to concerns by saying, “Don’t be so serious, it’s just a joke,” what issue does this raise?", a: ["Lack of humor in the team", "Miscommunication between colleagues", "Dismissing the impact of the behavior", "Differences in personality"], c: 2 },
+        { q: "Which factor is most important in determining whether such remarks are inappropriate?", a: ["The intention behind the comment", "The seniority of the person speaking", "The effect on the work environment", "Whether the comment was repeated"], c: 2 },
+        { q: "A manager suggests discussing career growth outside work in a personal setting. What makes this situation problematic?", a: ["The discussion is informal", "The timing is outside office hours", "As It mixes professional decisions with personal interaction", "The employee has not responded yet"], c: 2 },
+        { q: "Which element is most critical in identifying quid pro quo harassment?", a: ["Whether the employee agreed", "Whether the request was explicit", "The connection between benefit and personal expectation", "The location of the interaction"], c: 2 },
+        { q: "If an employee feels pressured but no direct demand is stated, how should the situation be viewed?", a: ["As a misunderstanding", "As acceptable unless proven otherwise", "As potentially coercive", "As normal managerial behavior"], c: 2 },
+        { q: "Is it the victim’s responsibility to avoid interacting with the harasser?", a: ["No, the organisation must take action to make the workplace safe.", "Yes, the victim should change their own behaviour.", "Only if the victim is junior.", "Only if the manager apologises."], c: 0 }
     ];
 
     let activeQuestions = [];
@@ -344,8 +329,8 @@
     let timeLeft = 30;
 
     function initQuiz() {
-        const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
-        activeQuestions = shuffled.slice(0, 20);
+        // Use all 26 questions
+        activeQuestions = [...questionPool].sort(() => 0.5 - Math.random());
         loadQuestion();
     }
 
@@ -375,9 +360,9 @@
 
     function loadQuestion() {
         const qData = activeQuestions[currentIdx];
-        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of 20`;
+        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of ${activeQuestions.length}`;
         document.getElementById('question-text').innerText = qData.q;
-        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / 20) * 100}%`;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / activeQuestions.length) * 100}%`;
 
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -412,7 +397,7 @@
         }
 
         currentIdx++;
-        if (currentIdx < 20) {
+        if (currentIdx < activeQuestions.length) {
             loadQuestion();
         } else {
             showResults();
@@ -422,16 +407,18 @@
     function showResults() {
         document.getElementById('quiz-ui').style.display = 'none';
         document.getElementById('results-ui').style.display = 'block';
-        document.getElementById('score-display').innerText = `${score}/20`;
+        document.getElementById('score-display').innerText = `${score}/${activeQuestions.length}`;
         const msg = document.getElementById('result-message');
 
-        const passed = score >= 14;
+        // 80% passing threshold
+        const passThreshold = Math.ceil(activeQuestions.length * 0.8);
+        const passed = score >= passThreshold;
 
         if (passed) {
             msg.innerText = "Congratulations! You passed.";
             msg.style.color = "var(--success)";
         } else {
-            msg.innerText = "You did not pass. 70% required.";
+            msg.innerText = `You did not pass. 80% (${passThreshold} correct) required. You will need to watch the training videos again before retrying.`;
             msg.style.color = "var(--danger)";
         }
 
