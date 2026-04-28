@@ -324,13 +324,14 @@
         document.getElementById('final-score').innerText = `${score}/20`;
         
         const msg = document.getElementById('result-msg');
-        const passed = score >= 14;
+        const passThreshold = Math.ceil(20 * 0.8); // 80% threshold (16/20)
+        const passed = score >= passThreshold;
 
         if (passed) {
             msg.innerText = "Congratulations! You have passed the POCSO Assessment.";
             msg.style.color = "var(--success)";
         } else {
-            msg.innerText = "Assessment Incomplete. You need 70% (14/20) to pass.";
+            msg.innerText = `Assessment Incomplete. You need 80% (${passThreshold}/20) to pass.`;
             msg.style.color = "var(--danger)";
         }
 
@@ -344,6 +345,7 @@
             body: JSON.stringify({
                 type: 'POCSO',
                 score: score,
+                total: 20,
                 passed: passed
             })
         }).then(res => res.json())

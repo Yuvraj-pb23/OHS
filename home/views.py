@@ -1014,6 +1014,11 @@ def individual_subscription(request, plan_type):
 @login_required(login_url="login")
 def posh_act_page(request):
     user = request.user
+    # Redirect corporate employees or HR acting as employees to the corporate dashboard
+    if user.is_authenticated:
+        if user.account_type == "EMPLOYEE" or request.session.get("hr_as_employee"):
+            return redirect("posh_act_page_corp")
+
     has_access = Subscription.objects.filter(
         Q(user=user) | Q(organization__organizationmember__user=user),
         status="ACTIVE",
@@ -1228,13 +1233,19 @@ def submit_assessment(request):
         try:
             data = json.loads(request.body)
             assessment_type = data.get("type", "POSH")  # POSH or POCSO
-            score = int(data.get("score", 0))
-            passed = bool(data.get("passed", False))
+            score_raw = int(data.get("score", 0))
+            total_q = int(data.get("total", 15)) # Default to 15 if not provided
+
+            # Calculate percentage accurately
+            percentage = int((score_raw / total_q) * 100) if total_q > 0 else score_raw
+            
+            # Enforce 80% pass threshold globally
+            passed = percentage >= 80
 
             progress, created = AssessmentProgress.objects.get_or_create(
                 user=request.user, assessment_type=assessment_type
             )
-            progress.score = score
+            progress.score = percentage # Store percentage as score for HR dashboard
             progress.is_passed = passed
             progress.save()
 
@@ -1246,7 +1257,7 @@ def submit_assessment(request):
                     module__module_type=assessment_type
                 ).delete()
 
-            return JsonResponse({"status": "success", "message": "Result saved"})
+            return JsonResponse({"status": "success", "message": "Result saved", "passed": passed, "score_percent": percentage})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
@@ -1255,6 +1266,11 @@ def submit_assessment(request):
 @login_required(login_url="login")
 def pocso_act_page(request):
     user = request.user
+    # Redirect corporate employees or HR acting as employees to the corporate dashboard
+    if user.is_authenticated:
+        if user.account_type == "EMPLOYEE" or request.session.get("hr_as_employee"):
+            return redirect("pocso_act_page_corp")
+
     has_access = Subscription.objects.filter(
         Q(user=user) | Q(organization__organizationmember__user=user),
         status="ACTIVE",

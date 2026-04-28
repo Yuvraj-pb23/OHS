@@ -166,6 +166,86 @@
             text-align: center;
         }
 
+        /* REFINED COMPACT MOBILE MENU */
+        @media (max-width: 768px) {
+            .nav-links {
+                background: #1e1e2f !important; /* Solid dark purple-gray */
+                width: 250px !important; /* Compact width */
+                height: auto !important; /* Content height only */
+                position: absolute !important;
+                top: 80px !important;
+                right: 15px !important;
+                border-radius: 15px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+                padding: 15px !important;
+                display: none !important; /* Hidden by default */
+                flex-direction: column !important;
+                z-index: 2900 !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
+            }
+            .nav-links .dropdown {
+                width: 100% !important;
+                text-align: center !important;
+            }
+            .nav-links.show {
+                display: flex !important;
+                animation: slideInDownCompact 0.3s ease-out;
+            }
+            @keyframes slideInDownCompact {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .nav-link, .user-greeting {
+                color: #ffffff !important; /* FORCE WHITE FOR ALL */
+                font-size: 1.1rem !important;
+                font-weight: 500 !important;
+                padding: 12px 15px !important;
+                border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+                width: 100% !important;
+                margin: 0 !important;
+                text-decoration: none !important;
+                text-align: center !important; /* CENTER ALIGN EVERYTHING */
+                display: block !important;
+            }
+            .user-greeting:hover, .user-greeting:active, .user-greeting:focus {
+                color: #ffb400 !important; /* Change to gold on interaction instead of purple */
+                background: rgba(255,255,255,0.05) !important;
+            }
+            .nav-link.active {
+                color: #ffb400 !important;
+                background: rgba(255,180,0,0.1);
+                border-radius: 8px;
+            }
+            .user-dropdown .dropdown-content {
+                display: none !important;
+                background: rgba(0,0,0,0.2) !important;
+                border-radius: 10px !important;
+                margin-top: 5px !important;
+                padding: 5px !important;
+                border: none !important;
+            }
+            .user-dropdown.mobile-open .dropdown-content {
+                display: block !important;
+            }
+            .user-dropdown .dropdown-content a, 
+            .user-dropdown .dropdown-content .btn-auth-logout {
+                color: #cccccc !important;
+                font-size: 0.95rem !important;
+                padding: 10px 15px !important;
+            }
+            .btn-auth-logout, .btn-auth-logout i {
+                color: #ff6b6b !important;
+            }
+            .btn-auth-login {
+                margin: 10px 0 !important;
+                width: 100% !important;
+                text-align: center !important;
+            }
+            .hamburger span {
+                background: #6200ea !important;
+            }
+        }
+
         /* ACCOUNTS BUTTON STYLES - Professional style */
         .accounts-button-wrapper {
             display: flex;
@@ -652,8 +732,20 @@
         hamburger.addEventListener("click", () => {
           navLinks.classList.toggle("show");
           hamburger.classList.toggle("active");
+          // Prevent scrolling when menu is open
+          document.body.style.overflow = navLinks.classList.contains("show") ? "hidden" : "auto";
         });
       }
+
+      // Mobile Dropdown Toggle
+      document.addEventListener('click', (e) => {
+          const userGreeting = e.target.closest('.user-greeting');
+          if (userGreeting && window.innerWidth <= 768) {
+              e.preventDefault();
+              const dropdown = userGreeting.closest('.user-dropdown');
+              dropdown.classList.toggle('mobile-open');
+          }
+      });
 
       // Floating Services Menu
       const fab = document.getElementById("servicesFab");

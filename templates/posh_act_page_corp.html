@@ -1208,11 +1208,16 @@
               document.getElementById('pq-result-area').style.display = 'block';
 
               // Save Assessment Result to trigger certificate generation if passed
-              fetch('/ajax/submit-assessment/', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
-                  body: JSON.stringify({ type: 'POSH', score: qScore, passed: passed })
-              }).then(() => {
+               fetch('/ajax/submit-assessment/', {
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+                   body: JSON.stringify({ 
+                       type: 'POSH', 
+                       score: qScore, 
+                       total: 15,
+                       passed: passed 
+                   })
+               }).then(res => res.json()).then(data => {
                   // Mark module complete ONLY if they passed
                   if (passed) {
                       if (window._quizModuleId) {

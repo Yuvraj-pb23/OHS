@@ -432,6 +432,7 @@
             body: JSON.stringify({
                 type: 'POSH',
                 score: score,
+                total: activeQuestions.length,
                 passed: passed
             })
         }).then(res => res.json())

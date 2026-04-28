@@ -719,35 +719,7 @@
         }
 
         // --- HEARTBEAT FOR TIME TRACKING ---
-        let lastTime = Date.now();
-        setInterval(async () => {
-            const now = Date.now();
-            const deltaSeconds = Math.floor((now - lastTime) / 1000);
-            lastTime = now;
 
-            const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
-            const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; // PPT or Quiz
-
-            if ((isVideoPlaying || isPPTOpen) && deltaSeconds > 0) {
-                try {
-                    // Modified to include credentials and better logging
-                    const res = await fetch(`/ajax/update-watch-time/`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRFToken': '{{ csrf_token }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ seconds: deltaSeconds }),
-                        credentials: 'same-origin'
-                    });
-                    if (res.ok) {
-                        const data = await res.json();
-                    }
-                } catch (e) {
-                    console.error("Error updating time:", e);
-                }
-            }
-        }, 5000); // 5 seconds
 
         function logout() {
             if (confirm("Are you sure you want to logout?")) {
@@ -1046,15 +1018,31 @@
             }
         };
 
-        setInterval(() => {
-            if (!document.hidden && (!player.paused || document.getElementById('pptModal').style.display === 'flex')) {
+        setInterval(async () => {
+            const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
+            const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; 
+
+            if (isVideoPlaying || isPPTOpen) {
                 totalActivitySeconds++;
 
                 const h = Math.floor(totalActivitySeconds / 3600);
                 const m_ = Math.floor((totalActivitySeconds % 3600) / 60);
                 const s_ = totalActivitySeconds % 60;
-                document.getElementById('watch-time-display').innerText =
-                    `${h > 0 ? h + ':' : ''}${m_ < 10 ? '0' + m_ : m_}:${s_ < 10 ? '0' + s_ : s_}`;
+                const display = document.getElementById('watch-time-display');
+                if (display) {
+                    display.innerText = `${h > 0 ? h + ':' : ''}${m_ < 10 ? '0' + m_ : m_}:${s_ < 10 ? '0' + s_ : s_}`;
+                }
+
+                // Sync with server EVERY second
+                fetch(`/ajax/update-watch-time/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ seconds: 1 }),
+                    credentials: 'same-origin'
+                }).catch(e => console.error("Timer sync failed:", e));
             }
         }, 1000);
 
