@@ -331,6 +331,70 @@
         .phone-group .floating-input:focus {
             box-shadow: none;
         }
+
+        /* MOBILE OPTIMIZATIONS - CLEAN REWRITE */
+        @media (max-width: 640px) {
+            body { padding: 0.5rem !important; }
+            .max-w-3xl { margin: 0 !important; width: 100% !important; }
+            .glass-container { border-radius: 1rem !important; box-shadow: none !important; border: none !important; }
+            .p-6.md\:p-10 { padding: 1.25rem 1rem !important; }
+            
+            /* Force all grids to single column */
+            .grid-cols-1, .grid-cols-2, .md\:grid-cols-2 { 
+                grid-template-columns: 1fr !important; 
+                gap: 1.25rem !important;
+            }
+
+            /* Section Headers */
+            .step-content > .flex.items-center {
+                flex-direction: row !important; /* BACK TO ROW */
+                align-items: center !important;
+                gap: 0.5rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            .section-tag { 
+                padding: 0.2rem 0.5rem !important;
+                font-size: 0.6rem !important;
+                white-space: nowrap;
+                margin: 0 !important;
+            }
+            .heading-font.text-xl {
+                font-size: 1rem !important; /* Smaller to fit one line */
+                line-height: 1.2 !important;
+            }
+
+            /* Compact Rows Refined */
+            .compact-row {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem !important;
+                padding: 1rem !important;
+                border-radius: 0.75rem !important;
+                background: #fcfdfe !important;
+            }
+            .pill-toggle {
+                width: 100% !important;
+                height: 44px !important;
+            }
+            .pill-toggle span {
+                line-height: 2.2 !important;
+                font-size: 0.75rem !important;
+            }
+
+            /* Indented Boxes */
+            #ic-history-box, #ic-training-requirement-box, #ic-requested-mode-box, #she-box-details {
+                margin-left: 0 !important;
+                padding: 1rem !important;
+                border-left: 4px solid #6366f1 !important;
+                background: #f8faff !important;
+            }
+            
+            .flex.items-center.justify-between:not(.no-stack-mobile) {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 0.75rem !important;
+            }
+        }
     </style>
 </head>
 <body class="py-10 px-4 antialiased">
@@ -368,9 +432,11 @@
             <div class="p-6 md:p-10">
                 <!-- STEP 1 -->
                 <div class="step-content" id="section-1">
-                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
-                        <span class="section-tag">Section 1</span>
-                        <h2 class="font-black text-xl text-indigo-950 heading-font">Primary Contact Details</h2>
+                    <div class="flex items-center justify-between no-stack-mobile mb-6 border-b border-indigo-50 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="section-tag">Section 1</span>
+                            <h2 class="font-black text-xl text-indigo-950 heading-font">Primary Contact Details</h2>
+                        </div>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -426,9 +492,11 @@
 
                 <!-- STEP 2 -->
                 <div class="step-content" id="section-2">
-                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
-                        <span class="section-tag">Section 2</span>
-                        <h2 class="font-black text-xl text-indigo-950 heading-font">Organization Profile</h2>
+                    <div class="flex items-center justify-between no-stack-mobile mb-6 border-b border-indigo-50 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="section-tag">Section 2</span>
+                            <h2 class="font-black text-xl text-indigo-950 heading-font">Organization Profile</h2>
+                        </div>
                     </div>
 
                     <div class="space-y-6">
@@ -470,9 +538,11 @@
 
                 <!-- STEP 3 -->
                 <div class="step-content" id="section-3">
-                    <div class="flex items-center gap-2 mb-6 border-b border-indigo-50 pb-4">
-                        <span class="section-tag">Section 3</span>
-                        <h2 class="font-black text-xl text-indigo-950 heading-font">Compliance Statutory Audit</h2>
+                    <div class="flex items-center justify-between no-stack-mobile mb-6 border-b border-indigo-50 pb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="section-tag">Section 3</span>
+                            <h2 class="font-black text-xl text-indigo-950 heading-font">Compliance Statutory Audit</h2>
+                        </div>
                     </div>
 
                     <div class="space-y-3">
