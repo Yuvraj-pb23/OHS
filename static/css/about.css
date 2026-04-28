@@ -59,7 +59,7 @@ html, body {
 .about-hero {
   position: relative;
   height: 60vh;
-  background: url("/static/img/about_n.jpeg") center/cover no-repeat;
+  background: url("/static/img/about_n.webp") center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;

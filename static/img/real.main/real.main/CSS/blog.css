@@ -20,7 +20,7 @@ body {
 /* ====== Blog Hero Section ====== */
 .blog-hero-section {
   background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)),
-    url("../img/blog.jpg") center/cover no-repeat;
+    url("../img/blog.webp") center/cover no-repeat;
   color: #fff;
   text-align: center;
   padding: 100px 20px;

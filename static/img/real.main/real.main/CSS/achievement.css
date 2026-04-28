@@ -94,7 +94,7 @@ html, body {
   position: relative;
   height: 400px;
    /* background: linear-gradient(to right, rgba(15, 32, 39, 0.7), rgba(32, 58, 67, 0.7)),
-              url('../img/achievement-bg.jpg') center/cover no-repeat;  */
+              url('../img/achievement-bg.webp') center/cover no-repeat;  */
    display: flex;
   align-items: center;
   justify-content: center;
@@ -106,7 +106,7 @@ html, body {
   width: 200%;
   height: 200%;
   /* background: radial-gradient(circle, rgba(255, 180, 0, 0.15) 10%, transparent 60%); */
-    background: url('../img/1.jpeg') center/cover no-repeat;
+    background: url('../img/1.webp') center/cover no-repeat;
   animation: moveBackground 10s linear infinite;
 }
 

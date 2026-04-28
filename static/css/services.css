@@ -20,7 +20,7 @@ html, body {
     position: relative;
     /* Note: In Django static files, absolute paths starting with /static/ usually work 
        if your STATIC_URL is configured correctly. */
-    background: url('/static/img/servies1.jpg') center/cover no-repeat;
+    background: url('/static/img/servies1.webp') center/cover no-repeat;
     background-attachment: fixed;
     min-height: 60vh;
     color: var(--white);

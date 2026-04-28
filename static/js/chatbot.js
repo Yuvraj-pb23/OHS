@@ -26,7 +26,7 @@ const ITEMS_PER_PAGE = 5;
 
 const botAvatarHTML = `
   <div class="message-avatar" style="width: 30px; height: 30px; border-radius: 50%; background: white; padding: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden;">
-    <img src="/static/images/logo_v2.jpg" alt="Bot Logo" style="width: 100%; height: 100%; object-fit: cover;">
+    <img src="/static/images/logo_v2.webp" alt="Bot Logo" style="width: 100%; height: 100%; object-fit: cover;">
   </div>
 `;
 

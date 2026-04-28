@@ -6,7 +6,7 @@ html, body {
 
 .contact-hero {
   min-height: 320px;
-  background: linear-gradient(135deg, #11131dcc, #030304cc), url('../img/contact.jpg') center/cover no-repeat;
+  background: linear-gradient(135deg, #11131dcc, #030304cc), url('../img/contact.webp') center/cover no-repeat;
   color: white;
   display: flex;
   justify-content: center;

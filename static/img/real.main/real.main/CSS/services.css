@@ -555,8 +555,8 @@ html, body {
   .services-hero {
       position: relative;
       background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                  url('../img/ser.jpeg') center/cover no-repeat;
-       /* background-image: url('../img/services.jpg'); */
+                  url('../img/ser.webp') center/cover no-repeat;
+       /* background-image: url('../img/services.webp'); */
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;

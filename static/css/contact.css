@@ -15,7 +15,7 @@ html, body {
 .contact-hero {
   min-height: 60vh;
   /* Ensure this image exists in your static/img folder */
-  background: url('/static/img/contact.jpg') center/cover no-repeat;
+  background: url('/static/img/contact.webp') center/cover no-repeat;
   color: white;
   display: flex;
   align-items: center;   /* keep vertical center */
