@@ -161,6 +161,16 @@
         text-align: center;
         transition: 0.5s;
       }
+      .content-cover h2 {
+        font-size: 2.5rem;
+        margin: 0 20px 20px;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      }
+      @media (max-width: 1024px) {
+        .content-cover h2 {
+          font-size: 1.8rem;
+        }
+      }
       .cover-overlay {
         position: absolute;
         top: 0;
@@ -236,11 +246,13 @@
         background-position: center;
       }
       .badge {
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-size: 11px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
+        align-self: center;
+        height: fit-content;
       }
 
       .bg-complete {
@@ -264,7 +276,7 @@
         width: 100%;
         height: 100%;
         background: rgba(0, 0, 0, 0.9);
-        z-index: 10000;
+        z-index: 20000;
         justify-content: center;
         align-items: center;
       }
@@ -346,6 +358,174 @@
         font-size: 12px;
         font-weight: bold;
         z-index: 9999;
+      }
+
+      /* --- MOBILE RESPONSIVENESS --- */
+      .mobile-toggle {
+        display: none;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 10001;
+        background: var(--primary-gradient);
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 10px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
+
+      /* --- MOBILE HEADER --- */
+        .mobile-header {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 60px;
+          background: var(--glass-surface);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+          z-index: 10000;
+          padding: 0 20px;
+          align-items: center;
+          justify-content: space-between;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+
+      .mobile-logout-btn-new {
+        transition: transform 0.2s;
+      }
+      .mobile-logout-btn-new:active {
+        transform: scale(0.95);
+      }
+
+      
+
+      @media (max-width: 1200px) {
+        .sidebar {
+          display: none !important;
+        }
+        .lms-container {
+          grid-template-columns: 1fr;
+          max-width: 100%;
+        }
+        .mobile-header {
+          display: flex !important;
+        }
+      }
+
+      @media (max-width: 992px) {
+        .lms-container aside.sidebar {
+          display: none !important;
+        }
+        .mobile-header {
+          display: flex !important;
+        }
+        .lms-container {
+          grid-template-columns: 1fr;
+          padding: 10px;
+        }
+        .main-content {
+          padding-top: 70px; /* account for header */
+        }
+        .mobile-logout-btn {
+          display: none !important; /* Hide the old one in the dashboard */
+        }
+
+        .report-grid {
+          grid-template-columns: 1fr !important;
+        }
+
+        .record-item {
+          grid-template-columns: 120px 1fr !important;
+          gap: 15px;
+        }
+
+        .record-item .badge {
+          grid-column: span 2;
+          width: fit-content;
+        }
+
+        .thumb-box {
+          height: 80px;
+        }
+
+        .pq-options {
+          grid-template-columns: 1fr !important;
+        }
+
+        .training-content {
+          width: 95%;
+          height: 95%;
+        }
+
+        .practice-quiz-container {
+          padding: 20px;
+        }
+
+        .pq-question {
+          font-size: 1.2rem;
+        }
+
+        #watch-time-display {
+          font-size: 2.5rem !important;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .record-item {
+          grid-template-columns: 100px 1fr !important;
+          gap: 10px;
+          padding: 10px;
+        }
+        
+        .record-item h3 {
+          font-size: 0.95rem;
+          line-height: 1.3;
+          margin: 0;
+        }
+
+        .thumb-box {
+          height: 70px;
+          width: 100px;
+        }
+
+        #cover-title {
+          font-size: 1.4rem !important;
+          padding: 0 15px;
+          margin-bottom: 10px;
+        }
+
+        .section-card {
+          padding: 15px;
+        }
+
+        #pwChangeBox {
+          padding: 20px;
+          margin: 15px;
+        }
+
+        h1 { font-size: 1.4rem; }
+      }
+
+      @media (max-width: 350px) {
+        .record-item {
+          grid-template-columns: 80px 1fr !important;
+        }
+        .thumb-box {
+          width: 80px;
+          height: 60px;
+        }
+        .record-item h3 {
+          font-size: 0.85rem;
+        }
+        .mobile-header h3 {
+          font-size: 1rem;
+        }
       }
     </style>
 
@@ -569,7 +749,7 @@
             border-radius: 50%;
             border: none;
             cursor: pointer;
-            z-index: 1100;
+            z-index: 20001; /* Higher than modal and header */
             font-size: 24px;
             display: flex;
             align-items: center;
@@ -635,13 +815,19 @@
       </div>
     </div>
 
+    <div class="mobile-header">
+      <h3 style="color: var(--primary); margin: 0;">POSH Training</h3>
+      <button class="mobile-logout-btn-new" onclick="handleLogout()" style="background: #ff4757; color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);">
+        Logout 🚪
+      </button>
+    </div>
+
     <div class="lms-container">
       <aside class="sidebar">
-        <h2
-          style="color: var(--primary); margin-bottom: 20px; padding-left: 10px"
-        >
-          POSH Training
-        </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2 style="color: var(--primary); margin: 0; padding-left: 10px">POSH Training</h2>
+          <button class="mobile-close-btn" onclick="toggleSidebar()" style="background: none; border: none; font-size: 2rem; color: var(--primary); cursor: pointer; display: none;">&times;</button>
+        </div>
         <div class="nav-menu">
           <div
             onclick="showView('dashboard')"
@@ -658,7 +844,9 @@
 
       <main class="main-content">
         <div id="dashboard-view">
-          <h1 style="color: white">Course Dashboard</h1>
+          <div style="margin-bottom: 20px;">
+            <h1 style="color: white; margin: 0;">Course Dashboard</h1>
+          </div>
 
           <div class="section-card">
             <div id="video-stage">
@@ -1014,7 +1202,7 @@
               clearInterval(quizTimerInterval);
               document.getElementById('pq-game-area').style.display = 'none';
 
-              const passed = qScore >= 3;
+              const passed = qScore >= Math.ceil(0.8 * 15); // 80% pass threshold (12 correct out of 15)
               const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
               document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn btn-gradient mt-3" onclick="closeModal()">Finish</button>`;
               document.getElementById('pq-result-area').style.display = 'block';
@@ -1047,36 +1235,35 @@
       let lastTime = Date.now();
 
 
-      setInterval(async () => {
-          const now = Date.now();
-          const deltaSeconds = Math.floor((now - lastTime) / 1000);
-          lastTime = now;
+      setInterval(() => {
+          const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
+          const isQuizOpen = document.getElementById('trainingModal').style.display !== 'none' && document.getElementById('trainingModal').style.display !== '';
 
-          const isVideoPlaying = !player.paused && !player.ended && player.readyState > 2;
-          const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex';
-
-          if ((isVideoPlaying || isQuizOpen) && deltaSeconds > 0) {
-               try {
-                  const res = await fetch(`/ajax/update-watch-time/`, {
-                      method: 'POST',
-                      headers: {
-                          'X-CSRFToken': getCsrfToken(),
-                          'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify({ seconds: deltaSeconds }),
-                      credentials: 'same-origin'
-                  });
-                  if (res.ok) {
-                      totalActivitySeconds += deltaSeconds;
-                      const h = Math.floor(totalActivitySeconds / 3600);
-                      const m = Math.floor((totalActivitySeconds % 3600) / 60);
-                      const s = totalActivitySeconds % 60;
-                      document.getElementById('watch-time-display').innerText =
-                          `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
-                  }
-               } catch (e) { console.error(e); }
+          if (isVideoPlaying || isQuizOpen) {
+              totalActivitySeconds += 1;
+              
+              const h = Math.floor(totalActivitySeconds / 3600);
+              const m = Math.floor((totalActivitySeconds % 3600) / 60);
+              const s = totalActivitySeconds % 60;
+              const display = document.getElementById('watch-time-display');
+              if (display) {
+                  display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+              }
+              
+              // Sync with server EVERY second as requested
+              fetch(`/ajax/update-watch-time/`, {
+                  method: 'POST',
+                  headers: {
+                      'X-CSRFToken': getCsrfToken(),
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ seconds: 1 }),
+                  credentials: 'same-origin'
+              }).catch(e => {
+                  console.error("Timer sync failed:", e);
+              });
           }
-      }, 5000);
+      }, 1000);
 
       function handleVideoComplete() {
           if (modules[currentIdx].status !== 'complete') {
@@ -1091,7 +1278,6 @@
       player.onended = handleVideoComplete;
 
       player.ontimeupdate = () => {
-          if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
           player.lastTime = player.currentTime;
           if (player.duration > 0) {
               const thresh = player.duration * 0.95;
@@ -1133,6 +1319,18 @@
       }
 
       function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
+
+      // Remove sidebar on mobile
+      function handleMobileSidebar() {
+        if (window.innerWidth <= 992) {
+          var sb = document.querySelector('.sidebar');
+          if (sb && sb.parentNode) {
+            sb.parentNode.removeChild(sb);
+          }
+        }
+      }
+      window.addEventListener('load', handleMobileSidebar);
+      window.addEventListener('resize', handleMobileSidebar);
 
       window.onload = () => {
           renderModules();
