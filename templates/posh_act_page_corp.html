@@ -865,10 +865,10 @@
                   oncontextmenu="return false;"
                   style="display: none"
                 >
-                  <source
-                    src="/media/training%20videos/POSH_Training_Video.mp4"
-                    type="video/mp4"
-                  />
+                   <source
+                     src="/media/training_videos/POSH_Training_Video.mp4"
+                     type="video/mp4"
+                   />
                 </video>
               </div>
             </div>
@@ -955,7 +955,6 @@
       let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
       let furthestTime = 0;
 
-
       const modules = [
           {% for m in video_modules %}
           {
@@ -971,7 +970,6 @@
       ];
 
       console.log('Modules loaded:', modules);
-      console.log('First module src:', modules.length > 0 ? modules[0].src : 'No modules');
 
       const questionBank = [
           { question: "What does POSH stand for?", options: ["Prevention of Social Harassment Act", "Prevention of Sexual Harassment Act", "Protection of Sexual Harassment Act", "Policy on Safety and Harassment Act"], answer: 1 },
@@ -1004,21 +1002,15 @@
 
       let quizSeconds = 600;
       let quizTimerInterval;
-      let currentQuizSet = []; // To store the 15 shuffled questions
+      let currentQuizSet = [];
+      let qIdx = 0;
+      let qScore = 0;
 
       function markComplete(moduleId) {
-          console.log('markComplete called with moduleId:', moduleId);
           fetch(`/ajax/mod-complete/${moduleId}/`, {
               method: 'POST',
               headers: { 'X-CSRFToken': getCsrfToken() }
-          })
-          .then(r => r.json())
-          .then(d => {
-              console.log(`Module ${moduleId} response:`, d);
-              if(d.status === 'success') console.log(`Module ${moduleId} saved successfully.`);
-              else console.error(`Module ${moduleId} save failed:`, d);
-          })
-          .catch(e => { console.error("Save failed for module", moduleId, e); });
+          });
       }
 
       function showView(v) {
@@ -1026,24 +1018,24 @@
           document.getElementById('nav-dash').classList.remove('active');
           if(v === 'dashboard') {
               document.getElementById('nav-dash').classList.add('active');
-              // Re-render modules to refresh the UI state
               renderModules();
               updateTotalStats();
           }
       }
 
       document.addEventListener('visibilitychange', () => {
-          if (document.hidden) player.pause();
+          if (document.hidden && !player.paused) player.pause();
       });
 
       function renderModules() {
-          const list = document.getElementById('module-list'); list.innerHTML = '';
+          const list = document.getElementById('module-list'); 
+          if (!list) return;
+          list.innerHTML = '';
           modules.forEach((mod, i) => {
               const item = document.createElement('div');
               item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
 
               if (mod.isQuiz) {
-                  // Quiz item — clicking opens the practice quiz modal
                   item.onclick = () => {
                       if (mod.status === 'locked') {
                           alert('🔒 Complete the video module first to unlock the Quiz.');
@@ -1052,14 +1044,12 @@
                       document.getElementById('trainingModal').style.display = 'flex';
                       document.getElementById('practiceQuizContainer').style.display = 'block';
                       document.getElementById('quiz-timer-box').style.display = 'block';
-                      // Store quiz module id so we can mark it complete on finish
                       window._quizModuleId = mod.id;
                       window._quizModuleIdx = i;
                       initQuiz();
                   };
                   item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>📝 ${mod.title}</h3><small style="color:#888">Interactive Quiz</small></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
               } else {
-                  // Normal video item
                   item.onclick = () => {
                       if(mod.status !== 'locked') {
                           currentIdx = i;
@@ -1075,69 +1065,43 @@
       }
 
       function playVideo(idx) {
-          console.log('playVideo called with idx:', idx);
-          console.log('Total modules:', modules.length);
-
-          if (!modules || modules.length === 0) {
-              console.error('No modules available!');
-              return;
-          }
-
-          if (idx >= modules.length) {
-              console.error('Invalid module index:', idx);
-              return;
-          }
-
+          if (!modules || modules.length === 0 || idx >= modules.length) return;
           currentIdx = idx;
           const mod = modules[idx];
-          console.log('Loading module:', mod);
-
-          if (!mod.src) {
-              console.error('Module has no src:', mod);
-              return;
-          }
-
           player.pause();
           player.style.display = 'none';
           document.getElementById('video-cover').style.display = 'flex';
           document.getElementById('video-cover').style.backgroundImage = `url('${mod.thumb}')`;
           document.getElementById('cover-title').innerText = mod.title;
-
-          // Clear existing source and set new one
           player.innerHTML = '';
           const source = document.createElement('source');
           source.src = mod.src;
           source.type = 'video/mp4';
           player.appendChild(source);
-
-          console.log('Player source set to:', mod.src);
           player.load();
           player.currentTime = 0;
           furthestTime = 0;
       }
 
       function startVideo() {
-          console.log('startVideo called');
-          console.log('Player src:', player.src);
-          console.log('Player readyState:', player.readyState);
           document.getElementById('video-cover').style.display = 'none';
           player.style.display = 'block';
-          player.play().catch(err => {
-              console.error('Play failed:', err);
-          });
+          const playPromise = player.play();
+          if (playPromise !== undefined) {
+              playPromise.then(_ => {
+                  console.log('Playback started successfully');
+              }).catch(err => {
+                  console.error('Play failed:', err);
+              });
+          }
       }
 
       function closeModal() {
           document.getElementById('trainingModal').style.display = 'none';
           clearInterval(quizTimerInterval);
-          // Refresh the UI state when closing modal
           renderModules();
           updateTotalStats();
       }
-
-      // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---
-      let qIdx = 0;
-      let qScore = 0;
 
       function shuffleArray(array) {
           for (let i = array.length - 1; i > 0; i--) {
@@ -1148,12 +1112,9 @@
       }
 
       function initQuiz() {
-          qIdx = 0;
-          qScore = 0;
+          qIdx = 0; qScore = 0;
           quizSeconds = 600;
-          // Create a copy, shuffle, and take only 15
           currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
-
           document.getElementById('pq-game-area').style.display = 'block';
           document.getElementById('pq-result-area').style.display = 'none';
           loadQuestion();
@@ -1166,27 +1127,23 @@
           let m = Math.floor(quizSeconds/60);
           let s = quizSeconds%60;
           document.getElementById('quiz-time').innerText = `${m}:${s.toString().padStart(2, '0')}`;
-          if(quizSeconds <= 0) { clearInterval(quizTimerInterval); closeModal(); alert("Time is up!"); }
+          if(quizSeconds <= 0) { clearInterval(quizTimerInterval); closeModal(); }
       }
 
       function loadQuestion() {
           const q = currentQuizSet[qIdx];
           document.getElementById('pq-counter').innerText = `Question ${qIdx+1}/15`;
           document.getElementById('pq-question-text').innerText = q.question;
-          const grid = document.getElementById('pq-options-grid'); grid.innerHTML = '';
+          const grid = document.getElementById('pq-options-grid'); 
+          grid.innerHTML = '';
           q.options.forEach((opt, i) => {
               const btn = document.createElement('button');
               btn.className = 'pq-btn'; btn.innerText = opt;
               btn.onclick = () => {
                   const btns = document.querySelectorAll('.pq-btn');
                   btns.forEach(b => b.classList.add('disabled'));
-                  if(i === q.answer) {
-                      btn.classList.add('correct');
-                      qScore++;
-                  } else {
-                      btn.classList.add('wrong');
-                      btns[q.answer].classList.add('correct');
-                  }
+                  if(i === q.answer) { btn.classList.add('correct'); qScore++; }
+                  else { btn.classList.add('wrong'); btns[q.answer].classList.add('correct'); }
                   document.getElementById('pq-next-btn').style.display = 'block';
               };
               grid.appendChild(btn);
@@ -1196,82 +1153,43 @@
       function nextPracticeQuestion() {
           qIdx++;
           document.getElementById('pq-next-btn').style.display = 'none';
-          if(qIdx < 15) {
-              loadQuestion();
-          } else {
+          if(qIdx < 15) loadQuestion();
+          else {
               clearInterval(quizTimerInterval);
               document.getElementById('pq-game-area').style.display = 'none';
-
-              const passed = qScore >= Math.ceil(0.8 * 15); // 80% pass threshold (12 correct out of 15)
+              const passed = qScore >= 12;
               const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
-              document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn btn-gradient mt-3" onclick="closeModal()">Finish</button>`;
+              document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn-start" onclick="closeModal()">Finish</button>`;
               document.getElementById('pq-result-area').style.display = 'block';
-
-              // Save Assessment Result to trigger certificate generation if passed
-               fetch('/ajax/submit-assessment/', {
-                   method: 'POST',
-                   headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
-                   body: JSON.stringify({ 
-                       type: 'POSH', 
-                       score: qScore, 
-                       total: 15,
-                       passed: passed 
-                   })
-               }).then(res => res.json()).then(data => {
-                  // Mark module complete ONLY if they passed
-                  if (passed) {
-                      if (window._quizModuleId) {
-                          const idx = window._quizModuleIdx;
-                          if (idx !== undefined && modules[idx]) {
-                              modules[idx].status = 'complete';
-                          }
-                          markComplete(window._quizModuleId);
-                          window._quizModuleId = null;
-                          window._quizModuleIdx = null;
-                          renderModules();
-                      }
-                  }
-                  updateTotalStats();
-              }).catch(e => console.error(e));
+              if (passed && window._quizModuleId) {
+                  const idx = window._quizModuleIdx;
+                  if (idx !== undefined && modules[idx]) modules[idx].status = 'complete';
+                  markComplete(window._quizModuleId);
+              }
+              updateTotalStats();
           }
       }
 
-      // --- ANALYTICS ---
-      let lastTime = Date.now();
-
-
       setInterval(() => {
           const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
-          const isQuizOpen = document.getElementById('trainingModal').style.display !== 'none' && document.getElementById('trainingModal').style.display !== '';
-
+          const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex';
           if (isVideoPlaying || isQuizOpen) {
               totalActivitySeconds += 1;
-              
               const h = Math.floor(totalActivitySeconds / 3600);
               const m = Math.floor((totalActivitySeconds % 3600) / 60);
               const s = totalActivitySeconds % 60;
               const display = document.getElementById('watch-time-display');
-              if (display) {
-                  display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
-              }
-              
-              // Sync with server EVERY second as requested
+              if (display) display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
               fetch(`/ajax/update-watch-time/`, {
                   method: 'POST',
-                  headers: {
-                      'X-CSRFToken': getCsrfToken(),
-                      'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ seconds: 1 }),
-                  credentials: 'same-origin'
-              }).catch(e => {
-                  console.error("Timer sync failed:", e);
-              });
+                  headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ seconds: 1 })
+              }).catch(e => console.error("Sync failed:", e));
           }
       }, 1000);
 
       function handleVideoComplete() {
-          if (modules[currentIdx].status !== 'complete') {
+          if (modules[currentIdx] && modules[currentIdx].status !== 'complete') {
               modules[currentIdx].status = 'complete';
               if(modules[currentIdx+1]) modules[currentIdx+1].status = 'pending';
               renderModules();
@@ -1281,13 +1199,8 @@
       }
 
       player.onended = handleVideoComplete;
-
       player.ontimeupdate = () => {
-          player.lastTime = player.currentTime;
-          if (player.duration > 0) {
-              const thresh = player.duration * 0.95;
-              if (player.currentTime > thresh) handleVideoComplete();
-          }
+          if (player.duration > 0 && player.currentTime > player.duration * 0.95) handleVideoComplete();
       };
 
       function updateTotalStats() {
@@ -1295,22 +1208,17 @@
           const total = modules.length;
           const perc = Math.round((done / total) * 100) || 0;
           document.getElementById('perc-text').innerText = perc + "%";
-          document.getElementById('perc-bar').style.width = perc + "%";
+          const bar = document.getElementById('perc-bar');
+          if (bar) bar.style.width = perc + "%";
           updateChart();
-          checkButtonLocks();
-      }
-
-      function checkButtonLocks() {
-          // Final Quiz removed from corp POSH training — nothing to unlock
       }
 
       function updateChart() {
           const ctx = document.getElementById('statusChart').getContext('2d');
-          const dataSet = modules;
           const counts = [
-              dataSet.filter(i => i.status === 'complete').length,
-              dataSet.filter(i => i.status === 'pending').length,
-              dataSet.filter(i => i.status === 'locked').length
+              modules.filter(i => i.status === 'complete').length,
+              modules.filter(i => i.status === 'pending').length,
+              modules.filter(i => i.status === 'locked').length
           ];
           if (window.myChart) window.myChart.destroy();
           window.myChart = new Chart(ctx, {
@@ -1325,14 +1233,11 @@
 
       function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
 
-      // Remove sidebar on mobile
       function handleMobileSidebar() {
-        if (window.innerWidth <= 992) {
-          var sb = document.querySelector('.sidebar');
-          if (sb && sb.parentNode) {
-            sb.parentNode.removeChild(sb);
+          if (window.innerWidth <= 992) {
+              const sb = document.querySelector('.sidebar');
+              if (sb && sb.parentNode) sb.parentNode.removeChild(sb);
           }
-        }
       }
       window.addEventListener('load', handleMobileSidebar);
       window.addEventListener('resize', handleMobileSidebar);
@@ -1344,9 +1249,8 @@
           const h = Math.floor(totalActivitySeconds / 3600);
           const m = Math.floor((totalActivitySeconds % 3600) / 60);
           const s = totalActivitySeconds % 60;
-          const timeStr = `${h>0?h+':':''}${m<10?'0'+m:m}:${s<10?'0'+s:s}`;
           const disp = document.getElementById('watch-time-display');
-          if(disp) disp.innerText = timeStr;
+          if(disp) disp.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
       };
     </script>
   </body>

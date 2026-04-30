@@ -235,7 +235,7 @@
                             <button class="btn-start" onclick="startVideo()">▶ Start Private Video</button>
                         </div>
                         <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none;">
-                            <source src="/media/training%20videos/POSH_Training_Video.mp4" type="video/mp4">
+                            <source src="/media/training_videos/POSH_Training_Video.mp4" type="video/mp4">
                         </video>
                     </div>
                 </div>
@@ -501,9 +501,15 @@
         console.log('Player readyState:', player.readyState);
         document.getElementById('video-cover').style.display = 'none';
         player.style.display = 'block';
-        player.play().catch(err => {
-            console.error('Play failed:', err);
-        });
+        
+        const playPromise = player.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                console.log('Playback started successfully');
+            }).catch(err => {
+                console.error('Play failed:', err);
+            });
+        }
     }
 
     function triggerPPTAction() {

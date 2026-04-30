@@ -434,7 +434,7 @@
                             <!-- SECURITY: Added oncontextmenu -->
                             <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;"
                                 style="display: none;">
-                                <source src="{% static 'video/Demo Video OHS.mp4' %}" type="video/mp4">
+                                <source src="{% static 'video/Demo_Video_OHS.mp4' %}" type="video/mp4">
                             </video>
                         </div>
                     </div>
@@ -765,7 +765,15 @@
         function startVideo() {
             document.getElementById('video-cover').style.display = 'none';
             player.style.display = 'block';
-            player.play();
+            
+            const playPromise = player.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    console.log('Playback started successfully');
+                }).catch(err => {
+                    console.error('Play failed:', err);
+                });
+            }
         }
 
         function selectResource(idx) {

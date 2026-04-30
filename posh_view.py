@@ -80,7 +80,7 @@ def posh_act_page(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/media/training%20videos/Demo%20video.mp4"
+                else "/media/training_videos/POSH_Training_Video.mp4"
             ),
             "duration": mod.duration_seconds,
         }
