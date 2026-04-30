@@ -261,12 +261,12 @@ try:
     if os.path.exists(image_model_path):
         image_chatbot = ImageChatbot(model_path=image_model_path)
 
-    text_model_path = os.path.join(settings.BASE_DIR, "chatbot_model.pkl")
+    text_model_path = os.path.join(settings.BASE_DIR, "home", "chatbot_model.pkl")
     if os.path.exists(text_model_path):
         text_chatbot = TextChatbot(
             model_path=text_model_path,
-            label_encoder_path=os.path.join(settings.BASE_DIR, "label_encoder.pkl"),
-            semantic_data_path=os.path.join(settings.BASE_DIR, "semantic_data.pkl"),
+            label_encoder_path=os.path.join(settings.BASE_DIR, "home", "label_encoder.pkl"),
+            semantic_data_path=os.path.join(settings.BASE_DIR, "home", "semantic_data.pkl"),
         )
 
     # Initialize RAG Chatbot
@@ -337,12 +337,12 @@ def load_topic_data(topic_name):
         return {}
 
     try:
-        json_path = os.path.join(settings.BASE_DIR, filename_map[topic_name])
+        json_path = os.path.join(settings.BASE_DIR, "data", filename_map[topic_name])
         # Fallback to current directory if BASE_DIR/json fails
         if not os.path.exists(json_path):
             json_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                f"../{filename_map[topic_name]}",
+                f"../data/{filename_map[topic_name]}",
             )
 
         if not os.path.exists(json_path):

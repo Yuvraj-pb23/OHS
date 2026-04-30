@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -563,7 +564,7 @@
                             <!-- SECURITY: Added oncontextmenu -->
                             <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;"
                                 style="display: none;">
-                                <source src="/media/training videos/Demo video.mp4" type="video/mp4">
+                                <source src="{% static 'video/Demo Video OHS.mp4' %}" type="video/mp4">
                             </video>
                         </div>
                     </div>

@@ -63,7 +63,7 @@ def posh_act_page_corp(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/media/training_videos/POSH_Training_Video.mp4"
+                else "/media/training%20videos/POSH_Training_Video.mp4"
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
