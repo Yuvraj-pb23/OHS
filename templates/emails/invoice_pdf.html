@@ -246,32 +246,16 @@
     </div>
 
     <div class="pricing-section">
-        {% if tier_key == 'PAY_NOW' %}
-            <div class="section-title" style="color: #64748b;">Payment Status</div>
-            <div class="pricing-grid">
-                <div class="pricing-card card-active" style="background-color: #f8fafc; border-color: #e2e8f0; max-width: 50%; margin: 0 auto;">
-                    <div class="tier-label" style="color: #64748b;">Amount Under Review</div>
-                    <div class="tier-amount" style="color: #1e293b;">₹{{ total_tier_1|floatformat:0 }}</div>
+        <div class="section-title">Total Amount Payable</div>
+        <div class="pricing-grid">
+            <div class="pricing-card card-active" style="max-width: 50%; margin: 0 auto;">
+                <div class="tier-label" style="font-size: 9pt;">Total Amount</div>
+                <div class="tier-amount">₹{{ total_tier_3|floatformat:0 }}</div>
+                {% if tier_key == 'PAY_NOW' %}
                     <div style="font-size: 8pt; font-weight: 800; color: #64748b; margin-top: 2mm; text-transform: uppercase;">This amount is under review</div>
-                </div>
+                {% endif %}
             </div>
-        {% else %}
-            <div class="section-title">Final Calculated Amount (Tiered Options)</div>
-            <div class="pricing-grid">
-                <div class="pricing-card card-active">
-                    <div class="tier-label">Pay Now</div>
-                    <div class="tier-amount">₹{{ total_tier_1|floatformat:0 }}</div>
-                </div>
-                <div class="pricing-card">
-                    <div class="tier-label">Before 15th May</div>
-                    <div class="tier-amount">₹{{ total_tier_2|floatformat:0 }}</div>
-                </div>
-                <div class="pricing-card">
-                    <div class="tier-label">Regular Price</div>
-                    <div class="tier-amount">₹{{ total_tier_3|floatformat:0 }}</div>
-                </div>
-            </div>
-        {% endif %}
+        </div>
         <div class="tax-disclaimer">
             All prices are inclusive of GST ({{ billing_data.gst_percentage|floatformat:0 }}%)
         </div>
