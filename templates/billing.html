@@ -29,18 +29,54 @@
         font-family: 'Outfit', sans-serif;
     }
 
+    /* Scaling Container for Fixed Ratio on Mobile */
+    .invoice-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow: visible;
+    }
+
     .certificate-card {
         background: #ffffff;
         position: relative;
         box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.1);
-        border: 20px solid #ffffff;
+        border: 10px solid #ffffff;
         outline: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    @media (min-width: 768px) {
+        .certificate-card {
+            border-width: 20px;
+        }
+    }
+
+    .invoice-wrapper .certificate-card {
+        width: 850px; /* Fixed width to maintain layout */
+        min-width: 850px;
+        transform-origin: top center;
+        transition: transform 0.1s ease-out;
+        margin: 0 auto;
+    }
+
+    @media (max-width: 900px) {
+        .invoice-wrapper {
+            padding: 0;
+            overflow: hidden;
+        }
     }
 
     .certificate-inner-border {
         border: 2px solid var(--certificate-gold);
-        padding: 40px;
+        padding: 20px;
         position: relative;
+    }
+
+    @media (min-width: 768px) {
+        .certificate-inner-border {
+            padding: 40px;
+        }
     }
 
     .watermark {
@@ -85,16 +121,16 @@
     }
 </style>
 
-<div class="billing-page min-h-screen py-12 md:py-20 flex items-center justify-center">
-    <div class="max-w-4xl w-full px-4">
+<div class="billing-page min-h-screen py-6 md:py-20 flex items-center justify-center">
+    <div class="max-w-4xl w-full px-2 md:px-4">
 
         {% if payment_status == 'SUBMITTED' or payment_status == 'VERIFIED' %}
         <!-- SUCCESS / CONGRATULATIONS SCREEN -->
-        <div class="certificate-card rounded-3xl p-4 text-center animate-fadeIn">
-            <div class="certificate-inner-border rounded-2xl flex flex-col items-center py-20 px-8">
+        <div class="certificate-card rounded-3xl p-2 md:p-4 text-center animate-fadeIn">
+            <div class="certificate-inner-border rounded-2xl flex flex-col items-center py-12 px-4 md:py-20 md:px-8">
                 <div class="relative mb-10">
                     <div
-                        class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl animate-bounce shadow-lg shadow-emerald-100">
+                        class="w-24 h-24 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl shadow-lg shadow-emerald-100">
                         <i class="fas fa-check"></i>
                     </div>
                     <div
@@ -103,10 +139,10 @@
                     </div>
                 </div>
 
-                <h1 class="heading-font text-5xl font-black text-blue-600 mb-6 tracking-tight">Congratulations!</h1>
+                <h1 class="heading-font text-3xl md:text-5xl font-black text-blue-600 mb-6 tracking-tight">Congratulations!</h1>
 
                 <div class="max-w-md mx-auto space-y-4 mb-12">
-                    <p class="text-xl font-extrabold text-slate-900 leading-snug">
+                    <p class="text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
                         Your request is under preview.
                     </p>
                     <p class="text-slate-500 font-medium leading-relaxed">
@@ -127,8 +163,9 @@
         </div>
         {% else %}
         <!-- BILLING SUMMARY / CERTIFICATE STYLE -->
-        <div class="certificate-card rounded-3xl p-4">
-            <div class="certificate-inner-border rounded-2xl overflow-hidden">
+        <div class="invoice-wrapper" id="invoiceWrapper">
+            <div class="certificate-card rounded-3xl p-4" id="invoiceCard">
+                <div class="certificate-inner-border rounded-2xl overflow-hidden">
                 <div class="watermark">OFFICIAL BILLING</div>
 
                 <!-- Disclaimer -->
@@ -304,6 +341,31 @@
 
 
 <script>
+    function scaleInvoice() {
+        const wrapper = document.getElementById('invoiceWrapper');
+        const card = document.getElementById('invoiceCard');
+        if (!wrapper || !card) return;
+
+        const container = wrapper.parentElement;
+        const availableWidth = container.offsetWidth - 32; // Account for px-4 padding
+        const baseWidth = 850;
+
+        if (availableWidth < baseWidth) {
+            const scale = availableWidth / baseWidth;
+            card.style.transform = `scale(${scale})`;
+            // Adjust the wrapper height to match the scaled card height
+            wrapper.style.height = (card.offsetHeight * scale) + 'px';
+        } else {
+            card.style.transform = 'none';
+            wrapper.style.height = 'auto';
+        }
+    }
+
+    window.addEventListener('resize', scaleInvoice);
+    window.addEventListener('load', scaleInvoice);
+    // Initial call
+    setTimeout(scaleInvoice, 100);
+
     function handlePaymentSubmit(form) {
         const btn = document.getElementById('btn-payment-done');
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
