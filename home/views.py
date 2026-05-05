@@ -18,7 +18,6 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 
-from home.models import POCSORegistration, POSHRegistration
 
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
@@ -32,6 +31,9 @@ from .models import (
     ModuleProgress,
     Organization,
     OrganizationMember,
+    POCSORegistration,
+    POSHRegistration,
+    PosterLogoConfig,
     POCSOPricingConfig,
     POSHPricingConfig,
     Subscription,
@@ -55,15 +57,34 @@ def upload_company_logo(request):
             return redirect("company_dashboard")
 
         org = membership.organization
-        logo = request.FILES.get("company_logo")
+        logo = request.FILES.get("company_logo") or request.FILES.get("logo")
+        poster_path = request.POST.get("poster_path")
+
         if logo:
-            org.logo = logo
-            org.save()
-            # messages.success(request, "Company logo uploaded successfully!")
+            if poster_path:
+                from .models import PosterLogoConfig
+
+                config, created = PosterLogoConfig.objects.get_or_create(
+                    organization=org, poster_path=poster_path
+                )
+                config.logo = logo
+                config.save()
+                logo_url = config.logo.url
+            else:
+                org.logo = logo
+                org.save()
+                logo_url = org.logo.url
+
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse({"status": "success", "logo_url": logo_url})
         else:
+            if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+                return JsonResponse(
+                    {"status": "error", "message": "No logo file selected."}, status=400
+                )
             messages.error(request, "No logo file selected.")
 
-    return redirect("company_dashboard")
+    return redirect("/dashboard/company/?section=posters&open_editor=true")
 
 
 @login_required(login_url="login")
@@ -83,12 +104,16 @@ def get_poster_with_logo(request, poster_type):
     is_download = request.GET.get("download") == "1"
 
     # Determine the poster file path
-    if poster_type == "posh":
-        poster_filename = "POSH Poster.jpeg"
+    if poster_type == "posh" or poster_type == "posh_1":
+        poster_filename = "POSH Poster.webp"
+    elif poster_type == "posh_2":
+        poster_filename = "POSH Poster 2.webp"
     elif poster_type == "pocso":
-        poster_filename = "POCSO Poster.jpeg"
+        poster_filename = "POCSO Poster.webp"
     else:
         return HttpResponse("Invalid poster type", status=400)
+
+    poster_key = f"/media/Posters/{poster_filename}"
 
     poster_path = os.path.join(settings.MEDIA_ROOT, "Posters", poster_filename)
 
@@ -100,23 +125,43 @@ def get_poster_with_logo(request, poster_type):
         poster_img = Image.open(poster_path).convert("RGBA")
         p_width, p_height = poster_img.size
 
-        # If organization has a logo, merge it
-        if org.logo:
-            logo_path = org.logo.path
+        # Fetch poster-specific config or fallback to org defaults
+        from .models import PosterLogoConfig
+
+        config = PosterLogoConfig.objects.filter(
+            organization=org, poster_path=poster_key
+        ).first()
+
+        # Determine which logo to use: poster-specific or global org logo
+        active_logo = None
+        if config and config.logo:
+            active_logo = config.logo
+        elif org.logo:
+            active_logo = org.logo
+
+        if active_logo:
+            logo_path = active_logo.path
             if os.path.exists(logo_path):
                 logo_img = Image.open(logo_path).convert("RGBA")
 
-                # Scale based on saved org.logo_width (percentage of poster width)
-                # Default to 15% if something goes wrong
-                lw_pct = org.logo_width if org.logo_width > 0 else 15.0
+                if config:
+                    lw_pct = config.logo_width if config.logo_width > 0 else 15.0
+                    lx = config.logo_x
+                    ly = config.logo_y
+                else:
+                    lw_pct = org.logo_width if org.logo_width > 0 else 15.0
+                    lx = org.logo_x
+                    ly = org.logo_y
+
+                # Scale based on lw_pct (percentage of poster width)
                 target_width = int(p_width * (lw_pct / 100.0))
                 w_percent = target_width / float(logo_img.size[0])
                 target_height = int((float(logo_img.size[1]) * float(w_percent)))
                 logo_img = logo_img.resize((target_width, target_height), Image.LANCZOS)
 
-                # Positioning based on saved org.logo_x, org.logo_y (percentages)
-                pos_x = int(p_width * (org.logo_x / 100.0))
-                pos_y = int(p_height * (org.logo_y / 100.0))
+                # Positioning based on lx, ly (percentages)
+                pos_x = int(p_width * (lx / 100.0))
+                pos_y = int(p_height * (ly / 100.0))
 
                 # Paste the logo directly onto the poster (using itself as mask for transparency)
                 poster_img.paste(logo_img, (pos_x, pos_y), logo_img)
@@ -159,10 +204,24 @@ def save_logo_config(request):
                 )
 
             org = membership.organization
-            org.logo_x = float(data.get("x", 2.0))
-            org.logo_y = float(data.get("y", 2.0))
-            org.logo_width = float(data.get("width", 15.0))
-            org.save()
+            poster_path = data.get("poster_path")
+
+            if poster_path:
+                # Save poster-specific config
+                config, created = PosterLogoConfig.objects.get_or_create(
+                    organization=org, poster_path=poster_path
+                )
+                config.logo_x = float(data.get("x", 2.0))
+                config.logo_y = float(data.get("y", 2.0))
+                config.logo_width = float(data.get("width", 15.0))
+                config.save()
+            else:
+                # Fallback to general org settings if no path provided
+                org.logo_x = float(data.get("x", 2.0))
+                org.logo_y = float(data.get("y", 2.0))
+                org.logo_width = float(data.get("width", 15.0))
+                org.save()
+
             return JsonResponse({"status": "success"})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
@@ -921,8 +980,15 @@ def company_dashboard(request):
 
     seat_limit = posh_reg.employee_count if posh_reg else org.max_users
 
+    poster_configs = {
+        "posh_1": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POSH Poster.webp").first(),
+        "posh_2": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POSH Poster 2.webp").first(),
+        "pocso": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POCSO Poster.webp").first(),
+    }
+    
     context = {
         "organization": org,
+        "poster_configs": poster_configs,
         "posh_company_name": posh_company_name,
         "posh_reg_employee_count": seat_limit,
         "active_plan": active_sub,
@@ -2445,8 +2511,8 @@ def get_posh_pricing_context(registration):
         "tax": billing_data["gst_amount"],
         "total": billing_data["total_amount"],
         "total_tier_3": billing_data["total_amount"],
-        "total_tier_2": billing_data["total_amount"] * 0.9,
-        "total_tier_1": billing_data["total_amount"] * 0.8,
+        "total_tier_2": billing_data["total_amount"],
+        "total_tier_1": billing_data["total_amount"],
         "gst_percentage": billing_data["gst_percentage"],
         "company_name": registration.company_name,
         "payment_status": registration.payment_status,
@@ -2861,8 +2927,8 @@ def get_pocso_pricing_context(registration):
         "gst_percentage": billing_data["gst_percentage"],
         "tax": billing_data["gst_amount"],
         "total": billing_data["total_amount"],
-        "total_tier_1": billing_data["total_amount"] * 0.8,
-        "total_tier_2": billing_data["total_amount"] * 0.9,
+        "total_tier_1": billing_data["total_amount"],
+        "total_tier_2": billing_data["total_amount"],
         "total_tier_3": billing_data["total_amount"],
         "payment_status": registration.payment_status,
     }

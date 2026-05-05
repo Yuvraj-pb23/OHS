@@ -391,8 +391,8 @@ def generate_proforma_invoice_pdf(
         "tier_key": tier_key,
         "date": timezone.now().strftime("%d %b %Y"),
         "invoice_no": f"PRO-{registration_type[:3]}-{registration.id:05d}",
-        "total_tier_1": total_amount * 0.8,
-        "total_tier_2": total_amount * 0.9,
+        "total_tier_1": total_amount,
+        "total_tier_2": total_amount,
         "total_tier_3": total_amount,
         "base_url": (
             settings.BASE_URL

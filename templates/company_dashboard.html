@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -124,17 +125,39 @@
         margin-bottom: var(--space-4);
       }
 
+      @media (max-width: 992px) {
+        .sidebar-brand {
+          padding-top: 80px !important;
+          padding-left: 70px !important;
+          border-bottom: none;
+        }
+      }
+
       .sidebar-brand i {
         font-size: 1.8rem;
         color: var(--color-primary);
       }
 
-      .nav-link,
-      .sidebar-back-btn {
+      .sidebar-menu-wrapper {
+        padding: var(--space-4) 0;
+        height: calc(100vh - 220px);
+        overflow-y: auto;
+      }
+
+      .menu-label {
+        padding: var(--space-2) var(--space-5);
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+        margin-top: var(--space-4);
+      }
+
+      .nav-link {
         color: var(--text-secondary) !important;
         padding: var(--space-3) var(--space-5);
-        margin: var(--space-1) var(--space-2);
-        border-radius: var(--radius-md);
+        margin: var(--space-1) 0;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -143,19 +166,38 @@
         font-weight: 600;
         cursor: pointer;
         font-size: 0.95rem;
+        border-left: 4px solid transparent;
       }
 
-      .nav-link:hover,
-      .sidebar-back-btn:hover {
+      .nav-link:hover {
         background: var(--bg-secondary);
         color: var(--color-primary) !important;
       }
 
       .nav-link.active {
-        background: rgba(79, 70, 229, 0.1);
+        background: rgba(79, 70, 229, 0.08);
         color: var(--color-primary) !important;
-        border-left: 3px solid var(--color-primary);
-        padding-left: calc(var(--space-5) - 3px);
+        border-left-color: var(--color-primary);
+      }
+
+      .sidebar-footer {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: var(--space-4) 0;
+        border-top: 1px solid var(--border-color);
+        background: var(--bg-sidebar);
+      }
+
+      .footer-link {
+        margin: 0 !important;
+        border-left: 4px solid transparent !important;
+      }
+
+      .logout-link:hover {
+        background: rgba(239, 68, 68, 0.08);
+        color: #ef4444 !important;
       }
 
       /* MAIN */
@@ -204,15 +246,18 @@
       .stat-card {
         background: var(--bg-card);
         border: 1px solid var(--border-color);
-        border-radius: var(--radius-lg);
         padding: var(--space-6);
+        border-radius: var(--radius-xl);
         text-align: center;
         transition: all 0.3s ease;
-        box-shadow: var(--shadow-sm);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: var(--space-4);
+        cursor: pointer;
+      }
+
+      .stat-card.active {
+        border-color: var(--color-primary);
+        background: var(--bg-card-hover);
+        box-shadow: var(--shadow-lg);
+        transform: scale(1.02);
       }
 
       .stat-card:hover {
@@ -220,6 +265,49 @@
         box-shadow: var(--shadow-md);
         border-color: var(--color-primary);
         transform: translateY(-4px);
+      }
+
+      /* PAGE HEADER */
+      .page-header {
+        margin-bottom: var(--space-8);
+        padding: var(--space-6) 0;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+      }
+
+      .header-main-title {
+        font-size: 2.25rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        letter-spacing: -0.02em;
+        margin-bottom: var(--space-1);
+        background: linear-gradient(135deg, var(--text-primary) 0%, var(--color-primary) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .header-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        font-weight: 500;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      @media (max-width: 992px) {
+        .page-header {
+          margin-top: 0;
+          margin-bottom: var(--space-4);
+        }
+        .header-main-title {
+          font-size: 1.75rem;
+        }
+        .header-subtitle {
+          font-size: 0.85rem;
+          padding: 0 var(--space-4);
+        }
       }
 
       /* MOBILE RESPONSIVENESS */
@@ -242,7 +330,7 @@
         .main-content {
           margin-left: 0 !important;
           padding: var(--space-4) !important;
-          padding-top: 70px !important; /* Space for fixed hamburger */
+          padding-top: 60px !important; /* Space for fixed hamburger */
         }
 
         .hamburger-btn {
@@ -271,37 +359,75 @@
         }
 
         .stat-card {
-          padding: var(--space-2) !important;
-          gap: var(--space-1) !important;
+          padding: var(--space-3) var(--space-2) !important;
+          display: flex !important;
+          flex-direction: column !important;
+          min-height: 110px !important;
+          justify-content: flex-start !important;
         }
 
         .stat-label {
-          font-size: 0.6rem !important;
+          font-size: 0.75rem !important;
+          line-height: 1.3 !important;
+          margin-bottom: var(--space-1) !important;
+          font-weight: 700 !important;
         }
 
         .stat-value {
-          font-size: 1.4rem !important;
+          font-size: 1.6rem !important;
+          margin-top: auto !important;
+        }
+
+        .glass-toolbar {
+          padding: var(--space-4) !important;
+        }
+
+        .icon-box {
+          width: 38px !important;
+          height: 38px !important;
+          font-size: 1.1rem !important;
+        }
+
+        .title-main {
+          font-size: 1.2rem !important;
+        }
+
+        .refresh-timestamp {
+          font-size: 0.7rem !important;
         }
 
         .action-group {
-          display: flex !important;
-          flex-direction: row !important;
-          flex-wrap: wrap !important;
+          display: grid !important;
+          grid-template-columns: repeat(2, 1fr) !important;
           gap: var(--space-2) !important;
-          justify-content: center !important;
+          width: 100% !important;
+        }
+
+        .search-wrapper {
+          grid-column: span 2 !important;
+          min-width: 100% !important;
+          order: -1;
+        }
+
+        .btn-gradient-action {
+          grid-column: span 2 !important;
         }
 
         .btn-action,
         .btn-gradient-action {
           padding: 6px 12px !important;
-          font-size: 0.75rem !important;
-          width: auto !important;
-          flex: 1 1 auto !important;
+          font-size: 0.8rem !important;
+          width: fit-content !important;
+          display: inline-flex !important;
+          justify-content: center !important;
+          align-items: center !important;
+          white-space: nowrap !important;
         }
 
-        .search-wrapper {
-          min-width: 100% !important;
-          order: -1; /* Search always first on mobile */
+        .action-group .btn-action,
+        .action-group .btn-gradient-action {
+          width: 100% !important;
+          display: flex !important;
         }
 
         .members-grid {
@@ -310,36 +436,35 @@
         }
 
         .member-card {
-          padding: var(--space-3) !important;
+          padding: var(--space-2) !important;
         }
 
         .avatar {
-          width: 45px !important;
-          height: 45px !important;
+          width: 40px !important;
+          height: 40px !important;
           font-size: 1rem !important;
           margin-bottom: var(--space-2) !important;
         }
 
         .member-name {
           font-size: 0.85rem !important;
+          text-align: center;
         }
 
         .member-email {
-          font-size: 0.7rem !important;
+          font-size: 0.65rem !important;
           margin-bottom: var(--space-2) !important;
+          word-break: break-all;
+          text-align: center;
         }
 
         .role-badge {
           font-size: 0.6rem !important;
-          padding: 2px 8px !important;
+          padding: 2px 6px !important;
         }
 
         .section-title {
-          font-size: 1.1rem;
-        }
-
-        .stat-card {
-          padding: var(--space-4);
+          font-size: 1.2rem;
         }
 
         .certificate-card {
@@ -353,7 +478,7 @@
         }
 
         .certificate-card .btn {
-          padding: 8px !important;
+          padding: 6px 10px !important;
           font-size: 0.75rem !important;
         }
       }
@@ -363,7 +488,26 @@
         position: fixed;
         top: 15px;
         left: 15px;
-        z-index: 1060;
+        z-index: 1100;
+        background: var(--lms-primary, #4f46e5);
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+      }
+
+      #uploadLogoModal {
+        z-index: 1070;
+      }
+
+      .modal-backdrop:nth-of-type(even) {
+        z-index: 1065;
+      }
         background: var(--color-primary);
         color: white;
         border: none;
@@ -435,6 +579,17 @@
         padding: var(--space-8);
         color: var(--text-primary);
         line-height: 1.8;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        min-height: 100vh;
+      }
+
+      body.no-scroll {
+        overflow: hidden;
       }
 
       .policy-text h3 {
@@ -564,6 +719,27 @@
         background: var(--color-primary-dark);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      }
+
+      .btn-gradient {
+        background: linear-gradient(135deg, var(--color-primary), #6366f1);
+        color: white !important;
+        border: none;
+        padding: var(--space-3) var(--space-6);
+        border-radius: var(--radius-lg);
+        font-weight: 700;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
+        opacity: 0.9;
       }
 
       /* FORM CONTROLS */
@@ -842,94 +1018,74 @@
         <span>{{ posh_company_name }}</span>
       </a>
 
-      <!-- NEW CODE -->
-      <a href="{% url 'hr_logout' %}" class="sidebar-back-btn">
-        <i class="bi bi-box-arrow-left"></i><span>Logout</span>
-      </a>
+      <div class="sidebar-menu-wrapper">
+        <div class="menu-label">Analytics & Overview</div>
+        <ul class="nav flex-column mt-2">
+          <li class="nav-item">
+            <a class="nav-link active" onclick="showSection('dashboard', this)">
+              <i class="bi bi-speedometer2"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+        </ul>
 
-      <ul
-        class="nav flex-column px-3 mt-3"
-        style="
-          display: flex;
-          flex-direction: column;
-          height: calc(100vh - 200px);
-        "
-      >
-        <li class="nav-item">
-          <a class="nav-link active" onclick="showSection('dashboard', this)">
-            <i class="bi bi-speedometer2"></i>
-            <span>Dashboard</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" onclick="showSection('posters', this)">
-            <i class="bi bi-images"></i>
-            <span>Posters</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" onclick="showSection('policy', this)">
-            <i class="bi bi-file-earmark-text"></i>
-            <span>POSH Policy</span>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" onclick="showSection('certificates', this)">
-            <i class="bi bi-award"></i>
-            <span>Certificates</span>
-          </a>
-        </li>
-      </ul>
+        <div class="menu-label">Compliance Assets</div>
+        <ul class="nav flex-column mt-2">
+          <li class="nav-item">
+            <a class="nav-link" onclick="showSection('posters', this)">
+              <i class="bi bi-images"></i>
+              <span>Awareness Posters</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="showSection('policy', this)">
+              <i class="bi bi-file-earmark-text"></i>
+              <span>POSH Policy</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" onclick="showSection('certificates', this)">
+              <i class="bi bi-award"></i>
+              <span>Certificates</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-      <!-- Settings pinned to bottom -->
-      <div
-        style="
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          padding: 0 12px 16px;
-          border-top: 1px solid var(--border-color);
-          background: var(--bg-sidebar);
-        "
-      >
-        <a
-          class="nav-link"
-          onclick="showSection('settings', this)"
-          style="
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.2s;
-          "
-          onmouseover="this.style.background = 'var(--bg-hover)'"
-          onmouseout="this.style.background = 'transparent'"
-        >
+      <!-- Settings & Logout pinned to bottom -->
+      <div class="sidebar-footer">
+        <a class="nav-link footer-link" onclick="showSection('settings', this)">
           <i class="bi bi-gear"></i>
           <span>Settings</span>
+        </a>
+        <a href="{% url 'hr_logout' %}" class="nav-link footer-link logout-link">
+          <i class="bi bi-box-arrow-left"></i>
+          <span>Logout</span>
         </a>
       </div>
     </nav>
 
     <main class="main-content">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1 class="header-main-title">Company Dashboard</h1>
+        <p class="header-subtitle">Overview of your organization's POSH compliance and training health.</p>
+      </header>
+
       <!-- === SECTION 1: DASHBOARD === -->
       <div id="dashboard" class="content-section active">
         <div class="stats-grid">
-          <div class="stat-card">
+          <div class="stat-card active" onclick="filterMembers('all', this)">
             <div class="stat-label">Total Employees</div>
             <div class="stat-value">{{ total_employees }}</div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" onclick="filterMembers('completed', this)">
             <div class="stat-label">Training Completed</div>
             <div class="stat-value" style="color: #4ade80">
               {{ training_completed }}
             </div>
           </div>
-          <div class="stat-card">
+          <div class="stat-card" onclick="filterMembers('pending', this)">
             <div class="stat-label">Training Pending</div>
             <div class="stat-value" style="color: #fb923c">
               {{ training_pending }}
@@ -970,7 +1126,7 @@
               </button>
 
               <!-- Animated Search -->
-              <div class="search-wrapper">
+              <div class="search-wrapper" style="order: -1;">
                 <i class="bi bi-search search-icon"></i>
                 <input
                   type="text"
@@ -1007,6 +1163,7 @@
           {% for member in members %}
           <div
             class="member-card"
+            data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}"
             data-bs-toggle="modal"
             data-bs-target="#userProgressModal-{{ member.id }}"
           >
@@ -1223,9 +1380,9 @@
               <div
                 id="draggable-logo"
                 style="position: absolute; 
-                        top: {{ organization.logo_y }}%; 
-                        left: {{ organization.logo_x }}%; 
-                        width: {{ organization.logo_width }}%; 
+                        top: {{ poster_configs.posh_1.logo_y|default:organization.logo_y }}%; 
+                        left: {{ poster_configs.posh_1.logo_x|default:organization.logo_x }}%; 
+                        width: {{ poster_configs.posh_1.logo_width|default:organization.logo_width }}%; 
                         cursor: default; 
                         user-select: none;
                         touch-action: none;
@@ -1234,7 +1391,7 @@
                         z-index: 10;"
               >
                 <img
-                  src="{{ organization.logo.url }}"
+                  src="{% if poster_configs.posh_1.logo %}{{ poster_configs.posh_1.logo.url }}{% else %}{{ organization.logo.url }}{% endif %}"
                   alt="Company Logo"
                   style="
                     width: 100%;
@@ -1251,14 +1408,14 @@
             <h5 class="mt-3">POSH Awareness 1</h5>
             <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
               <a
-                href="{% url 'get_poster_with_logo' 'posh' %}"
+                href="{% url 'get_poster_with_logo' 'posh_1' %}"
                 target="_blank"
                 class="btn btn-sm btn-action"
               >
                 <i class="bi bi-eye me-1"></i>View
               </a>
               <a
-                href="{% url 'get_poster_with_logo' 'posh' %}?download=1"
+                href="{% url 'get_poster_with_logo' 'posh_1' %}?download=1"
                 download
                 class="btn btn-sm btn-action"
               >
@@ -1272,10 +1429,7 @@
                 <i class="bi bi-pencil-square me-1"></i>Edit Layout
               </button>
             </div>
-            <p class="text-muted small mt-2">
-              <i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move.
-              Hover to resize. Use <b>Fullscreen Edit</b> for precision.
-            </p>
+
           </div>
 
           <!-- Poster 2: Spot It - Stop It -->
@@ -1295,19 +1449,35 @@
                 alt="Spot It Stop It Poster"
                 style="max-height: 500px; width: auto; display: block"
               />
+
+              {% if organization.logo %}
+              <div
+                class="draggable-logo-preview"
+                style="position: absolute; 
+                top: {{ poster_configs.posh_2.logo_y|default:organization.logo_y }}%; 
+                left: {{ poster_configs.posh_2.logo_x|default:organization.logo_x }}%; 
+                width: {{ poster_configs.posh_2.logo_width|default:organization.logo_width }}%; 
+                pointer-events: none;"
+              >
+                <img
+                  src="{% if poster_configs.posh_2.logo %}{{ poster_configs.posh_2.logo.url }}{% else %}{{ organization.logo.url }}{% endif %}"
+                  style="width: 100%; height: auto; display: block"
+                />
+              </div>
+              {% endif %}
             </div>
             <h5 class="mt-3">Spot It – Stop It</h5>
             <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
               <a
-                href="/media/Posters/POSH Poster 2.webp"
+                href="{% url 'get_poster_with_logo' 'posh_2' %}"
                 target="_blank"
                 class="btn btn-sm btn-action"
               >
                 <i class="bi bi-eye me-1"></i>View
               </a>
               <a
-                href="/media/Posters/POSH Poster 2.webp"
-                download="POSH_Spot_It_Stop_It.webp"
+                href="{% url 'get_poster_with_logo' 'posh_2' %}?download=1"
+                download
                 class="btn btn-sm btn-action"
               >
                 <i class="bi bi-download me-1"></i>Download
@@ -1320,10 +1490,7 @@
                 <i class="bi bi-pencil-square me-1"></i>Edit Layout
               </button>
             </div>
-            <p class="text-muted small mt-2">
-              <i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move.
-              Hover to resize. Use <b>Fullscreen Edit</b> for precision.
-            </p>
+
           </div>
 
           <style>
@@ -1444,6 +1611,45 @@
               border: 1px solid var(--border-color);
               background: white;
             }
+
+            @media (max-width: 768px) {
+              #fullscreenEditorModal .editor-top-bar {
+                padding: 8px 12px;
+              }
+              #fullscreenEditorModal .editor-top-bar h6 {
+                font-size: 0.9rem;
+              }
+              #fullscreenEditorModal .editor-top-bar span {
+                display: none;
+              }
+              #fullscreenEditorModal .editor-toolbar {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                padding: 10px;
+              }
+              #fullscreenEditorModal .tool-group {
+                width: 100%;
+                justify-content: space-around;
+              }
+              #fullscreenEditorModal .ms-auto {
+                width: 100%;
+                margin: 0 !important;
+              }
+              #fullscreenEditorModal .btn-save-project {
+                width: 100%;
+                padding: 10px;
+                font-size: 0.9rem;
+              }
+              #fullscreenEditorModal .editor-canvas {
+                padding: 20px 10px !important;
+                height: calc(100vh - 180px);
+              }
+              #modal-base-poster {
+                max-width: 100% !important;
+                height: auto !important;
+              }
+            }
           </style>
 
           <!-- Fullscreen Editor Modal -->
@@ -1483,14 +1689,19 @@
                 <div class="editor-toolbar">
                   <div class="tool-group">
                     <button
-                      class="tool-btn"
-                      data-bs-toggle="modal"
-                      data-bs-target="#uploadLogoModal"
+                      class="tool-btn btn-change-logo"
+                      onclick="document.getElementById('editorLogoInput').click()"
                     >
                       <i class="bi bi-image"></i> Change Logo
                     </button>
+                    <input
+                      type="file"
+                      id="editorLogoInput"
+                      style="display: none"
+                      accept="image/*"
+                    />
                     <a
-                      href="{% url 'reset_logo_config' %}"
+                      href="{% url 'reset_logo_config' %}?section=posters"
                       class="tool-btn text-decoration-none"
                     >
                       <i class="bi bi-arrow-counterclockwise"></i> Reset
@@ -1501,7 +1712,7 @@
                     <button class="tool-btn" id="reset-zoom-btn">
                       <i class="bi bi-zoom-in"></i> 100%
                     </button>
-                    <div class="px-2 text-secondary" style="font-size: 0.7rem">
+                    <div class="px-2 text-secondary d-none d-md-block" style="font-size: 0.7rem">
                       <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
                     </div>
                   </div>
@@ -1537,13 +1748,13 @@
                       id="modal-base-poster"
                     />
 
-                    {% if organization.logo %}
+                    {% if poster_config or organization.logo %}
                     <div
                       id="modal-draggable-logo"
                       style="position: absolute; 
-                      top: {{ organization.logo_y }}%; 
-                      left: {{ organization.logo_x }}%; 
-                      width: {{ organization.logo_width }}%; 
+                      top: {{ poster_config.logo_y|default:organization.logo_y }}%; 
+                      left: {{ poster_config.logo_x|default:organization.logo_x }}%; 
+                      width: {{ poster_config.logo_width|default:organization.logo_width }}%; 
                       cursor: move; 
                       user-select: none;
                       touch-action: none;
@@ -1551,7 +1762,9 @@
                       z-index: 100;"
                     >
                       <img
-                        src="{{ organization.logo.url }}"
+                        id="modal-logo-img"
+                        src="{{ poster_config.logo.url|default:organization.logo.url }}"
+                        alt="Company Logo"
                         style="
                           width: 100%;
                           height: auto;
@@ -1582,8 +1795,7 @@
                 <!-- Status Bar -->
                 <div class="status-bar">
                   <div>
-                    <i class="bi bi-info-circle me-1"></i> Drag to move. Hold
-                    Resize handle for scaling.
+                    <i class="bi bi-info-circle me-1"></i> Ready
                   </div>
                   <div id="editor-zoom-status">Scale: 100%</div>
                 </div>
@@ -1670,9 +1882,6 @@
                     logo.style.width = widthPct + "%";
                     syncLogo(null, null, widthPct, isModal);
                   }
-                  if (saveBtn) saveBtn.style.display = "inline-block";
-                  document.getElementById("save-logo-btn").style.display =
-                    "inline-block";
                 };
 
                 const onMouseUp = () => {
@@ -1680,6 +1889,36 @@
                   isResizing = false;
                   document.removeEventListener("mousemove", onMouseMove);
                   document.removeEventListener("mouseup", onMouseUp);
+                  document.removeEventListener("touchmove", onMouseMove);
+                  document.removeEventListener("touchend", onMouseUp);
+                };
+
+                // Touch support
+                logo.addEventListener("touchstart", function (e) {
+                  if (!isModal) return;
+                  const touch = e.touches[0];
+                  if (e.target === resizeHandle) {
+                    isResizing = true;
+                    startWidth = logo.offsetWidth;
+                  } else {
+                    isDragging = true;
+                    startLeft = logo.offsetLeft;
+                    startTop = logo.offsetTop;
+                  }
+                  startX = touch.clientX;
+                  startY = touch.clientY;
+                  logo.style.transition = "none";
+                  document.addEventListener("touchmove", onTouchMove, {
+                    passive: false,
+                  });
+                  document.addEventListener("touchend", onMouseUp);
+                });
+
+                const onTouchMove = (e) => {
+                  const touch = e.touches[0];
+                  // Mock a mouse event for onMouseMove
+                  onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+                  e.preventDefault();
                 };
               };
 
@@ -1707,6 +1946,40 @@
                 true,
               );
 
+              // Logo Upload
+              document.getElementById("editorLogoInput")?.addEventListener("change", function (e) {
+                const file = e.target.files[0];
+                if (file) {
+                  const posterSrc = document.getElementById('modal-base-poster').getAttribute('src');
+                  const formData = new FormData();
+                  formData.append("logo", file);
+                  formData.append("poster_path", posterSrc);
+
+                  const btn = document.querySelector('.btn-change-logo');
+                  const originalText = btn.innerHTML;
+                  btn.disabled = true;
+                  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Uploading...';
+
+                  fetch("{% url 'upload_company_logo' %}", {
+                    method: "POST",
+                    headers: {
+                      "X-CSRFToken": "{{ csrf_token }}",
+                      "X-Requested-With": "XMLHttpRequest"
+                    },
+                    body: formData,
+                  })
+                    .then((r) => r.json())
+                    .then((data) => {
+                      btn.disabled = false;
+                      btn.innerHTML = originalText;
+                      if (data.status === "success") {
+                        const modalLogoImg = document.getElementById("modal-logo-img");
+                        if (modalLogoImg) modalLogoImg.src = data.logo_url;
+                      }
+                    });
+                }
+              });
+
               // --- ZOOM LOGIC ---
               const modalBody = document.getElementById("modal-body-zoom");
               const zoomContainer = document.getElementById(
@@ -1724,6 +1997,17 @@
                     resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
                 };
 
+                let panX = 0;
+                let panY = 0;
+                let isPanning = false;
+                let startPanX = 0;
+                let startPanY = 0;
+
+                const updateTransform = () => {
+                    zoomContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${modalZoomScale})`;
+                    updateZoomUI();
+                };
+
                 modalBody.addEventListener(
                   "wheel",
                   function (e) {
@@ -1734,25 +2018,112 @@
                         0.3,
                         Math.min(modalZoomScale + delta, 4.0),
                       );
-                      zoomContainer.style.transform = `scale(${modalZoomScale})`;
-                      updateZoomUI();
+                      updateTransform();
                     }
                   },
                   { passive: false },
                 );
 
+                // Mouse Panning (Dragging background)
+                zoomContainer.addEventListener('mousedown', (e) => {
+                    if (e.target.closest('#modal-draggable-logo')) return;
+                    isPanning = true;
+                    startPanX = e.clientX - panX;
+                    startPanY = e.clientY - panY;
+                    zoomContainer.style.cursor = 'grabbing';
+                });
+
+                window.addEventListener('mousemove', (e) => {
+                    if (isPanning) {
+                        panX = e.clientX - startPanX;
+                        panY = e.clientY - startPanY;
+                        updateTransform();
+                    }
+                });
+
+                window.addEventListener('mouseup', () => {
+                    isPanning = false;
+                    zoomContainer.style.cursor = 'auto';
+                });
+
+                // Touch Zoom Logic (Pinch to zoom) & Panning
+                let initialTouchDistance = null;
+                let initialZoomScale = 1.0;
+
+                modalBody.addEventListener('touchstart', function(e) {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        initialTouchDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        initialZoomScale = modalZoomScale;
+                    } else if (e.touches.length === 1 && !e.target.closest('#modal-draggable-logo')) {
+                        isPanning = true;
+                        startPanX = e.touches[0].clientX - panX;
+                        startPanY = e.touches[0].clientY - panY;
+                    }
+                }, { passive: false });
+
+                modalBody.addEventListener('touchmove', function(e) {
+                    if (e.touches.length === 2 && initialTouchDistance) {
+                        e.preventDefault();
+                        const currentTouchDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        
+                        const distanceRatio = currentTouchDistance / initialTouchDistance;
+                        const newScale = initialZoomScale * distanceRatio;
+                        
+                        modalZoomScale = Math.max(0.3, Math.min(newScale, 4.0));
+                        updateTransform();
+                    } else if (isPanning && e.touches.length === 1) {
+                        e.preventDefault();
+                        panX = e.touches[0].clientX - startPanX;
+                        panY = e.touches[0].clientY - startPanY;
+                        updateTransform();
+                    }
+                }, { passive: false });
+
+                modalBody.addEventListener('touchend', function(e) {
+                    if (e.touches.length < 2) {
+                        initialTouchDistance = null;
+                    }
+                    if (e.touches.length === 0) {
+                        isPanning = false;
+                    }
+                });
+
+                modalBody.addEventListener('touchend', function(e) {
+                    if (e.touches.length < 2) {
+                        initialTouchDistance = null;
+                    }
+                });
+
                 resetZoomBtn?.addEventListener("click", () => {
                   modalZoomScale = 1.0;
-                  zoomContainer.style.transform = "scale(1)";
-                  updateZoomUI();
+                  panX = 0;
+                  panY = 0;
+                  updateTransform();
                 });
               }
 
               const handleSave = (btn) => {
-                const logo = document.getElementById("draggable-logo");
+                const isModal = btn.id === "modal-save-btn";
+                const logo = isModal
+                  ? document.getElementById("modal-draggable-logo")
+                  : document.getElementById("draggable-logo");
+                const posterImg = isModal
+                  ? document.getElementById("modal-base-poster")
+                  : logo.closest(".poster-item")?.querySelector("img");
+
                 const x_pct = parseFloat(logo.style.left);
                 const y_pct = parseFloat(logo.style.top);
                 const width_pct = parseFloat(logo.style.width);
+                const poster_path = posterImg
+                  ? posterImg.getAttribute("src")
+                  : null;
 
                 const originalText = btn.innerHTML;
                 btn.disabled = true;
@@ -1763,12 +2134,13 @@
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
-                    "X-CSRFToken": getCsrfToken(),
+                    "X-CSRFToken": "{{ csrf_token }}",
                   },
                   body: JSON.stringify({
                     x: x_pct,
                     y: y_pct,
                     width: width_pct,
+                    poster_path: poster_path,
                   }),
                 })
                   .then((response) => response.json())
@@ -1777,21 +2149,8 @@
                       btn.innerHTML =
                         '<i class="bi bi-check-all me-1"></i>Saved!';
                       setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                        if (btn.id === "save-logo-btn")
-                          btn.style.display = "none";
-                        // If in modal, maybe close it or just show success
-                        const modal = bootstrap.Modal.getInstance(
-                          document.getElementById("fullscreenEditorModal"),
-                        );
-                        if (modal && btn.id === "modal-save-btn") {
-                          setTimeout(() => {
-                            // modal.hide();
-                            // location.reload(); // Reload to see watermarked preview updated
-                          }, 500);
-                        }
-                      }, 1500);
+                        window.location.href = "{% url 'company_dashboard' %}?section=posters";
+                      }, 1000);
                     }
                   });
               };
@@ -1819,8 +2178,8 @@
 
       <!-- === SECTION 3: POLICY === -->
       <div id="policy" class="content-section">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="section-title">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+          <h2 class="section-title mb-0">
             <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
           </h2>
           <button class="btn btn-action">
@@ -1867,21 +2226,18 @@
 
       <!-- === SECTION 4: CERTIFICATES === -->
       <div id="certificates" class="content-section">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="section-title mb-0">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+          <h2 class="section-title mb-0 text-center text-md-start w-100">
             <i class="bi bi-award me-2"></i>Certificates
           </h2>
           {% if certified_employees %}
-          <div class="position-relative">
-            <i
-              class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
-            ></i>
+          <div class="search-wrapper">
+            <i class="bi bi-search search-icon"></i>
             <input
               type="text"
               id="certificateSearch"
-              class="form-control ps-5"
+              class="form-control search-input"
               placeholder="Search by employee name..."
-              style="min-width: 300px"
             />
           </div>
           {% endif %}
@@ -1891,9 +2247,16 @@
         <div class="members-grid">
           {% for member in certified_employees %}
           <div
-            class="member-card certificate-card text-center d-flex flex-column align-items-center"
-            style="padding: 30px 20px"
+            class="member-card certificate-card text-center d-flex flex-column align-items-center position-relative"
+            style="padding: 30px 20px; background: linear-gradient(135deg, rgba(16,185,129,0.06) 0%, rgba(255,255,255,0) 100%); border: 1px solid rgba(16,185,129,0.15);"
           >
+            <!-- Top Right Certified Seal -->
+            <img 
+              src="{% static 'images/certified_badge.png' %}" 
+              alt="Certified Seal" 
+              style="position: absolute; top: -15px; right: -15px; width: 45px; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); z-index: 10;" 
+            />
+
             <div
               class="avatar mb-3"
               style="
@@ -1907,6 +2270,7 @@
                 border-radius: 50%;
                 font-size: 1.5rem;
                 box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+                margin-top: 10px;
               "
             >
               {{ member.user.first_name|first|upper }}
@@ -1914,84 +2278,51 @@
 
             <h3
               class="member-name"
-              style="margin-bottom: 5px; font-weight: 700"
+              style="margin-bottom: 5px; font-weight: 700; color: #1f2937;"
             >
               {{ member.user.get_full_name|default:member.user.first_name }}
             </h3>
             <p
               class="member-email mb-2"
-              style="font-size: 0.9rem; opacity: 0.7"
+              style="font-size: 0.85rem; color: #6b7280;"
             >
               {{ member.user.email }}
             </p>
 
             {% if member.user.designation %}
             <p
-              class="small mb-3"
+              class="small mb-4"
               style="
-                font-size: 0.85rem;
-                color: var(--text-muted);
+                font-size: 0.8rem;
+                color: #9ca3af;
                 font-weight: 500;
               "
             >
               <i class="bi bi-briefcase me-1"></i>{{ member.user.designation }}
             </p>
+            {% else %}
+            <div class="mb-4"></div>
             {% endif %}
-
-            <span
-              class="role-badge mb-4"
-              style="
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
-                padding: 6px 15px;
-                border-radius: 20px;
-                font-weight: 600;
-              "
-            >
-              <i class="bi bi-patch-check-fill me-1"></i>Certified
-            </span>
 
             <div class="w-100 mt-auto">
               <a
                 href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}"
-                class="btn download-btn-animated w-100"
+                class="btn btn-dark w-100"
                 style="
-                  background: linear-gradient(135deg, #3b82f6, #1e3a8a);
-                  color: white;
-                  padding: 12px;
-                  border-radius: 12px;
+                  background: #0f172a;
+                  padding: 10px;
+                  border-radius: 8px;
                   font-weight: 600;
                   border: none;
                   display: flex;
                   align-items: center;
                   justify-content: center;
                   gap: 8px;
-                  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                  position: relative;
-                  overflow: hidden;
+                  font-size: 0.9rem;
                 "
               >
                 <i class="bi bi-download"></i>
-                <span>Download Certificate</span>
-
-                <!-- Shine Effect Element -->
-                <div
-                  style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 50%;
-                    height: 100%;
-                    background: linear-gradient(
-                      90deg,
-                      transparent,
-                      rgba(255, 255, 255, 0.2),
-                      transparent
-                    );
-                    transform: skewX(-25deg);
-                    animation: buttonShine 3s infinite;
-                  "
-                ></div>
+                <span>Download</span>
               </a>
             </div>
           </div>
@@ -2162,8 +2493,7 @@
                   class="form-control"
                   style="background: var(--bg-main); font-weight: 600"
                 >
-                  {{ request.user.get_full_name|default:request.user.first_name
-                  }}
+                  {{ request.user.get_full_name|default:request.user.first_name }}
                 </div>
               </div>
               <div class="col-md-6">
@@ -2397,8 +2727,7 @@
         >
           <div class="modal-header border-0">
             <h5 class="modal-title">
-              <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{%
-              else %}Add{% endif %} Company Logo
+              <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{% else %}Add{% endif %} Logo
             </h5>
             <button
               type="button"
@@ -2408,12 +2737,13 @@
           </div>
           <div class="modal-body">
             <form
+              id="uploadLogoForm"
               method="POST"
               action="{% url 'upload_company_logo' %}"
               enctype="multipart/form-data"
             >
               {% csrf_token %}
-              <p class="text-muted small mb-4">
+              <p class="text-white-50 small mb-4">
                 This logo will be displayed on the top-left of your awareness
                 posters.
               </p>
@@ -2427,7 +2757,7 @@
                   style="background: rgba(248, 250, 252, 0.95); color: #020617"
                 />
               </div>
-              <button type="submit" class="btn btn-gradient w-100">
+              <button type="submit" class="btn btn-gradient w-100" id="uploadLogoBtn">
                 Upload Logo
               </button>
             </form>
@@ -2439,6 +2769,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+      const SECTION_KEY = 'posh_activeSection';
+
       function showSection(sectionId, element) {
         document
           .querySelectorAll(".content-section")
@@ -2447,7 +2779,13 @@
         document
           .querySelectorAll(".nav-link")
           .forEach((link) => link.classList.remove("active"));
-        element.classList.add("active");
+        if (element) element.classList.add("active");
+
+        // Persist section state with page-specific key
+        localStorage.setItem(SECTION_KEY, sectionId);
+        if (window.location.hash !== "#" + sectionId) {
+          window.history.replaceState(null, null, "#" + sectionId);
+        }
       }
 
       document
@@ -2573,30 +2911,198 @@
 
       // Show notification when page loads after refresh
       window.addEventListener("load", function () {
+        // RESTORE ACTIVE SECTION
+        // Priority: 1) URL hash (set by user navigation) 2) localStorage 3) ?section= query param
+        const _hash = window.location.hash.substring(1);
+        const _urlParams = new URLSearchParams(window.location.search);
+        const _sectionParam = _urlParams.get("section");
+        const _savedSection = localStorage.getItem(SECTION_KEY);
+        const _sectionToRestore = _hash || _savedSection || _sectionParam;
+
+        if (_sectionToRestore) {
+          const targetLink = document.querySelector(
+            `[onclick*="showSection('${_sectionToRestore}'"]`,
+          );
+          const targetSection = document.getElementById(_sectionToRestore);
+          if (targetSection && targetLink) {
+            showSection(_sectionToRestore, targetLink);
+          }
+        }
+
         // MOBILE SIDEBAR TOGGLE
         const hamburgerBtn = document.getElementById("hamburgerBtn");
         const sidebar = document.getElementById("sidebar");
         const sidebarOverlay = document.getElementById("sidebarOverlay");
         const navLinks = document.querySelectorAll(".nav-link");
 
-        const toggleSidebar = () => {
+        window.toggleSidebar = function () {
           sidebar.classList.toggle("show");
           sidebarOverlay.classList.toggle("show");
+          document.body.classList.toggle("no-scroll");
         };
 
-        hamburgerBtn?.addEventListener("click", toggleSidebar);
-        sidebarOverlay?.addEventListener("click", toggleSidebar);
+        hamburgerBtn?.addEventListener("click", window.toggleSidebar);
+        sidebarOverlay?.addEventListener("click", window.toggleSidebar);
 
         // Close sidebar when clicking a link on mobile
         navLinks.forEach((link) => {
           link.addEventListener("click", () => {
             if (window.innerWidth <= 992) {
-              toggleSidebar();
+              window.toggleSidebar();
             }
           });
         });
 
-        const urlParams = new URLSearchParams(window.location.search);
+        // Initialize filtering logic
+        window.filterMembers = (status, element) => {
+          const cards = document.querySelectorAll(".member-card");
+          const statCards = document.querySelectorAll(".stat-card");
+
+          // Update active state on buttons
+          statCards.forEach((btn) => btn.classList.remove("active"));
+          element.classList.add("active");
+
+          cards.forEach((card) => {
+            if (status === "all") {
+              card.style.display = "block";
+            } else if (card.getAttribute("data-status") === status) {
+              card.style.display = "block";
+            } else {
+              card.style.display = "none";
+            }
+          });
+        };
+
+        // URL section param handled above in load listener
+
+        const posterConfigs = {
+            "/media/Posters/POSH Poster.webp": {
+                x: {{ poster_configs.posh_1.logo_x|default:organization.logo_x|default:2.0 }},
+                y: {{ poster_configs.posh_1.logo_y|default:organization.logo_y|default:2.0 }},
+                width: {{ poster_configs.posh_1.logo_width|default:organization.logo_width|default:15.0 }},
+                logo_url: "{% if poster_configs.posh_1.logo %}{{ poster_configs.posh_1.logo.url }}{% endif %}"
+            },
+            "/media/Posters/POSH Poster 2.webp": {
+                x: {{ poster_configs.posh_2.logo_x|default:organization.logo_x|default:2.0 }},
+                y: {{ poster_configs.posh_2.logo_y|default:organization.logo_y|default:2.0 }},
+                width: {{ poster_configs.posh_2.logo_width|default:organization.logo_width|default:15.0 }},
+                logo_url: "{% if poster_configs.posh_2.logo %}{{ poster_configs.posh_2.logo.url }}{% endif %}"
+            }
+        };
+
+        // Handle Edit Layout button clicks to update modal image and positions
+        document
+          .querySelectorAll('[data-bs-target="#fullscreenEditorModal"]')
+          .forEach((btn) => {
+            btn.addEventListener("click", function () {
+              const posterItem = this.closest(".poster-item");
+              if (posterItem) {
+                const dashboardPosterImg = posterItem.querySelector("img");
+                if (dashboardPosterImg) {
+                  const posterSrc = dashboardPosterImg.getAttribute("src");
+                  const modalBasePoster =
+                    document.getElementById("modal-base-poster");
+                  const modalLogo = document.getElementById("modal-draggable-logo");
+                  const modalLogoImg = document.getElementById("modal-logo-img");
+                  
+                  if (modalBasePoster) modalBasePoster.src = posterSrc;
+                  
+                  // Update logo image and position from saved config
+                  const config = posterConfigs[posterSrc];
+                  
+                  if (modalLogo) {
+                      if (config) {
+                          modalLogo.style.left = config.x + "%";
+                          modalLogo.style.top = config.y + "%";
+                          modalLogo.style.width = config.width + "%";
+                          if (config.logo_url && modalLogoImg) {
+                              modalLogoImg.src = config.logo_url;
+                          } else {
+                              modalLogoImg.src = "{{ organization.logo.url }}";
+                          }
+                      } else {
+                          // Fallback to global org settings if no config exists yet
+                          modalLogo.style.left = "{{ organization.logo_x|default:2 }}%";
+                          modalLogo.style.top = "{{ organization.logo_y|default:2 }}%";
+                          modalLogo.style.width = "{{ organization.logo_width|default:15 }}%";
+                          if (modalLogoImg) modalLogoImg.src = "{{ organization.logo.url }}";
+                      }
+                  }
+                }
+              }
+            });
+          });
+
+        if (urlParams.get("open_editor") === "true") {
+          const editorModalElem = document.getElementById(
+            "fullscreenEditorModal",
+          );
+          if (editorModalElem) {
+            const editorModal =
+              bootstrap.Modal.getOrCreateInstance(editorModalElem);
+            editorModal.show();
+          }
+        }
+
+        // AJAX Upload for Logo
+        const uploadForm = document.getElementById("uploadLogoForm");
+        if (uploadForm) {
+          uploadForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const btn = document.getElementById("uploadLogoBtn");
+            const originalText = btn.innerHTML;
+
+            btn.disabled = true;
+            btn.innerHTML =
+              '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+
+            fetch(this.action, {
+              method: "POST",
+              headers: {
+                "X-Requested-With": "XMLHttpRequest",
+              },
+              body: formData,
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.status === "success") {
+                  // Update logo images on page
+                  const logoImages = document.querySelectorAll(
+                    "#draggable-logo img, #modal-draggable-logo img, .org-logo-preview",
+                  );
+                  logoImages.forEach((img) => {
+                    img.src = data.logo_url + "?v=" + new Date().getTime();
+                  });
+
+                  // Ensure logo container is visible if it was hidden
+                  const containers = document.querySelectorAll(
+                    "#draggable-logo, #modal-draggable-logo",
+                  );
+                  containers.forEach((c) => (c.style.display = "block"));
+
+                  btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Uploaded!';
+
+                  setTimeout(() => {
+                    const modal = bootstrap.Modal.getInstance(
+                      document.getElementById("uploadLogoModal"),
+                    );
+                    if (modal) modal.hide();
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                  }, 1000);
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+              });
+          });
+        }
+
+
+
         if (urlParams.get("refreshed") === "true") {
           // Remove the parameter from URL
           window.history.replaceState(

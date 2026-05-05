@@ -855,3 +855,21 @@ class EmailTemplate(models.Model):
 
     def __str__(self):
         return f"Email: {self.get_tier_key_display()}"
+# 16. Poster-specific Logo Configuration
+class PosterLogoConfig(models.Model):
+    organization = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="poster_configs"
+    )
+    poster_path = models.CharField(
+        max_length=500
+    )  # e.g. "/media/Posters/POSH Poster.webp"
+    logo_x = models.FloatField(default=2.0)
+    logo_y = models.FloatField(default=2.0)
+    logo_width = models.FloatField(default=15.0)
+    logo = models.ImageField(upload_to="poster_logos/", null=True, blank=True)
+
+    class Meta:
+        unique_together = ("organization", "poster_path")
+
+    def __str__(self):
+        return f"{self.organization.name} - {self.poster_path}"

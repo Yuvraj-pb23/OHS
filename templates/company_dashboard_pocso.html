@@ -47,6 +47,10 @@
       font-size: 1.05rem;
     }
 
+    body.no-scroll {
+      overflow: hidden;
+    }
+
     /* SIDEBAR */
     .sidebar {
       position: fixed;
@@ -142,6 +146,79 @@
       }
     }
 
+    @media (max-width: 992px) {
+      .sidebar {
+        left: calc(-1 * var(--sidebar-width));
+        transition: all 0.3s ease;
+        z-index: 1050;
+      }
+
+      .sidebar.show {
+        left: 0;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+      }
+
+      .main-content {
+        margin-left: 0;
+        padding-top: 80px;
+      }
+
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1040;
+        backdrop-filter: blur(4px);
+      }
+
+      .sidebar-overlay.show {
+        display: block;
+      }
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-soft);
+      text-align: center;
+    }
+
+    .header-main-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.5rem;
+      letter-spacing: -1px;
+    }
+
+    .header-subtitle {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      font-weight: 500;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 992px) {
+      .page-header {
+        margin-top: 50px;
+      }
+      .header-main-title {
+        font-size: 1.8rem;
+      }
+      .header-subtitle {
+        font-size: 0.9rem;
+        padding: 0 1rem;
+      }
+    }
+
     /* STATS & CARDS */
     .stats-grid {
       display: grid;
@@ -157,6 +234,14 @@
       border: 1px solid var(--border-soft);
       box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
       text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card.active {
+      border-color: #fb923c;
+      background: rgba(249, 115, 22, 0.1);
+      transform: scale(1.03);
     }
 
     .stat-label {
@@ -198,15 +283,37 @@
     .avatar {
       width: 64px;
       height: 64px;
-      border-radius: 50%;
+      border-radius: 18px;
       background: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 800;
-      color: #020617;
+      color: white;
       margin-bottom: 1.2rem;
       font-size: 1.5rem;
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.3);
+    }
+
+    .btn-gradient {
+      background: var(--accent);
+      color: white !important;
+      border: none;
+      padding: 0.8rem 2rem;
+      border-radius: 12px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-gradient:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(249, 115, 22, 0.4);
+      opacity: 0.9;
     }
 
     .member-name {
@@ -625,13 +732,50 @@
       border-color: #f97316 !important;
       box-shadow: 0 0 15px rgba(249, 115, 22, 0.2) !important;
     }
+    .hamburger-btn {
+      display: none;
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1040;
+      background: #f97316;
+      color: white;
+      border: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+    }
+
+    #uploadLogoModal {
+      z-index: 1070;
+    }
+
+    .modal-backdrop:nth-of-type(even) {
+      z-index: 1065;
+    }
+
+    @media (max-width: 992px) {
+      .hamburger-btn {
+        display: flex;
+      }
+    }
   </style>
 </head>
 
 <body>
 
+  <!-- MOBILE HAMBURGER -->
+  <button class="hamburger-btn" id="hamburgerBtn">
+    <i class="bi bi-list"></i>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
   <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <nav class="sidebar" id="sidebar">
     <a href="#" class="sidebar-brand">
       <i class="bi bi-shield-check"></i>
       <span>{{ organization.name }}</span>
@@ -669,7 +813,12 @@
     </ul>
   </nav>
 
-  <main class="main-content">
+    <main class="main-content">
+      <!-- Page Header -->
+      <header class="page-header">
+        <h1 class="header-main-title">POCSO Compliance Dashboard</h1>
+        <p class="header-subtitle">Educational institution health overview and student safety metrics.</p>
+      </header>
 
     {% if messages %}
     {% for message in messages %}
@@ -685,15 +834,15 @@
     <!-- === SECTION 1: DASHBOARD === -->
     <div id="dashboard" class="content-section active">
       <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card active" onclick="filterMembers('all', this)">
           <div class="stat-label">Total Student</div>
           <div class="stat-value">{{ total_employees }}</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="filterMembers('completed', this)">
           <div class="stat-label">Certified Personnel</div>
           <div class="stat-value" style="color: #4ade80;">{{ training_completed }}</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="filterMembers('pending', this)">
           <div class="stat-label">Training Pending</div>
           <div class="stat-value" style="color: #fb923c;">{{ training_pending }}</div>
         </div>
@@ -752,7 +901,12 @@
 
       <div class="members-grid" id="membersGrid">
         {% for member in members %}
-        <div class="member-card" data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}">
+        <div
+          class="member-card"
+          data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}"
+          data-bs-toggle="modal"
+          data-bs-target="#userProgressModal-{{ member.id }}"
+        >
           <div class="avatar">{{ member.user.first_name|first|upper }}</div>
           <h3 class="member-name">{{ member.user.get_full_name|default:member.user.first_name }}</h3>
           <p class="member-email">{{ member.user.email }}</p>
@@ -936,16 +1090,16 @@
             <!-- Draggable Logo Container -->
             <div id="draggable-logo" 
                  style="position: absolute; 
-                        top: {{ organization.logo_y }}%; 
-                        left: {{ organization.logo_x }}%; 
-                        width: {{ organization.logo_width }}%; 
+                        top: {{ poster_configs.pocso.logo_y|default:organization.logo_y }}%; 
+                        left: {{ poster_configs.pocso.logo_x|default:organization.logo_x }}%; 
+                        width: {{ poster_configs.pocso.logo_width|default:organization.logo_width }}%; 
                         cursor: default; 
                         user-select: none;
                         touch-action: none;
                         border: 2px dashed transparent;
                         transition: border 0.2s;
                         z-index: 10;">
-              <img src="{{ organization.logo.url }}" alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
+              <img src="{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% else %}{{ organization.logo.url }}{% endif %}" alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
               <!-- Resize handle removed from dashboard view -->
             </div>
             {% endif %}
@@ -1069,6 +1223,33 @@
     border: 1px solid #444;
     background: white;
 }
+
+@media (max-width: 768px) {
+    #fullscreenEditorModal .editor-top-bar { padding: 8px 12px; }
+    #fullscreenEditorModal .editor-top-bar h6 { font-size: 0.9rem; }
+    #fullscreenEditorModal .editor-top-bar span { display: none; }
+    #fullscreenEditorModal .editor-toolbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        padding: 10px;
+    }
+    #fullscreenEditorModal .tool-group { width: 100%; justify-content: space-around; }
+    #fullscreenEditorModal .ms-auto { width: 100%; margin: 0 !important; }
+    #fullscreenEditorModal .btn-save-project {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    #fullscreenEditorModal .editor-canvas {
+        padding: 20px 10px !important;
+        height: calc(100vh - 180px);
+    }
+    #modal-base-poster {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+}
 </style>
 
 <!-- Fullscreen Editor Modal -->
@@ -1087,10 +1268,11 @@
       <!-- Editor Toolbar -->
       <div class="editor-toolbar">
         <div class="tool-group">
-          <button class="tool-btn" data-bs-toggle="modal" data-bs-target="#uploadLogoModal">
+          <button class="tool-btn btn-change-logo" onclick="document.getElementById('editorLogoInput').click()">
             <i class="bi bi-image"></i> Change Logo
           </button>
-          <a href="{% url 'reset_logo_config' %}" class="tool-btn text-decoration-none">
+          <input type="file" id="editorLogoInput" style="display: none" accept="image/*">
+          <a href="{% url 'reset_logo_config' %}?section=posters" class="tool-btn text-decoration-none">
             <i class="bi bi-arrow-counterclockwise"></i> Reset
           </a>
         </div>
@@ -1099,7 +1281,7 @@
           <button class="tool-btn" id="reset-zoom-btn">
             <i class="bi bi-zoom-in"></i> 100%
           </button>
-          <div class="px-2 text-secondary" style="font-size: 0.7rem;">
+          <div class="px-2 text-secondary d-none d-md-block" style="font-size: 0.7rem;">
             <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
           </div>
         </div>
@@ -1120,15 +1302,15 @@
           {% if organization.logo %}
           <div id="modal-draggable-logo" 
                style="position: absolute; 
-                      top: {{ organization.logo_y }}%; 
-                      left: {{ organization.logo_x }}%; 
-                      width: {{ organization.logo_width }}%; 
+                      top: {{ poster_configs.pocso.logo_y|default:organization.logo_y }}%; 
+                      left: {{ poster_configs.pocso.logo_x|default:organization.logo_x }}%; 
+                      width: {{ poster_configs.pocso.logo_width|default:organization.logo_width }}%; 
                       cursor: move; 
                       user-select: none;
                       touch-action: none;
                       border: 2px dashed rgba(255,193,7,0.8);
                       z-index: 100;">
-              <img src="{{ organization.logo.url }}" style="width: 100%; height: auto; pointer-events: none; display: block;">
+              <img id="modal-logo-img" src="{{ organization.logo.url }}" style="width: 100%; height: auto; pointer-events: none; display: block;">
               <div id="modal-resize-handle" style="position: absolute; right: -8px; bottom: -8px; width: 18px; height: 18px; background: #ffc107; border-radius: 2px; cursor: nwse-resize; border: 2px solid #000; z-index: 101;"></div>
           </div>
           {% endif %}
@@ -1221,6 +1403,33 @@ document.addEventListener('DOMContentLoaded', function() {
             isResizing = false;
             document.removeEventListener('mousemove', onMouseMove);
             document.removeEventListener('mouseup', onMouseUp);
+            document.removeEventListener('touchmove', onMouseMove);
+            document.removeEventListener('touchend', onMouseUp);
+        };
+
+        // Touch support
+        logo.addEventListener('touchstart', function(e) {
+            if (!isModal) return;
+            const touch = e.touches[0];
+            if (e.target === resizeHandle) {
+                isResizing = true;
+                startWidth = logo.offsetWidth;
+            } else {
+                isDragging = true;
+                startLeft = logo.offsetLeft;
+                startTop = logo.offsetTop;
+            }
+            startX = touch.clientX;
+            startY = touch.clientY;
+            logo.style.transition = 'none';
+            document.addEventListener('touchmove', onTouchMove, { passive: false });
+            document.addEventListener('touchend', onMouseUp);
+        });
+
+        const onTouchMove = (e) => {
+            const touch = e.touches[0];
+            onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+            e.preventDefault();
         };
     };
 
@@ -1248,28 +1457,144 @@ document.addEventListener('DOMContentLoaded', function() {
              if (resetZoomBtn) resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
         };
 
+        let panX = 0;
+        let panY = 0;
+        let isPanning = false;
+        let startPanX = 0;
+        let startPanY = 0;
+
+        const updateTransform = () => {
+            zoomContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${modalZoomScale})`;
+            updateZoomUI();
+        };
+
         modalBody.addEventListener('wheel', function(e) {
             if (e.ctrlKey) {
                 e.preventDefault();
                 const delta = e.deltaY > 0 ? -0.1 : 0.1;
                 modalZoomScale = Math.max(0.3, Math.min(modalZoomScale + delta, 4.0));
-                zoomContainer.style.transform = `scale(${modalZoomScale})`;
-                updateZoomUI();
+                updateTransform();
             }
         }, { passive: false });
 
+        // Mouse Panning (Dragging background)
+        zoomContainer.addEventListener('mousedown', (e) => {
+            if (e.target.closest('#modal-draggable-logo')) return;
+            isPanning = true;
+            startPanX = e.clientX - panX;
+            startPanY = e.clientY - panY;
+            zoomContainer.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (isPanning) {
+                panX = e.clientX - startPanX;
+                panY = e.clientY - startPanY;
+                updateTransform();
+            }
+        });
+
+        window.addEventListener('mouseup', () => {
+            isPanning = false;
+            zoomContainer.style.cursor = 'auto';
+        });
+
+        // Touch Zoom Logic (Pinch to zoom) & Panning
+        let initialTouchDistance = null;
+        let initialZoomScale = 1.0;
+
+        modalBody.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault();
+                initialTouchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                initialZoomScale = modalZoomScale;
+            } else if (e.touches.length === 1 && !e.target.closest('#modal-draggable-logo')) {
+                isPanning = true;
+                startPanX = e.touches[0].clientX - panX;
+                startPanY = e.touches[0].clientY - panY;
+            }
+        }, { passive: false });
+
+        modalBody.addEventListener('touchmove', function(e) {
+            if (e.touches.length === 2 && initialTouchDistance) {
+                e.preventDefault();
+                const currentTouchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                
+                const distanceRatio = currentTouchDistance / initialTouchDistance;
+                const newScale = initialZoomScale * distanceRatio;
+                
+                modalZoomScale = Math.max(0.3, Math.min(newScale, 4.0));
+                updateTransform();
+            } else if (isPanning && e.touches.length === 1) {
+                e.preventDefault();
+                panX = e.touches[0].clientX - startPanX;
+                panY = e.touches[0].clientY - startPanY;
+                updateTransform();
+            }
+        }, { passive: false });
+
+        modalBody.addEventListener('touchend', function(e) {
+            if (e.touches.length < 2) {
+                initialTouchDistance = null;
+            }
+            if (e.touches.length === 0) {
+                isPanning = false;
+            }
+        });
+
         resetZoomBtn?.addEventListener('click', () => {
             modalZoomScale = 1.0;
-            zoomContainer.style.transform = 'scale(1)';
-            updateZoomUI();
+            panX = 0;
+            panY = 0;
+            updateTransform();
         });
     }
 
     const handleSave = (btn) => {
-        const logo = document.getElementById('draggable-logo');
+        const isModal = btn.id === 'modal-save-btn';
+        const logo = isModal ? document.getElementById('modal-draggable-logo') : document.getElementById('draggable-logo');
+        const posterImg = isModal ? document.getElementById('modal-base-poster') : logo.closest('.poster-item')?.querySelector('img');
+
         const x_pct = parseFloat(logo.style.left);
         const y_pct = parseFloat(logo.style.top);
         const width_pct = parseFloat(logo.style.width);
+        const poster_path = posterImg ? posterImg.getAttribute('src') : null;
+
+        document.getElementById('editorLogoInput')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const posterSrc = document.getElementById('modal-base-poster').getAttribute('src');
+                const formData = new FormData();
+                formData.append('logo', file);
+                formData.append('poster_path', posterSrc);
+
+                const btn = document.querySelector('.btn-change-logo');
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Uploading...';
+
+                fetch("{% url 'upload_company_logo' %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: formData
+                })
+                .then(r => r.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    if (data.status === 'success') {
+                        const modalLogoImg = document.getElementById('modal-logo-img');
+                        if (modalLogoImg) modalLogoImg.src = data.logo_url;
+                    }
+                });
+            }
+        }); 
 
         const originalText = btn.innerHTML;
         btn.disabled = true;
@@ -1278,23 +1603,15 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch("{% url 'save_logo_config' %}", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-            body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct })
+            body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct, poster_path: poster_path })
         })
         .then(response => response.json())
         .then(data => {
             if (data.status === 'success') {
                 btn.innerHTML = '<i class="bi bi-check-all me-1"></i>Saved!';
                 setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    if (btn.id === 'save-logo-btn') btn.style.display = 'none';
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('fullscreenEditorModal'));
-                    if (modal && btn.id === 'modal-save-btn') {
-                        setTimeout(() => {
-                            // modal.hide();
-                        }, 500);
-                    }
-                }, 1500);
+                    window.location.href = "{% url 'company_dashboard' %}?section=posters";
+                }, 1000);
             }
         });
     };
@@ -1479,11 +1796,210 @@ document.addEventListener('DOMContentLoaded', function() {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    const SECTION_KEY = 'pocso_activeSection';
+
     function showSection(sectionId, element) {
       document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(sectionId).classList.add('active');
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      // Persist section state with page-specific key
+      localStorage.setItem(SECTION_KEY, sectionId);
+      if (window.location.hash !== '#' + sectionId) {
+        window.history.replaceState(null, null, '#' + sectionId);
+      }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sectionParam = urlParams.get('section');
+    if (sectionParam) {
+      const targetLink = document.querySelector(`[onclick*="showSection('${sectionParam}'"]`);
+      if (targetLink) {
+        showSection(sectionParam, targetLink);
+      }
+    } else {
+      // Priority: URL hash > localStorage > default (dashboard)
+      const hash = window.location.hash.substring(1);
+      const savedSection = hash || localStorage.getItem(SECTION_KEY);
+      if (savedSection) {
+        const targetLink = document.querySelector(`[onclick*="showSection('${savedSection}'"]`);
+        const targetSection = document.getElementById(savedSection);
+        if (targetSection && targetLink) {
+          showSection(savedSection, targetLink);
+        }
+      }
+    }
+
+    // Store poster configs for JS access
+    const posterConfigs = {
+        "/media/Posters/POCSO Poster.webp": {
+            x: {{ poster_configs.pocso.logo_x|default:organization.logo_x|default:2.0 }},
+            y: {{ poster_configs.pocso.logo_y|default:organization.logo_y|default:2.0 }},
+            width: {{ poster_configs.pocso.logo_width|default:organization.logo_width|default:15.0 }},
+            logo_url: "{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% endif %}"
+        }
+    };
+
+    // Handle Edit Layout button clicks to update modal image and positions
+    document.querySelectorAll('[data-bs-target="#fullscreenEditorModal"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const posterItem = this.closest('.poster-item');
+            if (posterItem) {
+                const dashboardPosterImg = posterItem.querySelector('img');
+                if (dashboardPosterImg) {
+                    const posterSrc = dashboardPosterImg.getAttribute('src');
+                    const modalBasePoster = document.getElementById('modal-base-poster');
+                    const modalLogo = document.getElementById('modal-draggable-logo');
+                    const modalLogoImg = document.getElementById('modal-logo-img');
+                    
+                    if (modalBasePoster) modalBasePoster.src = posterSrc;
+                    
+                    if (modalLogo) {
+                        const config = posterConfigs[posterSrc];
+                        if (config) {
+                            modalLogo.style.left = config.x + '%';
+                            modalLogo.style.top = config.y + '%';
+                            modalLogo.style.width = config.width + '%';
+                            if (config.logo_url && modalLogoImg) {
+                                modalLogoImg.src = config.logo_url;
+                            } else {
+                                modalLogoImg.src = "{{ organization.logo.url }}";
+                            }
+                        } else {
+                            modalLogo.style.left = "{{ organization.logo_x|default:2 }}%";
+                            modalLogo.style.top = "{{ organization.logo_y|default:2 }}%";
+                            modalLogo.style.width = "{{ organization.logo_width|default:15 }}%";
+                            if (modalLogoImg) modalLogoImg.src = "{{ organization.logo.url }}";
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+    if (urlParams.get('open_editor') === 'true') {
+      const editorModalElem = document.getElementById('fullscreenEditorModal');
+      if (editorModalElem) {
+        const editorModal = bootstrap.Modal.getOrCreateInstance(editorModalElem);
+        editorModal.show();
+      }
+    }
+
+    // AJAX Upload for Logo
+    const uploadForm = document.getElementById('uploadLogoForm');
+    if (uploadForm) {
+      uploadForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const btn = document.getElementById('uploadLogoBtn');
+        const originalText = btn.innerHTML;
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+
+        fetch(this.action, {
+          method: 'POST',
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          body: formData
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const logoImages = document.querySelectorAll('#draggable-logo img, #modal-draggable-logo img, .org-logo-preview');
+              logoImages.forEach(img => {
+                img.src = data.logo_url + '?v=' + new Date().getTime();
+              });
+
+              const containers = document.querySelectorAll('#draggable-logo, #modal-draggable-logo');
+              containers.forEach(c => c.style.display = 'block');
+
+              btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Uploaded!';
+
+              setTimeout(() => {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('uploadLogoModal'));
+                if (modal) modal.hide();
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+              }, 1000);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          });
+      });
+    }
+
+    window.handleEditorLogoUpload = function(input) {
+      if (!input.files || !input.files[0]) return;
+
+      const formData = new FormData();
+      formData.append('company_logo', input.files[0]);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+      const btn = input.previousElementSibling;
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Uploading...';
+
+      fetch("{% url 'upload_company_logo' %}", {
+        method: 'POST',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          const logoImages = document.querySelectorAll('#draggable-logo img, #modal-draggable-logo img, .org-logo-preview');
+          logoImages.forEach(img => {
+            img.src = data.logo_url + '?v=' + new Date().getTime();
+          });
+
+          const containers = document.querySelectorAll('#draggable-logo, #modal-draggable-logo');
+          containers.forEach(c => c.style.display = 'block');
+
+          btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Updated!';
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }, 1500);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      });
+    };
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.toggle('show');
+      if (overlay) overlay.classList.toggle('show');
+      document.body.classList.toggle('no-scroll');
+    }
+
+    document.getElementById('hamburgerBtn')?.addEventListener('click', toggleSidebar);
+
+    function filterMembers(status, element) {
+      const cards = document.querySelectorAll('.member-card');
+      const statCards = document.querySelectorAll('.stat-card');
+
+      statCards.forEach(btn => btn.classList.remove('active'));
       element.classList.add('active');
+
+      cards.forEach(card => {
+        if (status === 'all') {
+          card.style.display = "";
+        } else if (card.getAttribute('data-status') === status) {
+          card.style.display = "";
+        } else {
+          card.style.display = "none";
+        }
+      });
     }
 
     document.getElementById('memberSearch').addEventListener('input', function () {
@@ -1615,12 +2131,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <div class="modal-content" style="background: #020617; border: 1px solid var(--border-soft); color: white;">
         <div class="modal-header border-0">
           <h5 class="modal-title">
-            <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{% else %}Add{% endif %} Company Logo
+            <i class="bi bi-image me-2"></i>{% if organization.logo %}Change{% else %}Add{% endif %} Logo
           </h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form method="POST" action="{% url 'upload_company_logo' %}" enctype="multipart/form-data">
+          <form id="uploadLogoForm" method="POST" action="{% url 'upload_company_logo' %}" enctype="multipart/form-data">
             {% csrf_token %}
             <p class="text-white-50 small mb-4">
               This logo will be displayed on the top-left of your awareness posters.
@@ -1629,7 +2145,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <input class="form-control" type="file" name="company_logo" accept="image/*" required 
                      style="background: rgba(248, 250, 252, 0.95); color: #020617;">
             </div>
-            <button type="submit" class="btn btn-gradient w-100">
+            <button type="submit" class="btn btn-gradient w-100" id="uploadLogoBtn">
               Upload Logo
             </button>
           </form>
