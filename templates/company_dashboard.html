@@ -991,7 +991,30 @@
         margin-bottom: var(--space-1);
       }
 
-      /* Consolidated Mobile Responsiveness handled above in line 217 */
+      /* PRINT STYLES */
+      @media print {
+        .sidebar, .hamburger-btn, .page-header, .sidebar-overlay, .btn-action {
+          display: none !important;
+        }
+        .main-content {
+          margin: 0 !important;
+          padding: 0 !important;
+          width: 100% !important;
+        }
+        .content-section {
+          display: none !important;
+        }
+        .content-section#policy {
+          display: block !important;
+          padding: 0 !important;
+          border: none !important;
+        }
+        .policy-text {
+          padding: 0 !important;
+          border: none !important;
+          box-shadow: none !important;
+        }
+      }
     </style>
   </head>
 
@@ -2172,7 +2195,7 @@
           <h2 class="section-title mb-0">
             <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
           </h2>
-          <button class="btn btn-action">
+          <button class="btn btn-action" onclick="window.print()">
             <i class="bi bi-printer me-2"></i>Print Policy
           </button>
         </div>
