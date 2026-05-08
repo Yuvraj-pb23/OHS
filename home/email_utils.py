@@ -17,7 +17,7 @@ def send_welcome_email(
 
     template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_WELCOME").first()
 
-    site_base = training_link or "https://openhandsolutions.com/login"
+    site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
 
     if template and template.subject and template.body:
         subject = template.subject
@@ -162,7 +162,8 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
     else:
         billing_data = get_pocso_billing_data(registration)
 
-    invoice_url = "https://openhandsolutions.com/billing/"  # Link to billing portal
+    site_url = getattr(settings, "SITE_URL", "https://openhandsolutions.com")
+    invoice_url = f"{site_url}/billing/"  # Link to billing portal
 
     # Generate signed setup link for PAYMENT_VERIFIED emails
     setup_link = ""
@@ -197,7 +198,7 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
         body_content = body_content.replace(placeholder, str(val))
 
     # 3. Logo URL for Email
-    logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
+    logo_url = f"{site_url}/static/img/logo_new.png"
 
     # 3. Generate Invoice HTML for Email Body
     # (Billing data already calculated above)

@@ -395,9 +395,8 @@ def generate_proforma_invoice_pdf(
         "total_tier_2": total_amount,
         "total_tier_3": total_amount,
         "base_url": (
-            settings.BASE_URL
-            if hasattr(settings, "BASE_URL")
-            else "https://openhandsolutions.com"
+            getattr(settings, "BASE_URL", None)
+            or getattr(settings, "SITE_URL", "https://openhandsolutions.com")
         ),
         "logo_path": os.path.join(settings.BASE_DIR, "static", "img", "logo_new.png"),
     }
