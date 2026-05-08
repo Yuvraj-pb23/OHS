@@ -49,24 +49,27 @@
       }
 
       .lms-container {
-        display: grid;
-        grid-template-columns: 260px 1fr;
-        max-width: 1600px;
+        max-width: 1400px;
         margin: 0 auto;
-        gap: 20px;
         padding: 20px;
+        padding-top: 90px;
       }
 
-      .sidebar {
+      .top-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 70px;
         background: var(--glass-surface);
-        border-radius: 20px;
-        padding: 30px;
-        height: calc(100vh - 40px);
-        position: sticky;
-        top: 20px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 10000;
+        padding: 0 30px;
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       }
 
       .nav-menu {
@@ -361,73 +364,10 @@
       }
 
       /* --- MOBILE RESPONSIVENESS --- */
-      .mobile-toggle {
-        display: none;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 10001;
-        background: var(--primary-gradient);
-        color: white;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 10px;
-        font-size: 1.2rem;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      }
-
-      /* --- MOBILE HEADER --- */
-        .mobile-header {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 60px;
-          background: var(--glass-surface);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          z-index: 10000;
-          padding: 0 20px;
-          align-items: center;
-          justify-content: space-between;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-
-      .mobile-logout-btn-new {
-        transition: transform 0.2s;
-      }
-      .mobile-logout-btn-new:active {
-        transform: scale(0.95);
-      }
-
-      
-
-      @media (max-width: 1200px) {
-        .sidebar {
-          display: none !important;
-        }
-        .lms-container {
-          grid-template-columns: 1fr;
-          max-width: 100%;
-        }
-        .mobile-header {
-          display: flex !important;
-        }
-      }
-
       @media (max-width: 992px) {
-        .lms-container aside.sidebar {
-          display: none !important;
-        }
-        .mobile-header {
-          display: flex !important;
-        }
         .lms-container {
-          grid-template-columns: 1fr;
           padding: 10px;
+          padding-top: 80px;
         }
         .main-content {
           padding-top: 70px; /* account for header */
@@ -815,32 +755,14 @@
       </div>
     </div>
 
-    <div class="mobile-header">
-      <h3 style="color: var(--primary); margin: 0;">POSH Training</h3>
-      <button class="mobile-logout-btn-new" onclick="handleLogout()" style="background: #ff4757; color: white; border: none; padding: 8px 16px; border-radius: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);">
+    <div class="top-header">
+      <h3 style="color: var(--primary); margin: 0; font-weight: 700;">POSH Training Mastery</h3>
+      <button class="mobile-logout-btn-new" onclick="handleLogout()" style="background: #ff4757; color: white; border: none; padding: 10px 20px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 71, 87, 0.2);">
         Logout 🚪
       </button>
     </div>
 
     <div class="lms-container">
-      <aside class="sidebar">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-          <h2 style="color: var(--primary); margin: 0; padding-left: 10px">POSH Training</h2>
-          <button class="mobile-close-btn" onclick="toggleSidebar()" style="background: none; border: none; font-size: 2rem; color: var(--primary); cursor: pointer; display: none;">&times;</button>
-        </div>
-        <div class="nav-menu">
-          <div
-            onclick="showView('dashboard')"
-            id="nav-dash"
-            class="nav-item active"
-          >
-            <span>📊 Dashboard</span>
-          </div>
-        </div>
-        <div onclick="handleLogout()" class="nav-item logout">
-          <span>🚪 Logout</span>
-        </div>
-      </aside>
 
       <main class="main-content">
         <div id="dashboard-view">
@@ -1084,16 +1006,24 @@
       }
 
       function startVideo() {
-          document.getElementById('video-cover').style.display = 'none';
+          const cover = document.getElementById('video-cover');
+          if (cover) cover.style.display = 'none';
           player.style.display = 'block';
-          const playPromise = player.play();
-          if (playPromise !== undefined) {
-              playPromise.then(_ => {
-                  console.log('Playback started successfully');
-              }).catch(err => {
-                  console.error('Play failed:', err);
-              });
-          }
+          
+          // Use a small timeout to ensure the browser has processed the layout change
+          setTimeout(() => {
+              const playPromise = player.play();
+              if (playPromise !== undefined) {
+                  playPromise.then(_ => {
+                      console.log('Playback started successfully');
+                  }).catch(err => {
+                      // AbortError is often a harmless race condition in Chrome
+                      if (err.name !== 'AbortError') {
+                          console.error('Play failed:', err);
+                      }
+                  });
+              }
+          }, 50);
       }
 
       function closeModal() {
@@ -1233,14 +1163,6 @@
 
       function handleLogout() { if (confirm("Logout?")) window.location.href = "{% url 'training_logout' %}"; }
 
-      function handleMobileSidebar() {
-          if (window.innerWidth <= 992) {
-              const sb = document.querySelector('.sidebar');
-              if (sb && sb.parentNode) sb.parentNode.removeChild(sb);
-          }
-      }
-      window.addEventListener('load', handleMobileSidebar);
-      window.addEventListener('resize', handleMobileSidebar);
 
       window.onload = () => {
           renderModules();
