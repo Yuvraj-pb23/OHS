@@ -207,9 +207,10 @@
                 text-align: center !important; /* CENTER ALIGN EVERYTHING */
                 display: block !important;
             }
-            .user-greeting:hover, .user-greeting:active, .user-greeting:focus {
-                color: #ffb400 !important; /* Change to gold on interaction instead of purple */
-                background: rgba(255,255,255,0.05) !important;
+            .user-greeting:hover, .user-greeting:active, .user-greeting:focus,
+            .btn-accounts:hover, .btn-accounts:active, .btn-accounts:focus {
+                color: #ffffff !important; 
+                background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
             }
             .nav-link.active {
                 color: #ffb400 !important;
@@ -218,28 +219,35 @@
             }
             .user-dropdown .dropdown-content {
                 display: none !important;
-                background: rgba(0,0,0,0.2) !important;
+                background: rgba(255, 255, 255, 0.05) !important;
                 border-radius: 10px !important;
                 margin-top: 5px !important;
                 padding: 5px !important;
-                border: none !important;
+                border: 1px solid rgba(255,255,255,0.1) !important;
             }
             .user-dropdown.mobile-open .dropdown-content {
                 display: block !important;
             }
             .user-dropdown .dropdown-content a, 
-            .user-dropdown .dropdown-content .btn-auth-logout {
-                color: #cccccc !important;
+            .user-dropdown .dropdown-content .btn-auth-logout,
+            .user-dropdown .dropdown-content .dd-item {
+                color: #ffffff !important;
                 font-size: 0.95rem !important;
-                padding: 10px 15px !important;
+                padding: 12px 15px !important;
+                background: none !important;
+                border: none !important;
+                width: 100% !important;
+                text-align: center !important;
+                justify-content: center !important;
             }
-            .btn-auth-logout, .btn-auth-logout i {
+            .btn-auth-logout, .btn-auth-logout i, .dd-item i {
                 color: #ff6b6b !important;
             }
-            .btn-auth-login {
+            .btn-auth-login, .btn-accounts {
                 margin: 10px 0 !important;
                 width: 100% !important;
                 text-align: center !important;
+                justify-content: center !important;
             }
             .hamburger span {
                 background: #6200ea !important;
@@ -529,15 +537,19 @@
         <!--        AUTHENTICATION LOGIC START          -->
         <!-- ========================================== -->
         {% if user.is_authenticated %}
-            {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
-                <!-- ACCOUNTS USER DROPDOWN (Professional style) -->
-                <div class="dropdown accounts-dropdown user-dropdown">
-                    <button type="button" class="btn-accounts" style="border: none; cursor: pointer;">
+            <div class="dropdown accounts-dropdown user-dropdown">
+                <button type="button" class="btn-accounts" style="border: none; cursor: pointer;">
+                    {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
                         <i class="fas fa-calculator"></i>
                         Accounts
-                        <i class="fas fa-chevron-down accounts-chevron"></i>
-                    </button>
-                    <div class="dropdown-content">
+                    {% else %}
+                        <i class="fas fa-user-circle"></i>
+                        Hi, {{ user.first_name|default:user.username }}
+                    {% endif %}
+                    <i class="fas fa-chevron-down accounts-chevron"></i>
+                </button>
+                <div class="dropdown-content">
+                    {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
                         <a href="{% url 'accounts_dashboard' %}">
                             <i class="fas fa-chart-bar"></i> Dashboard
                         </a>
@@ -548,40 +560,27 @@
                                 <i class="fas fa-sign-out-alt"></i> Sign Out
                             </button>
                         </form>
-                    </div>
-                </div>
-            {% else %}
-                <!-- Regular User Dropdown -->
-                <div class="dropdown user-dropdown">
-                    <a href="#" class="nav-link user-greeting">
-                        <i class="fas fa-user-circle"></i>
-                        Hi, {{ user.first_name|default:user.username }}
-                        <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 2px;"></i>
-                    </a>
-                    <div class="dropdown-content">
+                    {% else %}
                         <a href="{% url 'login_redirect' %}">
                             <i class="fas fa-th-large"></i> Dashboard
                         </a>
-                        <div class="logout-btn-wrapper">
-                            <form action="{% url logout_url|default:'logout' %}" method="post" style="display:contents;">
-                                {% csrf_token %}
-                                <button type="submit" class="btn-auth-logout" style="display:flex; align-items:center; gap:10px; border:none; background:none; padding:0; width:100%; color:inherit; font:inherit;">
-                                    <i class="fas fa-sign-out-alt"></i> Logout
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                        <div class="dd-divider"></div>
+                        <form action="{% url logout_url|default:'logout' %}" method="post" style="display:contents;">
+                            {% csrf_token %}
+                            <button type="submit" class="dd-item">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </form>
+                    {% endif %}
                 </div>
-            {% endif %}
+            </div>
         {% else %}
-            <!-- If Logged Out: Show Login Button -->
-            <!-- <a href="{% url 'login' %}" class="btn-auth-login">Login</a> -->
-             <form action="{% url 'login' %}" method="get">
-  <button type="submit" class="btn-auth-login">
-    Login
-  </button>
-</form>
-
+            <!-- If Logged Out: Show Login Button (Accounts Style) -->
+            <form action="{% url 'login' %}" method="get" style="display: inline;">
+                <button type="submit" class="btn-accounts">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
         {% endif %}
         <!-- ========================================== -->
         <!--         AUTHENTICATION LOGIC END           -->
@@ -739,10 +738,10 @@
 
       // Mobile Dropdown Toggle
       document.addEventListener('click', (e) => {
-          const userGreeting = e.target.closest('.user-greeting');
-          if (userGreeting && window.innerWidth <= 768) {
+          const authButton = e.target.closest('.user-dropdown .btn-accounts');
+          if (authButton && window.innerWidth <= 768) {
               e.preventDefault();
-              const dropdown = userGreeting.closest('.user-dropdown');
+              const dropdown = authButton.closest('.user-dropdown');
               dropdown.classList.toggle('mobile-open');
           }
       });
