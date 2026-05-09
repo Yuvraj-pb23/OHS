@@ -2,9 +2,11 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link rel="shortcut icon" href="/static/img/favicon_final.ico" type="image/x-icon">
+    <link rel="icon" href="/static/img/favicon_final.ico" type="image/x-icon">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}OHS{% endblock %}</title>
+    <title>{% block title %}OHPL{% endblock %}</title>
     
     <!-- Link to the custom static base CSS file -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -25,10 +27,10 @@
     <style>
         /* Transparent Glassy Navbar with Sky Blue Tint */
         .navbar {
-            background: rgba(111, 187, 234, 0.2) !important; /* Sky Blue with low opacity */
-            backdrop-filter: blur(12px) saturate(180%); /* Glass blur effect */
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(90deg, #040e3f 0%, #0d47a1 45%, #ffffff 100%) !important; /* Deep Navy to White Gradient */
+            backdrop-filter: blur(15px) saturate(180%); /* Enhanced blur effect */
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             position: sticky;
             top: 0;
             z-index: 3000 !important;
@@ -38,8 +40,9 @@
 
         /* Ensure nav links look good on the glassy background */
         .nav-link {
-            color: #6200ea !important; /* Darker text for readability */
+            color: #6200ea !important; /* Reverted to blue/purple */
             font-weight: 500;
+            transition: color 0.3s ease;
         }
         .nav-link.active {
             color: #400c88 !important;
@@ -57,6 +60,18 @@
             transition: all 0.3s ease;
             margin-left: 10px;
             display: inline-block;
+        }
+
+        /* "Premium Anchor" Logo Styling - Clean and Transparent */
+        .app-logo {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .app-logo:hover {
+            transform: translateY(-1px);
         }
         .btn-auth-login:hover {
             background-color: #4a00b0;
@@ -603,7 +618,7 @@
         <div class="row g-4">
           <div class="col-md-3 col-sm-6">
             <div class="mb-3">
-                <img src="{% static 'img/logo_new.png' %}" alt="OHS Logo" style="height: 40px;">
+                <img src="{% static 'img/logo_new.png' %}" alt="OHPL Logo" style="height: 40px;">
             </div>
             <p>
               Empowering organizations with expert POSH training, compliance
@@ -627,11 +642,11 @@
   <p>
     <i class="fas fa-map-marker-alt me-2 text-warning"></i>
     <a 
-      href="https://www.google.com/maps/search/?api=1&query=Sector+13+Chandigarh+OHS"
+      href="https://www.google.com/maps/search/?api=1&query=Sector+13+Chandigarh+OHPL"
       target="_blank"
       class="footer-link"
     >
-      Sector-13, Chandigarh OHS
+      Sector-13, Chandigarh OHPL
     </a>
   </p>
 
@@ -676,7 +691,7 @@
           <hr class="border-light mt-4" />
           <div class="row">
             <div class="col text-center">
-              <p class="mb-0">&copy; 2025 <strong>OHS</strong>. All Rights Reserved.</p>
+              <p class="mb-0">&copy; 2025 <strong>OHPL</strong>. All Rights Reserved.</p>
             </div>
           </div>
         </div>
@@ -766,7 +781,6 @@
           e.stopPropagation();
         });
       }
-
 
     </script>
     <script src="{% static 'js/chatbot.js' %}?v=12"></script>

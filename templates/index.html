@@ -7,7 +7,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Open Hand Private Limited - POSH & POCSO Experts</title>
+  <title>OHPL</title>
 
   <!-- Link to the separated CSS file -->
   <link rel="stylesheet" href="{% static 'css/index.css' %}" />
@@ -170,14 +170,14 @@
     }
 
     .section-title-white {
-      color: #ffffff;
+      color: #ffffff !important;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 3rem;
+      letter-spacing: 3px;
+      margin-bottom: 3.5rem;
       position: relative;
       z-index: 1;
-      text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 0 25px rgba(13, 110, 253, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     .section-title-white::after {
@@ -540,24 +540,19 @@
       margin: 0 auto 20px auto;
       font-size: 2rem;
       transition: transform 0.5s ease;
-      background: rgba(255, 255, 255, 0.95) !important;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.2) !important;
+      color: #ffffff !important;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
     }
 
-    .style-gold .icon-wrapper {
-      color: #f59e0b;
-    }
-
-    .style-blue .icon-wrapper {
-      color: #3b82f6;
-    }
-
-    .style-pink .icon-wrapper {
-      color: #ec4899;
+    .impact-card .icon-wrapper i {
+      color: #ffffff !important;
     }
 
     .impact-card:hover .icon-wrapper {
       transform: scale(1.1) rotate(360deg);
+      background: rgba(255, 255, 255, 0.3) !important;
     }
 
     .impact-card h2.counter {
@@ -1259,6 +1254,8 @@
 <body>
 
 
+
+
   <!-- Hero Section -->
   <section id="hero" class="hero-section d-flex align-items-center text-center text-lg-start">
     <div class="container">
@@ -1346,7 +1343,7 @@
     </main>
   </div>
 
-  <!-- Why Choose OHS -->
+  <!-- Why Choose OHPL -->
   <section class="why-choose-us-section" data-aos="fade-up">
     <div class="container">
       <div class="section-header text-center mb-5">

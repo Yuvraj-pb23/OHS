@@ -593,7 +593,7 @@ class TextChatbot:
                 [f"{i + 1}. {q}" for i, (q, _) in enumerate(suggestions)]
             )
             return (
-                "We regret that your query falls outside RoadAthena scope; "
+                "We regret that your query falls outside OHPL scope; "
                 "Our AI chatbot is continually improving to broaden its capabilities, "
                 f"Did you mean one of these?\n\n{options}\n\n"
             )
@@ -602,7 +602,7 @@ class TextChatbot:
         print("\n" + "=" * 60)
         print("🤖 Text Chatbot - Ready to help!")
         print("=" * 60)
-        print("💬 Ask me anything about Road Athena.")
+        print("💬 Ask me anything about OHPL.")
         print("   - Type 'IRC 67', 'IRC 35', or 'IRC 82' for topic suggestions")
         print("   - Type 'back' to return to mode selection.")
         print("-" * 60)
@@ -645,11 +645,11 @@ def main():
 
         while True:
             print("\n" + "=" * 60)
-            print("👑 Welcome to the RoadAthena Unified Chatbot!")
+            print("👑 Welcome to the OHPL Unified Chatbot!")
             print("=" * 60)
             print("Choose a mode:")
             print("  1. 🖼️  Image Chatbot (Find images by name or figure number)")
-            print("  2. 💬  Text Chatbot (Ask questions about Road Athena)")
+            print("  2. 💬  Text Chatbot (Ask questions about OHPL)")
             print("  - Type 'quit' to exit.")
             print("-" * 60)
 

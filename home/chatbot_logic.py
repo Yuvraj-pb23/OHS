@@ -89,6 +89,6 @@ def predict_answer(user_question, threshold=0.5):
         last_suggestions = suggestions
         options = "\n".join([f"{i+1}. {q}" for i, (q, _) in enumerate(suggestions)])
         return (
-            f'Apologies I could not understand "{user_question}" since it is not related to OHS,\n'
+            f'Apologies I could not understand "{user_question}" since it is not related to OHPL,\n'
             f"Did you mean one of these?\n\n{options}\n\n"
         )

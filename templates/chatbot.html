@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}OHS Chatbot{% endblock %}
+{% block title %}OHPL Chatbot{% endblock %}
 
 {% block body %}
 <style>
@@ -438,7 +438,7 @@
 <!-- Chatbot HTML Structure -->
 {% csrf_token %}
 <div id="chat-wrapper">
-  <div id="chat-bubble">Hi! I'm OHS chatbot</div>
+  <div id="chat-bubble">Hi! I'm OHPL chatbot</div>
   <div id="chat-icon">
     <img src="{% static 'images/logo.png' %}" alt="Chat Icon" class="chat-icon-logo">
   </div>
@@ -448,7 +448,7 @@
   <div class="chat-header">
     <div class="header-content">
       <img src="{% static 'images/logo.png' %}" alt="logo" class="chat-avatar">
-      <div class="chat-title">OHS Assistant</div>
+      <div class="chat-title">OHPL Assistant</div>
       <div class="chat-subtitle">Your AI assistant</div>
       <button class="learn-more-btn">Learn More</button>
     </div>
@@ -575,7 +575,7 @@ function showTypingIndicator() {
     const typingDiv = document.createElement("div");
     typingDiv.id = "typing-indicator";
     typingDiv.className = "bot-message";
-    typingDiv.innerHTML = `${botAvatarHTML}<div id="typing-text" class="message-bubble">OHS Assistant is typing...</div>`;
+    typingDiv.innerHTML = `${botAvatarHTML}<div id="typing-text" class="message-bubble">OHPL Assistant is typing...</div>`;
     chatBody.appendChild(typingDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 }

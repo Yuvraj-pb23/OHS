@@ -15,6 +15,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -207,6 +211,7 @@
         padding: var(--space-8);
         min-height: 100vh;
         background: var(--bg-main);
+        position: relative;
       }
 
       .section-title {
@@ -489,7 +494,7 @@
         position: fixed;
         top: 15px;
         left: 15px;
-        z-index: 1100;
+        z-index: 1030;
         background: var(--lms-primary, #4f46e5);
         color: white;
         border: none;
@@ -502,13 +507,7 @@
         box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
       }
 
-      #uploadLogoModal {
-        z-index: 1070;
-      }
-
-      .modal-backdrop:nth-of-type(even) {
-        z-index: 1065;
-      }
+      /* Removed conflicting z-index overrides */
 
       .stat-label {
         color: var(--text-secondary);
@@ -1015,6 +1014,163 @@
           box-shadow: none !important;
         }
       }
+
+      /* Premium Modal System - Unified Fix */
+      .modal {
+        z-index: 10000 !important;
+      }
+      .modal-backdrop {
+        z-index: 9999 !important;
+      }
+      .modal-backdrop.show {
+        opacity: 0.45 !important;
+        backdrop-filter: blur(3px);
+      }
+      .modal-content {
+        border-radius: 28px !important;
+        border: none !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+        overflow: hidden;
+      }
+
+      /* Premium Logout Modal Specifics */
+      /* Premium Modal System - Unified Fix */
+      .modal {
+        z-index: 10000 !important;
+      }
+      .modal-backdrop {
+        z-index: 9999 !important;
+      }
+      .modal-backdrop.show {
+        opacity: 0.45 !important;
+        backdrop-filter: blur(3px);
+      }
+      .modal-content {
+        border-radius: 28px !important;
+        border: none !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
+        overflow: hidden;
+      }
+
+      /* Premium Logout Modal Specifics */
+      .logout-modal-content {
+        background: #ffffff !important;
+        padding: 2.5rem 2rem !important;
+      }
+      .logout-icon-wrapper {
+        width: 72px;
+        height: 72px;
+        background: #fff1f2;
+        color: #e11d48;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.2rem;
+        margin: 0 auto 1.5rem;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .logout-modal-content:hover .logout-icon-wrapper {
+        transform: scale(1.05);
+        background: #ffe4e6;
+      }
+      .btn-logout-confirm {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white !important;
+        border: none;
+        padding: 14px 28px;
+        border-radius: 16px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        width: 100%;
+      }
+      .btn-logout-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        color: white !important;
+      }
+      .btn-logout-cancel {
+        background: #f8fafc;
+        color: #64748b !important;
+        border: 1px solid #e2e8f0;
+        padding: 14px 28px;
+        border-radius: 16px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        width: 100%;
+      }
+      .btn-logout-cancel:hover {
+        background: #f1f5f9;
+        color: #1e293b !important;
+      }
+      .logout-modal-title {
+        color: #0f172a;
+        font-weight: 800;
+        font-size: 1.5rem;
+      }
+      .logout-modal-text {
+        color: #64748b;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+
+      /* User Profile Top Right */
+      .user-profile-top {
+        position: absolute;
+        top: 20px;
+        right: 40px;
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: white;
+        padding: 6px 16px;
+        border-radius: 50px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+      .user-profile-top:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        border-color: var(--color-primary);
+      }
+      .user-avatar-top {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--color-primary), #6366f1);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.85rem;
+        box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+      }
+      .user-name-top {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 0.85rem;
+        letter-spacing: 0.3px;
+      }
+      
+      @media (max-width: 992px) {
+        .user-profile-top {
+          top: 15px;
+          right: 15px;
+          padding: 5px 10px;
+          background: rgba(255, 255, 255, 0.9);
+          backdrop-filter: blur(10px);
+        }
+        .user-name-top {
+          display: none;
+        }
+      }
     </style>
   </head>
 
@@ -1071,7 +1227,7 @@
           <i class="bi bi-gear"></i>
           <span>Settings</span>
         </a>
-        <a href="{% url 'hr_logout' %}" class="nav-link footer-link logout-link">
+        <a href="javascript:void(0);" class="nav-link footer-link logout-link" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
           <i class="bi bi-box-arrow-left"></i>
           <span>Logout</span>
         </a>
@@ -1079,6 +1235,14 @@
     </nav>
 
     <main class="main-content">
+      <!-- User Profile Top Right -->
+      <div class="user-profile-top" onclick="showSection('settings', document.querySelector('[onclick*=\'settings\']'))">
+        <span class="user-name-top">{{ request.user.get_full_name|default:request.user.username|title }}</span>
+        <div class="user-avatar-top">
+          {{ request.user.username|slice:":1"|upper }}
+        </div>
+      </div>
+
       <!-- Page Header -->
       <header class="page-header">
         <h1 class="header-main-title">Company Dashboard</h1>
@@ -2534,8 +2698,10 @@
               </div>
               <div class="col-12 mt-2">
                 <a
-                  href="{% url 'hr_logout' %}"
+                  href="javascript:void(0);"
                   class="btn"
+                  data-bs-toggle="modal"
+                  data-bs-target="#logoutConfirmModal"
                   style="
                     background: linear-gradient(135deg, #ef4444, #dc2626);
                     color: white;
@@ -2774,6 +2940,28 @@
                 Upload Logo
               </button>
             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM LOGOUT CONFIRMATION MODAL -->
+    <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content logout-modal-content">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="position: absolute; right: 20px; top: 20px; z-index: 10;"></button>
+          
+          <div class="modal-body text-center p-0">
+            <div class="logout-icon-wrapper">
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </div>
+            <h3 class="logout-modal-title mb-3">Are you sure to exit?</h3>
+            <p class="logout-modal-text mb-4 px-3">You are about to end your session. Make sure you have saved all your progress before logging out.</p>
+            
+            <div class="d-flex flex-column gap-3">
+              <a href="{% url 'hr_logout' %}" class="btn btn-logout-confirm">Yes, Logout Now</a>
+              <button type="button" class="btn btn-logout-cancel" data-bs-dismiss="modal">Stay on Dashboard</button>
+            </div>
           </div>
         </div>
       </div>

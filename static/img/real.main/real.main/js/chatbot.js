@@ -94,7 +94,7 @@ function exactQuestionMatch(query) {
         ignoreLocation: true,
         minMatchCharLength: 3,
       });
-      appendBotMessage("Hello! I'm your POSH chatbot. Ask me anything about POSH or OHS services.");
+      appendBotMessage("Hello! I'm your POSH chatbot. Ask me anything about POSH or OHPL services.");
     } catch (err) {
       appendBotMessage("Failed to load data, please try later.");
       console.error(err);

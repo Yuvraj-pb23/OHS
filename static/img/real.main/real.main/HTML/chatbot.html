@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>OHS POSH Chatbot</title>
+<title>OHPL POSH Chatbot</title>
 <link rel="stylesheet" href="../CSS/chatbot.css" />
 </head>
 <body>
@@ -11,8 +11,8 @@
 <button id="chatBtn" aria-label="Open chat">💬</button>
 
 <!-- Chat window -->
-<div id="chatWindow" role="region" aria-live="polite" aria-label="OHS POSH Chatbot" style="display:none;">
-  <div id="chatHeader">OHS POSH Chatbot</div>
+<div id="chatWindow" role="region" aria-live="polite" aria-label="OHPL POSH Chatbot" style="display:none;">
+  <div id="chatHeader">OHPL POSH Chatbot</div>
   <div id="chatMessages" aria-live="polite" aria-atomic="false"></div>
   <div id="chatInputContainer">
     <input type="text" id="userInput" placeholder="Type your question here..." aria-label="Chat message input" autocomplete="off" />
@@ -118,7 +118,7 @@ function exactQuestionMatch(query) {
         ignoreLocation: true,
         minMatchCharLength: 3,
       });
-      appendBotMessage("Hello! I'm your POSH chatbot. Ask me anything about POSH or OHS services.");
+      appendBotMessage("Hello! I'm your POSH chatbot. Ask me anything about POSH or OHPL services.");
     } catch (err) {
       appendBotMessage("Failed to load data, please try later.");
       console.error(err);

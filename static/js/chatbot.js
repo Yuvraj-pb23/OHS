@@ -44,7 +44,7 @@ function createInitialMessage() {
     botMsgDiv.innerHTML = `
       ${botAvatarHTML}
       <div class="message-bubble welcome-message">
-        <p>Welcome to OHS AI! 
+        <p>Welcome to OHPL AI! 
         <br>How can I assist you with POSH, POSCO, Internal Committee matters, or workplace mental health today?
         </p>
       </div>
@@ -957,7 +957,7 @@ function showTypingIndicator() {
     const typingDiv = document.createElement("div");
     typingDiv.id = "typing-indicator";
     typingDiv.className = "bot-message";
-    typingDiv.innerHTML = `${botAvatarHTML}<div id="typing-text" class="message-bubble">OHS AI is typing...</div>`;
+    typingDiv.innerHTML = `${botAvatarHTML}<div id="typing-text" class="message-bubble">OHPL AI is typing...</div>`;
     chatBody.appendChild(typingDiv);
     chatBody.scrollTop = chatBody.scrollHeight;
 }

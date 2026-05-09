@@ -1386,7 +1386,7 @@ def pocso_act_page(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/static/video/Demo_Video_OHS.mp4"
+                else "/static/video/Demo_Video_OHPL.mp4"
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
@@ -1699,7 +1699,7 @@ def pocso_act_page_corp(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/static/video/Demo_Video_OHS.mp4"
+                else "/static/video/Demo_Video_OHPL.mp4"
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
@@ -1920,7 +1920,7 @@ def chatbot_response(request):
             if msg in ["bye", "clear"]:
                 return JsonResponse({"response": "Goodbye!", "reset": True})
             if "hello" in msg:
-                return JsonResponse({"response": "Hi! Ask me about OHS."})
+                return JsonResponse({"response": "Hi! Ask me about OHPL."})
 
             ml_resp = predict_answer(msg)
             return JsonResponse({"response": ml_resp})
