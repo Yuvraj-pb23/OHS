@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>POSH Mastery Dashboard</title>
+    <title>POSH Excellence Portal</title>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link
@@ -361,6 +361,62 @@
         display: none;
       }
 
+
+      /* Responsive Fixes for Mobile Header */
+      @media (max-width: 480px) {
+        .top-header {
+          padding: 0 12px !important;
+          height: 65px !important;
+        }
+        .top-header h3 {
+          font-size: 0.95rem !important;
+          white-space: nowrap !important;
+          overflow: hidden !important;
+          text-overflow: ellipsis !important;
+          max-width: 60% !important;
+        }
+        .user-name-top, .profile-chevron {
+          display: none !important;
+        }
+        .user-profile-top {
+          padding: 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          border: 2px solid rgba(78, 84, 200, 0.2) !important;
+          width: 40px !important;
+          height: 40px !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+        }
+        .user-avatar-top {
+          width: 32px !important;
+          height: 32px !important;
+          min-width: 32px !important;
+          min-height: 32px !important;
+          flex-shrink: 0 !important;
+          margin: 0 !important;
+          font-size: 0.85rem !important;
+          box-shadow: 0 4px 8px rgba(78, 84, 200, 0.3) !important;
+        }
+        .user-dropdown-menu {
+          width: 140px !important;
+          right: 0 !important;
+          left: auto !important;
+          transform: translateY(-8px) !important;
+          transform-origin: top right !important;
+        }
+        .user-dropdown-menu.show {
+          transform: translateY(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+        }
+        .user-dropdown-menu a {
+          padding: 10px !important;
+          font-size: 0.85rem !important;
+        }
+      }
       #presence-indicator {
         position: fixed;
         bottom: 20px;
@@ -1004,7 +1060,7 @@
     </div>
 
     <div class="top-header">
-      <h3 style="color: var(--primary); margin: 0; font-weight: 700;">POSH Training Mastery</h3>
+      <h3 style="color: var(--primary); margin: 0; font-weight: 700;">POSH Excellence Portal</h3>
       <div class="user-profile-wrapper">
         <div class="user-profile-top" id="userProfileBtn">
           <span class="user-name-top">{{ request.user.get_full_name|default:request.user.username|title }}</span>
