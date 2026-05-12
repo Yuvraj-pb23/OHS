@@ -40,12 +40,17 @@
 
         /* Ensure nav links look good on the glassy background */
         .nav-link {
-            color: #6200ea !important; /* Reverted to blue/purple */
-            font-weight: 500;
-            transition: color 0.3s ease;
+            color: #000a7d !important; 
+            font-weight: 600;
+            transition: all 0.3s ease;
+            padding: 8px 15px !important;
+            border-bottom: 3px solid transparent !important;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #000a7d !important;
+            border-bottom: 3px solid #ffb400 !important;
         }
         .nav-link.active {
-            color: #400c88 !important;
             font-weight: 700;
         }
 

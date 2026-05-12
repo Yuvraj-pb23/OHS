@@ -1136,7 +1136,7 @@ def posh_act_page(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/media/training_videos/POSH_Training_Video.mp4"
+                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
             ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
@@ -1212,6 +1212,7 @@ def posh_act_page(request):
         "is_final_quiz_passed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
+        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
     }
 
     return render(request, "posh_act_page.html", context)
@@ -1554,7 +1555,7 @@ def posh_act_page_corp(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/media/training_videos/POSH_Training_Video.mp4"
+                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
             ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
@@ -1634,6 +1635,7 @@ def posh_act_page_corp(request):
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
         "is_company_employee": True,
+        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
     }
 
     return render(request, "posh_act_page_corp.html", context)

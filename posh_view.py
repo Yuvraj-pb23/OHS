@@ -1,5 +1,7 @@
 import json
+import os
 from datetime import timedelta
+
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -80,7 +82,7 @@ def posh_act_page(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file
-                else "/media/training_videos/POSH_Training_Video.mp4"
+                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
             ),
             "duration": mod.duration_seconds,
         }
@@ -154,6 +156,7 @@ def posh_act_page(request):
         "is_final_quiz_passed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
+        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
     }
 
     return render(request, "posh_act_page.html", context)
