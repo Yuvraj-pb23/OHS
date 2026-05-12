@@ -1,5 +1,6 @@
-{% block body %}
+{% extends "base.html" %}
 {% load static %}
+{% block body %}
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -292,6 +293,10 @@
 </div>
 
 <script>
+    function getCsrfToken() {
+        return '{{ csrf_token }}';
+    }
+
     const questionPool = [
         { q: "What does POSH stand for?", a: ["Prevention of Social Harassment Act", "Prevention of Sexual Harassment Act", "Protection of Sexual Harassment Act", "Policy on Safety and Harassment Act"], c: 1 },
         { q: "In which year was the POSH Act enacted in India?", a: ["2010", "2012", "2013", "2015"], c: 2 },
@@ -410,9 +415,9 @@
         document.getElementById('score-display').innerText = `${score}/${activeQuestions.length}`;
         const msg = document.getElementById('result-message');
 
-        // 80% passing threshold
-        const passThreshold = Math.ceil(activeQuestions.length * 0.8);
-        const passed = score >= passThreshold;
+        // 80% passing threshold (Strictly Above 80%)
+        const percentage = Math.round((score / activeQuestions.length) * 100);
+        const passed = percentage >= 80;
 
         if (passed) {
             msg.innerText = "Congratulations! You passed.";

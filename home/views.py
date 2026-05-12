@@ -789,12 +789,12 @@ def company_dashboard(request):
 
     org = membership.organization
     active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
-    members = OrganizationMember.objects.filter(
+    members = list(OrganizationMember.objects.filter(
         organization=org, role="MEMBER"
-    ).select_related("user")
+    ).select_related("user"))
 
     # --- DATA CALCULATION FOR HTML ---
-    total_employees = members.count()
+    total_employees = len(members)
 
     # Identify Training Type based on Plan
     training_type = "POSH"  # Default
@@ -806,7 +806,13 @@ def company_dashboard(request):
     all_modules = TrainingModule.objects.filter(module_type=training_type).order_by(
         "order"
     )
-    total_modules_count = all_modules.count()
+    # Filter to only include modules visible to employees (consistent with corp_act_page logic)
+    visible_modules = [
+        m for m in all_modules 
+        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+    ]
+    visible_module_ids = [m.id for m in visible_modules]
+    total_modules_count = len(visible_modules)
 
     training_completed_count = 0
 
@@ -814,9 +820,9 @@ def company_dashboard(request):
     for mem in members:
         user_obj = mem.user
 
-        # Get progress for this user
+        # Get progress for this user (only for visible modules)
         completed_modules = ModuleProgress.objects.filter(
-            user=user_obj, module__module_type=training_type, is_completed=True
+            user=user_obj, module_id__in=visible_module_ids, is_completed=True
         ).count()
 
         mem.percent_complete = (
@@ -1299,6 +1305,27 @@ def mod_complete(request, module_id):
 
 @csrf_exempt
 @login_required
+def reset_progress(request):
+    """
+    Resets all module progress for the given course type (POSH/POCSO).
+    Called when a user fails an intermediate quiz.
+    """
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            course_type = data.get("type", "POSH")
+            ModuleProgress.objects.filter(
+                user=request.user, 
+                module__module_type=course_type
+            ).delete()
+            return JsonResponse({"status": "success"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
+
+
+@csrf_exempt
+@login_required
 def submit_assessment(request):
     if request.method == "POST":
         try:
@@ -1308,9 +1335,9 @@ def submit_assessment(request):
             total_q = int(data.get("total", 15)) # Default to 15 if not provided
 
             # Calculate percentage accurately
-            percentage = int((score_raw / total_q) * 100) if total_q > 0 else score_raw
+            percentage = round((score_raw / total_q) * 100) if total_q > 0 else score_raw
             
-            # Enforce 80% pass threshold globally
+            # Enforce 80% or above pass threshold
             passed = percentage >= 80
 
             progress, created = AssessmentProgress.objects.get_or_create(
@@ -2384,13 +2411,20 @@ def download_certificate(request, course_type="POSH"):
     # In a real app, maybe extract this check to a helper
     if course_type == "POSH":
         modules = TrainingModule.objects.filter(module_type="POSH")
-        total = modules.count()
-        # Count COMPLETED modules for this user
+        # Align with visible modules logic (videos + quiz)
+        visible_modules = [
+            m for m in modules 
+            if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+        ]
+        visible_ids = [m.id for m in visible_modules]
+        total = len(visible_modules)
+        
+        # Count COMPLETED visible modules for this user
         completed = ModuleProgress.objects.filter(
-            user=certificate_user, module__in=modules, is_completed=True
+            user=certificate_user, module_id__in=visible_ids, is_completed=True
         ).count()
 
-        # Strict check: Must be 100% complete
+        # Strict check: Must be 100% complete (visible modules)
         if total == 0 or completed < total:
             messages.error(
                 request,
@@ -2419,9 +2453,16 @@ def download_certificate(request, course_type="POSH"):
     elif course_type == "POCSO":
         # Check POCSO completion
         modules = TrainingModule.objects.filter(module_type="POCSO")
-        total = modules.count()
+        # Align with visible modules logic (videos + quiz)
+        visible_modules = [
+            m for m in modules 
+            if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+        ]
+        visible_ids = [m.id for m in visible_modules]
+        total = len(visible_modules)
+
         completed = ModuleProgress.objects.filter(
-            user=certificate_user, module__in=modules, is_completed=True
+            user=certificate_user, module_id__in=visible_ids, is_completed=True
         ).count()
 
         if total == 0 or completed < total:

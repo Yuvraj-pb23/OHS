@@ -1,5 +1,6 @@
-{% block body %}
+{% extends "base.html" %}
 {% load static %}
+{% block body %}
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -250,6 +251,10 @@
         { q: "Child-friendly environment in court is mandatory.", a: ["True", "False", "Only in big cities", "Only for private cases"], c: 0 }
     ];
 
+    function getCsrfToken() {
+        return '{{ csrf_token }}';
+    }
+
     let currentIdx = 0; let score = 0; let selected = null;
     let selectedQuestions = [];
     let userAnswers = []; 
@@ -323,9 +328,9 @@
         document.getElementById('result-section').style.display = 'block';
         document.getElementById('final-score').innerText = `${score}/20`;
         
-        const msg = document.getElementById('result-msg');
-        const passThreshold = Math.ceil(20 * 0.8); // 80% threshold (16/20)
-        const passed = score >= passThreshold;
+        // 80% passing threshold (Strictly Above 80%)
+        const percentage = Math.round((score / 20) * 100);
+        const passed = percentage >= 80;
 
         if (passed) {
             msg.innerText = "Congratulations! You have passed the POCSO Assessment.";

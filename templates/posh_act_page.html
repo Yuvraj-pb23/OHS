@@ -542,7 +542,7 @@
     }
     
     // --- PRACTICE QUIZ LOGIC (SHUFFLE + 15 QUESTIONS) ---
-    let qIdx = 0;
+    let qScore = 0;
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -553,7 +553,7 @@
     }
 
     function initQuiz() {
-        qIdx = 0; 
+        qIdx = 0; qScore = 0;
         quizSeconds = 600;
         // Create a copy, shuffle, and take only 15
         currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
@@ -584,7 +584,7 @@
             btn.onclick = () => {
                 const btns = document.querySelectorAll('.pq-btn');
                 btns.forEach(b => b.classList.add('disabled'));
-                if(i === q.answer) btn.classList.add('correct');
+                if(i === q.answer) { btn.classList.add('correct'); qScore++; }
                 else { btn.classList.add('wrong'); btns[q.answer].classList.add('correct'); }
                 document.getElementById('pq-next-btn').style.display = 'block';
             };
@@ -602,9 +602,28 @@
             document.getElementById('pq-game-area').style.display = 'none';
             document.getElementById('pq-result-area').style.display = 'block';
             
-            ppts[currentPPTIdx].status = 'complete';
-            markComplete(ppts[currentPPTIdx].id); 
-            renderPPTList();
+            const passed = qScore >= 13;
+            const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. <br><br><b>As per policy, you must watch the training videos again to unlock the quiz.</b>`;
+            document.getElementById('pq-result-area').innerHTML = `<div style="text-align:center"><h3>${resultMsg}</h3><button class="btn-start" onclick="closeModal()">OK</button></div>`;
+
+            if (passed) {
+                ppts[currentPPTIdx].status = 'complete';
+                markComplete(ppts[currentPPTIdx].id); 
+                renderPPTList();
+            } else {
+                // RESET PROGRESS ON FAILURE
+                fetch('/ajax/reset-progress/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type: 'POSH' })
+                }).then(() => {
+                    // Update local state
+                    modules.forEach((m, i) => { if(i===0) m.status='pending'; else m.status='locked'; });
+                    ppts.forEach(p => { p.status='locked'; });
+                    renderModules();
+                    renderPPTList();
+                });
+            }
             updateTotalStats();
         }
     }

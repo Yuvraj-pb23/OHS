@@ -12,7 +12,7 @@ def generate_certificate(user, course_type="POSH"):
     """
     # 1. Determine Template Image
     if course_type == "POSH":
-        template_name = "Certificate/POSH CERT.png"
+        template_name = "Certificate/Open Hands Pvt Ltd (1).png"
     else:
         template_name = "Certificate/POCSO CERT.png"
 

@@ -1402,14 +1402,29 @@
           else {
               clearInterval(quizTimerInterval);
               document.getElementById('pq-game-area').style.display = 'none';
-              const passed = qScore >= 12;
-              const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. Try again.`;
-              document.getElementById('pq-result-area').innerHTML = `<h3>${resultMsg}</h3><button class="btn-start" onclick="closeModal()">Finish</button>`;
+              const passed = qScore >= 13;
+              const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. <br><br><b>As per policy, you must watch the training videos again to unlock the quiz.</b>`;
+              document.getElementById('pq-result-area').innerHTML = `<div style="text-align:center"><h3>${resultMsg}</h3><button class="btn-start" onclick="closeModal()">OK</button></div>`;
               document.getElementById('pq-result-area').style.display = 'block';
+
               if (passed && window._quizModuleId) {
                   const idx = window._quizModuleIdx;
                   if (idx !== undefined && modules[idx]) modules[idx].status = 'complete';
                   markComplete(window._quizModuleId);
+              } else if (!passed) {
+                  // RESET PROGRESS ON FAILURE
+                  fetch('/ajax/reset-progress/', {
+                      method: 'POST',
+                      headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ type: 'POSH' })
+                  }).then(() => {
+                      // Update local state to reflect reset
+                      modules.forEach((m, i) => {
+                          if (i === 0) m.status = 'pending';
+                          else m.status = 'locked';
+                      });
+                      renderModules();
+                  });
               }
               updateTotalStats();
           }
