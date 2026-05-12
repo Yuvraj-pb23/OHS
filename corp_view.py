@@ -2,6 +2,8 @@ import json
 import os
 from datetime import timedelta
 
+from django.conf import settings
+
 
 from django.contrib import messages
 from django.db.models import Q, Sum
@@ -64,8 +66,8 @@ def posh_act_page_corp(request):
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": (
                 mod.video_file.url
-                if mod.video_file
-                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
+                if mod.video_file and os.path.exists(mod.video_file.path)
+                else "/posh-video-source/"
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
@@ -135,6 +137,6 @@ def posh_act_page_corp(request):
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
         "is_company_employee": True,
-        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
+        "posh_video_url": "/posh-video-source/",
     }
     return render(request, "posh_act_page_corp.html", context)

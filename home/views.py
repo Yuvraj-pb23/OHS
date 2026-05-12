@@ -22,6 +22,10 @@ from PIL import Image
 # Ensure this file exists in your app or adjust import accordingly
 from .chatbot_logic import predict_answer
 
+def posh_video_source(request):
+    """Redirects to the POSH training video URL stored in settings."""
+    return redirect(settings.POSH_TRAINING_VIDEO_URL)
+
 # Models
 # Ensure your User model has 'phone' and 'department' fields if you want to save them to the DB.
 from .models import (
@@ -1135,8 +1139,8 @@ def posh_act_page(request):
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": (
                 mod.video_file.url
-                if mod.video_file
-                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
+                if mod.video_file and os.path.exists(mod.video_file.path)
+                else "/posh-video-source/"
             ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
@@ -1212,7 +1216,7 @@ def posh_act_page(request):
         "is_final_quiz_passed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
-        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
+        "posh_video_url": "/posh-video-source/",
     }
 
     return render(request, "posh_act_page.html", context)
@@ -1554,8 +1558,8 @@ def posh_act_page_corp(request):
             "thumb": mod.thumbnail.url if mod.thumbnail else "",
             "src": (
                 mod.video_file.url
-                if mod.video_file
-                else os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4")
+                if mod.video_file and os.path.exists(mod.video_file.path)
+                else "/posh-video-source/"
             ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
@@ -1635,7 +1639,7 @@ def posh_act_page_corp(request):
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
         "is_company_employee": True,
-        "posh_video_url": os.getenv("POSH_TRAINING_VIDEO_URL", "/media/training_videos/POSH_Training_Video.mp4"),
+        "posh_video_url": "/posh-video-source/",
     }
 
     return render(request, "posh_act_page_corp.html", context)
