@@ -324,7 +324,7 @@
         }
 
         .team-card:hover .team-card-img {
-            transform: translateX(-50%) scale(1.15) rotate(5deg);
+            transform: translateX(-50%) scale(1.15);
         }
 
         .team-info h3 {
@@ -362,6 +362,40 @@
            ============================ */
         .achievements { padding: 60px 0; background: #fff; overflow: hidden; }
         .achievements-slider-container { margin-top: 30px; }
+        /* CSS Infinite Marquee animations (replaces buggy JS Swiper controls) */
+        .swiper-wrapper {
+            display: flex;
+            width: max-content;
+            align-items: center;
+        }
+        #teamSlider {
+            padding-top: 80px !important;
+            padding-bottom: 20px !important;
+        }
+        #slider1 {
+            padding-top: 20px !important;
+            padding-bottom: 20px !important;
+        }
+        #teamSlider .swiper-wrapper {
+            animation: teamMarquee 25s linear infinite;
+        }
+        #slider1 .swiper-wrapper {
+            animation: achievementsMarquee 20s linear infinite;
+        }
+        #teamSlider:hover .swiper-wrapper,
+        #slider1:hover .swiper-wrapper,
+        .swiper-wrapper.paused-state {
+            animation-play-state: paused !important;
+        }
+        @keyframes teamMarquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+        @keyframes achievementsMarquee {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
         .swiper-slide {
             width: 250px !important;
             height: 250px;
@@ -369,11 +403,103 @@
             padding: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             border-radius: 8px;
-            transition: transform 0.3s;
+            margin-right: 30px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .swiper-slide:hover { transform: scale(1.1); z-index: 10; }
-        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+        .achievements-slider .swiper-slide img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; cursor: pointer; }
         
+        .team-card-slide {
+            width: 320px !important;
+            height: auto;
+            background: transparent;
+            padding: 10px;
+            box-shadow: none;
+            border-radius: 0;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            margin-right: 30px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .team-card-slide:hover {
+            transform: scale(1.06);
+            z-index: 10;
+        }
+        .team-card-img {
+            cursor: pointer;
+        }
+
+        /* Premium Modal Styles */
+        .image-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .image-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content-container {
+            max-width: 90%;
+            max-height: 85%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .image-modal.show .modal-content-container {
+            transform: scale(1) translateY(0);
+        }
+        
+        .modal-img {
+            max-width: 100%;
+            max-height: 70vh;
+            object-fit: contain;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-caption {
+            margin-top: 20px;
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 3rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+        }
+        
+        .close-modal:hover {
+            color: #fff;
+            transform: scale(1.1) rotate(90deg);
+        }
+
         @media (max-width: 768px) {
             .hero-glass-card h1 { font-size: 2.5rem; }
             .stats-grid { grid-template-columns: 1fr; }
@@ -415,35 +541,6 @@
             <p class="section-description">
               Our certified professionals, legal advisors, and training experts bring decades of experience to transform workplace culture through tailored <span class="highlight">POSH training, audits, and consultancy</span>.
             </p>
-
-            <!-- Crystal Stat Tiles -->
-            <!-- <div class="stats-grid">
-                
-                <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="stat-icon-circle">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h3>2015</h3>
-                    <p>Established</p>
-                </div>
-
-                <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
-                    <div class="stat-icon-circle">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <h3>500+</h3>
-                    <p>Organizations</p>
-                </div>
-
-                <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="stat-icon-circle">
-                        <i class="fas fa-user-graduate"></i>
-                    </div>
-                    <h3>10k+</h3>
-                    <p>Trained Pro's</p>
-                </div>
-
-            </div> -->
         </div>
 
       </div>
@@ -456,52 +553,131 @@
       <h2 class="section-title" data-aos="fade-up">Our Team & Culture</h2>
       <p class="section-subtitle" data-aos="fade-up">Meet the passionate professionals behind OHPL.</p>
 
-      <div class="team-grid">
-        <div class="team-card" data-aos="fade-up" data-aos-delay="100">
-          <img src="{% static 'img/prerna-kalra.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Prerna Kalra</h3>
-            <p>“Nationally recognized leader in Diversity & Inclusion, trained 10,000+ professionals.”</p>
-          </div>
-        </div>
+      <div class="team-slider-container" style="margin-top: 10px; overflow: hidden;">
+        <div class="swiper team-slider" id="teamSlider">
+          <div class="swiper-wrapper" style="align-items: center; padding-bottom: 20px;">
+            
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/prerna-kalra.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Prerna Kalra</h3>
+                  <p>“Nationally recognized leader in Diversity & Inclusion, trained 10,000+ professionals.”</p>
+                </div>
+              </div>
+            </div>
 
-        <div class="team-card" data-aos="fade-up" data-aos-delay="200">
-          <img src="{% static 'img/pooja_n.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Pooja Pande</h3>
-            <p>“Highly accomplished legal expert specializing in POSH cases.”</p>
-          </div>
-        </div>
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/pooja_n.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Pooja Pande</h3>
+                  <p>“Highly accomplished legal expert specializing in POSH cases.”</p>
+                </div>
+              </div>
+            </div>
 
-        <div class="team-card" data-aos="fade-up" data-aos-delay="300">
-          <img src="{% static 'img/team3.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Vasundhra Kaul</h3>
-            <p>“Corporate HR professional with 15 years’ experience.”</p>
-          </div>
-        </div>
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/team3.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Vasundhra Kaul</h3>
+                  <p>“Corporate HR professional with 15 years’ experience.”</p>
+                </div>
+              </div>
+            </div>
 
-        <div class="team-card" data-aos="fade-up" data-aos-delay="400">
-          <img src="{% static 'img/team4.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Shradha Sinha</h3>
-            <p>“Retired Air Force Officer with 25+ years of HR training expertise.”</p>
-          </div>
-        </div>
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/team4.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Shradha Sinha</h3>
+                  <p>“Retired Air Force Officer with 25+ years of HR training expertise.”</p>
+                </div>
+              </div>
+            </div>
 
-        <div class="team-card" data-aos="fade-up" data-aos-delay="500">
-          <img src="{% static 'img/comm.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Anita</h3>
-            <p>“Certified POSH Trainer & DEI advocate.”</p>
-          </div>
-        </div>
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/comm.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Anita</h3>
+                  <p>“Certified POSH Trainer & DEI advocate.”</p>
+                </div>
+              </div>
+            </div>
 
-        <div class="team-card" data-aos="fade-up" data-aos-delay="600">
-          <img src="{% static 'img/maam.webp' %}" class="team-card-img" />
-          <div class="team-info">
-            <h3>Capt Rajni Pathania Sareen</h3>
-            <p>“Ex Army Officer with 24 years of HR expertise.”</p>
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/maam.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Capt Rajni Pathania Sareen</h3>
+                  <p>“Ex Army Officer with 24 years of HR expertise.”</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Duplicated set of 6 cards for seamless infinite marquee loop -->
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/prerna-kalra.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Prerna Kalra</h3>
+                  <p>“Nationally recognized leader in Diversity & Inclusion, trained 10,000+ professionals.”</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/pooja_n.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Pooja Pande</h3>
+                  <p>“Highly accomplished legal expert specializing in POSH cases.”</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/team3.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Vasundhra Kaul</h3>
+                  <p>“Corporate HR professional with 15 years’ experience.”</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/team4.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Shradha Sinha</h3>
+                  <p>“Retired Air Force Officer with 25+ years of HR training expertise.”</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/comm.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Anita</h3>
+                  <p>“Certified POSH Trainer & DEI advocate.”</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="swiper-slide team-card-slide">
+              <div class="team-card">
+                <img src="{% static 'img/maam.webp' %}" class="team-card-img" />
+                <div class="team-info">
+                  <h3>Capt Rajni Pathania Sareen</h3>
+                  <p>“Ex Army Officer with 24 years of HR expertise.”</p>
+                </div>
+              </div>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -537,22 +713,28 @@
             <div class="swiper-slide"><img src="{% static 'img/4.webp' %}"></div>
             <div class="swiper-slide"><img src="{% static 'img/5.webp' %}"></div>
             <div class="swiper-slide"><img src="{% static 'img/6.webp' %}"></div>
-          </div>
-        </div>
-
-        <!-- <div class="swiper achievements-slider" id="slider2" style="margin-top: 20px;">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide"><img src="{% static 'img/4.webp' %}"></div>
-            <div class="swiper-slide"><img src="{% static 'img/5.webp' %}"></div>
-            <div class="swiper-slide"><img src="{% static 'img/6.webp' %}"></div>
+            
+            <!-- Duplicated set of 6 images for seamless infinite marquee loop -->
             <div class="swiper-slide"><img src="{% static 'img/12.webp' %}"></div>
             <div class="swiper-slide"><img src="{% static 'img/13.webp' %}"></div>
             <div class="swiper-slide"><img src="{% static 'img/14.webp' %}"></div>
-          </div> -->
+            <div class="swiper-slide"><img src="{% static 'img/4.webp' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/5.webp' %}"></div>
+            <div class="swiper-slide"><img src="{% static 'img/6.webp' %}"></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Premium Glassmorphic Modal -->
+  <div id="imageModal" class="image-modal">
+      <span class="close-modal" id="closeImageModal">&times;</span>
+      <div class="modal-content-container">
+          <img class="modal-img" id="modalImage" src="" alt="">
+          <div id="modalCaption" class="modal-caption"></div>
+      </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
@@ -574,18 +756,59 @@
       // ============================================
 
       AOS.init({ duration: 800, easing: 'ease-out-cubic', once: true });
-      const initSlider = (selector, reverse = false) => {
-        new Swiper(selector, {
-          loop: true, slidesPerView: 'auto', spaceBetween: 20, speed: 3000,
-          autoplay: { delay: 0, disableOnInteraction: false, reverseDirection: reverse },
-          allowTouchMove: false, freeMode: true,
-        });
-      };
-      initSlider("#slider1", false);
-      initSlider("#slider2", true);
+      
+      // Modal Elements
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      const modalCaption = document.getElementById('modalCaption');
+      const closeBtn = document.getElementById('closeImageModal');
+
+      function openModal(src, caption) {
+          modalImage.src = src;
+          modalCaption.textContent = caption;
+          modal.classList.add('show');
+          
+          // Pause all CSS marquee animations
+          document.querySelectorAll('.swiper-wrapper').forEach(w => {
+              w.classList.add('paused-state');
+          });
+      }
+
+      function closeModal() {
+          modal.classList.remove('show');
+          
+          // Resume all CSS marquee animations
+          document.querySelectorAll('.swiper-wrapper').forEach(w => {
+              w.classList.remove('paused-state');
+          });
+      }
+
+      closeBtn.addEventListener('click', closeModal);
+      modal.addEventListener('click', (e) => {
+          if (e.target === modal) closeModal();
+      });
+
+      // Select team and achievements images
+      const imagesToListen = document.querySelectorAll('.team-card-img, .swiper-slide img');
+      imagesToListen.forEach(img => {
+          // Identify descriptive caption (name for team members, alt for achievements)
+          let captionText = 'Our Achievement';
+          const teamCard = img.closest('.team-card');
+          if (teamCard) {
+              const nameEl = teamCard.querySelector('h3');
+              if (nameEl) captionText = nameEl.textContent;
+          } else {
+              captionText = img.alt || 'Our Achievement';
+          }
+
+          // Click trigger: open the modal zoom view
+          img.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openModal(img.src, captionText);
+          });
+      });
     });
   </script>
-
 </body>
 </html>
 {% endblock body %}

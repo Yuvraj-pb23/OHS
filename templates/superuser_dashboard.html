@@ -740,5 +740,25 @@
             document.getElementById('sidebar').classList.add('mobile-active');
         });
     </script>
+<!-- === TAB-CLOSE AUTO LOGOUT === -->
+<script>
+  (function () {
+    'use strict';
+    var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
+    var _navAway = false;
+    function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href]');
+      if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
+    }, true);
+    document.addEventListener('submit', function () { markNav(); }, true);
+    window.addEventListener('pagehide', function (e) {
+      if (e.persisted) return;
+      if (_navAway) return;
+      navigator.sendBeacon(TAB_CLOSE_URL);
+    });
+    sessionStorage.removeItem('_ohs_nav');
+  })();
+</script>
 </body>
 </html>

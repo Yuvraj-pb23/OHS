@@ -44,6 +44,7 @@ from .models import (
     SubscriptionPlan,
     TrainingModule,
     User,
+    POSHPolicy,
 )
 from .utils import generate_certificate
 
@@ -112,6 +113,10 @@ def get_poster_with_logo(request, poster_type):
         poster_filename = "POSH Poster.webp"
     elif poster_type == "posh_2":
         poster_filename = "POSH Poster 2.webp"
+    elif poster_type == "posh_company":
+        poster_filename = "posh-company.webp"
+    elif poster_type == "posh_pocso":
+        poster_filename = "posh-pocso.webp"
     elif poster_type == "pocso":
         poster_filename = "POCSO Poster.webp"
     else:
@@ -170,6 +175,132 @@ def get_poster_with_logo(request, poster_type):
                 # Paste the logo directly onto the poster (using itself as mask for transparency)
                 poster_img.paste(logo_img, (pos_x, pos_y), logo_img)
 
+        # Draw Company Name and Address on the poster
+        if config and (config.company_name or config.company_address):
+            from PIL import ImageDraw, ImageFont
+            font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Nunito.ttf')
+            
+            if os.path.exists(font_path):
+                draw = ImageDraw.Draw(poster_img)
+                tx = config.text_x
+                ty = config.text_y
+                ts = config.text_size
+                
+                # Base font size calculated as percentage of poster width
+                font_size_base = p_width * (ts / 100.0)
+                font_size = max(12, int(font_size_base * 1.25))
+                font_size_reg = max(10, int(font_size_base * 0.9))
+                
+                try:
+                    font_bold = ImageFont.truetype(font_path, font_size)
+                    font_reg = ImageFont.truetype(font_path, font_size_reg)
+                except Exception as font_err:
+                    print(f"Error loading font: {str(font_err)}")
+                    font_bold = ImageFont.load_default()
+                    font_reg = ImageFont.load_default()
+                
+                pos_x = int(p_width * (tx / 100.0))
+                pos_y = int(p_height * (ty / 100.0))
+                
+                # Parse text color (hex to RGBA)
+                text_color_hex = getattr(config, "text_color", "#000000") or "#000000"
+                try:
+                    text_color_hex = text_color_hex.lstrip("#")
+                    r_col = int(text_color_hex[0:2], 16)
+                    g_col = int(text_color_hex[2:4], 16)
+                    b_col = int(text_color_hex[4:6], 16)
+                    text_color_rgb = (r_col, g_col, b_col, 255)
+                except Exception:
+                    r_col, g_col, b_col = 0, 0, 0
+                    text_color_rgb = (0, 0, 0, 255)
+
+                # Determine optimal shadow/border color based on text color brightness (luminance)
+                luminance = 0.299 * r_col + 0.587 * g_col + 0.114 * b_col
+                if luminance > 127:
+                    shadow_color = (0, 0, 0, 220)  # Dark shadow for light text
+                else:
+                    shadow_color = (255, 255, 255, 220)  # Light shadow for dark text
+                
+                # Calculate widths to support perfect center-alignment
+                name_w, name_h = 0, 0
+                if config.company_name:
+                    try:
+                        name_w, name_h = font_bold.getsize(config.company_name)
+                    except AttributeError:
+                        left, top, right, bottom = font_bold.getbbox(config.company_name)
+                        name_w = right - left
+                        name_h = bottom - top
+
+                addr_w, addr_h = 0, 0
+                spacing_val = 0
+                if config.company_address:
+                    spacing_val = max(1, int(font_size_reg * 0.08))
+                    for char in config.company_address:
+                        try:
+                            cw, ch = font_reg.getsize(char)
+                        except AttributeError:
+                            left, top, right, bottom = font_reg.getbbox(char)
+                            cw = right - left
+                            ch = bottom - top
+                        addr_w += cw
+                        addr_h = max(addr_h, ch)
+                    addr_w += (len(config.company_address) - 1) * spacing_val
+
+                max_w = max(name_w, addr_w)
+                
+                # Draw text with thin contrast borders/shadow for absolute legibility
+                def draw_text_with_shadow(draw, position, text, font, fill, stroke_w=0, shadow_color=shadow_color, spacing=0):
+                    x, y = position
+                    if spacing > 0:
+                        # Helper to draw spaced text
+                        def draw_spaced(draw, pos, txt, f, fl, sw=0, sf=None):
+                            sx, sy = pos
+                            for char in txt:
+                                draw.text((sx, sy), char, font=f, fill=fl, stroke_width=sw, stroke_fill=sf)
+                                try:
+                                    cw, _ = f.getsize(char)
+                                except AttributeError:
+                                    left, top, right, bottom = f.getbbox(char)
+                                    cw = right - left
+                                sx += cw + spacing
+                        
+                        if stroke_w > 0:
+                            draw_spaced(draw, (x, y), text, font, shadow_color, sw=stroke_w + 1, sf=shadow_color)
+                            draw_spaced(draw, (x, y), text, font, fill, sw=stroke_w, sf=fill)
+                        else:
+                            draw_spaced(draw, (x + 1, y + 1), text, font, shadow_color)
+                            draw_spaced(draw, (x - 1, y + 1), text, font, shadow_color)
+                            draw_spaced(draw, (x + 1, y - 1), text, font, shadow_color)
+                            draw_spaced(draw, (x - 1, y - 1), text, font, shadow_color)
+                            draw_spaced(draw, (x, y), text, font, fill)
+                    else:
+                        if stroke_w > 0:
+                            # Draw shadow with thick stroke first
+                            draw.text((x, y), text, font=font, fill=shadow_color, stroke_width=stroke_w + 1, stroke_fill=shadow_color)
+                            # Draw main text with stroke on top
+                            draw.text((x, y), text, font=font, fill=fill, stroke_width=stroke_w, stroke_fill=fill)
+                        else:
+                            draw.text((x + 1, y + 1), text, font=font, fill=shadow_color)
+                            draw.text((x - 1, y + 1), text, font=font, fill=shadow_color)
+                            draw.text((x + 1, y - 1), text, font=font, fill=shadow_color)
+                            draw.text((x - 1, y - 1), text, font=font, fill=shadow_color)
+                            draw.text((x, y), text, font=font, fill=fill)
+
+                if config.company_name:
+                    # Center align relative to the widest element
+                    pos_x_name = pos_x + int((max_w - name_w) / 2)
+                    stroke_w_name = max(1, int(font_size * 0.06))
+                    draw_text_with_shadow(draw, (pos_x_name, pos_y), config.company_name, font=font_bold, fill=text_color_rgb, stroke_w=stroke_w_name)
+                    pos_y += font_size + int(font_size * 0.25)
+                
+                if config.company_address:
+                    # Center align relative to the widest element
+                    pos_x_addr = pos_x + int((max_w - addr_w) / 2)
+                    stroke_w_addr = max(1, int(font_size_reg * 0.04))
+                    draw_text_with_shadow(draw, (pos_x_addr, pos_y), config.company_address, font=font_reg, fill=text_color_rgb, stroke_w=stroke_w_addr, spacing=spacing_val)
+            else:
+                print(f"Font file not found at: {font_path}")
+
         # Save to buffer
         buffer = io.BytesIO()
         poster_img.convert("RGB").save(buffer, format="JPEG", quality=95)
@@ -218,6 +349,12 @@ def save_logo_config(request):
                 config.logo_x = float(data.get("x", 2.0))
                 config.logo_y = float(data.get("y", 2.0))
                 config.logo_width = float(data.get("width", 15.0))
+                config.company_name = data.get("company_name", "")
+                config.company_address = data.get("company_address", "")
+                config.text_x = float(data.get("text_x", 3.0))
+                config.text_y = float(data.get("text_y", 88.0))
+                config.text_size = float(data.get("text_size", 2.2))
+                config.text_color = data.get("text_color", "#000000")
                 config.save()
             else:
                 # Fallback to general org settings if no path provided
@@ -243,12 +380,20 @@ def reset_logo_config(request):
         return redirect("company_dashboard")
 
     org = membership.organization
-    org.logo_x = 2.0
-    org.logo_y = 2.0
-    org.logo_width = 15.0
-    org.save()
-    # messages.success(request, "Logo position and size reset to default.")
-    return redirect("company_dashboard")
+    
+    poster_path = request.GET.get("poster_path")
+    if poster_path:
+        from .models import PosterLogoConfig
+        PosterLogoConfig.objects.filter(
+            organization=org, poster_path=poster_path
+        ).delete()
+    else:
+        org.logo_x = 2.0
+        org.logo_y = 2.0
+        org.logo_width = 15.0
+        org.save()
+        
+    return redirect("/dashboard/company/?section=posters")
 
 
 # --- 0. CUSTOM LOGIN VIEW ---
@@ -585,6 +730,16 @@ def company_subscription(request, plan_type):
             )
             return redirect(request.path)
 
+        # Strict backend validation matching frontend regexes
+        import re
+        if not re.match(r"^[a-zA-Z\s]{3,50}$", fullname):
+            messages.error(request, "Please enter a valid full name (letters and spaces only, 3-50 characters).")
+            return redirect(request.path)
+
+        if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password):
+            messages.error(request, "Password must be at least 8 characters long, containing at least one letter, one number, and one special character (@$!%*?&).")
+            return redirect(request.path)
+
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
             return redirect(request.path)
@@ -634,6 +789,8 @@ def company_subscription(request, plan_type):
 
     # --- GET ---
     else:
+        if request.user.is_authenticated:
+            logout(request)
         list(messages.get_messages(request))
 
     # Decode setup_token on GET to pre-fill and lock the email field
@@ -740,33 +897,34 @@ def add_employee(request):
                     organization=org, user=new_user, role="MEMBER"
                 )
 
-                # Send welcome email with credentials + training link
-                from django.conf import settings as django_settings
+            # Send welcome email OUTSIDE transaction so email failure doesn't roll back user creation
+            from django.conf import settings as django_settings
 
-                from home.email_utils import send_welcome_email
+            from home.email_utils import send_welcome_email
 
-                site_base = getattr(
-                    django_settings, "SITE_URL", "https://openhandsolutions.com"
-                )
-                training_link = f"{site_base}/login/"
-                company_name = posh_reg.company_name if posh_reg else org.name
+            site_base = getattr(
+                django_settings, "SITE_URL", "https://openhandsolutions.com"
+            )
+            training_link = f"{site_base}/login/"
+            company_name = posh_reg.company_name if posh_reg else org.name
 
-                send_welcome_email(
-                    new_user,
-                    emp_password,
-                    is_company_employee=True,
-                    organization_name=company_name,
-                    training_link=training_link,
-                    designation=emp_designation,
-                )
+            send_welcome_email(
+                new_user,
+                emp_password,
+                is_company_employee=True,
+                organization_name=company_name,
+                training_link=training_link,
+                designation=emp_designation,
+            )
 
-            # messages.success(request, f"{emp_name} added successfully!")
+            messages.success(request, f"✅ {emp_name} added successfully! Login credentials sent to {emp_email}.")
+
         except Exception as e:
             print(f"Error adding employee: {str(e)}")
             import traceback
 
             traceback.print_exc()
-            messages.error(request, f"Database error: {str(e)}")
+            messages.error(request, f"Failed to add employee: {str(e)}")
 
         return redirect("company_dashboard")
     return redirect("company_dashboard")
@@ -863,11 +1021,23 @@ def company_dashboard(request):
         total_vid_count = len(vid_mods)
         total_ppt_count = len(ppt_mods)
 
-        completed_vid_count = sum(1 for m in vid_mods if m.id in user_progress_map)
         completed_ppt_count = sum(1 for m in ppt_mods if m.id in user_progress_map)
 
+        total_vid_progress = 0.0
+        for m in vid_mods:
+            if m.id in user_progress_map:
+                total_vid_progress += 100.0
+            else:
+                prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                if prog and m.duration_seconds > 0:
+                    percent_watched = (prog.last_position / m.duration_seconds) * 100.0
+                    percent_watched = min(99.0, max(0.0, percent_watched))
+                    total_vid_progress += percent_watched
+                else:
+                    total_vid_progress += 0.0
+
         mem.video_percent = (
-            int((completed_vid_count / total_vid_count) * 100)
+            int(total_vid_progress / total_vid_count)
             if total_vid_count > 0
             else 0
         )
@@ -925,9 +1095,20 @@ def company_dashboard(request):
         mem.total_active_time = f"{hours}h {minutes}m"
         mem.employee_id = user_obj.user_id if user_obj else None
         # Check if employee has passed the final quiz (for certificate eligibility)
-        has_passed_quiz = AssessmentProgress.objects.filter(
-            user=user_obj, assessment_type=training_type, is_passed=True
-        ).exists()
+        if training_type == "POSH":
+            # For POSH corporate employees, coursework (video + interactive quiz) complete is certificate eligible.
+            quiz_module = next((m for m in all_modules if "quiz" in m.title.lower() and m.ppt_file and not m.video_file), None)
+            quiz_completed = False
+            if quiz_module:
+                quiz_prog = ModuleProgress.objects.filter(user=user_obj, module=quiz_module).first()
+                quiz_completed = quiz_prog.is_completed if quiz_prog else False
+            has_passed_quiz = quiz_completed
+        else:
+            # For POCSO and other training types, check the standard AssessmentProgress
+            has_passed_quiz = AssessmentProgress.objects.filter(
+                user=user_obj, assessment_type=training_type, is_passed=True
+            ).exists()
+            
         mem.has_certificate = has_passed_quiz and mem.is_training_completed
 
         # Quiz completion — check practice quiz module progress (module titled 'quiz')
@@ -993,9 +1174,14 @@ def company_dashboard(request):
     poster_configs = {
         "posh_1": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POSH Poster.webp").first(),
         "posh_2": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POSH Poster 2.webp").first(),
+        "posh_company": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/posh-company.webp").first(),
+        "posh_pocso": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/posh-pocso.webp").first(),
         "pocso": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POCSO Poster.webp").first(),
     }
     
+    posh_policy = POSHPolicy.objects.filter(organization=org).first()
+    show_policy_form = (training_type == "POSH" and posh_policy is None)
+
     context = {
         "organization": org,
         "poster_configs": poster_configs,
@@ -1013,7 +1199,10 @@ def company_dashboard(request):
         "training_type": training_type,
         "default_password": org.default_password,
         "logout_url": "hr_logout",
+        "posh_policy": posh_policy,
+        "show_policy_form": show_policy_form,
     }
+
 
     # --- LOGIC TO SWITCH TEMPLATES BASED ON PLAN ---
     if active_sub and active_sub.plan.type == "POCSO":
@@ -1115,7 +1304,10 @@ def posh_act_page(request):
     # Initialize progress for all modules if not exists
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
-        progress_map[mod.id] = prog.is_completed
+        progress_map[mod.id] = {
+            "is_completed": prog.is_completed,
+            "last_position": getattr(prog, "last_position", 0.0),
+        }
         if prog.is_completed:
             completed_count += 1
 
@@ -1134,7 +1326,9 @@ def posh_act_page(request):
     video_modules = [m for m in modules if m.video_file]
     previous_completed = True
     for mod in video_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
+        last_position = prog_data["last_position"]
         is_locked = not previous_completed
 
         item = {
@@ -1151,6 +1345,7 @@ def posh_act_page(request):
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
+            "last_position": last_position,
         }
         video_list.append(item)
         previous_completed = is_completed
@@ -1161,7 +1356,8 @@ def posh_act_page(request):
     # UPDATED: Only include if it has PPT AND NO Video (to prevent duplicates)
     previous_completed = True
     for mod in ppt_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
         is_locked = not previous_completed
 
         item = {
@@ -1305,6 +1501,26 @@ def mod_complete(request, module_id):
 
 @csrf_exempt
 @login_required
+def save_video_progress(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            module_id = data.get("module_id")
+            position = float(data.get("position", 0.0))
+            if module_id:
+                progress, created = ModuleProgress.objects.get_or_create(
+                    user=request.user, module_id=module_id
+                )
+                progress.last_position = position
+                progress.save()
+                return JsonResponse({"status": "success"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+    return JsonResponse({"status": "error"}, status=400)
+
+
+@csrf_exempt
+@login_required
 def reset_progress(request):
     """
     Resets all module progress for the given course type (POSH/POCSO).
@@ -1332,33 +1548,145 @@ def submit_assessment(request):
             data = json.loads(request.body)
             assessment_type = data.get("type", "POSH")  # POSH or POCSO
             score_raw = int(data.get("score", 0))
-            total_q = int(data.get("total", 15)) # Default to 15 if not provided
+            total_q = int(data.get("total", 15))  # Default to 15 if not provided
 
             # Calculate percentage accurately
             percentage = round((score_raw / total_q) * 100) if total_q > 0 else score_raw
-            
-            # Enforce 80% or above pass threshold
-            passed = percentage >= 80
+
+            # 80% pass threshold for corporate quiz; 100% required for standalone assessment
+            is_employee = OrganizationMember.objects.filter(
+                user=request.user, role="MEMBER"
+            ).exists()
+            if is_employee:
+                passed = percentage >= 80
+            else:
+                passed = percentage == 100
 
             progress, created = AssessmentProgress.objects.get_or_create(
                 user=request.user, assessment_type=assessment_type
             )
-            progress.score = percentage # Store percentage as score for HR dashboard
-            progress.is_passed = passed
-            progress.save()
-
-            # If failed, reset module progress so they have to watch videos again
-            if not passed:
-                from home.models import ModuleProgress, TrainingModule
-                ModuleProgress.objects.filter(
-                    user=request.user,
-                    module__module_type=assessment_type
-                ).delete()
+            # Only update score if this attempt is better (or first attempt)
+            if created or percentage > progress.score or passed:
+                progress.score = percentage  # Store percentage as score for HR dashboard
+                progress.is_passed = passed
+                progress.save()
 
             return JsonResponse({"status": "success", "message": "Result saved", "passed": passed, "score_percent": percentage})
         except Exception as e:
             return JsonResponse({"status": "error", "message": str(e)}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
+
+
+
+@csrf_exempt
+@login_required
+def member_progress_api(request, member_id):
+    try:
+        # Check if the user is an admin for some organization
+        membership = OrganizationMember.objects.filter(user=request.user, role="ADMIN").first()
+        if not membership:
+            return JsonResponse({"status": "error", "message": "Unauthorized"}, status=403)
+            
+        org = membership.organization
+        member = OrganizationMember.objects.filter(id=member_id, organization=org).first()
+        if not member:
+            return JsonResponse({"status": "error", "message": "Member not found"}, status=404)
+            
+        user_obj = member.user
+        
+        # Identify Training Type based on Plan
+        active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
+        training_type = "POSH"
+        if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
+            if active_sub.plan.type == "POCSO":
+                training_type = "POCSO"
+                
+        all_modules = TrainingModule.objects.filter(module_type=training_type).order_by("order")
+        user_progress_map = set(
+            ModuleProgress.objects.filter(
+                user=user_obj, module__module_type=training_type, is_completed=True
+            ).values_list("module_id", flat=True)
+        )
+        
+        vid_mods = [m for m in all_modules if m.video_file]
+        ppt_mods = [m for m in all_modules if m.ppt_file and not m.video_file]
+        
+        total_vid_count = len(vid_mods)
+        total_ppt_count = len(ppt_mods)
+        
+        completed_ppt_count = sum(1 for m in ppt_mods if m.id in user_progress_map)
+        
+        total_vid_progress = 0.0
+        for m in vid_mods:
+            if m.id in user_progress_map:
+                total_vid_progress += 100.0
+            else:
+                prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                if prog and m.duration_seconds > 0:
+                    percent_watched = (prog.last_position / m.duration_seconds) * 100.0
+                    percent_watched = min(99.0, max(0.0, percent_watched))
+                    total_vid_progress += percent_watched
+                else:
+                    total_vid_progress += 0.0
+                    
+        video_percent = int(total_vid_progress / total_vid_count) if total_vid_count > 0 else 0
+        ppt_percent = int((completed_ppt_count / total_ppt_count) * 100) if total_ppt_count > 0 else 0
+        
+        # Calculate Total Active Time
+        total_mins_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("minutes_watched"))["minutes_watched__sum"] or 0
+        total_secs_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("seconds_watched"))["seconds_watched__sum"] or 0
+        grand_total_seconds = (total_mins_agg * 60) + total_secs_agg
+        hours = grand_total_seconds // 3600
+        minutes = (grand_total_seconds % 3600) // 60
+        total_active_time = f"{hours}h {minutes}m"
+        
+        # Check quiz completion
+        quiz_module = next((m for m in all_modules if "quiz" in m.title.lower() and m.ppt_file and not m.video_file), None)
+        quiz_completed = False
+        if quiz_module:
+            quiz_prog = ModuleProgress.objects.filter(user=user_obj, module=quiz_module).first()
+            quiz_completed = quiz_prog.is_completed if quiz_prog else False
+            
+        assessment = AssessmentProgress.objects.filter(user=user_obj, assessment_type=training_type).first()
+        quiz_score = assessment.score if assessment else None
+        quiz_passed = assessment.is_passed if assessment else False
+        
+        # Video lesson modules list
+        video_lesson_modules = []
+        for i, mod in enumerate(vid_mods):
+            if "quiz" not in mod.title.lower():
+                video_lesson_modules.append({
+                    "id": mod.id,
+                    "title": mod.title,
+                    "is_completed": mod.id in user_progress_map,
+                    "thumbnail_url": mod.thumbnail.url if mod.thumbnail else ""
+                })
+                
+        # PPT modules list (useful for POCSO dashboard)
+        ppt_modules_list = []
+        for mod in ppt_mods:
+            ppt_modules_list.append({
+                "id": mod.id,
+                "title": mod.title,
+                "is_completed": mod.id in user_progress_map,
+                "is_quiz": "quiz" in mod.title.lower(),
+                "thumbnail_url": mod.thumbnail.url if mod.thumbnail else ""
+            })
+            
+        return JsonResponse({
+            "status": "success",
+            "video_percent": video_percent,
+            "ppt_percent": ppt_percent,
+            "total_active_time": total_active_time,
+            "quiz_completed": quiz_completed,
+            "quiz_score": quiz_score,
+            "quiz_passed": quiz_passed,
+            "video_lesson_modules": video_lesson_modules,
+            "ppt_modules": ppt_modules_list,
+            "training_type": training_type
+        })
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 
 @login_required(login_url="login")
@@ -1388,7 +1716,10 @@ def pocso_act_page(request):
 
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
-        progress_map[mod.id] = prog.is_completed
+        progress_map[mod.id] = {
+            "is_completed": prog.is_completed,
+            "last_position": getattr(prog, "last_position", 0.0),
+        }
         if prog.is_completed:
             completed_count += 1
 
@@ -1406,7 +1737,9 @@ def pocso_act_page(request):
     video_modules = [m for m in modules if not m.ppt_file]
     previous_completed = True
     for mod in video_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
+        last_position = prog_data["last_position"]
         is_locked = not previous_completed
 
         item = {
@@ -1422,6 +1755,7 @@ def pocso_act_page(request):
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
+            "last_position": last_position,
         }
         video_list.append(item)
         previous_completed = is_completed
@@ -1455,7 +1789,8 @@ def pocso_act_page(request):
         )  # Add to end or start? User said "show... when i open ppt". List is safer.
 
     for mod in ppt_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
         is_locked = not previous_completed
 
         item = {
@@ -1548,7 +1883,10 @@ def posh_act_page_corp(request):
     # Initialize progress for all modules if not exists
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
-        progress_map[mod.id] = prog.is_completed
+        progress_map[mod.id] = {
+            "is_completed": prog.is_completed,
+            "last_position": getattr(prog, "last_position", 0.0),
+        }
 
     # Only video and quiz modules are part of corp training flow now.
     visible_modules = [
@@ -1557,7 +1895,7 @@ def posh_act_page_corp(request):
         if m.video_file
         or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
     ]
-    completed_count = sum(1 for m in visible_modules if progress_map.get(m.id, False))
+    completed_count = sum(1 for m in visible_modules if progress_map.get(m.id, {}).get("is_completed", False))
 
     # 3. Calculate Overall Status
     total_modules = len(visible_modules)
@@ -1574,7 +1912,9 @@ def posh_act_page_corp(request):
     video_modules = [m for m in modules if m.video_file]
     previous_completed = True
     for mod in video_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
+        last_position = prog_data["last_position"]
         is_locked = not previous_completed
 
         item = {
@@ -1586,11 +1926,12 @@ def posh_act_page_corp(request):
             "src": (
                 mod.video_file.url
                 if mod.video_file and os.path.exists(mod.video_file.path)
-                else "/posh-video-source/"
+                else settings.POSH_TRAINING_VIDEO_URL
             ),
             # UPDATED: Use new hardcoded path for demo video
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
+            "last_position": last_position,
         }
         video_list.append(item)
         previous_completed = is_completed
@@ -1604,9 +1945,10 @@ def posh_act_page_corp(request):
         if m.ppt_file and not m.video_file and "quiz" in m.title.lower()
     ]
     for mod in quiz_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
         # Lock the quiz until all video modules are completed
-        all_videos_done = all(progress_map.get(v.id, False) for v in video_modules)
+        all_videos_done = all(progress_map.get(v.id, {}).get("is_completed", False) for v in video_modules)
         is_locked = not all_videos_done
 
         item = {
@@ -1666,7 +2008,7 @@ def posh_act_page_corp(request):
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
         "is_company_employee": True,
-        "posh_video_url": "/posh-video-source/",
+        "posh_video_url": settings.POSH_TRAINING_VIDEO_URL,
     }
 
     return render(request, "posh_act_page_corp.html", context)
@@ -1698,7 +2040,10 @@ def pocso_act_page_corp(request):
 
     for mod in modules:
         prog, created = ModuleProgress.objects.get_or_create(user=user, module=mod)
-        progress_map[mod.id] = prog.is_completed
+        progress_map[mod.id] = {
+            "is_completed": prog.is_completed,
+            "last_position": getattr(prog, "last_position", 0.0),
+        }
         if prog.is_completed:
             completed_count += 1
         print(
@@ -1720,7 +2065,9 @@ def pocso_act_page_corp(request):
     print(f"DEBUG: Video modules count: {len(video_modules)}")
     previous_completed = True
     for mod in video_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
+        last_position = prog_data["last_position"]
         is_locked = not previous_completed
 
         item = {
@@ -1736,6 +2083,7 @@ def pocso_act_page_corp(request):
             ),
             "url": "https://docs.google.com/presentation/d/1wb69ZQ4oYGYxOxzjNaTQP5bIfsB3tIKi/embed",
             "duration": mod.duration_seconds,
+            "last_position": last_position,
         }
         video_list.append(item)
         print(
@@ -1751,7 +2099,8 @@ def pocso_act_page_corp(request):
     previous_completed = True
 
     for mod in ppt_modules:
-        is_completed = progress_map.get(mod.id, False)
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        is_completed = prog_data["is_completed"]
         is_locked = not previous_completed
 
         item = {
@@ -1884,6 +2233,8 @@ def tutorial_view(request):
     show_posh = True
     show_pocso = True
 
+    is_accounts_user = request.user.is_authenticated and getattr(request.user, "account_type", None) == "ACCOUNTS"
+
     if request.user.is_authenticated:
         # Check POSH Access
         has_posh = Subscription.objects.filter(
@@ -1912,6 +2263,7 @@ def tutorial_view(request):
     context = {
         "show_posh": show_posh,
         "show_pocso": show_pocso,
+        "is_accounts_user": is_accounts_user,
         "logout_url": "training_logout",
     }
     return render(request, "tutorial.html", context)
@@ -1976,8 +2328,8 @@ def download_employee_template(request):
     response["Pragma"] = "no-cache"
     response["Expires"] = "0"
     writer = csv.writer(response)
-    writer.writerow(["Name", "Last name", "Department", "Email", "Phone no"])
-    writer.writerow(["John", "Doe", "IT", "john.doe@company.com", "9876543210"])
+    writer.writerow(["Name", "Last name", "Department", "Email", "Mobile"])
+    writer.writerow(["John", "Doe", "IT", "john.doe@company.com", "9999999999"])
     return response
 
 
@@ -2010,6 +2362,8 @@ def upload_employee_bulk(request):
                 reader.fieldnames = [name.strip() for name in reader.fieldnames]
 
             added_count = 0
+            skipped_count = 0
+            errors = []
 
             for row in reader:
                 current_count = OrganizationMember.objects.filter(
@@ -2018,7 +2372,7 @@ def upload_employee_bulk(request):
                 if current_count >= seat_limit:
                     messages.warning(
                         request,
-                        f"Limit reached ({seat_limit} from registration). Stopped after adding {added_count} users.",
+                        f"⚠️ Seat limit reached ({seat_limit}). Stopped after adding {added_count} employee(s).",
                     )
                     break
 
@@ -2026,16 +2380,24 @@ def upload_employee_bulk(request):
                 last_name = row.get("Last name", "").strip()
                 department = row.get("Department", "").strip()
                 email = row.get("Email", "").strip()
-                phone = row.get("Phone no", "").strip()
                 password = row.get("Default password", "").strip()
+                phone = row.get("Mobile", row.get("Mobile Number", row.get("Phone", ""))).strip()
 
                 # Use organization's default password if not provided in CSV
                 if not password:
                     password = org.default_password
 
-                if not email or not password:
+                if not email:
+                    skipped_count += 1
                     continue
+
+                if not password:
+                    skipped_count += 1
+                    errors.append(f"{email}: No password available.")
+                    continue
+
                 if User.objects.filter(email=email).exists():
+                    skipped_count += 1
                     continue
 
                 try:
@@ -2048,11 +2410,11 @@ def upload_employee_bulk(request):
                     user.force_password_change = (
                         True  # Force password change on first login
                     )
+                    if phone:
+                        user.phone = phone
 
                     if hasattr(user, "department"):
                         user.department = department
-                    if hasattr(user, "phone"):
-                        user.phone = phone
 
                     user.save()
 
@@ -2060,8 +2422,8 @@ def upload_employee_bulk(request):
                         organization=org, user=user, role="MEMBER"
                     )
 
-                    # Regenerate user_id after membership is created
-                    user.user_id = user.generate_user_id()
+                    # Regenerate user_id after membership is created (pass org to avoid lookup)
+                    user.user_id = user.generate_user_id(organization=org)
                     user.save()
 
                     # Send welcome email
@@ -2076,21 +2438,29 @@ def upload_employee_bulk(request):
 
                     added_count += 1
                 except Exception as e:
+                    skipped_count += 1
+                    errors.append(f"{email}: {str(e)}")
                     logger.warning(f"Skipping employee import row: {e}")
                     continue
 
             if added_count > 0:
-                # messages.success(
-                #     request, f"Successfully imported {added_count} employees."
-                # )
-                pass
+                msg = f"✅ Successfully imported {added_count} employee(s)."
+                if skipped_count > 0:
+                    msg += f" {skipped_count} row(s) skipped (duplicates or missing data)."
+                messages.success(request, msg)
             else:
-                messages.warning(
-                    request, "No new employees were added (check emails or duplicates)."
-                )
+                if errors:
+                    messages.error(request, f"Import failed. Errors: {'; '.join(errors[:3])}")
+                else:
+                    messages.warning(
+                        request, "⚠️ No new employees were added. Check for duplicate emails or empty rows in your CSV."
+                    )
 
         except Exception as e:
             messages.error(request, f"Error processing file: {str(e)}")
+
+    else:
+        messages.error(request, "No file was uploaded. Please select a CSV file and try again.")
 
     return redirect("company_dashboard")
 
@@ -2332,6 +2702,37 @@ def superuser_dashboard(request):
     return render(request, "superuser_dashboard.html", context)
 
 
+@csrf_exempt
+def tab_close_logout(request):
+    """
+    Called via navigator.sendBeacon() when the user closes a dashboard tab.
+    Removes the closed tab ID from active tabs tracking in the cache. If no active tabs remain,
+    marks the session for logout in the cache after a 15-second grace period.
+    """
+    import time
+    from django.core.cache import cache
+    
+    if request.method == "POST" and request.user.is_authenticated:
+        session_key = request.session.session_key
+        if session_key:
+            page_load_id = request.GET.get('page_load_id')
+            active_tabs = cache.get(f"active_tabs_{session_key}", [])
+            
+            if page_load_id:
+                if page_load_id in active_tabs:
+                    active_tabs.remove(page_load_id)
+                    cache.set(f"active_tabs_{session_key}", active_tabs, timeout=86400)
+                
+                # If no active tabs remain, mark session for unload in the cache
+                if not active_tabs:
+                    cache.set(f"unload_pending_at_{session_key}", time.time(), timeout=60)
+            else:
+                # Fallback for pages that did not pass page_load_id (immediate pending unload)
+                cache.set(f"unload_pending_at_{session_key}", time.time(), timeout=60)
+            
+    return HttpResponse(status=204)  # No Content — beacon doesn't need a body
+
+
 def custom_logout(request):
     logout(request)
     # messages.success(request, "Successfully logged out.")
@@ -2346,27 +2747,28 @@ def accounts_logout(request):
 
 
 def hr_logout(request):
-    """Logout for HR/Company Dashboard users - keeps user authenticated but removes portal access"""
-    request.session["logged_out_of_hr"] = True
-    # messages.success(request, "Successfully logged out from HR Portal.")
+    """Fully log out the user from all portals and clear authentication."""
+    logout(request)
     return redirect("home")
 
 
 def training_logout(request):
-    """Logout for Training users - keeps user authenticated but removes portal access"""
-    request.session["logged_out_of_training"] = True
-    if "hr_as_employee" in request.session:
-        del request.session["hr_as_employee"]
-    # messages.success(request, "Successfully logged out from Training Portal.")
+    """Fully log out the user from all portals and clear authentication."""
+    logout(request)
     return redirect("home")
 
 
 def download_certificate(request, course_type="POSH"):
+    import logging
+    cert_logger = logging.getLogger("home.certificate")
+
     if not request.user.is_authenticated:
         return redirect("login")
 
     # Check if downloading for another user (company admin)
     user_id = request.GET.get("user_id")
+    is_admin_download = bool(user_id)
+
     if user_id:
         # Verify that the requester is an admin of the organization
         try:
@@ -2377,6 +2779,7 @@ def download_certificate(request, course_type="POSH"):
             ).exists()
 
             if not is_admin:
+                cert_logger.warning(f"Non-admin {request.user.id} tried to download cert for user {user_id}")
                 messages.error(request, "Access denied. Admin privileges required.")
                 return redirect("company_dashboard")
 
@@ -2393,6 +2796,7 @@ def download_certificate(request, course_type="POSH"):
                 or not admin_membership
                 or target_membership.organization != admin_membership.organization
             ):
+                cert_logger.warning(f"Admin {request.user.id} tried to download cert for user {user_id} in different org")
                 messages.error(
                     request,
                     "Cannot download certificate for user outside your organization.",
@@ -2401,91 +2805,96 @@ def download_certificate(request, course_type="POSH"):
 
             certificate_user = target_user
         except User.DoesNotExist:
+            cert_logger.error(f"Certificate download: User {user_id} not found")
             messages.error(request, "User not found.")
             return redirect("company_dashboard")
     else:
         certificate_user = request.user
 
+    cert_logger.info(f"Certificate download: user={certificate_user.id}, course={course_type}, is_admin_download={is_admin_download}")
+
     # 1. Check Completion
-    # Re-using logic from posh_act_page roughly
-    # In a real app, maybe extract this check to a helper
+    # When HR admin downloads for employee, only check assessment (quiz passed).
+    # The employee is already shown in the certified_employees list which requires both.
+    # Skip module count check for admin downloads to avoid live DB inconsistencies.
     if course_type == "POSH":
-        modules = TrainingModule.objects.filter(module_type="POSH")
-        # Align with visible modules logic (videos + quiz)
-        visible_modules = [
-            m for m in modules 
-            if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
-        ]
-        visible_ids = [m.id for m in visible_modules]
-        total = len(visible_modules)
-        
-        # Count COMPLETED visible modules for this user
-        completed = ModuleProgress.objects.filter(
-            user=certificate_user, module_id__in=visible_ids, is_completed=True
-        ).count()
+        if not is_admin_download:
+            # Self-download: strict module check
+            modules = TrainingModule.objects.filter(module_type="POSH")
+            visible_modules = [
+                m for m in modules
+                if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+            ]
+            visible_ids = [m.id for m in visible_modules]
+            total = len(visible_modules)
+            completed = ModuleProgress.objects.filter(
+                user=certificate_user, module_id__in=visible_ids, is_completed=True
+            ).count()
+            cert_logger.info(f"POSH self-download: total={total}, completed={completed}")
+            if total == 0 or completed < total:
+                messages.error(request, "Training must be completed before downloading the certificate.")
+                return redirect("posh_act_page")
 
-        # Strict check: Must be 100% complete (visible modules)
-        if total == 0 or completed < total:
-            messages.error(
-                request,
-                "Training must be completed before downloading the certificate.",
-            )
-            return (
-                redirect("posh_act_page")
-                if not user_id
-                else redirect("company_dashboard")
-            )
-
-        # CHECK FINAL ASSESSMENT (NEW)
-        has_passed_assessment = AssessmentProgress.objects.filter(
-            user=certificate_user, assessment_type="POSH", is_passed=True
-        ).exists()
+        # Assessment check (applies to both self and admin downloads)
+        is_employee = OrganizationMember.objects.filter(user=certificate_user, role="MEMBER").exists()
+        if is_employee:
+            if is_admin_download:
+                # If downloading from company dashboard, they are already certified (completed coursework)
+                has_passed_assessment = True
+            else:
+                # POSH corporate training has no separate final assessment; coursework complete is certificate eligible.
+                modules = TrainingModule.objects.filter(module_type="POSH")
+                visible_modules = [
+                    m for m in modules
+                    if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+                ]
+                visible_ids = [m.id for m in visible_modules]
+                total = len(visible_modules)
+                completed = ModuleProgress.objects.filter(
+                    user=certificate_user, module_id__in=visible_ids, is_completed=True
+                ).count()
+                has_passed_assessment = (total > 0 and completed == total)
+        else:
+            has_passed_assessment = AssessmentProgress.objects.filter(
+                user=certificate_user, assessment_type="POSH", is_passed=True
+            ).exists()
+            
+        cert_logger.info(f"POSH assessment passed: {has_passed_assessment} for user {certificate_user.id}")
         if not has_passed_assessment:
-            messages.error(
-                request, "Final Quiz must be passed to download the certificate."
-            )
+            messages.error(request, "Final Quiz must be passed to download the certificate.")
             return (
                 redirect("posh_act_page")
-                if not user_id
+                if not is_admin_download
                 else redirect("company_dashboard")
             )
 
     elif course_type == "POCSO":
-        # Check POCSO completion
-        modules = TrainingModule.objects.filter(module_type="POCSO")
-        # Align with visible modules logic (videos + quiz)
-        visible_modules = [
-            m for m in modules 
-            if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
-        ]
-        visible_ids = [m.id for m in visible_modules]
-        total = len(visible_modules)
-
-        completed = ModuleProgress.objects.filter(
-            user=certificate_user, module_id__in=visible_ids, is_completed=True
-        ).count()
-
-        if total == 0 or completed < total:
-            messages.error(
-                request,
-                "Training must be completed before downloading the certificate.",
-            )
-            return (
-                redirect("pocso_act_page")
-                if not user_id
-                else redirect("company_dashboard")
-            )
+        if not is_admin_download:
+            # Self-download: strict module check
+            modules = TrainingModule.objects.filter(module_type="POCSO")
+            visible_modules = [
+                m for m in modules
+                if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+            ]
+            visible_ids = [m.id for m in visible_modules]
+            total = len(visible_modules)
+            completed = ModuleProgress.objects.filter(
+                user=certificate_user, module_id__in=visible_ids, is_completed=True
+            ).count()
+            cert_logger.info(f"POCSO self-download: total={total}, completed={completed}")
+            if total == 0 or completed < total:
+                messages.error(request, "Training must be completed before downloading the certificate.")
+                return redirect("pocso_act_page")
 
         has_passed_assessment = AssessmentProgress.objects.filter(
             user=certificate_user, assessment_type="POCSO", is_passed=True
         ).exists()
+        cert_logger.info(f"POCSO assessment passed: {has_passed_assessment} for user {certificate_user.id}")
         if not has_passed_assessment:
-            messages.error(
-                request, "Final Quiz must be passed to download the certificate."
-            )
+            messages.error(request, "Final Quiz must be passed to download the certificate.")
             return (
                 redirect("pocso_act_page")
-                if not user_id
+                if not is_admin_download
                 else redirect("company_dashboard")
             )
 
@@ -2493,12 +2902,14 @@ def download_certificate(request, course_type="POSH"):
     pdf_content = generate_certificate(certificate_user, course_type)
 
     if not pdf_content:
+        cert_logger.error(f"generate_certificate returned None for user {certificate_user.id}, course {course_type}")
         messages.error(request, "Error generating certificate. Please contact support.")
         return (
-            redirect("posh_act_page") if not user_id else redirect("company_dashboard")
+            redirect("posh_act_page") if not is_admin_download else redirect("company_dashboard")
         )
 
     # 3. Serve PDF
+    cert_logger.info(f"Certificate successfully generated for user {certificate_user.id}")
     response = HttpResponse(pdf_content, content_type="application/pdf")
     filename = f"Certificate_{course_type}_{certificate_user.username}.pdf"
     response["Content-Disposition"] = f'attachment; filename="{filename}"'
@@ -2749,12 +3160,9 @@ def accounts_verify_payment_view(request, registration_id):
             f"Payment verified but email failed for {registration.company_name}: {e}"
         )
 
-    # messages.success(
-    #     request,
-    #     f"Payment for {registration.company_name} verified successfully!",
-    # )
+    messages.success(request, f"Payment for {registration.company_name} has been verified!")
 
-    return redirect("accounts_dashboard")
+    return redirect("accounts_registration_detail", registration_id=registration_id)
 
 
 @login_required(login_url="accounts_login")
@@ -2768,7 +3176,7 @@ def accounts_reject_payment_view(request, registration_id):
     registration.save()
 
     messages.warning(request, f"Payment for {registration.company_name} rejected.")
-    return redirect("accounts_dashboard")
+    return redirect("accounts_registration_detail", registration_id=registration_id)
 
 
 @login_required(login_url="accounts_login")
@@ -2938,12 +3346,9 @@ def accounts_verify_pocso_payment_view(request, registration_id):
             f"Payment verified but email failed for {registration.school_name}: {e}"
         )
 
-    # messages.success(
-    #     request,
-    #     f"Payment for {registration.school_name} verified successfully!",
-    # )
+    messages.success(request, f"Payment for {registration.school_name} has been verified!")
 
-    return redirect("accounts_dashboard")
+    return redirect("accounts_pocso_registration_detail", registration_id=registration_id)
 
 
 @login_required(login_url="accounts_login")
@@ -2957,7 +3362,7 @@ def accounts_reject_pocso_payment_view(request, registration_id):
     messages.warning(
         request, f"Payment for {registration.school_name} has been rejected."
     )
-    return redirect("accounts_dashboard")
+    return redirect("accounts_pocso_registration_detail", registration_id=registration_id)
 
 
 def get_pocso_pricing_context(registration):
@@ -3193,4 +3598,225 @@ def submit_payment_view(request, registration_id):
 
     return render(request, "submit_payment.html", {"registration": registration})
 
-    return render(request, "submit_payment.html", {"registration": registration})
+
+@login_required(login_url="login")
+def generate_posh_policy(request):
+    if request.method == "POST":
+        user = request.user
+        membership = OrganizationMember.objects.filter(user=user, role="ADMIN").first()
+        if not membership:
+            messages.error(request, "Access Denied. Admin only.")
+            return redirect("tutorial")
+            
+        org = membership.organization
+        
+        # Get POST parameters
+        company_name = request.POST.get("companyName", "").strip()
+        registered_address = request.POST.get("registeredAddress", "").strip()
+        hr_email = request.POST.get("hrEmail", "").strip()
+        posh_email = request.POST.get("poshEmail", "").strip()
+        effective_date = request.POST.get("effectiveDate", "").strip()
+        district_name = request.POST.get("districtName", "").strip()
+        
+        po_name = request.POST.get("poName", "").strip()
+        po_email = request.POST.get("poEmail", "").strip()
+        po_phone = request.POST.get("poPhone", "").strip()
+        
+        m1_name = request.POST.get("m1Name", "").strip()
+        m1_email = request.POST.get("m1Email", "").strip()
+        m1_phone = request.POST.get("m1Phone", "").strip()
+        
+        m2_name = request.POST.get("m2Name", "").strip()
+        m2_email = request.POST.get("m2Email", "").strip()
+        m2_phone = request.POST.get("m2Phone", "").strip()
+
+        m3_name = request.POST.get("m3Name", "").strip()
+        m3_email = request.POST.get("m3Email", "").strip()
+        m3_phone = request.POST.get("m3Phone", "").strip()
+
+        m4_name = request.POST.get("m4Name", "").strip()
+        m4_email = request.POST.get("m4Email", "").strip()
+        m4_phone = request.POST.get("m4Phone", "").strip()
+        
+        ext_name = request.POST.get("extName", "").strip()
+        ext_email = request.POST.get("extEmail", "").strip()
+        ext_phone = request.POST.get("extPhone", "").strip()
+        
+        hr_head_name = request.POST.get("hrHeadName", "").strip()
+
+        escalation_officer_name = request.POST.get("escalationName", "").strip()
+        escalation_officer_designation = request.POST.get("escalationDesignation", "").strip()
+        
+        approver_name = request.POST.get("approverName", "").strip()
+        approver_designation = request.POST.get("approverDesignation", "").strip()
+        approval_date = request.POST.get("approvalDate", "").strip()
+        
+        company_logo = request.FILES.get("companyLogo")
+        
+        # --- STRICT BACKEND VALIDATION ---
+        errors = []
+
+        import re
+        from django.core.validators import validate_email
+        from django.core.exceptions import ValidationError
+        from datetime import datetime, date
+        import os
+
+        def is_valid_email(email_str):
+            try:
+                validate_email(email_str)
+                return True
+            except ValidationError:
+                return False
+
+        def is_valid_phone(phone_str):
+            return bool(re.match(r"^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$", phone_str))
+
+        # 1. Check required text lengths and min lengths
+        if len(company_name) < 3:
+            errors.append("Company Name must be at least 3 characters.")
+        if len(registered_address) < 10:
+            errors.append("Registered Office Address must be at least 10 characters.")
+        if len(district_name) < 2:
+            errors.append("District must be at least 2 characters.")
+            
+        # 2. Email uniqueness and syntax checks
+        if hr_email == posh_email:
+            errors.append("HR Email and POSH Email must be different.")
+
+        for label, email in [
+            ("HR Email", hr_email),
+            ("POSH Email", posh_email),
+            ("Presiding Officer Email", po_email),
+            ("IC Member 1 Email", m1_email),
+            ("IC Member 2 Email", m2_email),
+            ("IC Member 3 Email", m3_email),
+            ("IC Member 4 Email", m4_email),
+            ("External Member Email", ext_email),
+        ]:
+            if not email or not is_valid_email(email):
+                errors.append(f"Invalid format for {label}.")
+
+        # 3. Phone format checks
+        for label, phone in [
+            ("Presiding Officer Phone", po_phone),
+            ("IC Member 1 Phone", m1_phone),
+            ("IC Member 2 Phone", m2_phone),
+            ("IC Member 3 Phone", m3_phone),
+            ("IC Member 4 Phone", m4_phone),
+            ("External Member Phone", ext_phone),
+        ]:
+            if not phone or not is_valid_phone(phone):
+                errors.append(f"Invalid format for {label} (must be a valid 10-digit mobile number).")
+
+        # 4. Strict name sanitization checks (min 3 chars, no numbers)
+        for label, name in [
+            ("Presiding Officer Name", po_name),
+            ("IC Member 1 Name", m1_name),
+            ("IC Member 2 Name", m2_name),
+            ("IC Member 3 Name", m3_name),
+            ("IC Member 4 Name", m4_name),
+            ("External Member Name", ext_name),
+            ("HR Head Name", hr_head_name),
+            ("Escalation Officer Name", escalation_officer_name),
+            ("Approver Name", approver_name),
+        ]:
+            if len(name) < 3:
+                errors.append(f"{label} must be at least 3 characters.")
+            elif any(char.isdigit() for char in name):
+                errors.append(f"{label} cannot contain numeric digits.")
+
+        if len(approver_designation) < 2:
+            errors.append("Approver Designation must be at least 2 characters.")
+        if len(escalation_officer_designation) < 2:
+            errors.append("Escalation Officer Designation must be at least 2 characters.")
+
+        # 5. Date logic check
+        try:
+            eff_dt = datetime.strptime(effective_date, "%Y-%m-%d").date()
+            max_future = date.today().replace(year=date.today().year + 1)
+            if eff_dt > max_future:
+                errors.append("Policy Effective Date cannot be more than 1 year in the future.")
+        except ValueError:
+            errors.append("Invalid Effective Date format.")
+
+        try:
+            app_dt = datetime.strptime(approval_date, "%Y-%m-%d").date()
+            if app_dt > date.today():
+                errors.append("Policy Approval Date cannot be in the future.")
+        except ValueError:
+            errors.append("Invalid Approval Date format.")
+
+        # 6. Company Logo Validation (If uploaded)
+        if company_logo:
+            valid_exts = [".png", ".jpg", ".jpeg", ".webp"]
+            ext = os.path.splitext(company_logo.name)[1].lower()
+            if ext not in valid_exts:
+                errors.append("Company Logo must be a PNG, JPG, JPEG, or WEBP image.")
+            if company_logo.size > 2 * 1024 * 1024:
+                errors.append("Company Logo size exceeds 2MB.")
+        else:
+            # Check if there is already an existing policy with a logo
+            existing_policy = POSHPolicy.objects.filter(organization=org).first()
+            if not existing_policy or not existing_policy.company_logo:
+                errors.append("Company Logo is required.")
+
+        # Redirect back if validation fails
+        if errors:
+            messages.error(request, f"Policy Generation Failed: {', '.join(errors)}")
+            return redirect("company_dashboard")
+
+        # Save or update POSHPolicy safely by querying first to avoid database NOT NULL constraint failures on creation
+        policy = POSHPolicy.objects.filter(organization=org).first()
+        if not policy:
+            policy = POSHPolicy(organization=org)
+        policy.company_name = company_name
+        policy.registered_address = registered_address
+        policy.hr_email = hr_email
+        policy.posh_email = posh_email
+        policy.effective_date = effective_date
+        policy.district_name = district_name
+        
+        policy.po_name = po_name
+        policy.po_email = po_email
+        policy.po_phone = po_phone
+        
+        policy.m1_name = m1_name
+        policy.m1_email = m1_email
+        policy.m1_phone = m1_phone
+        
+        policy.m2_name = m2_name
+        policy.m2_email = m2_email
+        policy.m2_phone = m2_phone
+
+        policy.m3_name = m3_name
+        policy.m3_email = m3_email
+        policy.m3_phone = m3_phone
+
+        policy.m4_name = m4_name
+        policy.m4_email = m4_email
+        policy.m4_phone = m4_phone
+        
+        policy.ext_name = ext_name
+        policy.ext_email = ext_email
+        policy.ext_phone = ext_phone
+        
+        policy.hr_head_name = hr_head_name
+
+        policy.escalation_officer_name = escalation_officer_name
+        policy.escalation_officer_designation = escalation_officer_designation
+        
+        policy.approver_name = approver_name
+        policy.approver_designation = approver_designation
+        policy.approval_date = approval_date
+        
+        if company_logo:
+            policy.company_logo = company_logo
+            
+        policy.save()
+        
+        messages.success(request, "POSH Policy has been generated successfully!")
+        return redirect("company_dashboard")
+        
+    return redirect("company_dashboard")
+

@@ -370,46 +370,102 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
+
         #pwChangeBox {
             background: #fff;
             border-radius: 22px;
             padding: 40px 36px 32px;
             width: 100%;
             max-width: 420px;
-            box-shadow: 0 24px 60px rgba(78,84,200,0.25);
+            box-shadow: 0 24px 60px rgba(78, 84, 200, 0.25);
             position: relative;
-            animation: modalSlideIn 0.4s cubic-bezier(.22,1,.36,1);
+            animation: modalSlideIn 0.4s cubic-bezier(.22, 1, .36, 1);
         }
+
         @keyframes modalSlideIn {
-            from { opacity:0; transform: translateY(-30px) scale(0.97); }
-            to   { opacity:1; transform: translateY(0) scale(1); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
         }
+
         #pwChangeBox h2 {
             color: #4e54c8;
             margin: 0 0 6px;
             font-size: 1.5rem;
         }
-        #pwChangeBox p.sub { color: #636e72; font-size: 0.9rem; margin-bottom: 24px; }
-        #pwChangeBox label { display:block; font-weight:600; color:#444; margin-bottom:5px; font-size:0.88rem; }
+
+        #pwChangeBox p.sub {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+
+        #pwChangeBox label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 5px;
+            font-size: 0.88rem;
+        }
+
         #pwChangeBox input[type=password] {
-            width: 100%; padding: 11px 14px; border: 2px solid #e0e0e0;
-            border-radius: 10px; font-size: 1rem; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif; transition: border-color 0.2s;
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            transition: border-color 0.2s;
             margin-bottom: 16px;
         }
-        #pwChangeBox input[type=password]:focus { border-color: #4e54c8; outline: none; }
+
+        #pwChangeBox input[type=password]:focus {
+            border-color: #4e54c8;
+            outline: none;
+        }
+
         #pwChangeSaveBtn {
-            width: 100%; padding: 13px;
+            width: 100%;
+            padding: 13px;
             background: linear-gradient(135deg, #4e54c8, #8f94fb);
-            color: white; border: none; border-radius: 12px;
-            font-size: 1rem; font-weight: 700; cursor: pointer;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
             transition: opacity 0.2s;
             font-family: 'Poppins', sans-serif;
         }
-        #pwChangeSaveBtn:hover { opacity: 0.9; }
-        #pwChangeSaveBtn:disabled { background: #b2bec3; cursor: not-allowed; }
-        #pwChangeMsg { margin-top: 12px; font-size: 0.88rem; text-align: center; min-height: 20px; }
-        .pw-icon { font-size: 2.5rem; margin-bottom: 10px; display:block; }
+
+        #pwChangeSaveBtn:hover {
+            opacity: 0.9;
+        }
+
+        #pwChangeSaveBtn:disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+        }
+
+        #pwChangeMsg {
+            margin-top: 12px;
+            font-size: 0.88rem;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .pw-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
     </style>
     {% endif %}
 </head>
@@ -422,7 +478,8 @@
         <div id="pwChangeBox">
             <span class="pw-icon">🔐</span>
             <h2>Set Your New Password</h2>
-            <p class="sub">Welcome! Your HR has assigned a temporary password.<br>Please set a new password to continue.</p>
+            <p class="sub">Welcome! Your HR has assigned a temporary password.<br>Please set a new password to continue.
+            </p>
 
             <label for="newPw">New Password</label>
             <input type="password" id="newPw" placeholder="Min. 8 characters" autocomplete="new-password">
@@ -469,23 +526,23 @@
                 credentials: 'same-origin',
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
-            .then(res => {
-                if (res.redirected || res.ok) {
-                    msg.style.color = '#27ae60';
-                    msg.textContent = '✓ Password changed! Starting training...';
-                    setTimeout(() => {
-                        document.getElementById('pwChangeOverlay').style.display = 'none';
-                    }, 900);
-                } else {
-                    return res.text().then(t => { throw new Error(t); });
-                }
-            })
-            .catch(() => {
-                window.location.href = "{% url 'force_password_change' %}";
-            });
+                .then(res => {
+                    if (res.redirected || res.ok) {
+                        msg.style.color = '#27ae60';
+                        msg.textContent = '✓ Password changed! Starting training...';
+                        setTimeout(() => {
+                            document.getElementById('pwChangeOverlay').style.display = 'none';
+                        }, 900);
+                    } else {
+                        return res.text().then(t => { throw new Error(t); });
+                    }
+                })
+                .catch(() => {
+                    window.location.href = "{% url 'force_password_change' %}";
+                });
         }
 
-        document.getElementById('confirmPw').addEventListener('keydown', function(e) {
+        document.getElementById('confirmPw').addEventListener('keydown', function (e) {
             if (e.key === 'Enter') submitPwChange();
         });
     </script>
@@ -524,7 +581,7 @@
                         onclick="nextPracticeQuestion()">Next Question ➜</button>
                 </div>
 
-                <div id="pq-result-area" style="text-align: center; display: none; padding-top: 50px;">
+                <div id="pq-result-area" style="text-align: center; display: none; padding-top: 10px;">
                     <h1>Practice Complete!</h1>
                     <p>You have reviewed all 15 compliance scenarios.</p>
                     <button class="btn-start" onclick="closeModal()">Close & Continue</button>
@@ -559,12 +616,12 @@
                                 style="background-image: url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=1000');">
                                 <div class="cover-overlay"></div>
                                 <h2 id="cover-title">Module 1: The POCSO Act</h2>
-                                <button class="btn-start" onclick="startVideo()">▶ Start Private Video</button>
+                                <button class="btn-start" onclick="startVideo()">▶ Start Module</button>
                             </div>
                             <!-- SECURITY: Added oncontextmenu -->
                             <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;"
                                 style="display: none;">
-                                 <source src="{% static 'video/Demo_Video_OHPL.mp4' %}" type="video/mp4">
+                                <source src="{% static 'video/Demo_Video_OHPL.mp4' %}" type="video/mp4">
                             </video>
                         </div>
                     </div>
@@ -602,7 +659,8 @@
                     </div>
                     <div class="section-card" style="text-align: center;">
                         <h3>Study Time</h3>
-                        <h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">{{ formatted_total_time|default:"00:00" }}</h1>
+                        <h1 id="watch-time-display" style="font-size: 3.5rem; color: var(--primary); margin: 20px 0;">{{
+                            formatted_total_time|default:"00:00" }}</h1>
                     </div>
                     <div class="section-card">
                         <h3>Completion</h3>
@@ -633,10 +691,11 @@
         {
             id: {{ m.id }},
             title: "{{ m.title|escapejs }}",
-                status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
-                    backendSaved: {% if m.is_completed %}true{% else %}false{% endif %},
-                    thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}",
-                        src: "{{ m.src }}"
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
+            backendSaved: {% if m.is_completed %}true{% else %}false{% endif %},
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}",
+            src: "{{ m.src }}",
+            lastPosition: {{ m.last_position|default:0.0 }}
         },
         {% endfor %}
     ];
@@ -646,16 +705,16 @@
         {
             id: {{ m.id }},
             title: "{{ m.title|escapejs }}",
-                status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
-                    thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=600' }}",
-                        src: "{{ m.src }}",
-                            url: "{{ m.url|escapejs }}"
+            status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
+            thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1589216532372-1c2a11f90e48?auto=format&fit=crop&q=80&w=600' }}",
+            src: "{{ m.src }}",
+            url: "{{ m.url|escapejs }}"
         },
         {% endfor %}
     ];
-    
-    console.log('POCSO PPTs loaded:', ppts);
-    console.log('PPT modules count:', ppts.length);
+
+        console.log('POCSO PPTs loaded:', ppts);
+        console.log('PPT modules count:', ppts.length);
 
         // Check if Final Quiz is completed (Passed from Django view)
         // If context variable doesn't exist, default to false
@@ -682,11 +741,73 @@
 
         let quizSeconds = 600;
         let quizTimerInterval;
+        function getCsrfToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === ('csrftoken=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue || '';
+        }
+
         const player = document.getElementById('mainPlayer');
         let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
-        let sessionSeconds = 0;
         let currentIdx = 0;
         let currentPPTIdx = 0;
+        let furthestTime = 0;
+        let pendingSyncSeconds = 0;
+
+        function syncWatchTime() {
+            const secsToSync = Math.floor(pendingSyncSeconds);
+            if (secsToSync > 0) {
+                pendingSyncSeconds -= secsToSync;
+                fetch(`/ajax/update-watch-time/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ seconds: secsToSync })
+                }).catch(e => {
+                    console.error("Sync failed:", e);
+                    pendingSyncSeconds += secsToSync;
+                });
+            }
+        }
+
+        function saveVideoProgress() {
+            const mod = modules[currentIdx];
+            if (mod && player.currentTime > 0) {
+                mod.lastPosition = player.currentTime;
+                fetch(`/ajax/save-video-progress/`, {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        module_id: mod.id,
+                        position: player.currentTime
+                    })
+                }).catch(e => console.error("Failed to save progress:", e));
+            }
+        }
+
+        player.onpause = () => {
+            syncWatchTime();
+            saveVideoProgress();
+            updateTotalStats();
+        };
+        window.addEventListener('pagehide', () => {
+            syncWatchTime();
+            saveVideoProgress();
+            updateTotalStats();
+        });
+        window.addEventListener('beforeunload', () => {
+            syncWatchTime();
+            saveVideoProgress();
+            updateTotalStats();
+        });
 
         // Quiz Variables
         let practiceQuestions = [];
@@ -819,6 +940,9 @@
 
         // --- PLAYER & RESOURCE CONTROLS ---
         function playVideo(idx) {
+            syncWatchTime();
+            saveVideoProgress();
+
             currentIdx = idx;
             const mod = modules[idx];
             player.pause();
@@ -826,15 +950,46 @@
             document.getElementById('video-cover').style.display = 'flex';
             document.getElementById('video-cover').style.backgroundImage = `url('${mod.thumb}')`;
             document.getElementById('cover-title').innerText = mod.title;
-            player.src = mod.src;
+
+            // Update button text to Resume Module if progress has been made
+            const startBtn = document.querySelector('#video-cover .btn-start');
+            if (startBtn) {
+                if (parseFloat(mod.lastPosition || 0) > 1.0 && mod.status !== 'complete') {
+                    startBtn.innerHTML = '▶ Resume Module';
+                } else {
+                    startBtn.innerHTML = '▶ Start Module';
+                }
+            }
+            
+            // Clear and set new source
+            player.innerHTML = '';
+            const source = document.createElement('source');
+            source.src = mod.src;
+            source.type = 'video/mp4';
+            player.appendChild(source);
+
             player.load(); // Force reset
-            player.currentTime = 0;
+            
+            const startPos = parseFloat(mod.lastPosition || 0.0);
+            player.currentTime = startPos;
+            player.lastTrackedTime = startPos;
+            furthestTime = startPos;
+
+            // Update the display immediately on video change/load
+            const totalSecsInt = Math.floor(startPos);
+            const h = Math.floor(totalSecsInt / 3600);
+            const m = Math.floor((totalSecsInt % 3600) / 60);
+            const s = totalSecsInt % 60;
+            const display = document.getElementById('watch-time-display');
+            if (display) {
+                display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+            }
         }
 
         function startVideo() {
             document.getElementById('video-cover').style.display = 'none';
             player.style.display = 'block';
-            
+
             const playPromise = player.play();
             if (playPromise !== undefined) {
                 playPromise.then(_ => {
@@ -855,20 +1010,20 @@
             console.log('triggerResourceAction called');
             console.log('currentPPTIdx:', currentPPTIdx);
             console.log('ppts array:', ppts);
-            
+
             if (!ppts || ppts.length === 0) {
                 console.error('No PPT modules available');
                 return;
             }
-            
+
             if (currentPPTIdx >= ppts.length) {
                 console.error('Invalid PPT index:', currentPPTIdx);
                 return;
             }
-            
+
             const res = ppts[currentPPTIdx];
             console.log('Selected resource:', res);
-            
+
             if (res.status === 'locked') {
                 console.log('Resource is locked');
                 return alert("This resource is locked!");
@@ -909,9 +1064,22 @@
         // --- PRACTICE QUIZ ---
         let qIdx = 0;
         function initQuiz() {
-            qIdx = 0; quizSeconds = 600;
+            qIdx = 0; qScore = 0; quizSeconds = 600;
+            window._alreadyCorrectCount = 0;
+            currentQuizSet = [...questionBank];
+            currentQuizSet.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
             document.getElementById('pq-game-area').style.display = 'block';
             document.getElementById('pq-result-area').style.display = 'none';
+
+            // Reset quiz header alignment and show timer
+            document.getElementById('quiz-timer-box').style.display = 'block';
+            const pqTitle = document.querySelector('#practiceQuizContainer h2');
+            if (pqTitle) {
+                pqTitle.style.display = 'block';
+                pqTitle.style.textAlign = 'center';
+                pqTitle.style.marginBottom = '30px';
+            }
+
             loadQuestion();
             clearInterval(quizTimerInterval);
             quizTimerInterval = setInterval(updateTimer, 1000);
@@ -926,8 +1094,8 @@
         }
 
         function loadQuestion() {
-            const q = questionBank[qIdx];
-            document.getElementById('pq-counter').innerText = `Question ${qIdx + 1}/15`;
+            const q = currentQuizSet[qIdx];
+            document.getElementById('pq-counter').innerText = `Question ${qIdx + 1}/${currentQuizSet.length}`;
             document.getElementById('pq-question-text').innerText = q.question;
             const grid = document.getElementById('pq-options-grid'); grid.innerHTML = '';
             q.options.forEach((opt, i) => {
@@ -936,12 +1104,14 @@
                 btn.onclick = () => {
                     const btns = document.querySelectorAll('.pq-btn');
                     btns.forEach(b => b.classList.add('disabled'));
+                    q.userAnswer = i;
+                    q.isCorrect = (i === q.answer);
                     if (i === q.answer) {
                         btn.classList.add('correct');
                         qScore++;
-                    } else { 
-                        btn.classList.add('wrong'); 
-                        btns[q.answer].classList.add('correct'); 
+                    } else {
+                        btn.classList.add('wrong');
+                        btns[q.answer].classList.add('correct');
                     }
                     document.getElementById('pq-next-btn').style.display = 'block';
                 };
@@ -952,40 +1122,140 @@
         function nextPracticeQuestion() {
             qIdx++;
             document.getElementById('pq-next-btn').style.display = 'none';
-            if (qIdx < 15) {
+            if (qIdx < currentQuizSet.length) {
                 loadQuestion();
             } else {
                 clearInterval(quizTimerInterval);
                 document.getElementById('pq-game-area').style.display = 'none';
-                document.getElementById('pq-result-area').style.display = 'block';
+                
+                // Hide timer box and title when quiz finishes and results are shown
+                document.getElementById('quiz-timer-box').style.display = 'none';
+                const pqTitle = document.querySelector('#practiceQuizContainer h2');
+                if (pqTitle) {
+                    pqTitle.style.display = 'none';
+                }
 
-                const passed = qScore >= 13;
-                const resultMsg = passed ? `🎉 You passed! Score: ${qScore}/15` : `⚠️ You didn't pass. Score: ${qScore}/15. <br><br><b>As per policy, you must watch the training videos again to unlock the quiz.</b>`;
-                document.getElementById('pq-result-area').innerHTML = `<div style="text-align:center"><h3>${resultMsg}</h3><button class="btn-start" onclick="closeModal()">OK</button></div>`;
+                const totalCorrect = (window._alreadyCorrectCount || 0) + currentQuizSet.filter(q => q.isCorrect).length;
+                const passed = totalCorrect === 15;
+                const eligibleForReattempt = totalCorrect >= 12 && totalCorrect < 15;
+                
+                let resultMsg = '';
+                if (passed) {
+                    resultMsg = `🎉 Congratulations! You achieved a perfect score of 15/15!`;
+                } else if (eligibleForReattempt) {
+                    resultMsg = `⚠️ Score: ${totalCorrect}/15. <br><br><b>You are eligible to complete the module by re-attempting only the incorrect questions!</b>`;
+                } else {
+                    resultMsg = `❌ Score: ${totalCorrect}/15. <br><br><b>You did not qualify. Please retry the assessment to unlock completion.</b>`;
+                }
+
+                let resultContainerHtml = '';
+                const incorrectQuestions = currentQuizSet.filter(q => !q.isCorrect);
+                if (incorrectQuestions.length > 0) {
+                    let reviewItemsHtml = '';
+                    incorrectQuestions.forEach((q, idx) => {
+                        const userAnsText = q.userAnswer === undefined || q.userAnswer === null || q.userAnswer === -1 ? 'No Answer Given' : q.options[q.userAnswer];
+                        const correctAnsText = q.options[q.answer];
+                        reviewItemsHtml += `
+                            <div class="review-item" style="background: #fff; border-radius: 12px; border: 1px solid #f8d7da; border-left: 6px solid #ff4757; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); color: var(--text-dark, #2d3436);">
+                                 <p style="font-weight: 600; margin-top: 0; color: #2d3436;">${idx + 1}. ${q.question}</p>
+                                 <div style="font-size: 0.95rem; margin-bottom: 5px; color: #2d3436;">
+                                        <span style="color: #721c24; font-weight: 600;">❌ Your Answer:</span> ${userAnsText}
+                                 </div>
+                                 <div style="font-size: 0.95rem; color: #2d3436;">
+                                        <span style="color: #155724; font-weight: 600;">✓ Correct Answer:</span> ${correctAnsText}
+                                 </div>
+                            </div>
+                        `;
+                    });
+
+                    let actionButtons = '';
+                    if (eligibleForReattempt) {
+                        actionButtons = `
+                            <button class="btn-start" onclick="startReattempt()" style="margin-top: 20px; width: 90%; font-size: 0.95rem;">Re-attempt Incorrect Questions</button>
+                        `;
+                    } else {
+                        actionButtons = `
+                            <button class="btn-start" onclick="initQuiz()" style="margin-top: 20px; width: 90%;">Retest Quiz</button>
+                        `;
+                    }
+
+                    resultContainerHtml = `
+                        <div class="double-sided-review" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; text-align: left; padding: 10px 0;">
+                            <!-- Left Column: Status / Result Message -->
+                            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; border-right: 1px solid #eee; padding-right: 30px;">
+                                <h2 style="color: var(--primary, #3498db); margin-bottom: 20px;">Assessment Result</h2>
+                                <div style="margin: 20px 0; font-size: 1.1rem; line-height: 1.6;">
+                                    ${resultMsg}
+                                </div>
+                                ${actionButtons}
+                            </div>
+                            
+                            <!-- Right Column: Scrollable Incorrect Questions Review -->
+                            <div style="display: flex; flex-direction: column; max-height: 480px;">
+                                <h3 style="color: var(--danger, #ff4757); margin-top: 0; margin-bottom: 15px; font-weight: 600; text-align: center;">Incorrect Questions Review</h3>
+                                <div class="review-scroll-container" style="overflow-y: auto; max-height: 380px; padding-right: 10px;">
+                                    ${reviewItemsHtml}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    resultContainerHtml = `
+                        <div style="text-align:center; padding-top: 40px;">
+                            <h3>${resultMsg}</h3>
+                            <button class="btn-start" onclick="closeModal()" style="margin-top: 20px;">OK</button>
+                        </div>
+                    `;
+                }
+
+                document.getElementById('pq-result-area').innerHTML = resultContainerHtml;
+                document.getElementById('pq-result-area').style.display = 'block';
 
                 if (passed && window._quizModuleId) {
                     const idx = window._quizModuleIdx;
                     if (idx !== undefined && modules[idx]) modules[idx].status = 'complete';
                     markComplete(window._quizModuleId);
-                } else if (!passed) {
-                    // RESET PROGRESS ON FAILURE
-                    fetch('/ajax/reset-progress/', {
-                        method: 'POST',
-                        headers: { 'X-CSRFToken': '{{ csrf_token }}', 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ type: 'POCSO' })
-                    }).then(() => {
-                        // Update local state to reflect reset
-                        modules.forEach((m, i) => {
-                            if (i === 0) m.status = 'pending';
-                            else m.status = 'locked';
-                        });
-                        ppts.forEach(p => p.status = 'locked');
-                        renderModules();
-                        renderPPTList();
-                    });
                 }
+
+                // Save score to AssessmentProgress backend
+                fetch('/ajax/submit-assessment/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
+                    body: JSON.stringify({
+                        type: 'POCSO',
+                        score: totalCorrect,
+                        total: currentQuizSet.length || 15,
+                        passed: passed
+                    })
+                }).then(res => res.json())
+                  .then(data => console.log("POCSO Assessment score saved:", data))
+                  .catch(err => console.error("Error saving POCSO assessment score:", err));
+
                 updateTotalStats();
             }
+        }
+
+        function startReattempt() {
+            window._alreadyCorrectCount = (window._alreadyCorrectCount || 0) + currentQuizSet.filter(q => q.isCorrect).length;
+            currentQuizSet = currentQuizSet.filter(q => !q.isCorrect);
+            qIdx = 0;
+            qScore = 0;
+            currentQuizSet.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
+            document.getElementById('pq-game-area').style.display = 'block';
+            document.getElementById('pq-result-area').style.display = 'none';
+
+            // Reset quiz header alignment and show timer
+            document.getElementById('quiz-timer-box').style.display = 'block';
+            const pqTitle = document.querySelector('#practiceQuizContainer h2');
+            if (pqTitle) {
+                pqTitle.style.display = 'block';
+                pqTitle.style.textAlign = 'center';
+                pqTitle.style.marginBottom = '30px';
+            }
+
+            loadQuestion();
+            clearInterval(quizTimerInterval);
+            quizTimerInterval = setInterval(updateTimer, 1000);
         }
 
         function markResourceComplete(idx) {
@@ -1001,13 +1271,13 @@
             console.log('handleVideoComplete called, currentIdx:', currentIdx);
             console.log('modules array:', modules);
             console.log('Current module:', modules[currentIdx]);
-            
+
             if (modules[currentIdx]) {
                 const wasComplete = modules[currentIdx].status === 'complete';
                 const backendNotified = modules[currentIdx].backendSaved || false;
-                
+
                 console.log('Module status:', modules[currentIdx].status, 'Backend notified:', backendNotified);
-                
+
                 if (!wasComplete) {
                     console.log('Marking module complete in UI');
                     modules[currentIdx].status = 'complete';
@@ -1019,30 +1289,53 @@
                     renderModules();
                     renderPPTList();
                     updateTotalStats();
-                }
-                
-                // Always save to backend if not already saved
-                if (!backendNotified) {
-                    console.log('Calling markComplete API for module:', modules[currentIdx].id);
-                    modules[currentIdx].backendSaved = true;
-                    markComplete(modules[currentIdx].id);
+                    markComplete(mod.id);
                 } else {
                     console.log('Backend already notified, skipping API call');
                 }
             } else {
                 console.log('currentIdx invalid or module not found');
             }
+            saveVideoProgress();
         }
 
         // Fallback: Standard 'ended' event
-        player.onended = function() {
+        player.onended = function () {
             console.log('Video ended event fired');
             handleVideoComplete();
         };
 
         player.ontimeupdate = () => {
-            if (!player.paused) sessionSeconds += (player.currentTime - (player.lastTime || player.currentTime));
-            player.lastTime = player.currentTime;
+            // Prevent fast forwarding / skipping ahead
+            if (player.currentTime > furthestTime + 1.5) {
+                player.currentTime = furthestTime;
+            } else {
+                furthestTime = Math.max(furthestTime, player.currentTime);
+            }
+
+            // Keep study time in perfect sync with video time
+            if (!player.paused) {
+                const currentRealTime = player.currentTime;
+                const lastRealTime = player.lastTrackedTime || 0;
+                const delta = currentRealTime - lastRealTime;
+
+                // Only add positive increments (e.g. playback advancing) and ignore skips/rewinds
+                if (delta > 0 && delta < 2.0) {
+                    totalActivitySeconds += delta;
+                    pendingSyncSeconds += delta;
+                    
+                    // Update the UI display immediately in real-time with direct video currentTime
+                    const totalSecsInt = Math.floor(player.currentTime);
+                    const h = Math.floor(totalSecsInt / 3600);
+                    const m = Math.floor((totalSecsInt % 3600) / 60);
+                    const s = totalSecsInt % 60;
+                    const display = document.getElementById('watch-time-display');
+                    if (display) {
+                        display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
+                    }
+                }
+                player.lastTrackedTime = currentRealTime;
+            }
 
             // Duration Check Fallback
             if (player.duration > 0) {
@@ -1054,43 +1347,87 @@
             }
         };
 
-        setInterval(async () => {
+        setInterval(() => {
             const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
-            const isPPTOpen = document.getElementById('pptModal').style.display === 'flex'; 
+            const isPPTOpen = document.getElementById('pptModal').style.display === 'flex';
 
-            if (isVideoPlaying || isPPTOpen) {
-                totalActivitySeconds++;
+            // If PPT is open and video is not playing, increment study time
+            if (isPPTOpen && !isVideoPlaying && !document.hidden) {
+                totalActivitySeconds += 1;
+                pendingSyncSeconds += 1;
 
-                const h = Math.floor(totalActivitySeconds / 3600);
-                const m_ = Math.floor((totalActivitySeconds % 3600) / 60);
-                const s_ = totalActivitySeconds % 60;
+                const totalSecsInt = Math.floor(totalActivitySeconds);
+                const h = Math.floor(totalSecsInt / 3600);
+                const m = Math.floor((totalSecsInt % 3600) / 60);
+                const s = totalSecsInt % 60;
                 const display = document.getElementById('watch-time-display');
                 if (display) {
-                    display.innerText = `${h > 0 ? h + ':' : ''}${m_ < 10 ? '0' + m_ : m_}:${s_ < 10 ? '0' + s_ : s_}`;
+                    display.innerText = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
                 }
-
-                // Sync with server EVERY second
-                fetch(`/ajax/update-watch-time/`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ seconds: 1 }),
-                    credentials: 'same-origin'
-                }).catch(e => console.error("Timer sync failed:", e));
             }
+
+            // Sync accumulated watch time and progress to backend
+            if (pendingSyncSeconds >= 5.0) {
+                syncWatchTime();
+                saveVideoProgress();
+            }
+            updateTotalStats();
         }, 1000);
 
+        function getDetailedStats() {
+            let completeCount = 0;
+            let pendingCount = 0;
+            let lockedCount = 0;
+
+            modules.forEach((mod, idx) => {
+                if (mod.status === 'complete') {
+                    completeCount += 1.0;
+                } else if (mod.status === 'pending') {
+                    if (idx === currentIdx && player && player.duration > 0) {
+                        const progress = Math.min(0.95, player.currentTime / player.duration);
+                        completeCount += progress;
+                        pendingCount += (1.0 - progress);
+                    } else {
+                        pendingCount += 1.0;
+                    }
+                } else {
+                    lockedCount += 1.0;
+                }
+            });
+
+            // Include ppts progress too
+            let pptComplete = 0;
+            let pptPending = 0;
+            let pptLocked = 0;
+            ppts.forEach(ppt => {
+                if (ppt.status === 'complete') {
+                    pptComplete += 1.0;
+                } else if (ppt.status === 'pending') {
+                    pptPending += 1.0;
+                } else {
+                    pptLocked += 1.0;
+                }
+            });
+
+            const isVidsActive = document.getElementById('tab-vids').classList.contains('active');
+            
+            return {
+                completeCount: completeCount + pptComplete,
+                pendingCount: pendingCount + pptPending,
+                lockedCount: lockedCount + pptLocked,
+                chartCounts: isVidsActive ? [completeCount, pendingCount, lockedCount] : [pptComplete, pptPending, pptLocked]
+            };
+        }
+
         function updateTotalStats() {
-            const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
+            const stats = getDetailedStats();
             const total = modules.length + ppts.length;
-            const perc = Math.round((done / total) * 100) || 0;
+            const perc = Math.round((stats.completeCount / total) * 100) || 0;
 
             document.getElementById('perc-text').innerText = perc + "%";
             document.getElementById('perc-bar').style.width = perc + "%";
 
-            updateChart();
+            updateChart(stats);
 
             // --- 1. HANDLE FINAL QUIZ BUTTON STATE ---
             const quizBtn = document.getElementById('nav-final-quiz');
@@ -1126,25 +1463,20 @@
                 } else {
                     // Partially Unlocked (Videos done, Quiz pending)
                     certBtn.classList.add('btn-disabled');
-                    certBtn.innerHTML = "Pass Quiz to Download 🔒";
-                    certTitle.innerText = "Almost There!";
-                    certDesc.innerText = "You have finished the modules. Please pass the Final Quiz to unlock your certificate.";
+                    certBtn.innerHTML = "Download Certificate 🔒";
+                    certTitle.innerText = "Videos & PPTs Completed! 🏁";
+                    certDesc.innerText = "Please complete the Final Quiz to unlock your certificate.";
                 }
             } else {
                 certView.style.display = 'none';
             }
         }
 
-        function renderCert() {
-            // Deprecated by updateTotalStats logic above
-        }
-
-        function updateChart() {
+        function updateChart(stats) {
+            if (!stats) stats = getDetailedStats();
             const ctx = document.getElementById('statusChart').getContext('2d');
-            const set = document.getElementById('tab-vids').classList.contains('active') ? modules : ppts;
-            const counts = [set.filter(i => i.status === 'complete').length, set.filter(i => i.status === 'pending').length, set.filter(i => i.status === 'locked').length];
             if (window.myChart) window.myChart.destroy();
-            window.myChart = new Chart(ctx, { type: 'pie', data: { labels: ['Done', 'Pending', 'Locked'], datasets: [{ data: counts, backgroundColor: ['#3498db', '#ff4757', '#636e72'] }] }, options: { maintainAspectRatio: false } });
+            window.myChart = new Chart(ctx, { type: 'pie', data: { labels: ['Done', 'Pending', 'Locked'], datasets: [{ data: stats.chartCounts, backgroundColor: ['#3498db', '#ff4757', '#636e72'] }] }, options: { maintainAspectRatio: false } });
         }
 
         function showView(v) {
@@ -1158,16 +1490,27 @@
             renderModules();
             updateTotalStats();
             playVideo(0);
-
-            // FORCE INITIAL DISPLAY
-            // Explicitly set the time using JS to handle any mismatch
-            const h = Math.floor(totalActivitySeconds / 3600);
-            const m = Math.floor((totalActivitySeconds % 3600) / 60);
-            const s = totalActivitySeconds % 60;
-            const timeStr = `${h > 0 ? h + ':' : ''}${m < 10 ? '0' + m : m}:${s < 10 ? '0' + s : s}`;
-            const disp = document.getElementById('watch-time-display');
-            if (disp) disp.innerText = timeStr;
         };
+    </script>
+    <!-- === TAB-CLOSE AUTO LOGOUT === -->
+    <script>
+        (function () {
+            'use strict';
+            var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
+            var _navAway = false;
+            function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+            document.addEventListener('click', function (e) {
+                var a = e.target.closest('a[href]');
+                if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
+            }, true);
+            document.addEventListener('submit', function () { markNav(); }, true);
+            window.addEventListener('pagehide', function (e) {
+                if (e.persisted) return;
+                if (_navAway) return;
+                navigator.sendBeacon(TAB_CLOSE_URL);
+            });
+            sessionStorage.removeItem('_ohs_nav');
+        })();
     </script>
 </body>
 

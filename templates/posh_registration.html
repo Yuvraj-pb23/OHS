@@ -395,6 +395,84 @@
                 gap: 0.75rem !important;
             }
         }
+
+        /* PREMIUM VALIDATION STYLES */
+        .error-message {
+            color: #f43f5e;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.35rem;
+            margin-left: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .error-message.show {
+            opacity: 1;
+            max-height: 40px;
+        }
+
+        .floating-input.is-invalid,
+        select.floating-input.is-invalid {
+            border-color: #f43f5e !important;
+            background-color: #fffafb !important;
+        }
+        
+        .floating-input.is-invalid:focus,
+        select.floating-input.is-invalid:focus {
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15) !important;
+        }
+
+        .floating-input.is-valid,
+        select.floating-input.is-valid {
+            border-color: #10b981 !important;
+        }
+
+        .phone-group.is-invalid {
+            border-color: #f43f5e !important;
+            background-color: #fffafb !important;
+        }
+        .phone-group.is-invalid:focus-within {
+            box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15) !important;
+        }
+        
+        .phone-group.is-valid {
+            border-color: #10b981 !important;
+        }
+
+        .custom-select-trigger.is-invalid {
+            border-color: #f43f5e !important;
+            background-color: #fffafb !important;
+        }
+
+        .custom-select-trigger.is-valid {
+            border-color: #10b981 !important;
+        }
+
+        .compact-row.is-invalid {
+            border-color: #f43f5e !important;
+            background: #fff5f5 !important;
+            box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.2) !important;
+        }
+
+        .compact-row.is-valid {
+            border-color: #10b981 !important;
+        }
+
+        .validation-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-4px); }
+            40%, 80% { transform: translateX(4px); }
+        }
     </style>
 </head>
 <body class="py-10 px-4 antialiased">
@@ -442,18 +520,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="col-span-full">
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Full Name</label>
-                            <input type="text" name="contact_person" required class="floating-input" 
-                                   placeholder="John Doe" value="{{ registration.contact_person|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                            <input type="text" name="contact_person" id="contact_person" required class="floating-input" 
+                                   placeholder="John Doe" value="{{ registration.contact_person|default:'' }}" maxlength="50" onkeypress="return /[a-zA-Z\s.']/.test(event.key)">
+                            <div class="error-message" id="error_contact_person"></div>
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Designation</label>
-                            <input type="text" name="designation" required class="floating-input" 
-                                   placeholder="HR Manager" value="{{ registration.designation|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                            <input type="text" name="designation" id="designation" required class="floating-input" 
+                                   placeholder="HR Manager" value="{{ registration.designation|default:'' }}" maxlength="50" onkeypress="return /[a-zA-Z\s.']/.test(event.key)">
+                            <div class="error-message" id="error_designation"></div>
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">City</label>
-                            <div class="custom-select-wrapper">
-                                <input type="hidden" name="city" value="{{ registration.city|default:'' }}" required>
+                            <div class="custom-select-wrapper" id="city_wrapper">
+                                <input type="hidden" name="city" id="city" value="{{ registration.city|default:'' }}" required>
                                 <div class="custom-select-trigger floating-input">
                                     <span>{% if registration.city %}{{ registration.city }}{% else %}Select City{% endif %}</span>
                                     <i class="fas fa-chevron-down text-accent text-xs"></i>
@@ -465,27 +545,31 @@
                                     <div class="custom-option {% if registration.city == 'Delhi' %}selected{% endif %}" data-value="Delhi">Delhi</div>
                                 </div>
                             </div>
+                            <div class="error-message" id="error_city"></div>
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Phone</label>
-                            <div class="phone-group">
+                            <div class="phone-group" id="phone_group_container">
                                 <span class="prefix-box">+91</span>
                                 <input type="tel" name="phone" id="phone_input" required 
-                                       pattern="[0-9]{10}" maxlength="10"
                                        class="floating-input" 
                                        placeholder="9876543210"
                                        value="{{ registration.phone|default:'' }}"
+                                       maxlength="10"
                                        onkeypress="return /[0-9]/.test(event.key)">
                             </div>
+                            <div class="error-message" id="error_phone"></div>
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Work Email</label>
-                            <input type="email" name="email" required class="floating-input" placeholder="email@company.com" value="{{ registration.email|default:'' }}">
+                            <input type="email" name="email" id="email" required class="floating-input" placeholder="email@company.com" value="{{ registration.email|default:'' }}" maxlength="80">
+                            <div class="error-message" id="error_email"></div>
                         </div>
                         <div class="col-span-full">
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Website</label>
-                            <input type="url" name="website" required class="floating-input" placeholder="https://example.com" value="{{ registration.website|default:'' }}">
+                            <input type="url" name="website" id="website" required class="floating-input" placeholder="https://example.com" value="{{ registration.website|default:'' }}" maxlength="150">
                             <span class="text-[0.6rem] text-slate-400 mt-1 block">Include https:// for a genuine link</span>
+                            <div class="error-message" id="error_website"></div>
                         </div>
                     </div>
                 </div>
@@ -502,20 +586,22 @@
                     <div class="space-y-6">
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Name of Organization/Company</label>
-                            <input type="text" name="company_name" required class="floating-input" 
-                                   placeholder="Company Name" value="{{ registration.company_name|default:'' }}" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                            <input type="text" name="company_name" id="company_name" required class="floating-input" 
+                                   placeholder="Company Name" value="{{ registration.company_name|default:'' }}" maxlength="100" onkeypress="return /[a-zA-Z\s]/.test(event.key)">
+                            <div class="error-message" id="error_company_name"></div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Total Employees</label>
                                 <input type="number" name="employee_count" id="employee_count" required 
-                                       class="floating-input" placeholder="0" min="1" value="{{ registration.employee_count|default:'' }}">
+                                       class="floating-input" placeholder="0" min="1" max="1000000" value="{{ registration.employee_count|default:'' }}">
+                                <div class="error-message" id="error_employee_count"></div>
                             </div>
                             <div>
                                 <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">Last Year of Employee POSH Sensitization</label>
-                                <div class="custom-select-wrapper">
-                                    <input type="hidden" name="last_training_year" value="{{ registration.last_training_year|default:'none' }}" required>
+                                <div class="custom-select-wrapper" id="last_training_year_wrapper">
+                                    <input type="hidden" name="last_training_year" id="last_training_year" value="{{ registration.last_training_year|default:'none' }}" required>
                                     <div class="custom-select-trigger floating-input">
                                         <span>{% if registration.last_training_year and registration.last_training_year != 'none' %}{{ registration.last_training_year }}{% elif registration.last_training_year == 'none' %}None{% else %}Select Year{% endif %}</span>
                                         <i class="fas fa-chevron-down text-accent text-xs"></i>
@@ -531,6 +617,7 @@
                                         <div class="custom-option {% if registration.last_training_year == 'other' %}selected{% endif %}" data-value="other">Other</div>
                                     </div>
                                 </div>
+                                <div class="error-message" id="error_last_training_year"></div>
                             </div>
                         </div>
                     </div>
@@ -547,62 +634,67 @@
 
                     <div class="space-y-3">
                         <!-- Questions as Compact Rows -->
-                        <div class="compact-row">
+                        <div class="compact-row" id="row_has_posh_policy">
                             <span class="text-sm font-semibold">Do you have POSH Policy in Place?</span>
                             <div class="pill-toggle w-32">
                                 <label><input type="radio" name="has_posh_policy" value="yes" required class="peer hidden" {% if registration.has_posh_policy %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                 <label><input type="radio" name="has_posh_policy" value="no" class="peer hidden" {% if registration and not registration.has_posh_policy %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
+                        <div class="error-message" id="error_has_posh_policy"></div>
 
-                        <div class="compact-row">
+                        <div class="compact-row" id="row_has_ic">
                             <span class="text-sm font-semibold">Do you have Internal Committee (IC) in Place?</span>
                             <div class="pill-toggle w-32">
                                 <label><input type="radio" name="has_ic" value="yes" required class="peer hidden" onchange="toggleICFields(true)" {% if registration.has_ic %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                 <label><input type="radio" name="has_ic" value="no" class="peer hidden" onchange="toggleICFields(false)" {% if registration and not registration.has_ic %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
+                        <div class="error-message" id="error_has_ic"></div>
 
-                         <div id="ic-history-box" class="{% if not registration.has_ic %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
-                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-bold text-slate-500 uppercase">Has the IC received specialized training as per Act?</span>
-                                <div class="pill-toggle w-32 bg-white">
-                                    <label><input type="radio" name="ic_specialized_training" value="yes" class="peer hidden" onchange="toggleSpecializedTrainingFields(true)" {% if registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
-                                    <label><input type="radio" name="ic_specialized_training" value="no" class="peer hidden" onchange="toggleSpecializedTrainingFields(false)" {% if registration and not registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                        <div id="ic-history-box" class="{% if not registration.has_ic %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-transparent" id="row_ic_specialized_training">
+                               <span class="text-xs font-bold text-slate-500 uppercase">Has the IC received specialized training as per Act?</span>
+                               <div class="pill-toggle w-32 bg-white">
+                                   <label><input type="radio" name="ic_specialized_training" value="yes" class="peer hidden" onchange="toggleSpecializedTrainingFields(true)" {% if registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
+                                   <label><input type="radio" name="ic_specialized_training" value="no" class="peer hidden" onchange="toggleSpecializedTrainingFields(false)" {% if registration and not registration.ic_specialized_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
+                               </div>
+                            </div>
+                            <div class="error-message" id="error_ic_specialized_training"></div>
+
+                            <div class="grid grid-cols-1 gap-3" id="ic-training-dropdowns">
+                                <div>
+                                    <label class="text-[0.6rem] font-bold text-slate-400 uppercase ml-1 block mb-1">Last Training Year</label>
+                                    <div class="custom-select-wrapper {% if not registration.ic_specialized_training %}disabled-dropdown{% endif %}" id="ic-training-dropdown-wrapper">
+                                       <input type="hidden" name="ic_last_training_year" id="ic_last_training_year" value="{{ registration.ic_last_training_year|default:'' }}">
+                                       <div class="custom-select-trigger floating-input">
+                                           <span>{% if registration.ic_last_training_year %}{{ registration.ic_last_training_year }}{% else %}Select Year{% endif %}</span>
+                                           <i class="fas fa-chevron-down text-accent text-xs"></i>
+                                       </div>
+                                       <div class="custom-select-options">
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2021' %}selected{% endif %}" data-value="2021">2021</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2022' %}selected{% endif %}" data-value="2022">2022</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2023' %}selected{% endif %}" data-value="2023">2023</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2024' %}selected{% endif %}" data-value="2024">2024</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2025' %}selected{% endif %}" data-value="2025">2025</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == '2026' %}selected{% endif %}" data-value="2026">2026</div>
+                                           <div class="custom-option {% if registration.ic_last_training_year == 'other' %}selected{% endif %}" data-value="other">Other</div>
+                                       </div>
+                                    </div>
+                                    <div class="error-message" id="error_ic_last_training_year"></div>
                                 </div>
-                             </div>
+                            </div>
+                        </div>
 
-                             <div class="grid grid-cols-1 gap-3" id="ic-training-dropdowns">
-                                 <div>
-                                     <label class="text-[0.6rem] font-bold text-slate-400 uppercase ml-1 block mb-1">Last Training Year</label>
-                                     <div class="custom-select-wrapper {% if not registration.ic_specialized_training %}disabled-dropdown{% endif %}" id="ic-training-dropdown-wrapper">
-                                        <input type="hidden" name="ic_last_training_year" value="{{ registration.ic_last_training_year|default:'' }}">
-                                        <div class="custom-select-trigger floating-input">
-                                            <span>{% if registration.ic_last_training_year %}{{ registration.ic_last_training_year }}{% else %}Select Year{% endif %}</span>
-                                            <i class="fas fa-chevron-down text-accent text-xs"></i>
-                                        </div>
-                                        <div class="custom-select-options">
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2021' %}selected{% endif %}" data-value="2021">2021</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2022' %}selected{% endif %}" data-value="2022">2022</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2023' %}selected{% endif %}" data-value="2023">2023</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2024' %}selected{% endif %}" data-value="2024">2024</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2025' %}selected{% endif %}" data-value="2025">2025</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == '2026' %}selected{% endif %}" data-value="2026">2026</div>
-                                            <div class="custom-option {% if registration.ic_last_training_year == 'other' %}selected{% endif %}" data-value="other">Other</div>
-                                        </div>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-
-                         <div id="ic-training-requirement-box" class="{% if not registration.require_ic_training and not registration.has_ic == False %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
-                             <div class="flex items-center justify-between">
+                        <div id="ic-training-requirement-box" class="{% if not registration.require_ic_training and not registration.has_ic == False %}hidden{% endif %} bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4 animate-fadeIn mt-2">
+                             <div class="flex items-center justify-between p-3 rounded-xl border border-transparent" id="row_require_ic_training">
                                 <span class="text-xs font-bold text-slate-500 uppercase">Do you require IC training as per Act?</span>
                                 <div class="pill-toggle w-32 bg-white">
                                     <label><input type="radio" name="require_ic_training" value="yes" class="peer hidden" onchange="toggleRequireICTrainingMode(true)" {% if registration.require_ic_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                     <label><input type="radio" name="require_ic_training" value="no" class="peer hidden" onchange="toggleRequireICTrainingMode(false)" {% if registration and not registration.require_ic_training %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                                 </div>
                              </div>
+                             <div class="error-message" id="error_require_ic_training"></div>
 
                              <!-- Integrated IC Training Mode Selection -->
                              <div id="ic-requested-mode-box" class="{% if not registration.require_ic_training %}hidden{% endif %} bg-indigo-50/50 p-5 rounded-2xl border border-indigo-100 space-y-4 animate-fadeIn mt-4">
@@ -643,17 +735,19 @@
                                          </div>
                                      </div>
                                  </div>
+                                 <div class="error-message" id="error_ic_mode_selection"></div>
                              </div>
                          </div>
 
-                        <div class="compact-row">
+                        <div class="compact-row" id="row_external_member_support">
                             <span class="text-sm font-semibold">Do you have external member in IC?</span>
                             <div class="pill-toggle w-32">
                                 <label><input type="radio" name="external_member_support" value="yes" required class="peer hidden" onchange="toggleExternalMemberFields(false)" {% if registration.external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                 <label><input type="radio" name="external_member_support" value="no" class="peer hidden" onchange="toggleExternalMemberFields(true)" {% if registration and not registration.external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
-
+                        <div class="error-message" id="error_external_member_support"></div>
+ 
                         <div id="external-member-support-fields" class="{% if registration.external_member_support or not registration %}hidden{% endif %} compact-row border-dashed border-indigo-200 bg-indigo-50/30">
                             <span class="text-xs font-bold text-indigo-900 uppercase">Require External Member Support?</span>
                             <div class="pill-toggle w-32 bg-white">
@@ -661,24 +755,27 @@
                                 <label><input type="radio" name="require_external_member_support" value="no" class="peer hidden" {% if registration and not registration.require_external_member_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
+                        <div class="error-message" id="error_require_external_member_support"></div>
 
-                        <div class="compact-row">
+                        <div class="compact-row" id="row_she_box_registered">
                             <span class="text-sm font-semibold">Have you Registered on SHe Box Portal?</span>
                             <div class="pill-toggle w-32">
                                 <label><input type="radio" name="she_box_registered" value="yes" required class="peer hidden" onchange="toggleSHEBoxFields(true)" {% if registration.she_box_registered %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                 <label><input type="radio" name="she_box_registered" value="no" class="peer hidden" onchange="toggleSHEBoxFields(false)" {% if registration and not registration.she_box_registered %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                             </div>
                         </div>
-
+                        <div class="error-message" id="error_she_box_registered"></div>
+ 
                         <div id="she-box-details" class="{% if not registration.she_box_registered %}hidden{% endif %} compact-row border-slate-100 bg-slate-50 flex-col items-stretch gap-4">
-                            <div class="flex items-center justify-between">
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-transparent" id="row_nodal_officer_appointed">
                                 <span class="text-sm font-semibold">Have you appointed Nodal Officer for the Portal?</span>
                                 <div class="pill-toggle w-32">
                                     <label><input type="radio" name="nodal_officer_appointed" value="yes" class="peer hidden" onchange="toggleNodalOfficerSupport(false)" {% if registration.nodal_officer_appointed %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">YES</span></label>
                                     <label><input type="radio" name="nodal_officer_appointed" value="no" class="peer hidden" onchange="toggleNodalOfficerSupport(true)" {% if registration and not registration.nodal_officer_appointed %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                                 </div>
                             </div>
-
+                            <div class="error-message" id="error_nodal_officer_appointed"></div>
+ 
                             <div id="nodal-support-question" class="flex items-center justify-between border-t border-slate-200 pt-4 hidden">
                                 <span class="text-sm font-semibold">Do you require Nodal Officer Support?</span>
                                 <div class="pill-toggle w-32">
@@ -686,9 +783,10 @@
                                     <label><input type="radio" name="require_nodal_officer_support" value="no" class="peer hidden" {% if registration and not registration.require_nodal_officer_support %}checked{% endif %}><span class="peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-md transition-all">NO</span></label>
                                 </div>
                             </div>
+                            <div class="error-message" id="error_require_nodal_officer_support"></div>
                         </div>
 
-                        <div class="compact-row flex-col items-start gap-1 mt-4">
+                        <div class="compact-row flex-col items-start gap-1 mt-4" id="row_annual_report_submitted">
                             <div class="flex items-center justify-between w-full">
                                 <div>
                                     <span class="text-sm font-semibold">Annual Report Submitted?</span>
@@ -700,6 +798,7 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="error-message" id="error_annual_report_submitted"></div>
                     </div>
                 </div>
 
@@ -719,48 +818,281 @@
     </div>
 
     <script>
-        function validateForm() {
-            const form = document.getElementById("multiStepForm");
-            let valid = true;
-            const inputs = form.querySelectorAll("input, select, textarea");
-            
-            const radioNames = new Set();
-            inputs.forEach(input => {
-                if (input.type === "radio") {
-                    if (input.hasAttribute('required')) radioNames.add(input.name);
-                } else if (!input.checkValidity()) {
-                    input.classList.add("border-rose-300", "ring-1", "ring-rose-100");
-                    valid = false;
-                } else {
-                    input.classList.remove("border-rose-300", "ring-1", "ring-rose-100");
+        // PREMIUM REAL-TIME & SUBMIT VALIDATION ENGINE
+
+        function getFieldRule(name) {
+            const rules = {
+                contact_person: {
+                    validate: val => {
+                        if (val.length >= 50) return { isValid: false, message: "Full Name cannot exceed 50 characters." };
+                        if (val.length < 2) return { isValid: false, message: "Full Name must contain at least 2 characters." };
+                        if (!/^[a-zA-Z\s.']+$/.test(val)) return { isValid: false, message: "Full Name must contain only letters, spaces, dots, or apostrophes." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_contact_person"
+                },
+                designation: {
+                    validate: val => {
+                        if (val.length >= 50) return { isValid: false, message: "Designation cannot exceed 50 characters." };
+                        if (val.length < 2) return { isValid: false, message: "Designation must contain at least 2 characters." };
+                        if (!/^[a-zA-Z\s.']+$/.test(val)) return { isValid: false, message: "Designation must contain only letters, spaces, dots, or apostrophes." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_designation"
+                },
+                city: {
+                    validate: val => {
+                        if (val === "" || val === "Select City") return { isValid: false, message: "Please select a valid city from the list." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_city",
+                    container: document.querySelector("#city_wrapper .custom-select-trigger")
+                },
+                phone: {
+                    validate: val => {
+                        if (val.length > 10) return { isValid: false, message: "Phone number cannot exceed 10 digits." };
+                        if (val.length < 10) return { isValid: false, message: "Phone number must be exactly 10 digits." };
+                        if (!/^[6-9][0-9]{9}$/.test(val)) return { isValid: false, message: "Phone number must start with a digit between 6 and 9." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_phone",
+                    container: document.getElementById("phone_group_container")
+                },
+                email: {
+                    validate: val => {
+                        if (val.length >= 80) return { isValid: false, message: "Work Email cannot exceed 80 characters." };
+                        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(val)) return { isValid: false, message: "Please enter a valid work email address (e.g. name@company.com)." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_email"
+                },
+                website: {
+                    validate: val => {
+                        if (val.length >= 150) return { isValid: false, message: "Website URL cannot exceed 150 characters." };
+                        try {
+                            const url = new URL(val);
+                            if (url.protocol !== 'http:' && url.protocol !== 'https:') {
+                                return { isValid: false, message: "URL protocol must be http:// or https://." };
+                            }
+                        } catch {
+                            return { isValid: false, message: "Please enter a valid website URL starting with https:// or http://." };
+                        }
+                        return { isValid: true };
+                    },
+                    errorId: "error_website"
+                },
+                company_name: {
+                    validate: val => {
+                        if (val.length >= 100) return { isValid: false, message: "Organization Name cannot exceed 100 characters." };
+                        if (val.length < 2) return { isValid: false, message: "Organization Name must be at least 2 characters." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_company_name"
+                },
+                employee_count: {
+                    validate: val => {
+                        const n = parseInt(val);
+                        if (isNaN(n) || n < 1) return { isValid: false, message: "Total employees must be a positive integer (minimum 1)." };
+                        if (n >= 1000000) return { isValid: false, message: "Total employees cannot exceed 1,000,000." };
+                        return { isValid: true };
+                    },
+                    errorId: "error_employee_count"
+                },
+                last_training_year: {
+                    validate: val => val !== "" && val !== "Select Year" ? { isValid: true } : { isValid: false, message: "Please select a training year or select None." },
+                    errorId: "error_last_training_year",
+                    container: document.querySelector("#last_training_year_wrapper .custom-select-trigger")
+                },
+                has_posh_policy: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you have a POSH policy in place." },
+                    errorId: "error_has_posh_policy",
+                    container: document.getElementById("row_has_posh_policy")
+                },
+                has_ic: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you have an Internal Committee (IC) in place." },
+                    errorId: "error_has_ic",
+                    container: document.getElementById("row_has_ic")
+                },
+                ic_specialized_training: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if the IC has received specialized training." },
+                    errorId: "error_ic_specialized_training",
+                    container: document.getElementById("row_ic_specialized_training")
+                },
+                ic_last_training_year: {
+                    validate: val => val !== "" && val !== "Select Year" ? { isValid: true } : { isValid: false, message: "Please select the training year for IC." },
+                    errorId: "error_ic_last_training_year",
+                    container: document.querySelector("#ic-training-dropdown-wrapper .custom-select-trigger")
+                },
+                require_ic_training: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you require IC training." },
+                    errorId: "error_require_ic_training",
+                    container: document.getElementById("row_require_ic_training")
+                },
+                ic_mode_selection: {
+                    validate: () => {
+                        const mode = document.getElementById("id_requested_ic_training_mode").value;
+                        return mode === "ONLINE" || mode === "EXPERT_LED" ? { isValid: true } : { isValid: false, message: "Please select standard Online or Expert-led Physical/Virtual training mode." };
+                    },
+                    errorId: "error_ic_mode_selection",
+                    container: document.getElementById("ic-requested-mode-box")
+                },
+                external_member_support: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you have an external member in the IC." },
+                    errorId: "error_external_member_support",
+                    container: document.getElementById("row_external_member_support")
+                },
+                require_external_member_support: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you require external member support." },
+                    errorId: "error_require_external_member_support",
+                    container: document.getElementById("external-member-support-fields")
+                },
+                she_box_registered: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you are registered on the SHe Box Portal." },
+                    errorId: "error_she_box_registered",
+                    container: document.getElementById("row_she_box_registered")
+                },
+                nodal_officer_appointed: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you have appointed a Nodal Officer." },
+                    errorId: "error_nodal_officer_appointed",
+                    container: document.getElementById("row_nodal_officer_appointed")
+                },
+                require_nodal_officer_support: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if you require Nodal Officer support." },
+                    errorId: "error_require_nodal_officer_support",
+                    container: document.getElementById("nodal-support-question")
+                },
+                annual_report_submitted: {
+                    validate: val => val === "yes" || val === "no" ? { isValid: true } : { isValid: false, message: "Please specify if the annual report has been submitted." },
+                    errorId: "error_annual_report_submitted",
+                    container: document.getElementById("row_annual_report_submitted")
                 }
-            });
-            
-            // Employee validation
-            const empInput = document.getElementById('employee_count');
-            if (empInput) {
-                const empCount = parseInt(empInput.value) || 0;
-                if (empCount < 1) {
-                    empInput.classList.add("border-rose-300", "ring-1", "ring-rose-100");
-                    valid = false;
-                }
+            };
+            return rules[name];
+        }
+
+        function validateField(input) {
+            let element = input;
+            if (typeof input === 'string') {
+                element = document.getElementsByName(input)[0] || document.getElementById(input);
+            }
+            if (!element) return true;
+
+            const name = element.name || element.id;
+            const rule = getFieldRule(name);
+            if (!rule) return true;
+
+            // Bypassed if hidden under a closed accordion/conditional panel
+            if (isFieldHidden(element)) {
+                setFieldValidState(element, rule, true, "");
+                return true;
             }
 
-            radioNames.forEach(name => {
-                const checked = document.querySelector(`input[name="${name}"]:checked`);
-                if (!checked) {
-                    // Find the parent compact-row and highlight it
-                    const parent = document.querySelector(`input[name="${name}"]`).closest('.compact-row') || 
-                                 document.querySelector(`input[name="${name}"]`).closest('.card') ||
-                                 document.querySelector(`input[name="${name}"]`).closest('.selection-card');
-                    if (parent) parent.classList.add("border-rose-300", "ring-1", "ring-rose-50");
-                    valid = false;
+            let val = "";
+            if (element.type === "radio") {
+                const checkedRadio = document.querySelector(`input[name="${name}"]:checked`);
+                val = checkedRadio ? checkedRadio.value : "";
+            } else {
+                val = element.value ? element.value.trim() : "";
+            }
+
+            const result = rule.validate(val, element);
+            const isValid = typeof result === 'object' ? result.isValid : result;
+            const message = typeof result === 'object' ? result.message : rule.message;
+
+            setFieldValidState(element, rule, isValid, message);
+            return isValid;
+        }
+
+        function isFieldHidden(element) {
+            let parent = element.parentElement;
+            while (parent) {
+                if (parent.classList.contains('hidden') || parent.style.display === 'none') {
+                    return true;
+                }
+                parent = parent.parentElement;
+            }
+            return false;
+        }
+
+        function setFieldValidState(element, rule, isValid, message) {
+            const container = rule.container || element;
+            const errorMsgEl = document.getElementById(rule.errorId);
+
+            if (isValid) {
+                container.classList.remove("is-invalid");
+                container.classList.add("is-valid");
+                if (errorMsgEl) {
+                    errorMsgEl.textContent = "";
+                    errorMsgEl.classList.remove("show");
+                }
+            } else {
+                container.classList.remove("is-valid");
+                container.classList.add("is-invalid");
+                if (errorMsgEl) {
+                    errorMsgEl.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ${message || rule.message}`;
+                    errorMsgEl.classList.add("show");
+                }
+            }
+        }
+
+        function validateForm() {
+            let valid = true;
+            let firstInvalidElement = null;
+
+            const fieldsToValidate = [
+                "contact_person",
+                "designation",
+                "city",
+                "phone",
+                "email",
+                "website",
+                "company_name",
+                "employee_count",
+                "last_training_year",
+                "has_posh_policy",
+                "has_ic",
+                "ic_specialized_training",
+                "ic_last_training_year",
+                "require_ic_training",
+                "ic_mode_selection",
+                "external_member_support",
+                "require_external_member_support",
+                "she_box_registered",
+                "nodal_officer_appointed",
+                "require_nodal_officer_support",
+                "annual_report_submitted"
+            ];
+
+            fieldsToValidate.forEach(fieldName => {
+                let el = document.getElementsByName(fieldName)[0] || document.getElementById(fieldName);
+                if (fieldName === "ic_mode_selection") {
+                    el = document.getElementById("id_requested_ic_training_mode");
+                }
+                if (el) {
+                    const fieldValid = validateField(el);
+                    if (!fieldValid) {
+                        valid = false;
+                        const rule = getFieldRule(fieldName) || {};
+                        const container = rule.container || el;
+                        
+                        if (!firstInvalidElement) {
+                            firstInvalidElement = el;
+                        }
+                        
+                        // Shake container for premium visual interaction
+                        container.classList.add("validation-shake");
+                        setTimeout(() => {
+                            container.classList.remove("validation-shake");
+                        }, 400);
+                    }
                 }
             });
 
-            if (!valid) {
-                const firstError = document.querySelector(".border-rose-300");
-                if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (!valid && firstInvalidElement) {
+                const name = firstInvalidElement.name || firstInvalidElement.id;
+                const rule = getFieldRule(name) || {};
+                const scrollTarget = rule.container || firstInvalidElement;
+                scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
             return valid;
@@ -770,13 +1102,9 @@
             const historyBox = document.getElementById('ic-history-box');
             const trainingBox = document.getElementById('ic-training-requirement-box');
             
-            // Show history only if IC exists
             historyBox.classList.toggle('hidden', !hasIC);
-            
-            // Show training requirement box if IC question is answered (both Yes and No cases)
             trainingBox.classList.remove('hidden');
             
-            // Handle required attributes for history
             historyBox.querySelectorAll('input, select').forEach(i => {
                 if (hasIC) {
                     if (i.name === 'ic_specialized_training') i.setAttribute('required', '');
@@ -785,17 +1113,23 @@
                 }
             });
 
-            // Handle required attributes for training box (it's always required now)
             trainingBox.querySelectorAll('input[type="radio"]').forEach(i => {
                 if (i.name === 'require_ic_training') i.setAttribute('required', '');
             });
 
             if (!hasIC) {
-                // If no IC, we might still want to reset history fields
                 const specializedTrainingNo = document.querySelector('input[name="ic_specialized_training"][value="no"]');
                 if (specializedTrainingNo) specializedTrainingNo.checked = true;
                 toggleSpecializedTrainingFields(false);
             }
+            
+            // Recalculate conditional validations on state toggle
+            setTimeout(() => {
+                validateField("has_ic");
+                validateField("ic_specialized_training");
+                validateField("ic_last_training_year");
+                validateField("require_ic_training");
+            }, 50);
         }
 
         function toggleRequireICTrainingMode(show) {
@@ -807,17 +1141,27 @@
                 document.getElementById('id_requested_expert_led_type').value = '';
                 box.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
             }
+            setTimeout(() => {
+                validateField("require_ic_training");
+                validateField("ic_mode_selection");
+            }, 50);
         }
 
         function setICMode(mode, type) {
             document.getElementById('id_requested_ic_training_mode').value = mode;
             document.getElementById('id_requested_expert_led_type').value = type || '';
+            validateField("ic_mode_selection");
         }
 
         function toggleExternalMemberFields(show) {
             const box = document.getElementById('external-member-support-fields');
             box.classList.toggle('hidden', !show);
             box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+            
+            setTimeout(() => {
+                validateField("external_member_support");
+                validateField("require_external_member_support");
+            }, 50);
         }
 
         function toggleSHEBoxFields(show) {
@@ -828,32 +1172,46 @@
                 const nodalAppointed = document.querySelector('input[name="nodal_officer_appointed"]:checked');
                 if (nodalAppointed) toggleNodalOfficerSupport(nodalAppointed.value === 'no');
             }
+            
+            setTimeout(() => {
+                validateField("she_box_registered");
+                validateField("nodal_officer_appointed");
+                validateField("require_nodal_officer_support");
+            }, 50);
         }
 
         function toggleNodalOfficerSupport(show) {
             const box = document.getElementById('nodal-support-question');
             box.classList.toggle('hidden', !show);
             box.querySelectorAll('input').forEach(i => show ? i.setAttribute('required', '') : i.removeAttribute('required'));
+            
+            setTimeout(() => {
+                validateField("nodal_officer_appointed");
+                validateField("require_nodal_officer_support");
+            }, 50);
         }
 
         function toggleSpecializedTrainingFields(show) {
-            const yearSelect = document.getElementById('ic_last_training_year');
+            const wrapper = document.getElementById('ic-training-dropdown-wrapper');
+            if (!wrapper) return;
             
             if (show) {
-                yearSelect.removeAttribute('disabled');
-                yearSelect.setAttribute('required', '');
-                yearSelect.classList.remove('opacity-50', 'cursor-not-allowed');
+                wrapper.classList.remove('disabled-dropdown');
             } else {
-                yearSelect.setAttribute('disabled', 'disabled');
-                yearSelect.removeAttribute('required');
-                yearSelect.classList.add('opacity-50', 'cursor-not-allowed');
-                if (!window.formInitializing) {
-                    yearSelect.value = '';
+                wrapper.classList.add('disabled-dropdown');
+                const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+                if (hiddenInput) {
+                    hiddenInput.value = '';
+                    const event = new Event('change');
+                    hiddenInput.dispatchEvent(event);
                 }
+                const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+                if (triggerSpan) triggerSpan.textContent = 'Select Year';
+                wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
             }
         }
 
-        // Initialize form on load
+        // Initialize form and bind real-time event listeners
         window.addEventListener('DOMContentLoaded', () => {
             window.formInitializing = true;
             
@@ -892,6 +1250,73 @@
             }
 
             window.formInitializing = false;
+
+            // Bind real-time input fields
+            const fieldsToBind = [
+                "contact_person",
+                "designation",
+                "phone",
+                "email",
+                "website",
+                "company_name",
+                "employee_count"
+            ];
+            fieldsToBind.forEach(fieldName => {
+                const el = document.getElementsByName(fieldName)[0] || document.getElementById(fieldName);
+                if (el) {
+                    el.addEventListener("input", () => {
+                        if (fieldName === "employee_count") {
+                            const val = parseInt(el.value);
+                            if (!isNaN(val) && val > 1000000) {
+                                el.value = 1000000;
+                            }
+                        }
+                        validateField(el);
+                    });
+                    el.addEventListener("blur", () => validateField(el));
+                }
+            });
+
+            // Bind radio toggles
+            const radioFields = [
+                "has_posh_policy",
+                "has_ic",
+                "ic_specialized_training",
+                "require_ic_training",
+                "external_member_support",
+                "require_external_member_support",
+                "she_box_registered",
+                "nodal_officer_appointed",
+                "require_nodal_officer_support",
+                "annual_report_submitted"
+            ];
+            radioFields.forEach(fieldName => {
+                document.querySelectorAll(`input[name="${fieldName}"]`).forEach(radio => {
+                    radio.addEventListener("change", () => {
+                        validateField(fieldName);
+                    });
+                });
+            });
+
+            // Bind hidden custom select inputs
+            const hiddenSelects = [
+                "city",
+                "last_training_year",
+                "ic_last_training_year"
+            ];
+            hiddenSelects.forEach(fieldName => {
+                const el = document.getElementsByName(fieldName)[0] || document.getElementById(fieldName);
+                if (el) {
+                    el.addEventListener("change", () => validateField(el));
+                }
+            });
+
+            // Bind custom expert led training modes
+            document.querySelectorAll('input[name="ic_mode_selection"]').forEach(radio => {
+                radio.addEventListener("change", () => {
+                    validateField("ic_mode_selection");
+                });
+            });
         });
     </script>
     <script>
@@ -947,18 +1372,7 @@
             });
         });
 
-        // Update existing logic to handle custom dropdowns
-        function toggleSpecializedTrainingFields(show) {
-            const wrapper = document.getElementById('ic-training-dropdown-wrapper');
-            if (show) {
-                wrapper.classList.remove('disabled-dropdown');
-            } else {
-                wrapper.classList.add('disabled-dropdown');
-                wrapper.querySelector('input[type="hidden"]').value = '';
-                wrapper.querySelector('.custom-select-trigger span').textContent = 'Select Year';
-                wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
-            }
-        }
+        // Specialized training toggle handled in the main validation script
     </script>
 </body>
 </html>

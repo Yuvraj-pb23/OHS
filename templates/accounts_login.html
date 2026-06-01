@@ -130,9 +130,12 @@
                                 <i class="fas fa-lock text-xs"></i>
                             </span>
                             <input type="password" name="password" id="id_password" required
-                                   class="input-field pl-10"
+                                   class="input-field pl-10 pr-10"
                                    placeholder="Enter your password"
                                    autocomplete="current-password">
+                            <button type="button" id="togglePasswordBtn" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/70 transition-all focus:outline-none">
+                                <i class="fas fa-eye text-xs" id="passwordEyeIcon"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -153,5 +156,27 @@
         </p>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+            const passwordInput = document.getElementById('id_password');
+            const passwordEyeIcon = document.getElementById('passwordEyeIcon');
+
+            if (togglePasswordBtn && passwordInput && passwordEyeIcon) {
+                togglePasswordBtn.addEventListener('click', () => {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    
+                    if (type === 'password') {
+                        passwordEyeIcon.classList.remove('fa-eye-slash');
+                        passwordEyeIcon.classList.add('fa-eye');
+                    } else {
+                        passwordEyeIcon.classList.remove('fa-eye');
+                        passwordEyeIcon.classList.add('fa-eye-slash');
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>

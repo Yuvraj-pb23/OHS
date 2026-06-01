@@ -15,7 +15,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Font from File 2 for the LMS look -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;700&display=swap"
     rel="stylesheet" />
 
   <style>
@@ -210,9 +211,11 @@
       .page-header {
         margin-top: 50px;
       }
+
       .header-main-title {
         font-size: 1.8rem;
       }
+
       .header-subtitle {
         font-size: 0.9rem;
         padding: 0 1rem;
@@ -533,11 +536,17 @@
     }
 
     .lms-badge {
-      padding: 3px 8px;
-      border-radius: 4px;
-      font-size: 10px;
-      font-weight: 700;
-      text-transform: uppercase;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 120px !important;
+      height: 34px !important;
+      border-radius: 8px !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      align-self: center !important;
+      justify-self: end !important;
     }
 
     .bg-complete {
@@ -732,6 +741,7 @@
       border-color: #f97316 !important;
       box-shadow: 0 0 15px rgba(249, 115, 22, 0.2) !important;
     }
+
     .hamburger-btn {
       display: none;
       position: fixed;
@@ -813,12 +823,12 @@
     </ul>
   </nav>
 
-    <main class="main-content">
-      <!-- Page Header -->
-      <header class="page-header">
-        <h1 class="header-main-title">POCSO Compliance Dashboard</h1>
-        <p class="header-subtitle">Educational institution health overview and student safety metrics.</p>
-      </header>
+  <main class="main-content">
+    <!-- Page Header -->
+    <header class="page-header">
+      <h1 class="header-main-title">POCSO Compliance Dashboard</h1>
+      <p class="header-subtitle">Educational institution health overview and student safety metrics.</p>
+    </header>
 
     {% if messages %}
     {% for message in messages %}
@@ -901,12 +911,9 @@
 
       <div class="members-grid" id="membersGrid">
         {% for member in members %}
-        <div
-          class="member-card"
+        <div class="member-card"
           data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}"
-          data-bs-toggle="modal"
-          data-bs-target="#userProgressModal-{{ member.id }}"
-        >
+          data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}">
           <div class="avatar">{{ member.user.first_name|first|upper }}</div>
           <h3 class="member-name">{{ member.user.get_full_name|default:member.user.first_name }}</h3>
           <p class="member-email">{{ member.user.email }}</p>
@@ -1011,7 +1018,14 @@
                 <div id="content-vids-{{ member.id }}">
                   {% for mod in member.video_modules %}
                   <div class="record-item">
-                    <div class="record-thumb" style="background-image: url('{{ mod.thumbnail_url }}');"></div>
+                    <div class="record-thumb" {% if mod.thumbnail_url %}
+                      style="background-image: url('{{ mod.thumbnail_url }}');" {% else %}
+                      style="background-color: var(--border-soft); display:flex; align-items:center; justify-content:center;"
+                      {% endif %}>
+                      {% if not mod.thumbnail_url %}
+                      <i class="bi bi-play-btn-fill" style="font-size:1.5rem; color: var(--lms-primary);"></i>
+                      {% endif %}
+                    </div>
                     <div class="record-info">
                       <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
                       <p>Video Lesson</p>
@@ -1081,15 +1095,15 @@
       <h2 class="mb-4 section-title"><i class="bi bi-megaphone me-2"></i>Awareness Material</h2>
       <div class="poster-grid">
         <div class="poster-item">
-          <div class="d-inline-block position-relative" id="poster-editor-container" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-soft); background: #1a1a1a; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+          <div class="d-inline-block position-relative" id="poster-editor-container"
+            style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-soft); background: #1a1a1a; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 100%;">
             <!-- Base Poster Image -->
             <img src="/media/Posters/POCSO Poster.webp" alt="POCSO Poster"
-                 style="max-height: 500px; width: auto; display: block;" id="base-poster-pocso">
-            
-            {% if organization.logo %}
+              style="max-height: 500px; max-width: 100%; height: auto; display: block;" id="base-poster-pocso">
+
             <!-- Draggable Logo Container -->
-            <div id="draggable-logo" 
-                 style="position: absolute; 
+            <div id="draggable-logo"
+              style="position: absolute; 
                         top: {{ poster_configs.pocso.logo_y|default:organization.logo_y }}%; 
                         left: {{ poster_configs.pocso.logo_x|default:organization.logo_x }}%; 
                         width: {{ poster_configs.pocso.logo_width|default:organization.logo_width }}%; 
@@ -1098,11 +1112,33 @@
                         touch-action: none;
                         border: 2px dashed transparent;
                         transition: border 0.2s;
-                        z-index: 10;">
-              <img src="{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% else %}{{ organization.logo.url }}{% endif %}" alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
+                        z-index: 10;
+                        display: {% if poster_configs.pocso.logo or organization.logo %}block{% else %}none{% endif %};">
+              <img
+                src="{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
+                alt="Company Logo" style="width: 100%; height: auto; pointer-events: none; display: block;">
               <!-- Resize handle removed from dashboard view -->
             </div>
-            {% endif %}
+
+            <!-- Company Name & Address Overlay -->
+            <div class="card-text-overlay" data-text-size="{{ poster_configs.pocso.text_size|default:2.2 }}" data-text-color="#000000"
+              style="position: absolute; 
+                top: {{ poster_configs.pocso.text_y|default:88.0 }}%; 
+                left: {{ poster_configs.pocso.text_x|default:3.0 }}%; 
+                pointer-events: none;
+                font-family: 'Nunito', sans-serif;
+                color: #000000;
+                text-align: center;
+                padding: 4px 8px;
+                z-index: 99;
+                display: {% if poster_configs.pocso.company_name or poster_configs.pocso.company_address %}block{% else %}none{% endif %};">
+              <div style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;">
+                {{ poster_configs.pocso.company_name }}
+              </div>
+              <div style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
+                {{ poster_configs.pocso.company_address }}
+              </div>
+            </div>
           </div>
 
           <h5 class="mt-3">Child Safety Awareness</h5>
@@ -1117,191 +1153,234 @@
               <i class="bi bi-pencil-square me-1"></i>Edit Layout
             </button>
           </div>
-          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to resize. Use <b>Fullscreen Edit</b> for precision.</p>
+          <p class="text-muted small mt-2"><i class="bi bi-info-circle me-1"></i>Tip: Drag logo to move. Hover to
+            resize. Use <b>Fullscreen Edit</b> for precision.</p>
         </div>
 
-<style>
-/* Studio Dark Editor Theme */
-#fullscreenEditorModal .modal-content {
-    background-color: #121212 !important;
-    border: none;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
+        <style>
+          /* Studio Dark Editor Theme */
+          #fullscreenEditorModal .modal-content {
+            background-color: #121212 !important;
+            border: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          }
 
-#fullscreenEditorModal .editor-top-bar {
-    background: #1e1e1e;
-    border-bottom: 1px solid #333;
-    padding: 8px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    z-index: 1050;
-}
+          #fullscreenEditorModal .editor-top-bar {
+            background: #1e1e1e;
+            border-bottom: 1px solid #333;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 1050;
+          }
 
-#fullscreenEditorModal .editor-toolbar {
-    background: #252526;
-    border-bottom: 1px solid #333;
-    padding: 6px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    z-index: 1049;
-}
+          #fullscreenEditorModal .editor-toolbar {
+            background: #252526;
+            border-bottom: 1px solid #333;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            z-index: 1049;
+          }
 
-#fullscreenEditorModal .editor-canvas {
-    background: #0f0f0f;
-    background-image: radial-gradient(#222 1px, transparent 1px);
-    background-size: 20px 20px;
-    height: calc(100vh - 100px);
-    overflow: auto;
-    position: relative;
-    cursor: grab;
-}
+          #fullscreenEditorModal .editor-canvas {
+            background: #0f0f0f;
+            background-image: radial-gradient(#222 1px, transparent 1px);
+            background-size: 20px 20px;
+            height: calc(100vh - 100px);
+            overflow: auto;
+            position: relative;
+            cursor: grab;
+          }
 
-#fullscreenEditorModal .editor-canvas:active { cursor: grabbing; }
+          #fullscreenEditorModal .editor-canvas:active {
+            cursor: grabbing;
+          }
 
-#fullscreenEditorModal .tool-group {
-    display: flex;
-    align-items: center;
-    background: #333;
-    border-radius: 6px;
-    padding: 2px;
-}
+          #fullscreenEditorModal .tool-group {
+            display: flex;
+            align-items: center;
+            background: #333;
+            border-radius: 6px;
+            padding: 2px;
+          }
 
-#fullscreenEditorModal .tool-btn {
-    background: transparent;
-    border: none;
-    color: #ccc;
-    padding: 4px 12px;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.2s;
-}
+          #fullscreenEditorModal .tool-btn {
+            background: transparent;
+            border: none;
+            color: #ccc;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+          }
 
-#fullscreenEditorModal .tool-btn:hover {
-    background: #444;
-    color: #fff;
-}
+          #fullscreenEditorModal .tool-btn:hover {
+            background: #444;
+            color: #fff;
+          }
 
-#fullscreenEditorModal .tool-btn.active {
-    background: #007acc;
-    color: #fff;
-}
+          #fullscreenEditorModal .tool-btn.active {
+            background: #007acc;
+            color: #fff;
+          }
 
-#fullscreenEditorModal .btn-save-project {
-    background: #28a745;
-    color: white;
-    font-weight: 600;
-    padding: 6px 20px;
-    border-radius: 6px;
-    border: none;
-    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
-    transition: transform 0.2s, background 0.2s;
-}
+          #fullscreenEditorModal .btn-save-project {
+            background: #28a745;
+            color: white;
+            font-weight: 600;
+            padding: 6px 20px;
+            border-radius: 6px;
+            border: none;
+            box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+            transition: transform 0.2s, background 0.2s;
+          }
 
-#fullscreenEditorModal .btn-save-project:hover {
-    background: #218838;
-    transform: translateY(-1px);
-}
+          #fullscreenEditorModal .btn-save-project:hover {
+            background: #218838;
+            transform: translateY(-1px);
+          }
 
-#fullscreenEditorModal .status-bar {
-    background: #007acc;
-    color: white;
-    padding: 2px 16px;
-    font-size: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+          #fullscreenEditorModal .status-bar {
+            background: #007acc;
+            color: white;
+            padding: 2px 16px;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          }
 
-#modal-poster-container {
-    box-shadow: 0 0 50px rgba(0,0,0,0.5), 0 0 10px rgba(0,0,0,0.3);
-    border: 1px solid #444;
-    background: white;
-}
+          #modal-poster-container {
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5), 0 0 10px rgba(0, 0, 0, 0.3);
+            border: 1px solid #444;
+            background: white;
+          }
 
-@media (max-width: 768px) {
-    #fullscreenEditorModal .editor-top-bar { padding: 8px 12px; }
-    #fullscreenEditorModal .editor-top-bar h6 { font-size: 0.9rem; }
-    #fullscreenEditorModal .editor-top-bar span { display: none; }
-    #fullscreenEditorModal .editor-toolbar {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-        padding: 10px;
-    }
-    #fullscreenEditorModal .tool-group { width: 100%; justify-content: space-around; }
-    #fullscreenEditorModal .ms-auto { width: 100%; margin: 0 !important; }
-    #fullscreenEditorModal .btn-save-project {
-        width: 100%;
-        padding: 10px;
-        font-size: 0.9rem;
-    }
-    #fullscreenEditorModal .editor-canvas {
-        padding: 20px 10px !important;
-        height: calc(100vh - 180px);
-    }
-    #modal-base-poster {
-        max-width: 100% !important;
-        height: auto !important;
-    }
-}
-</style>
+          @media (max-width: 768px) {
+            #fullscreenEditorModal .editor-top-bar {
+              padding: 8px 12px;
+            }
 
-<!-- Fullscreen Editor Modal -->
-<div class="modal fade" id="fullscreenEditorModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-fullscreen">
-    <div class="modal-content">
-      <!-- Editor Top Bar -->
-      <div class="editor-top-bar">
-        <div class="d-flex align-items-center gap-3">
-          <h6 class="mb-0 text-white fw-bold"><i class="bi bi-layers-half me-2"></i>Branding Workshop</h6>
-          <span class="badge bg-dark text-secondary border border-secondary">v2.0 Professional</span>
-        </div>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
+            #fullscreenEditorModal .editor-top-bar h6 {
+              font-size: 0.9rem;
+            }
 
-      <!-- Editor Toolbar -->
-      <div class="editor-toolbar">
-        <div class="tool-group">
-          <button class="tool-btn btn-change-logo" onclick="document.getElementById('editorLogoInput').click()">
-            <i class="bi bi-image"></i> Change Logo
-          </button>
-          <input type="file" id="editorLogoInput" style="display: none" accept="image/*">
-          <a href="{% url 'reset_logo_config' %}?section=posters" class="tool-btn text-decoration-none">
-            <i class="bi bi-arrow-counterclockwise"></i> Reset
-          </a>
-        </div>
+            #fullscreenEditorModal .editor-top-bar span {
+              display: none;
+            }
 
-        <div class="tool-group">
-          <button class="tool-btn" id="reset-zoom-btn">
-            <i class="bi bi-zoom-in"></i> 100%
-          </button>
-          <div class="px-2 text-secondary d-none d-md-block" style="font-size: 0.7rem;">
-            <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
-          </div>
-        </div>
+            #fullscreenEditorModal .editor-toolbar {
+              flex-wrap: wrap;
+              justify-content: center;
+              gap: 8px;
+              padding: 10px;
+            }
 
-        <div class="ms-auto">
-          <button type="button" class="btn-save-project" id="modal-save-btn">
-            <i class="bi bi-cloud-arrow-up me-2"></i>Save Layout
-          </button>
-        </div>
-      </div>
+            #fullscreenEditorModal .tool-group {
+              width: 100%;
+              justify-content: space-around;
+            }
 
-      <!-- Main Canvas -->
-      <div class="editor-canvas d-flex justify-content-center p-5" id="modal-body-zoom">
-        <div id="modal-poster-container" class="position-relative d-inline-block align-self-start" 
-             style="transform-origin: top center; transition: transform 0.1s ease-out;">
-          <img src="/media/Posters/POCSO Poster.webp" alt="POCSO Poster" style="max-height: 85vh; width: auto; display: block;" id="modal-base-poster">
-          
-          {% if organization.logo %}
-          <div id="modal-draggable-logo" 
-               style="position: absolute; 
+            #fullscreenEditorModal .ms-auto {
+              width: 100%;
+              margin: 0 !important;
+            }
+
+            #fullscreenEditorModal .btn-save-project {
+              width: 100%;
+              padding: 10px;
+              font-size: 0.9rem;
+            }
+
+            #fullscreenEditorModal .editor-canvas {
+              padding: 20px 10px !important;
+              height: calc(100vh - 180px);
+            }
+
+            #modal-base-poster {
+              max-width: 100% !important;
+              height: auto !important;
+            }
+          }
+        </style>
+
+        <!-- Fullscreen Editor Modal -->
+        <div class="modal fade" id="fullscreenEditorModal" tabindex="-1" aria-hidden="true">
+          <div class="modal-dialog modal-fullscreen">
+            <div class="modal-content">
+              <!-- Editor Top Bar -->
+              <div class="editor-top-bar">
+                <div class="d-flex align-items-center gap-3">
+                  <h6 class="mb-0 text-white fw-bold"><i class="bi bi-layers-half me-2"></i>Branding Workshop</h6>
+                  <span class="badge bg-dark text-secondary border border-secondary">v2.0 Professional</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                  aria-label="Close"></button>
+              </div>
+
+              <!-- Editor Toolbar -->
+              <div class="editor-toolbar">
+                <div class="tool-group">
+                  <button class="tool-btn btn-change-logo" onclick="document.getElementById('editorLogoInput').click()">
+                    <i class="bi bi-image"></i> Change Logo
+                  </button>
+                  <input type="file" id="editorLogoInput" style="display: none" accept="image/*">
+                  <a id="modal-reset-logo-btn" href="{% url 'reset_logo_config' %}?section=posters"
+                    class="tool-btn text-decoration-none">
+                    <i class="bi bi-arrow-counterclockwise"></i> Reset
+                  </a>
+                </div>
+
+                <div class="tool-group">
+                  <button class="tool-btn" id="reset-zoom-btn">
+                    <i class="bi bi-zoom-in"></i> 100%
+                  </button>
+                  <div class="px-2 text-secondary d-none d-md-block" style="font-size: 0.7rem;">
+                    <i class="bi bi-mouse me-1"></i>Ctrl+Scroll to Zoom
+                  </div>
+                </div>
+
+                <div class="tool-group px-2"
+                  style="background: var(--bg-card); display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: 6px;">
+                  <div class="input-group input-group-sm" style="max-width: 500px;">
+                    <span class="input-group-text bg-transparent border-0 text-secondary" style="font-size: 0.75rem;"><i
+                        class="bi bi-building me-1"></i> Company</span>
+                    <input type="text" id="editor-company-name"
+                      class="form-control bg-white text-dark border-0 border-end" placeholder="Company Name"
+                      style="font-size: 0.75rem; min-width: 140px; border-color: var(--border-color) !important; color: var(--text-primary) !important;" />
+                    <input type="text" id="editor-company-address"
+                      class="form-control bg-white text-dark border-0 border-end" placeholder="Address"
+                      style="font-size: 0.75rem; min-width: 160px; border-color: var(--border-color) !important; color: var(--text-primary) !important;" />
+                    <span class="input-group-text bg-transparent border-0 text-secondary" style="font-size: 0.75rem;"><i
+                        class="bi bi-type-size me-1"></i> Size</span>
+                    <input type="number" id="editor-text-size" class="form-control bg-white text-dark border-0"
+                      step="0.1" min="1.0" max="10.0" value="2.2"
+                      style="font-size: 0.75rem; max-width: 60px; color: var(--text-primary) !important;" />
+                  </div>
+                </div>
+
+                <div class="ms-auto">
+                  <button type="button" class="btn-save-project" id="modal-save-btn">
+                    <i class="bi bi-cloud-arrow-up me-2"></i>Save Layout
+                  </button>
+                </div>
+              </div>
+
+              <!-- Main Canvas -->
+              <div class="editor-canvas d-flex justify-content-center p-5" id="modal-body-zoom">
+                <div id="modal-poster-container" class="position-relative d-inline-block align-self-start"
+                  style="transform-origin: top center; transition: transform 0.1s ease-out;">
+                  <img src="/media/Posters/POCSO Poster.webp" alt="POCSO Poster"
+                    style="max-height: 85vh; width: auto; display: block;" id="modal-base-poster">
+
+                  <div id="modal-draggable-logo" style="position: absolute; 
                       top: {{ poster_configs.pocso.logo_y|default:organization.logo_y }}%; 
                       left: {{ poster_configs.pocso.logo_x|default:organization.logo_x }}%; 
                       width: {{ poster_configs.pocso.logo_width|default:organization.logo_width }}%; 
@@ -1309,266 +1388,404 @@
                       user-select: none;
                       touch-action: none;
                       border: 2px dashed rgba(255,193,7,0.8);
-                      z-index: 100;">
-              <img id="modal-logo-img" src="{{ organization.logo.url }}" style="width: 100%; height: auto; pointer-events: none; display: block;">
-              <div id="modal-resize-handle" style="position: absolute; right: -8px; bottom: -8px; width: 18px; height: 18px; background: #ffc107; border-radius: 2px; cursor: nwse-resize; border: 2px solid #000; z-index: 101;"></div>
+                      z-index: 100;
+                      display: {% if poster_configs.pocso.logo or organization.logo %}block{% else %}none{% endif %};">
+                    <img id="modal-logo-img"
+                      src="{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
+                      style="width: 100%; height: auto; pointer-events: none; display: block;">
+                    <div id="modal-resize-handle"
+                      style="position: absolute; right: -8px; bottom: -8px; width: 18px; height: 18px; background: #ffc107; border-radius: 2px; cursor: nwse-resize; border: 2px solid #000; z-index: 101;">
+                    </div>
+                  </div>
+
+                  <!-- Company Name & Address Overlay -->
+                  <div id="modal-text-overlay" style="position: absolute; 
+            top: {{ poster_configs.pocso.text_y|default:88.0 }}%; 
+            left: {{ poster_configs.pocso.text_x|default:3.0 }}%; 
+            cursor: move; 
+            user-select: none;
+            touch-action: none;
+            font-family: 'Nunito', sans-serif;
+            color: black;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9), 1px 1px 0 rgba(255,255,255,0.9);
+            border: 2px dashed rgba(255,193,7,0.7);
+            padding: 4px 8px;
+            z-index: 99;
+            display: none;">
+                    <div id="modal-company-name-display"
+                      style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;"></div>
+                    <div id="modal-company-address-display"
+                      style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Status Bar -->
+              <div class="status-bar">
+                <div><i class="bi bi-info-circle me-1"></i> Drag to move. Hold Resize handle for scaling.</div>
+                <div id="editor-zoom-status">Scale: 100%</div>
+              </div>
+            </div>
           </div>
-          {% endif %}
         </div>
-      </div>
 
-      <!-- Status Bar -->
-      <div class="status-bar">
-        <div><i class="bi bi-info-circle me-1"></i> Drag to move. Hold Resize handle for scaling.</div>
-        <div id="editor-zoom-status">Scale: 100%</div>
-      </div>
-    </div>
-  </div>
-</div>
+        <script>
+          document.addEventListener('DOMContentLoaded', function () {
+            let modalZoomScale = 1.0;
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    let modalZoomScale = 1.0;
+            const initDraggable = (logoId, containerId, saveBtnId, resizeHandleId, isModal = false) => {
+              const logo = document.getElementById(logoId);
+              const container = logo ? logo.parentElement : null;
+              const saveBtn = document.getElementById(saveBtnId);
+              const resizeHandle = document.getElementById(resizeHandleId);
 
-    const initDraggable = (logoId, containerId, saveBtnId, resizeHandleId, isModal = false) => {
-        const logo = document.getElementById(logoId);
-        const container = logo ? logo.parentElement : null;
-        const saveBtn = document.getElementById(saveBtnId);
-        const resizeHandle = document.getElementById(resizeHandleId);
-        
-        if (!logo || !container) return;
+              if (!logo || !container) return;
 
-        let isDragging = false;
-        let isResizing = false;
-        let startX, startY, startLeft, startTop, startWidth;
+              let isDragging = false;
+              let isResizing = false;
+              let startX, startY, startLeft, startTop, startWidth;
 
-        logo.addEventListener('mousedown', function(e) {
-            if (!isModal) return; // Only allow editing in the modal Fullscreen version
-            
-            if (e.target === resizeHandle) {
-                isResizing = true;
-                startWidth = logo.offsetWidth;
-            } else {
+              logo.addEventListener('mousedown', function (e) {
+                if (!isModal) return; // Only allow editing in the modal Fullscreen version
+
+                if (e.target === resizeHandle) {
+                  isResizing = true;
+                  startWidth = logo.offsetWidth;
+                } else {
+                  isDragging = true;
+                  startLeft = logo.offsetLeft;
+                  startTop = logo.offsetTop;
+                }
+                startX = e.clientX;
+                startY = e.clientY;
+                logo.style.transition = 'none';
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+                e.preventDefault();
+              });
+
+              const onMouseMove = (e) => {
+                // Recalibrate movement based on zoom level
+                const currentScale = isModal ? modalZoomScale : 1.0;
+                const dx = (e.clientX - startX) / currentScale;
+                const dy = (e.clientY - startY) / currentScale;
+
+                if (isDragging) {
+                  let newX = startLeft + dx;
+                  let newY = startTop + dy;
+
+                  // Extremely relaxed constraints: allow moving up to 95% of the logo width/height outside
+                  const limitXMin = -(logo.offsetWidth * 0.95);
+                  const limitXMax = container.offsetWidth - (logo.offsetWidth * 0.05);
+                  const limitYMin = -(logo.offsetHeight * 0.95);
+                  const limitYMax = container.offsetHeight - (logo.offsetHeight * 0.05);
+
+                  newX = Math.max(limitXMin, Math.min(newX, limitXMax));
+                  newY = Math.max(limitYMin, Math.min(newY, limitYMax));
+
+                  const leftPct = (newX / container.offsetWidth * 100);
+                  const topPct = (newY / container.offsetHeight * 100);
+
+                  logo.style.left = leftPct + '%';
+                  logo.style.top = topPct + '%';
+                  syncLogo(leftPct, topPct, null, isModal);
+                } else if (isResizing) {
+                  let newWidth = startWidth + dx;
+                  newWidth = Math.max(20, Math.min(newWidth, container.offsetWidth * 0.9));
+
+                  const widthPct = (newWidth / container.offsetWidth * 100);
+                  logo.style.width = widthPct + '%';
+                  syncLogo(null, null, widthPct, isModal);
+                }
+                if (saveBtn) saveBtn.style.display = 'inline-block';
+                document.getElementById('save-logo-btn').style.display = 'inline-block';
+              };
+
+              const onMouseUp = () => {
+                isDragging = false;
+                isResizing = false;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+                document.removeEventListener('touchmove', onMouseMove);
+                document.removeEventListener('touchend', onMouseUp);
+              };
+
+              // Touch support
+              logo.addEventListener('touchstart', function (e) {
+                if (!isModal) return;
+                const touch = e.touches[0];
+                if (e.target === resizeHandle) {
+                  isResizing = true;
+                  startWidth = logo.offsetWidth;
+                } else {
+                  isDragging = true;
+                  startLeft = logo.offsetLeft;
+                  startTop = logo.offsetTop;
+                }
+                startX = touch.clientX;
+                startY = touch.clientY;
+                logo.style.transition = 'none';
+                document.addEventListener('touchmove', onTouchMove, { passive: false });
+                document.addEventListener('touchend', onMouseUp);
+              });
+
+              const onTouchMove = (e) => {
+                const touch = e.touches[0];
+                onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
+                e.preventDefault();
+              };
+            };
+
+            const syncLogo = (x, y, w, fromModal) => {
+              const targetLogo = fromModal ? document.getElementById('draggable-logo') : document.getElementById('modal-draggable-logo');
+              if (!targetLogo) return;
+              if (x !== null) targetLogo.style.left = x + '%';
+              if (y !== null) targetLogo.style.top = y + '%';
+              if (w !== null) targetLogo.style.width = w + '%';
+            };
+
+            const initDraggableText = (textId, containerId) => {
+              const textOverlay = document.getElementById(textId);
+              const container = textOverlay ? textOverlay.parentElement : null;
+              if (!textOverlay || !container) return;
+
+              let isDragging = false;
+              let startX, startY, startLeft, startTop;
+
+              textOverlay.addEventListener("mousedown", function (e) {
                 isDragging = true;
-                startLeft = logo.offsetLeft;
-                startTop = logo.offsetTop;
-            }
-            startX = e.clientX;
-            startY = e.clientY;
-            logo.style.transition = 'none';
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('mouseup', onMouseUp);
-            e.preventDefault();
-        });
+                startLeft = textOverlay.offsetLeft;
+                startTop = textOverlay.offsetTop;
+                startX = e.clientX;
+                startY = e.clientY;
+                textOverlay.style.transition = "none";
+                document.addEventListener("mousemove", onMouseMove);
+                document.addEventListener("mouseup", onMouseUp);
+                e.preventDefault();
+              });
 
-        const onMouseMove = (e) => {
-            // Recalibrate movement based on zoom level
-            const currentScale = isModal ? modalZoomScale : 1.0;
-            const dx = (e.clientX - startX) / currentScale;
-            const dy = (e.clientY - startY) / currentScale;
-            
-            if (isDragging) {
+              const onMouseMove = (e) => {
+                if (!isDragging) return;
+                const currentScale = modalZoomScale;
+                const dx = (e.clientX - startX) / currentScale;
+                const dy = (e.clientY - startY) / currentScale;
+
                 let newX = startLeft + dx;
                 let newY = startTop + dy;
-                
-                // Extremely relaxed constraints: allow moving up to 95% of the logo width/height outside
-                const limitXMin = -(logo.offsetWidth * 0.95);
-                const limitXMax = container.offsetWidth - (logo.offsetWidth * 0.05);
-                const limitYMin = -(logo.offsetHeight * 0.95);
-                const limitYMax = container.offsetHeight - (logo.offsetHeight * 0.05);
-                
+
+                const limitXMin = 0;
+                const limitXMax = container.offsetWidth - textOverlay.offsetWidth;
+                const limitYMin = 0;
+                const limitYMax = container.offsetHeight - textOverlay.offsetHeight;
+
                 newX = Math.max(limitXMin, Math.min(newX, limitXMax));
                 newY = Math.max(limitYMin, Math.min(newY, limitYMax));
-                
-                const leftPct = (newX / container.offsetWidth * 100);
-                const topPct = (newY / container.offsetHeight * 100);
-                
-                logo.style.left = leftPct + '%';
-                logo.style.top = topPct + '%';
-                syncLogo(leftPct, topPct, null, isModal);
-            } else if (isResizing) {
-                let newWidth = startWidth + dx;
-                newWidth = Math.max(20, Math.min(newWidth, container.offsetWidth * 0.9));
-                
-                const widthPct = (newWidth / container.offsetWidth * 100);
-                logo.style.width = widthPct + '%';
-                syncLogo(null, null, widthPct, isModal);
-            }
-            if (saveBtn) saveBtn.style.display = 'inline-block';
-            document.getElementById('save-logo-btn').style.display = 'inline-block';
-        };
 
-        const onMouseUp = () => {
-            isDragging = false;
-            isResizing = false;
-            document.removeEventListener('mousemove', onMouseMove);
-            document.removeEventListener('mouseup', onMouseUp);
-            document.removeEventListener('touchmove', onMouseMove);
-            document.removeEventListener('touchend', onMouseUp);
-        };
+                const leftPct = (newX / container.offsetWidth) * 100;
+                const topPct = (newY / container.offsetHeight) * 100;
 
-        // Touch support
-        logo.addEventListener('touchstart', function(e) {
-            if (!isModal) return;
-            const touch = e.touches[0];
-            if (e.target === resizeHandle) {
-                isResizing = true;
-                startWidth = logo.offsetWidth;
-            } else {
+                textOverlay.style.left = leftPct + "%";
+                textOverlay.style.top = topPct + "%";
+              };
+
+              const onMouseUp = () => {
+                isDragging = false;
+                document.removeEventListener("mousemove", onMouseMove);
+                document.removeEventListener("mouseup", onMouseUp);
+                document.removeEventListener("touchmove", onMouseMove);
+                document.removeEventListener("touchend", onMouseUp);
+              };
+
+              // Touch support
+              textOverlay.addEventListener("touchstart", function (e) {
+                const touch = e.touches[0];
                 isDragging = true;
-                startLeft = logo.offsetLeft;
-                startTop = logo.offsetTop;
-            }
-            startX = touch.clientX;
-            startY = touch.clientY;
-            logo.style.transition = 'none';
-            document.addEventListener('touchmove', onTouchMove, { passive: false });
-            document.addEventListener('touchend', onMouseUp);
-        });
+                startLeft = textOverlay.offsetLeft;
+                startTop = textOverlay.offsetTop;
+                startX = touch.clientX;
+                startY = touch.clientY;
+                textOverlay.style.transition = "none";
+                document.addEventListener("touchmove", onTouchMove, { passive: false });
+                document.addEventListener("touchend", onMouseUp);
+              });
 
-        const onTouchMove = (e) => {
-            const touch = e.touches[0];
-            onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
-            e.preventDefault();
-        };
-    };
-
-    const syncLogo = (x, y, w, fromModal) => {
-        const targetLogo = fromModal ? document.getElementById('draggable-logo') : document.getElementById('modal-draggable-logo');
-        if (!targetLogo) return;
-        if (x !== null) targetLogo.style.left = x + '%';
-        if (y !== null) targetLogo.style.top = y + '%';
-        if (w !== null) targetLogo.style.width = w + '%';
-    };
-
-    initDraggable('draggable-logo', 'poster-editor-container', 'save-logo-btn', 'resize-handle');
-    initDraggable('modal-draggable-logo', 'modal-poster-container', 'modal-save-btn', 'modal-resize-handle', true);
-
-    // --- ZOOM LOGIC ---
-    const modalBody = document.getElementById('modal-body-zoom');
-    const zoomContainer = document.getElementById('modal-poster-container');
-    const resetZoomBtn = document.getElementById('reset-zoom-btn');
-
-    if (modalBody && zoomContainer) {
-        const updateZoomUI = () => {
-             const zoomPct = Math.round(modalZoomScale * 100);
-             const statusElem = document.getElementById('editor-zoom-status');
-             if (statusElem) statusElem.innerHTML = `Scale: ${zoomPct}%`;
-             if (resetZoomBtn) resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
-        };
-
-        let panX = 0;
-        let panY = 0;
-        let isPanning = false;
-        let startPanX = 0;
-        let startPanY = 0;
-
-        const updateTransform = () => {
-            zoomContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${modalZoomScale})`;
-            updateZoomUI();
-        };
-
-        modalBody.addEventListener('wheel', function(e) {
-            if (e.ctrlKey) {
+              const onTouchMove = (e) => {
+                const touch = e.touches[0];
+                onMouseMove({ clientX: touch.clientX, clientY: touch.clientY });
                 e.preventDefault();
-                const delta = e.deltaY > 0 ? -0.1 : 0.1;
-                modalZoomScale = Math.max(0.3, Math.min(modalZoomScale + delta, 4.0));
-                updateTransform();
+              };
+            };
+
+            const nameInput = document.getElementById("editor-company-name");
+            const addrInput = document.getElementById("editor-company-address");
+            const sizeInput = document.getElementById("editor-text-size");
+            const textOverlay = document.getElementById("modal-text-overlay");
+            const nameDisplay = document.getElementById("modal-company-name-display");
+            const addrDisplay = document.getElementById("modal-company-address-display");
+
+             const updateTextOverlayPreview = () => {
+              if (!textOverlay) return;
+              const nameVal = nameInput ? nameInput.value.trim() : "";
+              const addrVal = addrInput ? addrInput.value.trim() : "";
+              const sizeVal = sizeInput ? (parseFloat(sizeInput.value) || 2.2) : 2.2;
+
+              if (nameDisplay) nameDisplay.textContent = nameVal;
+              if (addrDisplay) addrDisplay.textContent = addrVal;
+
+              const container = document.getElementById("modal-poster-container");
+              if (container && container.offsetWidth > 0) {
+                textOverlay.style.fontSize = (container.offsetWidth * (sizeVal / 100)) + "px";
+              } else {
+                textOverlay.style.fontSize = (sizeVal * 0.45) + "vw";
+              }
+
+              if (nameVal || addrVal) {
+                textOverlay.style.display = "block";
+              } else {
+                textOverlay.style.display = "none";
+              }
+            };
+
+            nameInput?.addEventListener("input", updateTextOverlayPreview);
+            addrInput?.addEventListener("input", updateTextOverlayPreview);
+            sizeInput?.addEventListener("input", updateTextOverlayPreview);
+            sizeInput?.addEventListener("change", updateTextOverlayPreview);
+
+            initDraggable('draggable-logo', 'poster-editor-container', 'save-logo-btn', 'resize-handle');
+            initDraggable('modal-draggable-logo', 'modal-poster-container', 'modal-save-btn', 'modal-resize-handle', true);
+            initDraggableText('modal-text-overlay', 'modal-poster-container');
+
+            // Dynamically scale text font size in preview whenever the container dimensions change (e.g. on zoom/resize)
+            const posterContainer = document.getElementById("modal-poster-container");
+            if (posterContainer) {
+              const resizeObserver = new ResizeObserver((entries) => {
+                for (let entry of entries) {
+                  const containerWidth = entry.contentRect.width;
+                  if (containerWidth > 0) {
+                    const sizeVal = sizeInput ? (parseFloat(sizeInput.value) || 2.2) : 2.2;
+                    textOverlay.style.fontSize = (containerWidth * (sizeVal / 100)) + "px";
+                  }
+                }
+              });
+              resizeObserver.observe(posterContainer);
             }
-        }, { passive: false });
 
-        // Mouse Panning (Dragging background)
-        zoomContainer.addEventListener('mousedown', (e) => {
-            if (e.target.closest('#modal-draggable-logo')) return;
-            isPanning = true;
-            startPanX = e.clientX - panX;
-            startPanY = e.clientY - panY;
-            zoomContainer.style.cursor = 'grabbing';
-        });
+            // --- ZOOM LOGIC ---
+            const modalBody = document.getElementById('modal-body-zoom');
+            const zoomContainer = document.getElementById('modal-poster-container');
+            const resetZoomBtn = document.getElementById('reset-zoom-btn');
 
-        window.addEventListener('mousemove', (e) => {
-            if (isPanning) {
-                panX = e.clientX - startPanX;
-                panY = e.clientY - startPanY;
-                updateTransform();
-            }
-        });
+            if (modalBody && zoomContainer) {
+              const updateZoomUI = () => {
+                const zoomPct = Math.round(modalZoomScale * 100);
+                const statusElem = document.getElementById('editor-zoom-status');
+                if (statusElem) statusElem.innerHTML = `Scale: ${zoomPct}%`;
+                if (resetZoomBtn) resetZoomBtn.innerHTML = `<i class="bi bi-zoom-in"></i> ${zoomPct}%`;
+              };
 
-        window.addEventListener('mouseup', () => {
-            isPanning = false;
-            zoomContainer.style.cursor = 'auto';
-        });
+              let panX = 0;
+              let panY = 0;
+              let isPanning = false;
+              let startPanX = 0;
+              let startPanY = 0;
 
-        // Touch Zoom Logic (Pinch to zoom) & Panning
-        let initialTouchDistance = null;
-        let initialZoomScale = 1.0;
+              const updateTransform = () => {
+                zoomContainer.style.transform = `translate(${panX}px, ${panY}px) scale(${modalZoomScale})`;
+                updateZoomUI();
+              };
 
-        modalBody.addEventListener('touchstart', function(e) {
-            if (e.touches.length === 2) {
-                e.preventDefault();
-                initialTouchDistance = Math.hypot(
-                    e.touches[0].pageX - e.touches[1].pageX,
-                    e.touches[0].pageY - e.touches[1].pageY
-                );
-                initialZoomScale = modalZoomScale;
-            } else if (e.touches.length === 1 && !e.target.closest('#modal-draggable-logo')) {
+              modalBody.addEventListener('wheel', function (e) {
+                if (e.ctrlKey) {
+                  e.preventDefault();
+                  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+                  modalZoomScale = Math.max(0.3, Math.min(modalZoomScale + delta, 4.0));
+                  updateTransform();
+                }
+              }, { passive: false });
+
+              // Mouse Panning (Dragging background)
+              zoomContainer.addEventListener('mousedown', (e) => {
+                if (e.target.closest('#modal-draggable-logo') || e.target.closest('#modal-text-overlay')) return;
                 isPanning = true;
-                startPanX = e.touches[0].clientX - panX;
-                startPanY = e.touches[0].clientY - panY;
-            }
-        }, { passive: false });
+                startPanX = e.clientX - panX;
+                startPanY = e.clientY - panY;
+                zoomContainer.style.cursor = 'grabbing';
+              });
 
-        modalBody.addEventListener('touchmove', function(e) {
-            if (e.touches.length === 2 && initialTouchDistance) {
-                e.preventDefault();
-                const currentTouchDistance = Math.hypot(
+              window.addEventListener('mousemove', (e) => {
+                if (isPanning) {
+                  panX = e.clientX - startPanX;
+                  panY = e.clientY - startPanY;
+                  updateTransform();
+                }
+              });
+
+              window.addEventListener('mouseup', () => {
+                isPanning = false;
+                zoomContainer.style.cursor = 'auto';
+              });
+
+              // Touch Zoom Logic (Pinch to zoom) & Panning
+              let initialTouchDistance = null;
+              let initialZoomScale = 1.0;
+
+              modalBody.addEventListener('touchstart', function (e) {
+                if (e.touches.length === 2) {
+                  e.preventDefault();
+                  initialTouchDistance = Math.hypot(
                     e.touches[0].pageX - e.touches[1].pageX,
                     e.touches[0].pageY - e.touches[1].pageY
-                );
-                
-                const distanceRatio = currentTouchDistance / initialTouchDistance;
-                const newScale = initialZoomScale * distanceRatio;
-                
-                modalZoomScale = Math.max(0.3, Math.min(newScale, 4.0));
+                  );
+                  initialZoomScale = modalZoomScale;
+                } else if (e.touches.length === 1 && !e.target.closest('#modal-draggable-logo') && !e.target.closest('#modal-text-overlay')) {
+                  isPanning = true;
+                  startPanX = e.touches[0].clientX - panX;
+                  startPanY = e.touches[0].clientY - panY;
+                }
+              }, { passive: false });
+
+              modalBody.addEventListener('touchmove', function (e) {
+                if (e.touches.length === 2 && initialTouchDistance) {
+                  e.preventDefault();
+                  const currentTouchDistance = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                  );
+
+                  const distanceRatio = currentTouchDistance / initialTouchDistance;
+                  const newScale = initialZoomScale * distanceRatio;
+
+                  modalZoomScale = Math.max(0.3, Math.min(newScale, 4.0));
+                  updateTransform();
+                } else if (isPanning && e.touches.length === 1) {
+                  e.preventDefault();
+                  panX = e.touches[0].clientX - startPanX;
+                  panY = e.touches[0].clientY - startPanY;
+                  updateTransform();
+                }
+              }, { passive: false });
+
+              modalBody.addEventListener('touchend', function (e) {
+                if (e.touches.length < 2) {
+                  initialTouchDistance = null;
+                }
+                if (e.touches.length === 0) {
+                  isPanning = false;
+                }
+              });
+
+              resetZoomBtn?.addEventListener('click', () => {
+                modalZoomScale = 1.0;
+                panX = 0;
+                panY = 0;
                 updateTransform();
-            } else if (isPanning && e.touches.length === 1) {
-                e.preventDefault();
-                panX = e.touches[0].clientX - startPanX;
-                panY = e.touches[0].clientY - startPanY;
-                updateTransform();
+              });
             }
-        }, { passive: false });
 
-        modalBody.addEventListener('touchend', function(e) {
-            if (e.touches.length < 2) {
-                initialTouchDistance = null;
-            }
-            if (e.touches.length === 0) {
-                isPanning = false;
-            }
-        });
-
-        resetZoomBtn?.addEventListener('click', () => {
-            modalZoomScale = 1.0;
-            panX = 0;
-            panY = 0;
-            updateTransform();
-        });
-    }
-
-    const handleSave = (btn) => {
-        const isModal = btn.id === 'modal-save-btn';
-        const logo = isModal ? document.getElementById('modal-draggable-logo') : document.getElementById('draggable-logo');
-        const posterImg = isModal ? document.getElementById('modal-base-poster') : logo.closest('.poster-item')?.querySelector('img');
-
-        const x_pct = parseFloat(logo.style.left);
-        const y_pct = parseFloat(logo.style.top);
-        const width_pct = parseFloat(logo.style.width);
-        const poster_path = posterImg ? posterImg.getAttribute('src') : null;
-
-        document.getElementById('editorLogoInput')?.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
+            document.getElementById('editorLogoInput')?.addEventListener('change', function (e) {
+              const file = e.target.files[0];
+              if (file) {
                 const posterSrc = document.getElementById('modal-base-poster').getAttribute('src');
                 const formData = new FormData();
                 formData.append('logo', file);
@@ -1580,52 +1797,119 @@ document.addEventListener('DOMContentLoaded', function() {
                 btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Uploading...';
 
                 fetch("{% url 'upload_company_logo' %}", {
-                    method: 'POST',
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}', 'X-Requested-With': 'XMLHttpRequest' },
-                    body: formData
+                  method: 'POST',
+                  headers: { 'X-CSRFToken': '{{ csrf_token }}', 'X-Requested-With': 'XMLHttpRequest' },
+                  body: formData
                 })
-                .then(r => r.json())
-                .then(data => {
+                  .then(r => r.json())
+                  .then(data => {
                     btn.disabled = false;
                     btn.innerHTML = originalText;
                     if (data.status === 'success') {
-                        const modalLogoImg = document.getElementById('modal-logo-img');
-                        if (modalLogoImg) modalLogoImg.src = data.logo_url;
+                      const modalLogoImg = document.getElementById('modal-logo-img');
+                      if (modalLogoImg) modalLogoImg.src = data.logo_url;
+                      const draggableLogo = document.getElementById('modal-draggable-logo');
+                      if (draggableLogo) draggableLogo.style.display = 'block';
                     }
+                  });
+              }
+            });
+
+            const handleSave = (btn) => {
+              const isModal = btn.id === 'modal-save-btn';
+              const logo = isModal ? document.getElementById('modal-draggable-logo') : document.getElementById('draggable-logo');
+              const posterImg = isModal ? document.getElementById('modal-base-poster') : logo.closest('.poster-item')?.querySelector('img');
+
+              const x_pct = parseFloat(logo.style.left);
+              const y_pct = parseFloat(logo.style.top);
+              const width_pct = parseFloat(logo.style.width);
+              const poster_path = posterImg ? posterImg.getAttribute('src') : null;
+
+              const textOverlay = document.getElementById("modal-text-overlay");
+              const nameInput = document.getElementById("editor-company-name");
+              const addrInput = document.getElementById("editor-company-address");
+              const sizeInput = document.getElementById("editor-text-size");
+
+              const text_x = textOverlay ? parseFloat(textOverlay.style.left) : 3.0;
+              const text_y = textOverlay ? parseFloat(textOverlay.style.top) : 88.0;
+              const company_name = nameInput ? nameInput.value.trim() : "";
+              const company_address = addrInput ? addrInput.value.trim() : "";
+              const text_size = sizeInput ? (parseFloat(sizeInput.value) || 2.2) : 2.2;
+
+              const originalText = btn.innerHTML;
+              btn.disabled = true;
+              btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+
+              fetch("{% url 'save_logo_config' %}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
+                body: JSON.stringify({
+                  x: x_pct,
+                  y: y_pct,
+                  width: width_pct,
+                  poster_path: poster_path,
+                  company_name: company_name,
+                  company_address: company_address,
+                  text_x: text_x,
+                  text_y: text_y,
+                  text_size: text_size
+                })
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.status === 'success') {
+                    btn.innerHTML = '<i class="bi bi-check-all me-1"></i>Saved!';
+                    setTimeout(() => {
+                      window.location.href = "{% url 'company_dashboard' %}?section=posters";
+                    }, 1000);
+                  }
                 });
-            }
-        }); 
+            };
 
-        const originalText = btn.innerHTML;
-        btn.disabled = true;
-        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+            document.getElementById('save-logo-btn')?.addEventListener('click', function () { handleSave(this); });
+            document.getElementById('modal-save-btn')?.addEventListener('click', function () { handleSave(this); });
 
-        fetch("{% url 'save_logo_config' %}", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' },
-            body: JSON.stringify({ x: x_pct, y: y_pct, width: width_pct, poster_path: poster_path })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                btn.innerHTML = '<i class="bi bi-check-all me-1"></i>Saved!';
-                setTimeout(() => {
-                    window.location.href = "{% url 'company_dashboard' %}?section=posters";
-                }, 1000);
-            }
-        });
-    };
+             // Disable hover-resize and change-layout button on dashboard
+             const dLogo = document.getElementById('draggable-logo');
+             if (dLogo) {
+               // dLogo.addEventListener('mouseenter', () => document.getElementById('resize-handle').style.display = 'block');
+             }
 
-    document.getElementById('save-logo-btn')?.addEventListener('click', function() { handleSave(this); });
-    document.getElementById('modal-save-btn')?.addEventListener('click', function() { handleSave(this); });
-
-    // Disable hover-resize and change-layout button on dashboard
-    const dLogo = document.getElementById('draggable-logo');
-    if (dLogo) {
-        // dLogo.addEventListener('mouseenter', () => document.getElementById('resize-handle').style.display = 'block');
-    }
-});
-</script>
+             // Automatically scale text overlay font sizes and shadows on dashboard poster cards
+             const updateAllCardFontSizes = () => {
+               document.querySelectorAll(".poster-item").forEach((item) => {
+                 const container = item.querySelector(".position-relative");
+                 const textOverlay = item.querySelector(".card-text-overlay");
+                 if (container && textOverlay) {
+                   const text_size = parseFloat(textOverlay.getAttribute("data-text-size")) || 2.2;
+                   if (container.offsetWidth > 0) {
+                     textOverlay.style.fontSize = (container.offsetWidth * (text_size / 100)) + "px";
+                   }
+                   
+                   const colorVal = textOverlay.getAttribute("data-text-color") || "#000000";
+                   let r = parseInt(colorVal.substring(1, 3), 16) || 0;
+                   let g = parseInt(colorVal.substring(3, 5), 16) || 0;
+                   let b = parseInt(colorVal.substring(5, 7), 16) || 0;
+                   let luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+                   if (luminance > 127) {
+                     textOverlay.style.textShadow = "0 1px 2px rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8), 1px -1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8), 1px 1px 0 rgba(0,0,0,0.8)";
+                   } else {
+                     textOverlay.style.textShadow = "0 1px 2px rgba(255,255,255,0.9), -1px -1px 0 rgba(255,255,255,0.9), 1px -1px 0 rgba(255,255,255,0.9), -1px 1px 0 rgba(255,255,255,0.9), 1px 1px 0 rgba(255,255,255,0.9)";
+                   }
+                 }
+               });
+             };
+             
+             updateAllCardFontSizes();
+             window.addEventListener("resize", updateAllCardFontSizes);
+             // Run again after brief timeouts to catch finished layouts or image loads
+             setTimeout(updateAllCardFontSizes, 100);
+             setTimeout(updateAllCardFontSizes, 500);
+             document.querySelectorAll(".poster-item img").forEach(img => {
+               img.addEventListener("load", updateAllCardFontSizes);
+             });
+           });
+        </script>
         <div class="poster-item">
           <div class="poster-placeholder">
             <i class="bi bi-telephone-outbound fs-1 d-block mb-2"></i>
@@ -1833,49 +2117,94 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Store poster configs for JS access
     const posterConfigs = {
-        "/media/Posters/POCSO Poster.webp": {
-            x: {{ poster_configs.pocso.logo_x|default:organization.logo_x|default:2.0 }},
-            y: {{ poster_configs.pocso.logo_y|default:organization.logo_y|default:2.0 }},
-            width: {{ poster_configs.pocso.logo_width|default:organization.logo_width|default:15.0 }},
-            logo_url: "{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% endif %}"
-        }
+      "/media/Posters/POCSO Poster.webp": {
+        x: {{ poster_configs.pocso.logo_x|default:organization.logo_x|default:2.0 }},
+        y: {{ poster_configs.pocso.logo_y|default:organization.logo_y|default:2.0 }},
+        width: {{ poster_configs.pocso.logo_width|default:organization.logo_width|default:15.0 }},
+        logo_url: "{% if poster_configs.pocso.logo %}{{ poster_configs.pocso.logo.url }}{% endif %}",
+        company_name: "{{ poster_configs.pocso.company_name|default:''|escapejs }}",
+        company_address: "{{ poster_configs.pocso.company_address|default:''|escapejs }}",
+        text_x: {{ poster_configs.pocso.text_x|default:3.0 }},
+        text_y: {{ poster_configs.pocso.text_y|default:88.0 }},
+        text_size: {{ poster_configs.pocso.text_size|default:2.2 }}
+      }
     };
 
     // Handle Edit Layout button clicks to update modal image and positions
     document.querySelectorAll('[data-bs-target="#fullscreenEditorModal"]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const posterItem = this.closest('.poster-item');
-            if (posterItem) {
-                const dashboardPosterImg = posterItem.querySelector('img');
-                if (dashboardPosterImg) {
-                    const posterSrc = dashboardPosterImg.getAttribute('src');
-                    const modalBasePoster = document.getElementById('modal-base-poster');
-                    const modalLogo = document.getElementById('modal-draggable-logo');
-                    const modalLogoImg = document.getElementById('modal-logo-img');
-                    
-                    if (modalBasePoster) modalBasePoster.src = posterSrc;
-                    
-                    if (modalLogo) {
-                        const config = posterConfigs[posterSrc];
-                        if (config) {
-                            modalLogo.style.left = config.x + '%';
-                            modalLogo.style.top = config.y + '%';
-                            modalLogo.style.width = config.width + '%';
-                            if (config.logo_url && modalLogoImg) {
-                                modalLogoImg.src = config.logo_url;
-                            } else {
-                                modalLogoImg.src = "{{ organization.logo.url }}";
-                            }
-                        } else {
-                            modalLogo.style.left = "{{ organization.logo_x|default:2 }}%";
-                            modalLogo.style.top = "{{ organization.logo_y|default:2 }}%";
-                            modalLogo.style.width = "{{ organization.logo_width|default:15 }}%";
-                            if (modalLogoImg) modalLogoImg.src = "{{ organization.logo.url }}";
-                        }
-                    }
-                }
+      btn.addEventListener('click', function () {
+        const posterItem = this.closest('.poster-item');
+        if (posterItem) {
+          const dashboardPosterImg = posterItem.querySelector('img');
+          if (dashboardPosterImg) {
+            const posterSrc = dashboardPosterImg.getAttribute('src');
+            const modalBasePoster = document.getElementById('modal-base-poster');
+            const modalLogo = document.getElementById('modal-draggable-logo');
+            const modalLogoImg = document.getElementById('modal-logo-img');
+
+            if (modalBasePoster) modalBasePoster.src = posterSrc;
+
+            const modalResetBtn = document.getElementById('modal-reset-logo-btn');
+            if (modalResetBtn) {
+              modalResetBtn.href = `{% url 'reset_logo_config' %}?section=posters&poster_path=${encodeURIComponent(posterSrc)}`;
             }
-        });
+
+            const config = posterConfigs[posterSrc];
+
+            if (modalLogo) {
+              const hasLogo = (config && config.logo_url) || "{% if organization.logo %}{{ organization.logo.url }}{% endif %}";
+              if (hasLogo) {
+                modalLogo.style.display = 'block';
+              } else {
+                modalLogo.style.display = 'none';
+              }
+
+              if (config) {
+                modalLogo.style.left = config.x + '%';
+                modalLogo.style.top = config.y + '%';
+                modalLogo.style.width = config.width + '%';
+                if (config.logo_url && modalLogoImg) {
+                  modalLogoImg.src = config.logo_url;
+                } else {
+                  modalLogoImg.src = "{% if organization.logo %}{{ organization.logo.url }}{% endif %}";
+                }
+              } else {
+                modalLogo.style.left = "{{ organization.logo_x|default:2 }}%";
+                modalLogo.style.top = "{{ organization.logo_y|default:2 }}%";
+                modalLogo.style.width = "{{ organization.logo_width|default:15 }}%";
+                if (modalLogoImg) modalLogoImg.src = "{% if organization.logo %}{{ organization.logo.url }}{% endif %}";
+              }
+            }
+
+            // Update text values and positions from config
+            const nameInput = document.getElementById("editor-company-name");
+            const addrInput = document.getElementById("editor-company-address");
+            const sizeInput = document.getElementById("editor-text-size");
+            const textOverlay = document.getElementById("modal-text-overlay");
+            const nameDisplay = document.getElementById("modal-company-name-display");
+            const addrDisplay = document.getElementById("modal-company-address-display");
+
+             if (config && textOverlay) {
+              nameInput.value = config.company_name || "";
+              addrInput.value = config.company_address || "";
+              sizeInput.value = config.text_size || 2.2;
+
+              textOverlay.style.left = (config.text_x !== undefined ? config.text_x : 3.0) + "%";
+              textOverlay.style.top = (config.text_y !== undefined ? config.text_y : 88.0) + "%";
+
+              updateTextOverlayPreview();
+            } else if (textOverlay) {
+              nameInput.value = "";
+              addrInput.value = "";
+              sizeInput.value = 2.2;
+              textOverlay.style.left = "3%";
+              textOverlay.style.top = "88%";
+              
+              updateTextOverlayPreview();
+            }
+          }
+        }
+      });
     });
 
     if (urlParams.get('open_editor') === 'true') {
@@ -1932,7 +2261,7 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    window.handleEditorLogoUpload = function(input) {
+    window.handleEditorLogoUpload = function (input) {
       if (!input.files || !input.files[0]) return;
 
       const formData = new FormData();
@@ -1949,29 +2278,29 @@ document.addEventListener('DOMContentLoaded', function() {
         headers: { 'X-Requested-With': 'XMLHttpRequest' },
         body: formData
       })
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          const logoImages = document.querySelectorAll('#draggable-logo img, #modal-draggable-logo img, .org-logo-preview');
-          logoImages.forEach(img => {
-            img.src = data.logo_url + '?v=' + new Date().getTime();
-          });
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            const logoImages = document.querySelectorAll('#draggable-logo img, #modal-draggable-logo img, .org-logo-preview');
+            logoImages.forEach(img => {
+              img.src = data.logo_url + '?v=' + new Date().getTime();
+            });
 
-          const containers = document.querySelectorAll('#draggable-logo, #modal-draggable-logo');
-          containers.forEach(c => c.style.display = 'block');
+            const containers = document.querySelectorAll('#draggable-logo, #modal-draggable-logo');
+            containers.forEach(c => c.style.display = 'block');
 
-          btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Updated!';
-          setTimeout(() => {
-            btn.disabled = false;
-            btn.innerHTML = originalText;
-          }, 1500);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-      });
+            btn.innerHTML = '<i class="bi bi-check2 me-2"></i>Updated!';
+            setTimeout(() => {
+              btn.disabled = false;
+              btn.innerHTML = originalText;
+            }, 1500);
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          btn.disabled = false;
+          btn.innerHTML = originalText;
+        });
     };
 
     function toggleSidebar() {
@@ -2082,19 +2411,102 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     }
 
-    // Initialize BOTH charts when the modal opens
+    // Initialize BOTH charts and fetch progress in real-time when the modal opens
     document.addEventListener('shown.bs.modal', function (event) {
       const modalId = event.target.id;
       if (modalId.startsWith('userProgressModal-')) {
         const memberId = modalId.split('-')[1];
 
-        // 1. Draw Video Chart (Primary Blue)
-        drawChart(`pie-vids-${memberId}`, '#4e54c8');
+        // Fetch real-time progress from backend
+        fetch(`/ajax/member-progress/${memberId}/`)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === 'success') {
+              const modal = document.getElementById(modalId);
 
-        // 2. Draw PPT Chart (Warning Yellow/Orange)
-        drawChart(`pie-ppts-${memberId}`, '#f1c40f');
+              // Update time text
+              const timeTextElem = modal.querySelector('.time-text');
+              if (timeTextElem) timeTextElem.textContent = data.total_active_time;
+
+              // Update video percent text and bar
+              const videoPercentElem = document.querySelector(`#stats-vids-${memberId} h2`);
+              if (videoPercentElem) videoPercentElem.textContent = `${data.video_percent}%`;
+
+              const videoProgressFill = document.querySelector(`#stats-vids-${memberId} .progress-fill`);
+              if (videoProgressFill) videoProgressFill.style.width = `${data.video_percent}%`;
+
+              // Update PPT percent text and bar
+              const pptPercentElem = document.querySelector(`#stats-ppts-${memberId} h2`);
+              if (pptPercentElem) pptPercentElem.textContent = `${data.ppt_percent}%`;
+
+              const pptProgressFill = document.querySelector(`#stats-ppts-${memberId} .progress-fill`);
+              if (pptProgressFill) pptProgressFill.style.width = `${data.ppt_percent}%`;
+
+              // Update data-percent attribute of canvases
+              const canvasVids = document.getElementById(`pie-vids-${memberId}`);
+              if (canvasVids) {
+                canvasVids.setAttribute('data-percent', data.video_percent);
+              }
+              const canvasPpts = document.getElementById(`pie-ppts-${memberId}`);
+              if (canvasPpts) {
+                canvasPpts.setAttribute('data-percent', data.ppt_percent);
+              }
+
+              // Update video lessons completion badges
+              const videoListDiv = document.getElementById(`content-vids-${memberId}`);
+              if (videoListDiv) {
+                const recordItems = videoListDiv.querySelectorAll('.record-item');
+                data.video_lesson_modules.forEach((mod, index) => {
+                  const item = recordItems[index];
+                  if (item) {
+                    const badge = item.querySelector('.lms-badge');
+                    if (badge) {
+                      if (mod.is_completed) {
+                        badge.className = 'lms-badge bg-complete';
+                        badge.textContent = 'Completed';
+                      } else {
+                        badge.className = 'lms-badge bg-pending';
+                        badge.textContent = 'Pending';
+                      }
+                    }
+                  }
+                });
+              }
+
+              // Update PPT/Quiz list completion badges
+              const pptListDiv = document.getElementById(`content-ppts-${memberId}`);
+              if (pptListDiv) {
+                const recordItems = pptListDiv.querySelectorAll('.record-item');
+                data.ppt_modules.forEach((mod, index) => {
+                  const item = recordItems[index];
+                  if (item) {
+                    const badge = item.querySelector('.lms-badge');
+                    if (badge) {
+                      if (mod.is_completed) {
+                        badge.className = 'lms-badge bg-complete';
+                        badge.textContent = 'Completed';
+                      } else {
+                        badge.className = 'lms-badge bg-pending';
+                        badge.textContent = mod.is_quiz ? 'Attempt' : 'View';
+                      }
+                    }
+                  }
+                });
+              }
+            }
+            // Finally draw charts
+            drawChart(`pie-vids-${memberId}`, '#4e54c8'); // Video uses primary blue
+            drawChart(`pie-ppts-${memberId}`, '#f1c40f'); // PPT uses yellow/orange
+          })
+          .catch(err => {
+            console.error("Error fetching real-time member progress:", err);
+            // Fallback to static chart drawing
+            drawChart(`pie-vids-${memberId}`, '#4e54c8');
+            drawChart(`pie-ppts-${memberId}`, '#f1c40f');
+          });
       }
     });
+
     function refreshDashboard() {
       const btn = document.getElementById('refreshBtn');
       const icon = btn.querySelector('i');
@@ -2136,14 +2548,15 @@ document.addEventListener('DOMContentLoaded', function() {
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
-          <form id="uploadLogoForm" method="POST" action="{% url 'upload_company_logo' %}" enctype="multipart/form-data">
+          <form id="uploadLogoForm" method="POST" action="{% url 'upload_company_logo' %}"
+            enctype="multipart/form-data">
             {% csrf_token %}
             <p class="text-white-50 small mb-4">
               This logo will be displayed on the top-left of your awareness posters.
             </p>
             <div class="mb-4">
-              <input class="form-control" type="file" name="company_logo" accept="image/*" required 
-                     style="background: rgba(248, 250, 252, 0.95); color: #020617;">
+              <input class="form-control" type="file" name="company_logo" accept="image/*" required
+                style="background: rgba(248, 250, 252, 0.95); color: #020617;">
             </div>
             <button type="submit" class="btn btn-gradient w-100" id="uploadLogoBtn">
               Upload Logo
@@ -2154,6 +2567,26 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
   </div>
 
+  <!-- === TAB-CLOSE AUTO LOGOUT === -->
+  <script>
+    (function () {
+      'use strict';
+      var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
+      var _navAway = false;
+      function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+      document.addEventListener('click', function (e) {
+        var a = e.target.closest('a[href]');
+        if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
+      }, true);
+      document.addEventListener('submit', function () { markNav(); }, true);
+      window.addEventListener('pagehide', function (e) {
+        if (e.persisted) return;
+        if (_navAway) return;
+        navigator.sendBeacon(TAB_CLOSE_URL);
+      });
+      sessionStorage.removeItem('_ohs_nav');
+    })();
+  </script>
 </body>
 
 </html>

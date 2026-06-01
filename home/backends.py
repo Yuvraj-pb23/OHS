@@ -19,6 +19,17 @@ class EmailOrUsernameModelBackend(ModelBackend):
         except UserModel.DoesNotExist:
             print("No user found with that username or email.")
             return None
+        except UserModel.MultipleObjectsReturned:
+            print("Multiple users found with that username or email. Checking passwords...")
+            users = UserModel.objects.filter(
+                Q(username__iexact=username) | Q(email__iexact=username)
+            )
+            for u in users:
+                if u.check_password(password) and self.user_can_authenticate(u):
+                    print(f"Found matching User among duplicates: {u.username}")
+                    return u
+            print("Multiple users found, but none matched the password.")
+            return None
 
         if user.check_password(password) and self.user_can_authenticate(user):
             print("Password matches! Logging in...")

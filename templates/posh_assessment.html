@@ -273,10 +273,9 @@
         <!-- Results UI -->
         <div class="quiz-card" id="results-ui" style="display:none; text-align:center;">
             <h1>Results</h1>
-            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/20
-            </div>
+            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/26</div>
             <p id="result-message" style="font-size: 1.1rem; margin-bottom: 30px;"></p>
-            <div style="display:flex; gap:15px; justify-content:center;">
+            <div style="display:flex; gap:15px; justify-content:center;" id="result-actions">
                 <button class="btn btn-primary" onclick="location.reload()">Retry Test</button>
                 <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
             </div>
@@ -286,8 +285,7 @@
         <div class="review-section" id="review-ui">
             <h2 style="margin-bottom:20px;">Review Answers</h2>
             <div id="review-container"></div>
-            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="location.reload()">Close
-                Review</button>
+            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="closeReview()">Close Review</button>
         </div>
     </main>
 </div>
@@ -300,14 +298,14 @@
     const questionPool = [
         { q: "What does POSH stand for?", a: ["Prevention of Social Harassment Act", "Prevention of Sexual Harassment Act", "Protection of Sexual Harassment Act", "Policy on Safety and Harassment Act"], c: 1 },
         { q: "In which year was the POSH Act enacted in India?", a: ["2010", "2012", "2013", "2015"], c: 2 },
-        { q: "What is considered sexual harassment under the POSH Act?", a: ["Only physical contact of a sexual nature", "Only verbal abuse of a sexual nature", "Only non-verbal conduct of a sexual nature", "All of the above"], c: 2 },
+        { q: "What is considered sexual harassment under the POSH Act?", a: ["Only physical contact of a sexual nature", "Only verbal abuse of a sexual nature", "Only non-verbal conduct of a sexual nature", "All of the above"], c: 3 },
         { q: "Which of the following is an example of sexual harassment?", a: ["Asking about work deadlines", "Making sexually coloured remarks", "Assigning tasks", "Giving performance feedback"], c: 1 },
         { q: "What is the name of the committee formed at the workplace under POSH?", a: ["Safety Committee", "Internal Committee", "Ethics Committee", "HR Committee"], c: 1 },
         { q: "POSH Act is mandatory for organizations with how many employees?", a: ["5 or more", "10 or more", "15 or more", "20 or more"], c: 1 },
         { q: "What is the time limit to file a complaint under POSH?", a: ["1 month", "3 months", "6 months", "1 year"], c: 1 },
-        { q: "Is a verbal complaint valid under POSH?", a: ["No, only written complaints are accepted", "IC can assist in writing it down", "Only email complaints are valid", "All of the above"], c: 1 },
+        { q: "Is a verbal complaint valid under POSH?", a: ["No, only written complaints are accepted", "IC can assist in writing it down", "Only email complaints are valid", "All of the above"], c: 0 },
         { q: "Who can file a complaint under POSH?", a: ["Only female employees", "Only permanent staff", "Any aggrieved employee, including interns or visitors", "Only manager"], c: 2 },
-        { q: "Can men file complaints under POSH to the IC?", a: ["Yes", "No", "Only if approved by HR", "Only in government offices"], c: 1 },
+        { q: "Can men file complaints under POSH to the IC?", a: ["Yes", "No", "Only if the POSH policy of the company includes men", "Only in government offices"], c: 2 },
         { q: "What is the role of the Internal Committee (IC)?", a: ["Punish employees directly", "Conduct inquiry and recommend action", "File FIR automatically", "Terminate employees"], c: 1 },
         { q: "What is the timeline for completing an inquiry under POSH?", a: ["30 days", "60 days", "90 days", "120 days"], c: 2 },
         { q: "What type of workplace is covered under POSH?", a: ["Only offices", "Only government workplaces", "All workplaces including virtual/work-from-home", "Only factories"], c: 2 },
@@ -322,20 +320,19 @@
         { q: "Which factor is most important in determining whether such remarks are inappropriate?", a: ["The intention behind the comment", "The seniority of the person speaking", "The effect on the work environment", "Whether the comment was repeated"], c: 2 },
         { q: "A manager suggests discussing career growth outside work in a personal setting. What makes this situation problematic?", a: ["The discussion is informal", "The timing is outside office hours", "As It mixes professional decisions with personal interaction", "The employee has not responded yet"], c: 2 },
         { q: "Which element is most critical in identifying quid pro quo harassment?", a: ["Whether the employee agreed", "Whether the request was explicit", "The connection between benefit and personal expectation", "The location of the interaction"], c: 2 },
-        { q: "If an employee feels pressured but no direct demand is stated, how should the situation be viewed?", a: ["As a misunderstanding", "As acceptable unless proven otherwise", "As potentially coercive", "As normal managerial behavior"], c: 2 },
         { q: "Is it the victim’s responsibility to avoid interacting with the harasser?", a: ["No, the organisation must take action to make the workplace safe.", "Yes, the victim should change their own behaviour.", "Only if the victim is junior.", "Only if the manager apologises."], c: 0 }
     ];
 
     let activeQuestions = [];
     let currentIdx = 0;
-    let score = 0;
-    let userSelections = [];
     let timer;
     let timeLeft = 30;
 
     function initQuiz() {
-        // Use all 26 questions
+        window._alreadyCorrectCount = 0;
         activeQuestions = [...questionPool].sort(() => 0.5 - Math.random());
+        activeQuestions.forEach(q => { delete q.userAnswer; });
+        currentIdx = 0;
         loadQuestion();
     }
 
@@ -355,8 +352,9 @@
 
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                if (userSelections[currentIdx] === undefined) {
-                    userSelections[currentIdx] = -1; // -1 indicates Timed Out
+                const qData = activeQuestions[currentIdx];
+                if (qData.userAnswer === undefined) {
+                    qData.userAnswer = -1; // -1 indicates Timed Out
                 }
                 handleNext();
             }
@@ -379,7 +377,7 @@
             div.onclick = () => {
                 document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
                 div.classList.add('selected');
-                userSelections[currentIdx] = i;
+                qData.userAnswer = i;
                 document.getElementById('next-btn').disabled = false;
             };
             container.appendChild(div);
@@ -392,13 +390,9 @@
     function handleNext() {
         clearInterval(timer);
 
-        // If they click next without selecting, or it timed out
-        if (userSelections[currentIdx] === undefined) {
-            userSelections[currentIdx] = -1;
-        }
-
-        if (userSelections[currentIdx] === activeQuestions[currentIdx].c) {
-            score++;
+        const qData = activeQuestions[currentIdx];
+        if (qData.userAnswer === undefined) {
+            qData.userAnswer = -1;
         }
 
         currentIdx++;
@@ -412,19 +406,41 @@
     function showResults() {
         document.getElementById('quiz-ui').style.display = 'none';
         document.getElementById('results-ui').style.display = 'block';
-        document.getElementById('score-display').innerText = `${score}/${activeQuestions.length}`;
+        
+        const correctCount = activeQuestions.filter(q => q.userAnswer === q.c).length;
+        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
+        
+        document.getElementById('score-display').innerText = `${totalCorrect}/${questionPool.length}`;
         const msg = document.getElementById('result-message');
 
-        // 80% passing threshold (Strictly Above 80%)
-        const percentage = Math.round((score / activeQuestions.length) * 100);
-        const passed = percentage >= 80;
+        const percentage = Math.round((totalCorrect / questionPool.length) * 100);
+        const passed = totalCorrect === questionPool.length;
+        const eligibleForReattempt = totalCorrect >= Math.ceil(questionPool.length * 0.8) && totalCorrect < questionPool.length;
 
         if (passed) {
-            msg.innerText = "Congratulations! You passed.";
+            msg.innerText = "🎉 Congratulations! You passed the POSH Assessment with a perfect score! Your certificate is now unlocked.";
             msg.style.color = "var(--success)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="window.location.href='{% url 'posh_act_page' %}'">Go to Dashboard</button>
+                <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+            `;
+        } else if (eligibleForReattempt) {
+            msg.innerText = `⚠️ Score: ${totalCorrect}/${questionPool.length} (${percentage}%). <br><br><b>You are eligible to complete the assessment by re-attempting only the incorrect questions!</b>`;
+            msg.style.color = "var(--warning)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="startFinalReattempt()">Re-attempt Incorrect Questions</button>
+                <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+            `;
         } else {
-            msg.innerText = `You did not pass. 80% (${passThreshold} correct) required. You will need to watch the training videos again before retrying.`;
+            msg.innerText = `❌ Score: ${totalCorrect}/${questionPool.length} (${percentage}%). <br><br><b>You did not qualify. Please retry the assessment to unlock your certificate.</b>`;
             msg.style.color = "var(--danger)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="location.reload()">Retry Assessment</button>
+                <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+            `;
         }
 
         // SAVE TO BACKEND
@@ -436,13 +452,31 @@
             },
             body: JSON.stringify({
                 type: 'POSH',
-                score: score,
-                total: activeQuestions.length,
+                score: totalCorrect,
+                total: questionPool.length,
                 passed: passed
             })
         }).then(res => res.json())
             .then(data => console.log("Result saved:", data))
             .catch(err => console.error("Error saving result:", err));
+    }
+
+    function startFinalReattempt() {
+        window._alreadyCorrectCount = (window._alreadyCorrectCount || 0) + activeQuestions.filter(q => q.userAnswer === q.c).length;
+        activeQuestions = activeQuestions.filter(q => q.userAnswer !== q.c);
+        activeQuestions.forEach(q => { delete q.userAnswer; });
+        currentIdx = 0;
+        
+        document.getElementById('quiz-ui').style.display = 'block';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('review-ui').style.display = 'none';
+        
+        loadQuestion();
+    }
+
+    function closeReview() {
+        document.getElementById('review-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'block';
     }
 
     function generateReview() {
@@ -451,26 +485,41 @@
         const container = document.getElementById('review-container');
         container.innerHTML = '';
 
+        const correctCount = activeQuestions.filter(q => q.userAnswer === q.c).length;
+        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
+
+        if (totalCorrect === questionPool.length) {
+            const item = document.createElement('div');
+            item.style.textAlign = 'center';
+            item.style.padding = '30px';
+            item.innerHTML = `
+                <div class="status-badge bg-success-light" style="font-size: 1.2rem; padding: 8px 24px; border-radius: 30px; margin-bottom: 15px;">🎉 Perfect Score!</div>
+                <h3 style="margin-top: 15px; color: var(--success, #10b981);">Outstanding! You answered all questions correctly.</h3>
+            `;
+            container.appendChild(item);
+            return;
+        }
+
         activeQuestions.forEach((q, i) => {
-            const userPick = userSelections[i];
+            const userPick = q.userAnswer;
             const isCorrect = userPick === q.c;
-            const isTimedOut = userPick === -1;
+            const isTimedOut = userPick === -1 || userPick === undefined;
+
+            if (isCorrect) return; // Only show incorrect/timed-out questions
 
             const item = document.createElement('div');
-            item.className = `review-item ${isCorrect ? 'correct-border' : 'wrong-border'}`;
+            item.className = `review-item wrong-border`;
 
-            let statusBadge = `<div class="status-badge bg-success-light">✓ Correct</div>`;
+            let statusBadge = `<div class="status-badge bg-danger-light">✗ Incorrect</div>`;
             if (isTimedOut) {
                 statusBadge = `<div class="status-badge bg-warning-light">⌛ Timed Out</div>`;
-            } else if (!isCorrect) {
-                statusBadge = `<div class="status-badge bg-danger-light">✗ Incorrect</div>`;
             }
 
             item.innerHTML = `
                 ${statusBadge}
                 <h3 style="margin:0 0 10px 0;">${i + 1}. ${q.q}</h3>
                 <p><strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}</p>
-                ${!isCorrect ? `<p style="color:var(--success)"><strong>Correct Answer:</strong> ${q.a[q.c]}</p>` : ''}
+                <p style="color:var(--success)"><strong>Correct Answer:</strong> ${q.a[q.c]}</p>
             `;
             container.appendChild(item);
         });

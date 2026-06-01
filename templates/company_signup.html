@@ -108,6 +108,32 @@
 
     .verified-tag { display: none; align-items: center; gap: 6px; margin-top: 6px; color: #2e7d32; font-size: 0.85rem; font-weight: 600; }
     .verified-tag.show { display: flex; }
+
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+    }
+    .password-toggle-icon {
+        position: absolute !important;
+        right: 15px !important;
+        top: 50% !important;
+        transform: translateY(-50%) !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 9999 !important;
+        width: 24px !important;
+        height: 24px !important;
+        pointer-events: auto !important;
+    }
+    .password-toggle-icon svg {
+        transition: stroke 0.3s ease;
+        pointer-events: none !important;
+    }
+    .password-toggle-icon:hover svg {
+        stroke: #26a69a !important;
+    }
 </style>
 
 <div class="sub-container">
@@ -177,76 +203,175 @@
 
         <div class="form-group">
             <label class="form-label">Create Password</label>
-            <input type="password" name="password" id="password" class="form-control" placeholder="********">
+            <div class="password-wrapper">
+                <input type="password" name="password" id="password" class="form-control" placeholder="********" style="padding-right: 45px;">
+                <span class="password-toggle-icon" id="togglePassword">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="#6b7280" class="eye-open" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="#6b7280" class="eye-closed" style="width: 20px; height: 20px; display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                </span>
+            </div>
             <div class="error-msg">Password must be 8+ chars, with a number &amp; symbol (@$!%*?&amp;).</div>
         </div>
 
         <div class="form-group">
             <label class="form-label">Confirm Password</label>
-            <input type="password" id="confirm_password" class="form-control" placeholder="********">
+            <div class="password-wrapper">
+                <input type="password" id="confirm_password" class="form-control" placeholder="********" style="padding-right: 45px;">
+                <span class="password-toggle-icon" id="toggleConfirmPassword">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="#6b7280" class="eye-open" style="width: 20px; height: 20px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.2" stroke="#6b7280" class="eye-closed" style="width: 20px; height: 20px; display: none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                </span>
+            </div>
             <div class="error-msg">Passwords do not match.</div>
         </div>
 
-        {% if locked_email %}
-        <button type="submit" class="btn-company" id="submitBtn">Create Organization Account</button>
-        {% else %}
         <button type="submit" class="btn-company" id="submitBtn" disabled>Create Organization Account</button>
-        {% endif %}
     </form>
 </div>
 
 <script>
 (function () {
-    {% if locked_email %}
-    // ── LOCKED EMAIL FLOW — real-time validation ─────────────────
-    const submitBtn = document.getElementById('submitBtn');
+    'use strict';
+
+    // ── Shared DOM Elements ─────────────────────────────────────────
     const form      = document.getElementById('companyForm');
+    const submitBtn = document.getElementById('submitBtn');
     const nameInput = document.getElementById('fullname');
     const pass      = document.getElementById('password');
     const conf      = document.getElementById('confirm_password');
 
-    const nameErr = nameInput.nextElementSibling;   // .error-msg after fullname
-    const passErr = pass.nextElementSibling;        // .error-msg after password
-    const confErr = conf.nextElementSibling;        // .error-msg after confirm_password
+    // ── Global Password Visibility Toggles ──────────────────────────
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword && pass) {
+        togglePassword.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const type = pass.type === 'password' ? 'text' : 'password';
+            pass.type = type;
+            
+            const openEye = togglePassword.querySelector('.eye-open');
+            const closedEye = togglePassword.querySelector('.eye-closed');
+            if (type === 'text') {
+                openEye.style.display = 'none';
+                closedEye.style.display = 'block';
+            } else {
+                openEye.style.display = 'block';
+                closedEye.style.display = 'none';
+            }
+        });
+    }
+
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    if (toggleConfirmPassword && conf) {
+        toggleConfirmPassword.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const type = conf.type === 'password' ? 'text' : 'password';
+            conf.type = type;
+            
+            const openEye = toggleConfirmPassword.querySelector('.eye-open');
+            const closedEye = toggleConfirmPassword.querySelector('.eye-closed');
+            if (type === 'text') {
+                openEye.style.display = 'none';
+                closedEye.style.display = 'block';
+            } else {
+                openEye.style.display = 'block';
+                closedEye.style.display = 'none';
+            }
+        });
+    }
+
+    const RE = {
+        fullname: /^[a-zA-Z\s]{3,50}$/,
+        email:    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
+        password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+    };
+
+    {% if locked_email %}
+    // ── LOCKED EMAIL FLOW — real-time validation ─────────────────
+    const nameErr = nameInput.closest('.form-group').querySelector('.error-msg');
+    const passErr = pass.closest('.form-group').querySelector('.error-msg');
+    const confErr = conf.closest('.form-group').querySelector('.error-msg');
 
     function showError(input, errEl, msg) {
         input.style.borderColor = '#c62828';
+        input.classList.remove('valid');
+        input.classList.add('invalid');
         errEl.textContent = msg;
         errEl.style.display = 'block';
     }
+
     function clearError(input, errEl) {
         input.style.borderColor = '#26a69a';
+        input.classList.remove('invalid');
+        input.classList.add('valid');
         errEl.style.display = 'none';
+    }
+
+    function checkSubmitLocked() {
+        const isNameOk = RE.fullname.test(nameInput.value.trim());
+        const isPassOk = RE.password.test(pass.value);
+        const isConfOk = conf.value === pass.value && conf.value !== '';
+        
+        submitBtn.disabled = !(isNameOk && isPassOk && isConfOk);
     }
 
     // ── real-time feedback ──────────────────────────────────────
     nameInput.addEventListener('input', function() {
-        if (this.value.trim().length < 2) showError(this, nameErr, 'Please enter your full name.');
-        else clearError(this, nameErr);
+        if (!RE.fullname.test(this.value.trim())) {
+            showError(this, nameErr, 'Please enter a valid full name (minimum 3 characters, letters only).');
+        } else {
+            clearError(this, nameErr);
+        }
+        checkSubmitLocked();
     });
 
     pass.addEventListener('input', function() {
-        if (this.value.length < 8) showError(this, passErr, 'Password must be at least 8 characters.');
-        else clearError(this, passErr);
-        if (conf.value && conf.value !== this.value) showError(conf, confErr, 'Passwords do not match.');
-        else if (conf.value) clearError(conf, confErr);
+        if (!RE.password.test(this.value)) {
+            showError(this, passErr, 'Password must be 8+ chars, with a number & symbol (@$!%*?&).');
+        } else {
+            clearError(this, passErr);
+        }
+        if (conf.value && conf.value !== this.value) {
+            showError(conf, confErr, 'Passwords do not match.');
+        } else if (conf.value) {
+            clearError(conf, confErr);
+        }
+        checkSubmitLocked();
     });
 
     conf.addEventListener('input', function() {
-        if (this.value !== pass.value) showError(this, confErr, 'Passwords do not match.');
-        else clearError(this, confErr);
+        if (this.value !== pass.value || this.value === '') {
+            showError(this, confErr, 'Passwords do not match.');
+        } else {
+            clearError(this, confErr);
+        }
+        checkSubmitLocked();
     });
+
+    // Run dynamic enable check on page load to handle pre-filled data
+    checkSubmitLocked();
 
     // ── block submit if invalid ─────────────────────────────────
     form.addEventListener('submit', function(e) {
         let valid = true;
-        if (nameInput.value.trim().length < 2) {
-            showError(nameInput, nameErr, 'Please enter your full name.');
+        if (!RE.fullname.test(nameInput.value.trim())) {
+            showError(nameInput, nameErr, 'Please enter a valid full name (minimum 3 characters, letters only).');
             nameInput.focus();
             valid = false;
         }
-        if (pass.value.length < 8) {
-            showError(pass, passErr, 'Password must be at least 8 characters.');
+        if (!RE.password.test(pass.value)) {
+            showError(pass, passErr, 'Password must be 8+ chars, with a number & symbol (@$!%*?&).');
             if (valid) pass.focus();
             valid = false;
         }
@@ -270,13 +395,6 @@
     const btnVerify   = document.getElementById('btnVerify');
     const otpMsg      = document.getElementById('otpMsg');
     const verifiedTag = document.getElementById('verifiedTag');
-    const submitBtn   = document.getElementById('submitBtn');
-
-    const RE = {
-        fullname: /^[a-zA-Z\s]{3,50}$/,
-        email:    /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/,
-        password: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-    };
 
     let verified    = false;
     let timerHandle = null;
@@ -331,7 +449,8 @@
     function setValid(el, ok) {
         el.classList.toggle('valid',   ok);
         el.classList.toggle('invalid', !ok);
-        const err = el.parentElement && el.parentElement.querySelector('.error-msg');
+        const formGroup = el.closest('.form-group');
+        const err = formGroup && formGroup.querySelector('.error-msg');
         if (err) err.style.display = ok ? 'none' : 'block';
     }
 
@@ -449,6 +568,9 @@
             checkSubmit();
         });
     });
+
+    // Run dynamic enable check on page load to handle pre-filled data
+    checkSubmit();
 })();
 </script>
 {% endblock %}

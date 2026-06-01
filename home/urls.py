@@ -65,6 +65,8 @@ urlpatterns = [
     path("ajax/mod-complete/<int:module_id>/", views.mod_complete, name="mod_complete"),
     path("ajax/submit-assessment/", views.submit_assessment, name="submit_assessment"),
     path("ajax/reset-progress/", views.reset_progress, name="reset_progress"),
+    path("ajax/save-video-progress/", views.save_video_progress, name="save_video_progress"),
+    path("ajax/member-progress/<int:member_id>/", views.member_progress_api, name="member_progress_api"),
     path("posh-video-source/", views.posh_video_source, name="posh_video_source"),
     # --- SUBSCRIPTION FLOWS ---
     path(
@@ -88,6 +90,7 @@ urlpatterns = [
     ),
     # --- COMPANY DASHBOARD & MANAGEMENT ---
     path("dashboard/company/", views.company_dashboard, name="company_dashboard"),
+    path("dashboard/company/generate-policy/", views.generate_posh_policy, name="generate_posh_policy"),
     path("dashboard/company", views.company_dashboard),
     # Backward-compatible aliases for older bookmarks/links
     path("company-dashboard/", views.company_dashboard),
@@ -136,6 +139,7 @@ urlpatterns = [
     path("accounts-portal/logout/", views.accounts_logout, name="accounts_logout"),
     path("hr/logout/", views.hr_logout, name="hr_logout"),
     path("training/logout/", views.training_logout, name="training_logout"),
+    path("session/tab-close/", views.tab_close_logout, name="tab_close_logout"),
     path(
         "accounts-portal/save-pricing/",
         views.accounts_save_pricing_view,

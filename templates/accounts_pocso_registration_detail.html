@@ -1,78 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ reg.school_name }} — POCSO Review | OHPL Accounts</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
             --bg: #0d0a0b;
             --surface: #1a1517;
             --card: #241c1e;
-            --border: rgba(255,255,255,0.06);
+            --border: rgba(255, 255, 255, 0.06);
             --accent: #f43f5e;
             --muted: #4b5563;
             --text-muted: #94a3b8;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: #f1f5f9; font-family: 'Inter', sans-serif; min-height: 100vh; }
-        .heading-font { font-family: 'Space Grotesk', sans-serif; }
 
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 1.25rem; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 1.25rem;
+        }
 
         .section-label {
-            font-size: 0.65rem; font-weight: 900; letter-spacing: 0.18em;
-            text-transform: uppercase; color: var(--accent);
-            margin-bottom: 1.25rem; padding-bottom: 0.6rem;
+            font-size: 0.65rem;
+            font-weight: 900;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.6rem;
             border-bottom: 1px solid var(--border);
         }
 
         .detail-row {
-            display: flex; justify-content: space-between; align-items: flex-start;
-            padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             gap: 1rem;
         }
-        .detail-row:last-child { border-bottom: none; }
-        .detail-key { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; width: 140px; flex-shrink: 0; }
-        .detail-val { font-size: 0.85rem; font-weight: 600; color: #f1f5f9; text-align: right; flex: 1; word-break: break-all; }
 
-        .badge-yes { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
-        .badge-no { background: rgba(244,63,94,0.12); color: #fb7185; border: 1px solid rgba(244,63,94,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        .detail-row:last-child {
+            border-bottom: none;
+        }
 
-        .status-verified { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
-        .status-submitted { background: rgba(244,63,94,0.1); color: #fb7185; border: 1px solid rgba(244,63,94,0.2); }
+        .detail-key {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            width: 140px;
+            flex-shrink: 0;
+        }
+
+        .detail-val {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #f1f5f9;
+            text-align: right;
+            flex: 1;
+            word-break: break-all;
+        }
+
+        .badge-yes {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-no {
+            background: rgba(244, 63, 94, 0.12);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-verified {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-submitted {
+            background: rgba(244, 63, 94, 0.1);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+        }
 
         .btn-approve {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 2rem; border-radius: 0.75rem;
-            background: rgba(34,197,94,0.1); color: #4ade80;
-            border: 1px solid rgba(34,197,94,0.25);
-            font-size: 0.85rem; font-weight: 700; transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
         }
-        .btn-approve:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
+
+        .btn-approve:hover {
+            background: #16a34a;
+            color: #fff;
+            border-color: #16a34a;
+        }
 
         .btn-reject {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 2rem; border-radius: 0.75rem;
-            background: rgba(244,63,94,0.08); color: #fb7185;
-            border: 1px solid rgba(244,63,94,0.2);
-            font-size: 0.85rem; font-weight: 700; transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            background: rgba(244, 63, 94, 0.08);
+            color: #fb7185;
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: all 0.2s;
         }
-        .btn-reject:hover { background: #e11d48; color: #fff; border-color: #e11d48; }
 
-        .billing-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem; }
+        .btn-reject:hover {
+            background: #e11d48;
+            color: #fff;
+            border-color: #e11d48;
+        }
+
+        .billing-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.85rem;
+        }
     </style>
 </head>
+
 <body>
 
     <header class="border-b border-white/5 bg-[#1a1517]/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="{% url 'accounts_dashboard' %}" class="px-4 py-2 rounded-xl bg-white/5 text-xs font-bold text-text-muted hover:text-white transition-all border border-white/5">
+                <a href="{% url 'accounts_dashboard' %}?active_tab=pocso_registrations"
+                    class="px-4 py-2 rounded-xl bg-white/5 text-xs font-bold text-text-muted hover:text-white transition-all border border-white/5">
                     <i class="fas fa-arrow-left mr-2"></i> Dashboard
                 </a>
                 <span class="text-white/10">|</span>
@@ -94,7 +198,8 @@
         <div class="card p-8 border-l-4 border-l-rose-500">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <p class="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest mb-1">Educational Institution</p>
+                    <p class="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest mb-1">Educational
+                        Institution</p>
                     <h1 class="heading-font text-3xl font-black text-white">{{ reg.school_name }}</h1>
                     <p class="text-text-muted mt-1">{{ reg.address }}, {{ reg.city }}, {{ reg.state }} — {{ reg.pin_code }}</p>
                 </div>
@@ -112,15 +217,20 @@
                 <div class="card p-7">
                     <p class="section-label">Institution Profile & Contact</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12">
-                        <div class="detail-row"><span class="detail-key">Contact Person</span><span class="detail-val">{{ reg.person_name }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Contact Person</span><span
+                                class="detail-val">{{ reg.person_name }}</span></div>
                         <div class="detail-row"><span class="detail-key">Designation</span><span class="detail-val">{{ reg.designation }}</span></div>
                         <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">{{ reg.contact_no }}</span></div>
                         <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">{{ reg.email }}</span></div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
-                        <div class="detail-row"><span class="detail-key">Student Count</span><span class="detail-val font-black text-rose-400">{{ reg.students_count }}</span></div>
-                        <div class="detail-row"><span class="detail-key">Teaching Staff</span><span class="detail-val font-black text-rose-400">{{ reg.teachers_count }}</span></div>
-                        <div class="detail-row"><span class="detail-key">Non-Teaching Staff</span><span class="detail-val font-black text-rose-400">{{ reg.non_teaching_staff_count }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Student Count</span><span
+                                class="detail-val font-black text-rose-400">{{ reg.students_count }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Teaching Staff</span><span
+                                class="detail-val font-black text-rose-400">{{ reg.teachers_count }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Non-Teaching Staff</span><span
+                                class="detail-val font-black text-rose-400">{{ reg.non_teaching_staff_count }}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -130,19 +240,43 @@
                     <div class="space-y-1">
                         <div class="detail-row">
                             <span class="detail-key">Child Protection Policy?</span>
-                            <span class="detail-val">{% if reg.has_policy %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.has_policy %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-key">Internal POCSO Committee?</span>
-                            <span class="detail-val">{% if reg.has_committee %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.has_committee %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-key">Teaching Staff Trained?</span>
-                            <span class="detail-val">{% if reg.teaching_staff_trained %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No (Mode: {{ reg.teaching_training_mode }})</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.teaching_staff_trained %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No (Mode: {{ reg.teaching_training_mode }})</span>
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-key">Non-Teaching Staff Trained?</span>
-                            <span class="detail-val">{% if reg.non_teaching_staff_trained %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no (Mode: {{ reg.non_teaching_training_mode }})">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.non_teaching_staff_trained %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No (Mode: {{ reg.non_teaching_training_mode }})</span>
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -161,7 +295,7 @@
                         </div>
                         {% endfor %}
                     </div>
-                    
+
                     <div class="border-t border-white/5 pt-4 space-y-2">
                         <div class="flex justify-between text-xs text-text-muted">
                             <span>Subtotal</span>
@@ -184,18 +318,24 @@
                 <div class="card p-7">
                     <p class="section-label">Payment Evidence</p>
                     {% if reg.payment_screenshot %}
-                        <img src="{{ reg.payment_screenshot.url }}" class="w-full h-auto rounded-lg border border-white/5">
-                        <a href="{{ reg.payment_screenshot.url }}" target="_blank" class="mt-4 inline-block text-[0.6rem] font-bold text-rose-400 uppercase tracking-widest hover:underline">Open Full Image <i class="fas fa-external-link-alt ml-1"></i></a>
+                    <img src="{{ reg.payment_screenshot.url }}" class="w-full h-auto rounded-lg border border-white/5">
+                    <a href="{{ reg.payment_screenshot.url }}" target="_blank"
+                        class="mt-4 inline-block text-[0.6rem] font-bold text-rose-400 uppercase tracking-widest hover:underline">Open
+                        Full Image <i class="fas fa-external-link-alt ml-1"></i></a>
                     {% else %}
-                        <div class="py-10 text-center opacity-20"><i class="fas fa-image text-3xl"></i><p class="text-xs font-bold mt-2">NO SCREENSHOT</p></div>
+                    <div class="py-10 text-center opacity-20"><i class="fas fa-image text-3xl"></i>
+                        <p class="text-xs font-bold mt-2">NO SCREENSHOT</p>
+                    </div>
                     {% endif %}
                 </div>
 
                 <!-- Verification -->
                 {% if reg.payment_status != 'VERIFIED' %}
                 <div class="card p-6 flex flex-col gap-3">
-                    <a href="{% url 'accounts_verify_pocso_payment' reg.id %}" class="btn-approve justify-center">Verify & Approve</a>
-                    <a href="{% url 'accounts_reject_pocso_payment' reg.id %}" class="btn-reject justify-center" onclick="return confirm('Reject this POCSO payment?')">Reject Payment</a>
+                    <a href="{% url 'accounts_verify_pocso_payment' reg.id %}" class="btn-approve justify-center">Verify
+                        & Approve</a>
+                    <a href="{% url 'accounts_reject_pocso_payment' reg.id %}" class="btn-reject justify-center"
+                        onclick="return confirm('Reject this POCSO payment?')">Reject Payment</a>
                 </div>
                 {% else %}
                 <div class="card p-6 bg-emerald-500/10 border-emerald-500/20 flex items-center gap-3">
@@ -206,6 +346,84 @@
             </div>
         </div>
     </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" style="position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.75rem;pointer-events:none;"></div>
+
+    <style>
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            min-width: 300px;
+            max-width: 380px;
+            padding: 1rem 1.25rem;
+            border-radius: 0.9rem;
+            backdrop-filter: blur(14px);
+            pointer-events: all;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+        }
+        .toast.show { transform: translateX(0); opacity: 1; }
+        .toast.hide { transform: translateX(120%); opacity: 0; }
+        .toast-success { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(52, 211, 153, 0.25); }
+        .toast-warning { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(248, 113, 113, 0.25); }
+        .toast-icon {
+            flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; margin-top: 0.05rem;
+        }
+        .toast-success .toast-icon { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .toast-warning .toast-icon { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+        .toast-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+        .toast-success .toast-title { color: #34d399; }
+        .toast-warning .toast-title { color: #f87171; }
+        .toast-body { font-size: 0.82rem; font-weight: 500; margin-top: 0.15rem; color: rgba(255,255,255,0.75); line-height: 1.4; }
+        .toast-progress {
+            position: absolute; bottom: 0; left: 0; height: 3px;
+            border-radius: 0 0 0.9rem 0.9rem;
+            animation: toastProgress 3.5s linear forwards;
+        }
+        .toast-success .toast-progress { background: #34d399; }
+        .toast-warning .toast-progress { background: #f87171; }
+        @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+    </style>
+
+    <script>
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.style.position = 'relative';
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${type === 'success' ? 'fa-check' : 'fa-times'}"></i></div>
+                <div>
+                    <p class="toast-title">${title}</p>
+                    <p class="toast-body">${message}</p>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            container.appendChild(toast);
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 500);
+            }, 3800);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            {% for message in messages %}
+                {% if 'success' in message.tags %}
+                    showToast('success', 'Payment Approved', '{{ message|escapejs }}');
+                {% elif 'warning' in message.tags %}
+                    showToast('warning', 'Payment Rejected', '{{ message|escapejs }}');
+                {% endif %}
+            {% endfor %}
+        });
+    </script>
 
 </body>
 </html>

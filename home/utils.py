@@ -1,9 +1,13 @@
+import logging
 import os
+from pathlib import Path
 
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils import timezone
 from weasyprint import HTML
+
+logger = logging.getLogger(__name__)
 
 
 def generate_certificate(user, course_type="POSH"):
@@ -17,10 +21,9 @@ def generate_certificate(user, course_type="POSH"):
         template_name = "Certificate/POCSO CERT.png"
 
     # Construct absolute path to the image for WeasyPrint
-    image_path = os.path.join(settings.MEDIA_ROOT, template_name)
-    if not os.path.exists(image_path):
-        # Fallback or error handling
-        print(f"ERROR: Certificate template not found at {image_path}")
+    image_path = Path(settings.MEDIA_ROOT) / template_name
+    if not image_path.exists():
+        logger.error(f"Certificate template not found at {image_path}")
         return None
 
     # 2. Prepare Context
@@ -28,11 +31,15 @@ def generate_certificate(user, course_type="POSH"):
     if getattr(user, "designation", None):
         name_str += f" ({user.designation})"
 
+    # Use Path.as_uri() to correctly generate file:///Y:/path/... on Windows
+    # (avoids broken file://y:\path\... with backslashes)
+    image_uri = image_path.as_uri()
+
     context = {
         "candidate_name": name_str,
         "course_type": course_type,
         "completion_date": timezone.now().strftime("%d/%m/%Y"),  # e.g. 05/02/2026
-        "image_path": f"file://{image_path}",  # WeasyPrint needs file:// protocol for local images
+        "image_path": image_uri,
     }
 
     # Determine date position (adjusting based on user request to be after "held on")
@@ -94,9 +101,15 @@ def generate_certificate(user, course_type="POSH"):
     """
 
     # 4. Convert to PDF
-    pdf_file = HTML(string=html_string).write_pdf()
-
-    return pdf_file
+    try:
+        pdf_file = HTML(string=html_string).write_pdf()
+        return pdf_file
+    except Exception as e:
+        logger.error(
+            f"WeasyPrint failed to generate certificate for user {user.id}: {e}",
+            exc_info=True,
+        )
+        return None
 
 
 def get_posh_billing_data(registration):

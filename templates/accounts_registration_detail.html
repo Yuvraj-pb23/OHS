@@ -1,26 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ reg.company_name }} — Registration Review | OHPL Accounts</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
             --bg: #080b14;
             --surface: #0e1525;
             --card: #111927;
-            --border: rgba(255,255,255,0.06);
+            --border: rgba(255, 255, 255, 0.06);
             --accent: #6366f1;
             --muted: #4b5563;
             --text-muted: #6b7280;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Inter', sans-serif; min-height: 100vh; }
-        .heading-font { font-family: 'Space Grotesk', sans-serif; }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: var(--bg);
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+        }
+
+        .heading-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
 
         .card {
             background: var(--card);
@@ -44,10 +61,14 @@
             justify-content: space-between;
             align-items: flex-start;
             padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
             gap: 1rem;
         }
-        .detail-row:last-child { border-bottom: none; }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
         .detail-key {
             font-size: 0.72rem;
             color: var(--text-muted);
@@ -55,6 +76,7 @@
             width: 140px;
             flex-shrink: 0;
         }
+
         .detail-val {
             font-size: 0.82rem;
             font-weight: 600;
@@ -64,69 +86,171 @@
             word-break: break-all;
         }
 
-        .badge-yes { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
-        .badge-no { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.2); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
-        .badge-na { background: rgba(107,114,128,0.1); color: #6b7280; border: 1px solid rgba(107,114,128,0.15); padding: 0.2rem 0.65rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+        .badge-yes {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
 
-        .status-verified { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
-        .status-submitted { background: rgba(99,102,241,0.1); color: #818cf8; border: 1px solid rgba(99,102,241,0.2); }
-        .status-pending { background: rgba(245,158,11,0.1); color: #fbbf24; border: 1px solid rgba(245,158,11,0.2); }
+        .badge-no {
+            background: rgba(239, 68, 68, 0.12);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .badge-na {
+            background: rgba(107, 114, 128, 0.1);
+            color: #6b7280;
+            border: 1px solid rgba(107, 114, 128, 0.15);
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .status-verified {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-submitted {
+            background: rgba(99, 102, 241, 0.1);
+            color: #818cf8;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
 
         .btn-approve {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 2rem; border-radius: 0.75rem;
-            background: rgba(34,197,94,0.1); color: #4ade80;
-            border: 1px solid rgba(34,197,94,0.25);
-            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em;
-            text-decoration: none; transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: all 0.2s;
         }
-        .btn-approve:hover { background: #16a34a; color: #fff; border-color: #16a34a; }
+
+        .btn-approve:hover {
+            background: #16a34a;
+            color: #fff;
+            border-color: #16a34a;
+        }
 
         .btn-reject {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.75rem 2rem; border-radius: 0.75rem;
-            background: rgba(239,68,68,0.08); color: #f87171;
-            border: 1px solid rgba(239,68,68,0.2);
-            font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em;
-            text-decoration: none; transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 2rem;
+            border-radius: 0.75rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            transition: all 0.2s;
         }
-        .btn-reject:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
+
+        .btn-reject:hover {
+            background: #dc2626;
+            color: #fff;
+            border-color: #dc2626;
+        }
 
         .btn-back {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            padding: 0.6rem 1.25rem; border-radius: 0.75rem;
-            background: rgba(255,255,255,0.05); color: #94a3b8;
-            border: 1px solid rgba(255,255,255,0.08);
-            font-size: 0.75rem; font-weight: 600; text-decoration: none; transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
         }
-        .btn-back:hover { background: rgba(255,255,255,0.1); color: #e2e8f0; }
 
-        .billing-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.82rem; }
-        .billing-row:last-child { border-bottom: none; }
-        .billing-total { font-size: 1.1rem; font-weight: 900; }
+        .btn-back:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e2e8f0;
+        }
+
+        .billing-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.82rem;
+        }
+
+        .billing-row:last-child {
+            border-bottom: none;
+        }
+
+        .billing-total {
+            font-size: 1.1rem;
+            font-weight: 900;
+        }
 
         .addon-pill {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            background: rgba(239,68,68,0.08); color: #f87171;
-            border: 1px solid rgba(239,68,68,0.15);
-            border-radius: 8px; padding: 0.3rem 0.75rem;
-            font-size: 0.7rem; font-weight: 700; margin: 0.2rem 0.2rem 0.2rem 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            border-radius: 8px;
+            padding: 0.3rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin: 0.2rem 0.2rem 0.2rem 0;
         }
 
         .screenshot-frame {
-            border-radius: 1rem; overflow: hidden;
+            border-radius: 1rem;
+            overflow: hidden;
             border: 1px solid var(--border);
             background: var(--surface);
         }
     </style>
 </head>
+
 <body>
 
     <!-- Top Bar -->
     <header class="border-b border-white/5 bg-[#0a0f1e]/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="{% url 'accounts_dashboard' %}" class="btn-back">
+                <a href="{% url 'accounts_dashboard' %}?active_tab=registrations" class="btn-back">
                     <i class="fas fa-arrow-left text-xs"></i> Back to Dashboard
                 </a>
                 <span class="text-white/10">|</span>
@@ -173,7 +297,8 @@
                 <div class="card p-7">
                     <p class="section-label">Contact Information</p>
                     <div>
-                        <div class="detail-row"><span class="detail-key">Contact Person</span><span class="detail-val">{{ reg.contact_person|default:"—" }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Contact Person</span><span
+                                class="detail-val">{{ reg.contact_person|default:"—" }}</span></div>
                         <div class="detail-row"><span class="detail-key">Designation</span><span class="detail-val">{{ reg.designation|default:"—" }}</span></div>
                         <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">{{ reg.phone }}</span></div>
                         <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">{{ reg.email }}</span></div>
@@ -184,10 +309,15 @@
                 <div class="card p-7">
                     <p class="section-label">Company Profile</p>
                     <div>
-                        <div class="detail-row"><span class="detail-key">Total Employees</span><span class="detail-val text-indigo-300 text-base font-black">{{ reg.employee_count }}</span></div>
-                        <div class="detail-row"><span class="detail-key">Last Year of Employee<br>POSH Sensitization</span><span class="detail-val">{{ reg.last_training_year|default:"None / Not Done" }}</span></div>
-                        <div class="detail-row"><span class="detail-key">Pricing Tier Applied</span><span class="detail-val text-indigo-300 font-bold">{{ tier_label }}</span></div>
-                        <div class="detail-row"><span class="detail-key">Rate Per Employee</span><span class="detail-val">₹{{ per_emp|floatformat:2 }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Total Employees</span><span
+                                class="detail-val text-indigo-300 text-base font-black">{{ reg.employee_count }}</span>
+                        </div>
+                        <div class="detail-row"><span class="detail-key">Last Year of Employee<br>POSH
+                                Sensitization</span><span class="detail-val">{{ reg.last_training_year|default:"None / Not Done" }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Pricing Tier Applied</span><span
+                                class="detail-val text-indigo-300 font-bold">{{ tier_label }}</span></div>
+                        <div class="detail-row"><span class="detail-key">Rate Per Employee</span><span
+                                class="detail-val">₹{{ per_emp|floatformat:2 }}</span></div>
                     </div>
                 </div>
 
@@ -197,16 +327,34 @@
                     <div>
                         <div class="detail-row">
                             <span class="detail-key">Do you have POSH Policy in Place?</span>
-                            <span class="detail-val">{% if reg.has_posh_policy %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.has_posh_policy %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-key">Do you have Internal Committee (IC) in Place?</span>
-                            <span class="detail-val">{% if reg.has_ic %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.has_ic %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if reg.has_ic %}
                         <div class="detail-row">
                             <span class="detail-key">Has the IC received specialized training as per Act?</span>
-                            <span class="detail-val">{% if reg.ic_specialized_training %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.ic_specialized_training %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if reg.ic_specialized_training %}
                         <div class="detail-row">
@@ -219,37 +367,78 @@
                         </div>
                         {% endif %}
                         {% else %}
-                        <div class="detail-row"><span class="detail-key">IC Specialized Training</span><span class="detail-val"><span class="badge-na">N/A — No IC</span></span></div>
+                        <div class="detail-row">
+                            <span class="detail-key">IC Specialized Training</span>
+                            <span class="detail-val"><span class="badge-na">N/A — No IC</span></span>
+                        </div>
                         {% endif %}
                         <div class="detail-row">
                             <span class="detail-key">Do you have external member in IC?</span>
-                            <span class="detail-val">{% if reg.external_member_support %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.external_member_support %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if not reg.external_member_support %}
                         <div class="detail-row">
                             <span class="detail-key">Require External Member Support?</span>
-                            <span class="detail-val">{% if reg.require_external_member_support %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.require_external_member_support %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% endif %}
                         <div class="detail-row">
                             <span class="detail-key">Have you Registered on SHe Box Portal?</span>
-                            <span class="detail-val">{% if reg.she_box_registered %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.she_box_registered %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if reg.she_box_registered %}
                         <div class="detail-row">
                             <span class="detail-key">Have you appointed Nodal Officer for the Portal?</span>
-                            <span class="detail-val">{% if reg.nodal_officer_appointed %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.nodal_officer_appointed %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% if not reg.nodal_officer_appointed %}
                         <div class="detail-row">
                             <span class="detail-key">Require Nodal Officer Support?</span>
-                            <span class="detail-val">{% if reg.require_nodal_officer_support %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-val">
+                                {% if reg.require_nodal_officer_support %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                         {% endif %}
                         {% endif %}
                         <div class="detail-row">
-                            <span class="detail-key">Annual Report Submitted? <span class="text-[0.6rem] text-text-muted font-normal">(Deadline: 31 Mar 2026)</span></span>
-                            <span class="detail-val">{% if reg.annual_report_submitted %}<span class="badge-yes">Yes</span>{% else %}<span class="badge-no">No</span>{% endif %}</span>
+                            <span class="detail-key">Annual Report Submitted? <span
+                                    class="text-[0.6rem] text-text-muted font-normal">(Deadline: 31 Mar
+                                    2026)</span></span>
+                            <span class="detail-val">
+                                {% if reg.annual_report_submitted %}
+                                    <span class="badge-yes">Yes</span>
+                                {% else %}
+                                    <span class="badge-no">No</span>
+                                {% endif %}
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -263,7 +452,8 @@
                 <div class="card p-7 bg-indigo-500/5 border-indigo-500/15">
                     <p class="section-label" style="color:#818cf8;">Billing Breakdown</p>
                     <div class="mb-4">
-                        <p class="text-[0.65rem] text-text-muted uppercase font-bold tracking-widest mb-1">Pricing Tier</p>
+                        <p class="text-[0.65rem] text-text-muted uppercase font-bold tracking-widest mb-1">Pricing Tier
+                        </p>
                         <p class="text-indigo-300 font-bold text-sm">{{ tier_label }}</p>
                         <p class="text-xs text-text-muted mt-0.5">₹{{ per_emp|floatformat:2 }} per employee</p>
                     </div>
@@ -275,7 +465,8 @@
                         </div>
                         {% for fee in addon_fees %}
                         <div class="billing-row">
-                            <span class="text-red-400/80 text-[0.72rem]"><i class="fas fa-plus-circle text-[0.6rem] mr-1"></i>{{ fee.label }}</span>
+                            <span class="text-red-400/80 text-[0.72rem]"><i
+                                    class="fas fa-plus-circle text-[0.6rem] mr-1"></i>{{ fee.label }}</span>
                             <span class="font-bold text-red-400">₹{{ fee.amount|floatformat:2 }}</span>
                         </div>
                         {% endfor %}
@@ -291,14 +482,16 @@
                         </div>
                     </div>
 
-                    <div class="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/15 flex justify-between items-center">
+                    <div
+                        class="bg-indigo-500/10 rounded-xl p-4 border border-indigo-500/15 flex justify-between items-center">
                         <span class="text-indigo-300 font-bold text-xs uppercase tracking-wider">Total Payable</span>
                         <span class="heading-font text-white font-black text-xl">₹{{ total|floatformat:2 }}</span>
                     </div>
 
                     {% if addon_fees %}
                     <div class="mt-4">
-                        <p class="text-[0.6rem] text-text-muted uppercase font-bold tracking-widest mb-2">Compliance Gaps</p>
+                        <p class="text-[0.6rem] text-text-muted uppercase font-bold tracking-widest mb-2">Compliance
+                            Gaps</p>
                         <div>
                             {% for fee in addon_fees %}
                             <span class="addon-pill"><i class="fas fa-exclamation-triangle text-[0.55rem]"></i> {{ fee.label }}</span>
@@ -314,17 +507,19 @@
                 <div class="card p-7">
                     <p class="section-label">Payment Proof</p>
                     {% if reg.payment_screenshot %}
-                        <div class="screenshot-frame">
-                            <img src="{{ reg.payment_screenshot.url }}" alt="Payment Screenshot" class="w-full h-auto object-cover rounded-lg">
-                        </div>
-                        <a href="{{ reg.payment_screenshot.url }}" target="_blank" class="mt-3 inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 text-xs font-bold transition-colors">
-                            <i class="fas fa-external-link-alt"></i> Open in new tab
-                        </a>
+                    <div class="screenshot-frame">
+                        <img src="{{ reg.payment_screenshot.url }}" alt="Payment Screenshot"
+                            class="w-full h-auto object-cover rounded-lg">
+                    </div>
+                    <a href="{{ reg.payment_screenshot.url }}" target="_blank"
+                        class="mt-3 inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 text-xs font-bold transition-colors">
+                        <i class="fas fa-external-link-alt"></i> Open in new tab
+                    </a>
                     {% else %}
-                        <div class="flex flex-col items-center justify-center py-10 opacity-30">
-                            <i class="fas fa-image text-3xl mb-3"></i>
-                            <p class="text-sm font-bold uppercase tracking-widest">No Screenshot Uploaded</p>
-                        </div>
+                    <div class="flex flex-col items-center justify-center py-10 opacity-30">
+                        <i class="fas fa-image text-3xl mb-3"></i>
+                        <p class="text-sm font-bold uppercase tracking-widest">No Screenshot Uploaded</p>
+                    </div>
                     {% endif %}
                 </div>
 
@@ -338,7 +533,7 @@
                             <i class="fas fa-check-circle"></i> Approve Payment
                         </a>
                         <a href="{% url 'accounts_reject_payment' reg.id %}" class="btn-reject w-full justify-center"
-                           onclick="return confirm('Reject this payment and reset status to Pending?')">
+                            onclick="return confirm('Reject this payment and reset status to Pending?')">
                             <i class="fas fa-times-circle"></i> Reject Payment
                         </a>
                         {% else %}
@@ -363,5 +558,124 @@
             </div>
         </div>
     </main>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" style="position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:0.75rem;pointer-events:none;"></div>
+
+    <style>
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            min-width: 300px;
+            max-width: 380px;
+            padding: 1rem 1.25rem;
+            border-radius: 0.9rem;
+            backdrop-filter: blur(14px);
+            pointer-events: all;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+            transform: translateX(120%);
+            opacity: 0;
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease;
+        }
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .toast.hide {
+            transform: translateX(120%);
+            opacity: 0;
+        }
+        .toast-success {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(52, 211, 153, 0.25);
+        }
+        .toast-warning {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+        }
+        .toast-icon {
+            flex-shrink: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            margin-top: 0.05rem;
+        }
+        .toast-success .toast-icon { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+        .toast-warning .toast-icon { background: rgba(248, 113, 113, 0.15); color: #f87171; }
+        .toast-title {
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .toast-success .toast-title { color: #34d399; }
+        .toast-warning .toast-title { color: #f87171; }
+        .toast-body {
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-top: 0.15rem;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.4;
+        }
+        .toast-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            border-radius: 0 0 0.9rem 0.9rem;
+            animation: toastProgress 3.5s linear forwards;
+        }
+        .toast-success .toast-progress { background: #34d399; }
+        .toast-warning .toast-progress { background: #f87171; }
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to   { width: 0%; }
+        }
+    </style>
+
+    <script>
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.style.position = 'relative';
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas ${type === 'success' ? 'fa-check' : 'fa-times'}"></i>
+                </div>
+                <div>
+                    <p class="toast-title">${title}</p>
+                    <p class="toast-body">${message}</p>
+                </div>
+                <div class="toast-progress"></div>
+            `;
+            container.appendChild(toast);
+            // Trigger slide-in
+            requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
+            // Auto dismiss after 3.8s
+            setTimeout(() => {
+                toast.classList.remove('show');
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 500);
+            }, 3800);
+        }
+
+        // Fire toasts from Django messages
+        document.addEventListener('DOMContentLoaded', () => {
+            {% for message in messages %}
+                {% if 'success' in message.tags %}
+                    showToast('success', 'Payment Approved', '{{ message|escapejs }}');
+                {% elif 'warning' in message.tags %}
+                    showToast('warning', 'Payment Rejected', '{{ message|escapejs }}');
+                {% endif %}
+            {% endfor %}
+        });
+    </script>
+
 </body>
 </html>

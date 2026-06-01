@@ -84,7 +84,12 @@
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" class="form-control" required placeholder="Enter your password">
+                <div style="position: relative;">
+                    <input type="password" name="password" id="passwordInput" class="form-control" required placeholder="Enter your password" style="padding-right: 45px;">
+                    <button type="button" id="togglePasswordBtn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #7e57c2; outline: none; padding: 0;">
+                        <i class="fas fa-eye" id="passwordEyeIcon" style="font-size: 1.1rem;"></i>
+                    </button>
+                </div>
             </div>
 
             <button type="submit" class="btn-login">Login</button>
@@ -99,4 +104,27 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordEyeIcon = document.getElementById('passwordEyeIcon');
+
+        if (togglePasswordBtn && passwordInput && passwordEyeIcon) {
+            togglePasswordBtn.addEventListener('click', () => {
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Toggle eye / eye-slash icon
+                if (type === 'password') {
+                    passwordEyeIcon.classList.remove('fa-eye-slash');
+                    passwordEyeIcon.classList.add('fa-eye');
+                } else {
+                    passwordEyeIcon.classList.remove('fa-eye');
+                    passwordEyeIcon.classList.add('fa-eye-slash');
+                }
+            });
+        }
+    });
+</script>
 {% endblock body %}

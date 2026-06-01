@@ -189,7 +189,7 @@
             <h1 style="font-size: 2.5rem; margin-bottom: 10px;">Assessment Result</h1>
             <div style="font-size:4rem; font-weight:800; color:var(--primary); margin:10px 0;" id="final-score">0/20</div>
             <p id="result-msg" style="margin-bottom:30px; font-size: 1.2rem; font-weight: 500;"></p>
-            <div style="display:flex; gap:15px; justify-content:center;">
+            <div style="display:flex; gap:15px; justify-content:center;" id="result-actions">
                 <button class="btn btn-primary" onclick="showReview()">Review My Answers</button>
                 <button class="btn btn-outline" onclick="location.reload()">Retry Assessment</button>
             </div>
@@ -199,7 +199,7 @@
         <div class="quiz-card" id="review-section" style="display:none;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
                 <h2 style="margin:0;">Answer Review</h2>
-                <button class="btn btn-outline" onclick="location.reload()">Back to Dashboard</button>
+                <button class="btn btn-outline" onclick="closeReview()">Close Review</button>
             </div>
             <div id="review-container"></div>
         </div>
@@ -255,16 +255,17 @@
         return '{{ csrf_token }}';
     }
 
-    let currentIdx = 0; let score = 0; let selected = null;
+    let currentIdx = 0; let selected = null;
     let selectedQuestions = [];
-    let userAnswers = []; 
     let timer;
     let timeLeft = 30;
 
     function initQuiz() {
+        window._alreadyCorrectCount = 0;
         const shuffled = allQuestions.sort(() => 0.5 - Math.random());
         selectedQuestions = shuffled.slice(0, 20);
-        currentIdx = 0; score = 0; userAnswers = [];
+        selectedQuestions.forEach(q => { delete q.userAnswer; });
+        currentIdx = 0;
         loadQuestion();
     }
 
@@ -280,7 +281,10 @@
             if (timeLeft <= 10) document.getElementById('timer-box').classList.add('timer-low');
             if (timeLeft <= 0) {
                 clearInterval(timer);
-                if (selected === null) selected = -1;
+                const qData = selectedQuestions[currentIdx];
+                if (qData.userAnswer === undefined) {
+                    qData.userAnswer = -1; // -1 indicates Timed Out
+                }
                 handleNext();
             }
         }, 1000);
@@ -291,9 +295,9 @@
         document.getElementById('next-btn').disabled = true;
         const qData = selectedQuestions[currentIdx];
         
-        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of 20`;
+        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of ${selectedQuestions.length}`;
         document.getElementById('q-text').innerText = qData.q;
-        document.getElementById('pg-fill').style.width = `${((currentIdx + 1) / 20) * 100}%`;
+        document.getElementById('pg-fill').style.width = `${((currentIdx + 1) / selectedQuestions.length) * 100}%`;
 
         const container = document.getElementById('options-container');
         container.innerHTML = '';
@@ -303,6 +307,7 @@
             div.innerText = opt;
             div.onclick = () => {
                 selected = i;
+                qData.userAnswer = i;
                 document.querySelectorAll('.option-card').forEach(el => el.classList.remove('selected'));
                 div.classList.add('selected');
                 document.getElementById('next-btn').disabled = false;
@@ -314,30 +319,55 @@
 
     function handleNext() {
         clearInterval(timer);
-        userAnswers.push(selected);
-        if (selected !== null && selected !== -1) {
-            if (selected === selectedQuestions[currentIdx].c) score++;
+        
+        const qData = selectedQuestions[currentIdx];
+        if (qData.userAnswer === undefined) {
+            qData.userAnswer = -1;
         }
+
         currentIdx++;
-        if (currentIdx < 20) loadQuestion();
+        if (currentIdx < selectedQuestions.length) loadQuestion();
         else showResult();
     }
 
     function showResult() {
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('result-section').style.display = 'block';
-        document.getElementById('final-score').innerText = `${score}/20`;
         
-        // 80% passing threshold (Strictly Above 80%)
-        const percentage = Math.round((score / 20) * 100);
-        const passed = percentage >= 80;
+        const correctCount = selectedQuestions.filter(q => q.userAnswer === q.c).length;
+        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
+        
+        document.getElementById('final-score').innerText = `${totalCorrect}/20`;
+        const msg = document.getElementById('result-msg');
+        
+        const percentage = Math.round((totalCorrect / 20) * 100);
+        const passed = totalCorrect === 20;
+        const eligibleForReattempt = totalCorrect >= 16 && totalCorrect < 20;
 
         if (passed) {
-            msg.innerText = "Congratulations! You have passed the POCSO Assessment.";
+            msg.innerText = "🎉 Congratulations! You have passed the POCSO Assessment with a perfect score! Your certificate is now unlocked.";
             msg.style.color = "var(--success)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="window.location.href='{% url 'pocso_act_page' %}'">Go to Dashboard</button>
+                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+            `;
+        } else if (eligibleForReattempt) {
+            msg.innerText = `⚠️ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You are eligible to complete the assessment by re-attempting only the incorrect questions!</b>`;
+            msg.style.color = "var(--warning)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="startFinalReattempt()">Re-attempt Incorrect Questions</button>
+                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+            `;
         } else {
-            msg.innerText = `Assessment Incomplete. You need 80% (${passThreshold}/20) to pass.`;
+            msg.innerText = `❌ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You did not qualify. Please retry the assessment to unlock your certificate.</b>`;
             msg.style.color = "var(--danger)";
+            
+            document.getElementById('result-actions').innerHTML = `
+                <button class="btn btn-primary" onclick="location.reload()">Retry Assessment</button>
+                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+            `;
         }
 
         // SAVE TO BACKEND
@@ -349,7 +379,7 @@
             },
             body: JSON.stringify({
                 type: 'POCSO',
-                score: score,
+                score: totalCorrect,
                 total: 20,
                 passed: passed
             })
@@ -358,24 +388,57 @@
           .catch(err => console.error("Error saving result:", err));
     }
 
+    function startFinalReattempt() {
+        window._alreadyCorrectCount = (window._alreadyCorrectCount || 0) + selectedQuestions.filter(q => q.userAnswer === q.c).length;
+        selectedQuestions = selectedQuestions.filter(q => q.userAnswer !== q.c);
+        selectedQuestions.forEach(q => { delete q.userAnswer; });
+        currentIdx = 0;
+        
+        document.getElementById('quiz-section').style.display = 'block';
+        document.getElementById('result-section').style.display = 'none';
+        document.getElementById('review-section').style.display = 'none';
+        
+        loadQuestion();
+    }
+
+    function closeReview() {
+        document.getElementById('review-section').style.display = 'none';
+        document.getElementById('result-section').style.display = 'block';
+    }
+
     function showReview() {
         document.getElementById('result-section').style.display = 'none';
         document.getElementById('review-section').style.display = 'block';
         const container = document.getElementById('review-container');
         container.innerHTML = '';
 
+        const correctCount = selectedQuestions.filter(q => q.userAnswer === q.c).length;
+        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
+
+        if (totalCorrect === 20) {
+            const div = document.createElement('div');
+            div.style.textAlign = 'center';
+            div.style.padding = '30px';
+            div.innerHTML = `
+                <span class="badge badge-success" style="font-size: 1.1rem; padding: 8px 20px; border-radius: 30px; margin-bottom: 15px;">🎉 Perfect Score!</span>
+                <h3 style="color: var(--success, #27ae60);">Outstanding! You answered all questions correctly.</h3>
+            `;
+            container.appendChild(div);
+            return;
+        }
+
         selectedQuestions.forEach((q, i) => {
-            const userPick = userAnswers[i];
+            const userPick = q.userAnswer;
             const isCorrect = userPick === q.c;
-            const isTimedOut = userPick === -1;
+            const isTimedOut = userPick === -1 || userPick === undefined;
+
+            if (isCorrect) return; // Only show incorrect/timed-out questions
 
             let reviewClass = 'review-wrong';
             let badgeClass = 'badge-danger';
             let badgeText = '✗ Incorrect';
 
-            if (isCorrect) {
-                reviewClass = 'review-correct'; badgeClass = 'badge-success'; badgeText = '✓ Correct';
-            } else if (isTimedOut) {
+            if (isTimedOut) {
                 reviewClass = 'review-timeout'; badgeClass = 'badge-warning'; badgeText = '⌛ Timed Out';
             }
 
@@ -389,9 +452,9 @@
                 <p style="margin:5px 0; font-size:0.9rem;">
                     <strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}
                 </p>
-                ${!isCorrect ? `<p style="margin:5px 0; font-size:0.9rem; color:var(--success);">
+                <p style="margin:5px 0; font-size:0.9rem; color:var(--success);">
                     <strong>Correct Answer:</strong> ${q.a[q.c]}
-                </p>` : ''}
+                </p>
             `;
             container.appendChild(div);
         });

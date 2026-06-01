@@ -290,6 +290,7 @@ class ModuleProgress(models.Model):
     )
     module = models.ForeignKey(TrainingModule, on_delete=models.CASCADE)
     is_completed = models.BooleanField(default=False)
+    last_position = models.FloatField(default=0.0, help_text="Last watched position in seconds")
     timestamp = models.DateTimeField(auto_now=True)  # Last watched
 
     class Meta:
@@ -868,8 +869,75 @@ class PosterLogoConfig(models.Model):
     logo_width = models.FloatField(default=15.0)
     logo = models.ImageField(upload_to="poster_logos/", null=True, blank=True)
 
+    # Company text overlay fields
+    company_name = models.CharField(max_length=200, blank=True, default="")
+    company_address = models.CharField(max_length=500, blank=True, default="")
+    text_x = models.FloatField(default=3.0)   # % left from poster left edge
+    text_y = models.FloatField(default=88.0)  # % top from poster top edge
+    text_size = models.FloatField(default=2.2)  # % of poster width for font size
+    text_color = models.CharField(max_length=7, default="#000000")
+
     class Meta:
         unique_together = ("organization", "poster_path")
 
     def __str__(self):
         return f"{self.organization.name} - {self.poster_path}"
+
+
+# 17. POSH Policy Model for Dynamic Generation
+class POSHPolicy(models.Model):
+    organization = models.OneToOneField(Organization, on_delete=models.CASCADE, related_name="posh_policy")
+    
+    # Section A - Company Details
+    company_name = models.CharField(max_length=255)
+    registered_address = models.TextField()
+    hr_email = models.EmailField()
+    posh_email = models.EmailField(default="")
+    effective_date = models.DateField()
+    district_name = models.CharField(max_length=100)
+    
+    # Section B - IC Details
+    po_name = models.CharField(max_length=255)
+    po_email = models.EmailField()
+    po_phone = models.CharField(max_length=20)
+    
+    m1_name = models.CharField(max_length=255)
+    m1_email = models.EmailField()
+    m1_phone = models.CharField(max_length=20)
+    
+    m2_name = models.CharField(max_length=255)
+    m2_email = models.EmailField()
+    m2_phone = models.CharField(max_length=20)
+
+    m3_name = models.CharField(max_length=255, default="")
+    m3_email = models.EmailField(default="")
+    m3_phone = models.CharField(max_length=20, default="")
+
+    m4_name = models.CharField(max_length=255, default="")
+    m4_email = models.EmailField(default="")
+    m4_phone = models.CharField(max_length=20, default="")
+    
+    ext_name = models.CharField(max_length=255)
+    ext_email = models.EmailField()
+    ext_phone = models.CharField(max_length=20)
+    
+    # Section C - HR Head
+    hr_head_name = models.CharField(max_length=255)
+
+    # Section C.2 - Escalation Matrix
+    escalation_officer_name = models.CharField(max_length=255, default="")
+    escalation_officer_designation = models.CharField(max_length=255, default="")
+    
+    # Section D - Approval
+    approver_name = models.CharField(max_length=255)
+    approver_designation = models.CharField(max_length=255)
+    approval_date = models.DateField()
+    
+    # Brand/Logo
+    company_logo = models.ImageField(upload_to="policy_logos/", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"POSH Policy for {self.company_name}"
+

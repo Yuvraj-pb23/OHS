@@ -1,34 +1,63 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <link rel="shortcut icon" href="{% static 'img/favicon_final.ico' %}" type="image/x-icon">
     <link rel="icon" href="{% static 'img/favicon_final.ico' %}" type="image/x-icon">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}OHPL{% endblock %}</title>
-    
+    <meta name="description"
+        content="{% block meta_description %}Open Hand Private Limited (OHPL) is a leading provider of end-to-end POSH (Prevention of Sexual Harassment) and POCSO (Protection of Children from Sexual Offences) compliance, statutory training, and audit solutions.{% endblock %}" />
+    <meta name="keywords"
+        content="{% block meta_keywords %}POSH compliance, POSH training India, Prevention of Sexual Harassment, POSH Act 2013, POCSO compliance, Protection of Children from Sexual Offences, child protection policy, Internal Committee training, POSH External Member, corporate compliance, workplace safety audit, SHe-Box registration, POSH annual report, employee sensitization training, statutory training, POSH training online, POCSO training schools, corporate governance India, legal compliance audit, workplace harassment prevention{% endblock %}" />
+    <title>{% block title %}OHPL - POSH & POCSO Compliance, Training & Legal Support{% endblock %}</title>
+
+    <!-- Open Graph / Facebook SEO -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="OHPL - POSH & POCSO Compliance, Training & Legal Support" />
+    <meta property="og:description"
+        content="Empowering organizations and schools with end-to-end POSH & POCSO compliance, expert-led training, legal audit, policy drafting, and External Member support." />
+    <meta property="og:site_name" content="Open Hand Private Limited (OHPL)" />
+
+    <!-- Twitter SEO -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="OHPL - POSH & POCSO Compliance, Training & Legal Support" />
+    <meta name="twitter:description"
+        content="Empowering organizations and schools with end-to-end POSH & POCSO compliance, expert-led training, legal audit, policy drafting, and External Member support." />
+
+    <!-- DNS Prefetch & Preconnect for CDN Performance -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="preconnect" href="https://unpkg.com" crossorigin />
+
     <!-- Link to the custom static base CSS file -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
     <!-- Chatbot CSS -->
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=1" />
 
-    <!-- External CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
+    <!-- External CSS - Preloaded for high speed -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" /></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
 
     <!-- INTERNAL STYLES FOR LOGIN/LOGOUT BUTTONS AND GLASSY NAVBAR -->
     <style>
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 76px;
+            /* Align target sections perfectly flush with the bottom of the sticky navbar */
+        }
+
+
+
         /* Transparent Glassy Navbar with Sky Blue Tint */
         .navbar {
-            background: linear-gradient(90deg, #040e3f 0%, #0d47a1 45%, #ffffff 100%) !important; /* Deep Navy to White Gradient */
-            backdrop-filter: blur(15px) saturate(180%); /* Enhanced blur effect */
+            background: linear-gradient(90deg, #040e3f 0%, #0d47a1 45%, #ffffff 100%) !important;
+            /* Deep Navy to White Gradient */
+            backdrop-filter: blur(15px) saturate(180%);
+            /* Enhanced blur effect */
             -webkit-backdrop-filter: blur(15px) saturate(180%);
             border-bottom: 1px solid rgba(0, 0, 0, 0.05);
             position: sticky;
@@ -40,23 +69,27 @@
 
         /* Ensure nav links look good on the glassy background */
         .nav-link {
-            color: #000a7d !important; 
+            color: #000a7d !important;
             font-weight: 600;
             transition: all 0.3s ease;
             padding: 8px 15px !important;
             border-bottom: 3px solid transparent !important;
         }
-        .nav-link:hover, .nav-link.active {
+
+        .nav-link:hover,
+        .nav-link.active {
             color: #000a7d !important;
             border-bottom: 3px solid #ffb400 !important;
         }
+
         .nav-link.active {
             font-weight: 700;
         }
 
         /* Login Button Style - Purple Pill Shape */
         .btn-auth-login {
-            background-color: #6200ea; /* Purple theme */
+            background-color: #6200ea;
+            /* Purple theme */
             color: white !important;
             padding: 8px 20px !important;
             border-radius: 20px;
@@ -74,10 +107,11 @@
             margin-left: 15px;
             transition: all 0.3s ease;
         }
-        
+
         .app-logo:hover {
             transform: translateY(-1px);
         }
+
         .btn-auth-login:hover {
             background-color: #4a00b0;
             transform: translateY(-2px);
@@ -92,11 +126,14 @@
             padding: 0;
             font: inherit;
             cursor: pointer;
-            color: inherit; /* Inherits nav-link color */
+            color: inherit;
+            /* Inherits nav-link color */
             font-weight: 500;
         }
+
         .btn-auth-logout:hover {
-            color: #d32f2f !important; /* Red on hover */
+            color: #d32f2f !important;
+            /* Red on hover */
             text-decoration: underline;
         }
 
@@ -111,10 +148,11 @@
             align-items: center;
             gap: 5px;
         }
+
         .user-greeting:hover {
             color: #4a00b0 !important;
         }
-        
+
         /* Right-aligned dropdown for user menu */
         .user-dropdown .dropdown-content {
             right: 0;
@@ -123,13 +161,13 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(98, 0, 234, 0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             padding: 8px 0;
             z-index: 2001 !important;
         }
 
-        .user-dropdown .dropdown-content a, 
+        .user-dropdown .dropdown-content a,
         .user-dropdown .dropdown-content .logout-btn-wrapper {
             padding: 10px 16px;
             color: #333 !important;
@@ -156,7 +194,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(98, 0, 234, 0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             padding: 8px 0;
             z-index: 2001 !important;
@@ -201,7 +239,7 @@
             min-width: 180px;
             background: #fff;
             border: 1px solid rgba(99, 102, 241, 0.15);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
             border-radius: 12px;
             padding: 6px;
             z-index: 2001 !important;
@@ -261,7 +299,7 @@
 
         .accounts-dropdown .dropdown-content .dd-divider {
             height: 1px;
-            background: rgba(0,0,0,0.06);
+            background: rgba(0, 0, 0, 0.06);
             margin: 4px 0;
         }
 
@@ -322,14 +360,17 @@
         .side-poster-container {
             position: fixed;
             bottom: 30px;
-            left: -450px; /* Changed from right to left (Hidden initially) */
+            left: -450px;
+            /* Changed from right to left (Hidden initially) */
             width: 350px;
             z-index: 10001;
-            transition: left 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55); /* Changed transition to left */
+            transition: left 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            /* Changed transition to left */
         }
 
         .side-poster-container.active {
-            left: 30px; /* Changed from right to left (Slide in) */
+            left: 30px;
+            /* Changed from right to left (Slide in) */
         }
 
         .poster-card {
@@ -338,7 +379,8 @@
             border-radius: 20px;
             text-align: center;
             position: relative;
-            box-shadow: 10px 15px 40px rgba(0, 0, 0, 0.15); /* Adjusted shadow for left side */
+            box-shadow: 10px 15px 40px rgba(0, 0, 0, 0.15);
+            /* Adjusted shadow for left side */
             border-left: 6px solid #6200ea;
         }
 
@@ -405,11 +447,14 @@
         @media (max-width: 480px) {
             .side-poster-container {
                 width: 90%;
-                left: -110%; /* Changed from right to left */
+                left: -110%;
+                /* Changed from right to left */
                 right: auto;
             }
+
             .side-poster-container.active {
-                left: 5%; /* Changed from right to left */
+                left: 5%;
+                /* Changed from right to left */
                 right: auto;
             }
         }
@@ -424,21 +469,26 @@
                 align-items: center !important;
                 padding: 0 10px !important;
             }
+
             .app-logo {
                 order: 1 !important;
                 margin-left: 5px !important;
             }
+
             .app-logo img {
                 height: 35px !important;
             }
+
             .hamburger {
                 display: flex !important;
                 order: 2 !important;
                 margin-right: 15px !important;
             }
+
             .hamburger span {
                 background: #6200ea !important;
             }
+
             .nav-links {
                 background: #1e1e2f !important;
                 width: 250px !important;
@@ -446,36 +496,50 @@
                 top: 60px !important;
                 right: 15px !important;
                 border-radius: 15px !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
                 padding: 15px !important;
                 display: none !important;
                 flex-direction: column !important;
                 z-index: 2900 !important;
-                border: 1px solid rgba(255,255,255,0.1) !important;
+                border: 1px solid rgba(255, 255, 255, 0.1) !important;
             }
+
             .nav-links.show {
                 display: flex !important;
                 animation: slideInDownCompact 0.3s ease-out;
             }
+
             @keyframes slideInDownCompact {
-                from { opacity: 0; transform: translateY(-10px); }
-                to { opacity: 1; transform: translateY(0); }
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
-            .nav-link, .user-greeting {
+
+            .nav-link,
+            .user-greeting {
                 color: #ffffff !important;
                 font-size: 1.1rem !important;
                 padding: 12px 15px !important;
-                border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
                 width: 100% !important;
                 text-align: center !important;
                 display: block !important;
             }
+
             .nav-link.active {
                 color: #ffffff !important;
-                background: rgba(255,180,0,0.1) !important;
-                border-bottom: 2px solid #ffb400 !important; /* Orange underline */
+                background: rgba(255, 180, 0, 0.1) !important;
+                border-bottom: 2px solid #ffb400 !important;
+                /* Orange underline */
                 font-weight: 700 !important;
             }
+
             .user-dropdown .dropdown-content {
                 display: none !important;
                 background: #2a2a3d !important;
@@ -484,18 +548,21 @@
                 padding: 8px !important;
                 border: 1px solid rgba(255, 255, 255, 0.1) !important;
                 width: 95% !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
             }
+
             .user-dropdown.mobile-open .dropdown-content {
                 display: block !important;
             }
-            .user-dropdown .dropdown-content a, 
+
+            .user-dropdown .dropdown-content a,
             .user-dropdown .dropdown-content .btn-auth-logout,
             .user-dropdown .dropdown-content .dd-item {
-                color: #ffffff !important; /* CRITICAL: Force white Dashboard text */
+                color: #ffffff !important;
+                /* CRITICAL: Force white Dashboard text */
                 font-size: 0.95rem !important;
                 padding: 12px 15px !important;
-                background: rgba(255,255,255,0.08) !important;
+                background: rgba(255, 255, 255, 0.08) !important;
                 border-radius: 8px !important;
                 margin-bottom: 8px !important;
                 width: 100% !important;
@@ -503,6 +570,7 @@
                 text-align: left !important;
                 text-decoration: none !important;
             }
+
             .user-dropdown .dropdown-content a i,
             .user-dropdown .dropdown-content .btn-auth-logout i,
             .user-dropdown .dropdown-content .dd-item i {
@@ -512,15 +580,253 @@
                 display: inline-block !important;
                 color: inherit !important;
             }
-            .btn-auth-logout, .btn-auth-logout i, .dd-item i {
+
+            .btn-auth-logout,
+            .btn-auth-logout i,
+            .dd-item i {
                 color: #df1e1e !important;
+            }
+        }
+
+        /* =========================================================
+           PREMIUM DYNAMIC GLASSMORPHIC FOOTER STYLES (ADDED)
+           ========================================================= */
+        .premium-footer {
+            background: linear-gradient(180deg, #070c1e 0%, #03050c 100%) !important;
+            position: relative;
+            overflow: hidden;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ccc !important;
+            padding-top: 80px !important;
+            padding-bottom: 40px !important;
+            z-index: 1;
+        }
+
+        /* Cosmic radial glows for high-end depth */
+        .premium-footer::before {
+            content: '';
+            position: absolute;
+            top: -150px;
+            right: -100px;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .premium-footer::after {
+            content: '';
+            position: absolute;
+            bottom: -150px;
+            left: -100px;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(255, 180, 0, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .footer-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ffb400 !important;
+            margin-bottom: 25px;
+            position: relative;
+            display: inline-block;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .footer-header::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 35px;
+            height: 3px;
+            background: linear-gradient(90deg, #ffb400, #ff6b35);
+            border-radius: 2px;
+            transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .footer-header:hover::after {
+            width: 55px;
+        }
+
+        @media (min-width: 768px) {
+            .text-md-end .footer-header::after {
+                left: auto;
+                right: 0;
+            }
+        }
+
+        /* Branding text & intro */
+        .footer-brand-desc {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #ccc;
+            margin-top: 15px;
+        }
+
+        /* Dynamic, animated navigation links */
+        .premium-footer .footer-link {
+            color: #ccc !important;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .premium-footer .footer-link i {
+            font-size: 0.8rem;
+            color: rgba(255, 180, 0, 0.6);
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+
+        .premium-footer .footer-link:hover {
+            color: #ffb400 !important;
+            transform: translateX(6px);
+        }
+
+        .premium-footer .footer-link:hover i {
+            transform: scale(1.25);
+            color: #ffb400;
+        }
+
+        /* Interactive Contact Details with glowing boxes */
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-icon-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            color: #ffb400;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            flex-shrink: 0;
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-item:hover .contact-icon-wrapper {
+            background: linear-gradient(135deg, #ffb400 0%, #ff8c00 100%);
+            border-color: #ffb400;
+            color: #070c1e;
+            box-shadow: 0 0 15px rgba(255, 180, 0, 0.4);
+            transform: translateY(-2px) scale(1.05);
+        }
+
+        .contact-text-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .contact-text-wrapper a,
+        .contact-text-wrapper span {
+            color: #ccc !important;
+            font-weight: 500;
+            font-size: 1.05rem;
+            text-decoration: none !important;
+            transition: color 0.2s ease;
+            line-height: 1.5;
+        }
+
+        .contact-item:hover .contact-text-wrapper a,
+        .contact-item:hover .contact-text-wrapper span {
+            color: #f1f5f9 !important;
+        }
+
+        /* Glassmorphic premium social badges with gold hover glows */
+        .premium-social-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            color: #ccc !important;
+            font-size: 1.2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .premium-social-btn:hover {
+            color: #070c1e !important;
+            background: linear-gradient(135deg, #ffb400 0%, #ff8c00 100%);
+            border-color: #ffb400;
+            box-shadow: 0 8px 25px rgba(255, 180, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            transform: translateY(-6px) scale(1.15);
+        }
+
+        /* Bottom copyright & premium links */
+        .premium-footer-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
+            margin-top: 50px !important;
+            margin-bottom: 25px !important;
+            width: 100%;
+        }
+
+        .premium-copyright-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .premium-copyright-text {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        .premium-copyright-text strong {
+            color: #ccc;
+        }
+
+        .premium-copyright-links {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .premium-copyright-link {
+            color: #64748b !important;
+            text-decoration: none !important;
+            transition: color 0.2s ease;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .premium-copyright-link:hover {
+            color: #ffb400 !important;
+        }
+
+        @media (min-width: 768px) {
+            .footer-links-gap {
+                margin-left: 25% !important;
             }
         }
     </style>
     {% block extra_head %}{% endblock %}
-  </head>
+</head>
 
-  <body>
+<body>
     <!-- SLIDING POSTER SECTION (Hidden if already registered) -->
     {% if not user.is_authenticated or not user.posh_registrations.exists %}
     <div class="side-poster-container" id="mainPosterContainer">
@@ -530,7 +836,8 @@
                 <i class="fas fa-certificate"></i>
             </div>
             <h2>Specialized Training</h2>
-            <p>Elevate your organization's compliance with our expert-led <strong>POSH & POCSO Training</strong> sessions.</p>
+            <p>Elevate your organization's compliance with our expert-led <strong>POSH & POCSO Training</strong>
+                sessions.</p>
             <a href="/tutorial" class="poster-btn">Learn More & Apply</a>
         </div>
     </div>
@@ -541,272 +848,319 @@
 
     <!-- Navbar -->
     <nav class="navbar">
-      <div class="hamburger" id="hamburger">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-
-<div class="app-logo">
-    <a href="/#hero">
-        <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Private Limited Logo" style="height: 50px; width: auto; object-fit: contain;">
-    </a>
-</div>
-
-
-      <!-- UPDATED NAV LINKS WITH LOGIN LOGIC -->
-      <div class="nav-links" id="navLinks">
-        <!-- Home: Exact match check -->
-        <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-        
-        <!-- Other pages: Contains check (handles sub-pages) -->
-        <div class="dropdown">
-          <a href="/about" class="nav-link {% if '/about' in request.path %}active{% endif %}">Our Team</a>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
         </div>
 
-        <div class="dropdown">
-          <a href="/blog" class="nav-link {% if '/blog' in request.path %}active{% endif %}">Resources</a>
+        <div class="app-logo">
+            <a href="/#hero">
+                <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Private Limited Logo" width="180" height="50"
+                    style="height: 50px; width: auto; object-fit: contain;">
+            </a>
         </div>
-        
-        <a href="/tutorial" class="nav-link {% if '/tutorial' in request.path %}active{% endif %}">Training</a>
-        
-        <!-- ========================================== -->
-        <!--        AUTHENTICATION LOGIC START          -->
-        <!-- ========================================== -->
-        {% if user.is_authenticated %}
+
+
+        <!-- UPDATED NAV LINKS WITH LOGIN LOGIC -->
+        <div class="nav-links" id="navLinks">
+            <!-- Home: Exact match check -->
+            <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
+
+            <!-- Other pages: Contains check (handles sub-pages) -->
+            <div class="dropdown">
+                <a href="/about" class="nav-link {% if '/about' in request.path %}active{% endif %}">Our Team</a>
+            </div>
+
+            <div class="dropdown">
+                <a href="/blog" class="nav-link {% if '/blog' in request.path %}active{% endif %}">Resources</a>
+            </div>
+
+            <a href="/tutorial" class="nav-link {% if '/tutorial' in request.path %}active{% endif %}">Training</a>
+
+            <!-- ========================================== -->
+            <!--        AUTHENTICATION LOGIC START          -->
+            <!-- ========================================== -->
+            {% if user.is_authenticated %}
             <div class="dropdown accounts-dropdown user-dropdown">
                 <button type="button" class="btn-accounts" style="border: none; cursor: pointer;">
                     {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
-                        <i class="fas fa-calculator"></i>
-                        Accounts
+                    <i class="fas fa-calculator"></i>
+                    Accounts
                     {% else %}
-                        <i class="fas fa-user-circle"></i>
-                        Hi, {{ user.first_name|default:user.username }}
+                    <i class="fas fa-user-circle"></i>
+                    Hi, {{ user.first_name|default:user.username }}
                     {% endif %}
                     <i class="fas fa-chevron-down accounts-chevron"></i>
                 </button>
                 <div class="dropdown-content">
                     {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
-                        <a href="{% url 'accounts_dashboard' %}">
-                            <i class="fas fa-chart-bar"></i> Dashboard
-                        </a>
-                        <div class="dd-divider"></div>
-                        <form action="{% url 'accounts_logout' %}" method="post" style="display:contents;">
-                            {% csrf_token %}
-                            <button type="submit" class="dd-item">
-                                <i class="fas fa-sign-out-alt"></i> Sign Out
-                            </button>
-                        </form>
+                    <a href="{% url 'accounts_dashboard' %}">
+                        <i class="fas fa-chart-bar"></i> Dashboard
+                    </a>
+                    <div class="dd-divider"></div>
+                    <form action="{% url 'accounts_logout' %}" method="post" style="display:contents;">
+                        {% csrf_token %}
+                        <button type="submit" class="dd-item">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </button>
+                    </form>
                     {% else %}
-                        <a href="{% url 'login_redirect' %}">
-                            <i class="fas fa-th-large"></i> Dashboard
-                        </a>
-                        <div class="dd-divider"></div>
-                        <form action="{% url logout_url|default:'logout' %}" method="post" style="display:contents;">
-                            {% csrf_token %}
-                            <button type="submit" class="dd-item">
-                                <i class="fas fa-sign-out-alt"></i> Logout
-                            </button>
-                        </form>
+                    <a href="{% url 'login_redirect' %}">
+                        <i class="fas fa-th-large"></i> Dashboard
+                    </a>
+                    <div class="dd-divider"></div>
+                    <form action="{% url logout_url|default:'logout' %}" method="post" style="display:contents;">
+                        {% csrf_token %}
+                        <button type="submit" class="dd-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    </form>
                     {% endif %}
                 </div>
             </div>
-        {% else %}
+            {% else %}
             <!-- If Logged Out: Show Login Button (Accounts Style) -->
             <form action="{% url 'login' %}" method="get" style="display: inline;">
                 <button type="submit" class="btn-accounts">
                     <i class="fas fa-sign-in-alt"></i> Login
                 </button>
             </form>
-        {% endif %}
-        <!-- ========================================== -->
-        <!--         AUTHENTICATION LOGIC END           -->
-        <!-- ========================================== -->
+            {% endif %}
+            <!-- ========================================== -->
+            <!--         AUTHENTICATION LOGIC END           -->
+            <!-- ========================================== -->
 
-      </div>
+        </div>
     </nav>
 
     <!-- Main Content -->
     <main>
-      {% block body %}{% endblock %}
+        {% block body %}{% endblock %}
     </main>
 
     <!-- CHATBOT -->
     {% include 'chat/chatbot_snippet.html' %}
 
     <!-- Footer -->
-    <footer class="bg-dark text-light pt-5 pb-4">
-      <div class="container px-4">
-        <div class="row g-4">
-          <div class="col-md-3 col-sm-6">
-            <div class="mb-3">
-                <img src="{% static 'img/logo_new.png' %}" alt="OHPL Logo" style="height: 40px;">
+    <footer class="premium-footer">
+        <div class="container px-4" style="max-width: 1525px !important;">
+            <div class="row g-4">
+                <div class="col-md-3 col-sm-6">
+                    <div class="mb-3">
+                        <img src="{% static 'img/logo_new.png' %}" alt="OHPL Logo" width="180" height="50"
+                            style="height: 50px; width: auto; filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));">
+                    </div>
+                    <p class="footer-brand-desc">
+                        Empowering organizations with expert POSH training, compliance
+                        support, and committee setup to ensure safe and lawful workplaces.
+                    </p>
+                </div>
+
+                <div class="col-md-2 col-sm-6 footer-links-gap">
+                    <h5 class="footer-header">Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <a href="/" class="footer-link">
+                                <i class="fas fa-chevron-right me-2"></i>Home
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="/about" class="footer-link">
+                                <i class="fas fa-chevron-right me-2"></i>Our Team
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="/blog" class="footer-link">
+                                <i class="fas fa-chevron-right me-2"></i>Resources
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="/tutorial" class="footer-link">
+                                <i class="fas fa-chevron-right me-2"></i>Training
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-2 col-sm-6">
+                    <h5 class="footer-header">Contact Details</h5>
+
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-text-wrapper">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Sector+13+Chandigarh+OHPL"
+                                target="_blank">
+                                Sector-13, Chandigarh OHPL
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-text-wrapper">
+                            <a href="https://www.google.com/maps/search/?api=1&query=Sector+79+Mohali" target="_blank">
+                                Sector-79, Mohali
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-text-wrapper">
+                            <a href="tel:+919988997555">+91 99889 97555</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <div class="contact-icon-wrapper">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-text-wrapper">
+                            <a href="tel:+919142437456">+91 91424 37456</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-2 col-sm-6">
+                    <h5 class="footer-header">Follow Us</h5>
+                    <p class="footer-brand-desc mb-4 d-none d-md-block" style="font-size: 0.9rem;">
+                        Connect with Open Hand Solutions on social media platforms.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.facebook.com/openhandsolutions/about/" class="premium-social-btn"
+                            target="_blank" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://in.linkedin.com/company/open-hand-solutions" class="premium-social-btn"
+                            target="_blank" aria-label="LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                        <a href="https://www.instagram.com/open_hand_solutions/" class="premium-social-btn"
+                            target="_blank" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
-            <p>
-              Empowering organizations with expert POSH training, compliance
-              support, and committee setup to ensure safe and lawful workplaces.
-            </p>
-          </div>
 
-          <div class="col-md-2 col-sm-6">
-            <h5 class="text-uppercase text-warning mb-3">Quick Links</h5>
-            <ul class="list-unstyled">
-              <li class="mb-2"><a href="/" class="footer-link"><i class="fas fa-angle-right me-2"></i>Home</a></li>
-              <li class="mb-2"><a href="/about" class="footer-link"><i class="fas fa-angle-right me-2"></i>Our Team</a></li>
-              <li class="mb-2"><a href="/blog" class="footer-link"><i class="fas fa-angle-right me-2"></i>Resources</a></li>
-               <li class="mb-2"><a href="/tutorial" class="footer-link"><i class="fas fa-angle-right me-2"></i>Training</a></li>
-            </ul>
-          </div>
+            <div class="premium-footer-divider"></div>
 
-       <div class="col-md-4 col-sm-6">
-  <h5 class="text-uppercase text-warning mb-3">Contact</h5>
-
-  <p>
-    <i class="fas fa-map-marker-alt me-2 text-warning"></i>
-    <a 
-      href="https://www.google.com/maps/search/?api=1&query=Sector+13+Chandigarh+OHPL"
-      target="_blank"
-      class="footer-link"
-    >
-      Sector-13, Chandigarh OHPL
-    </a>
-  </p>
-
-  <p>
-    <i class="fas fa-map-marker-alt me-2 text-warning"></i>
-    <a 
-      href="https://www.google.com/maps/search/?api=1&query=Sector+79+Mohali"
-      target="_blank"
-      class="footer-link"
-    >
-      Sector-79, Mohali
-    </a>
-  </p>
-
-  <p class="mb-1">
-    <i class="fas fa-phone me-2 text-warning"></i>
-    <a href="tel:+919988997555" class="footer-link">+91 99889 97555</a>
-  </p>
-
-  <p>
-    <i class="fas fa-phone me-2 text-warning"></i>
-    <a href="tel:+919142437456" class="footer-link">+91 91424 37456</a>
-  </p>
-</div>
-
-
-          <div class="col-md-3 col-sm-6">
-            <h5 class="text-uppercase text-warning mb-3">Follow Us</h5>
-            <div class="d-flex gap-3">
-              <a href="https://www.facebook.com/openhandsolutions/about/" class="social-icon" target="_blank" aria-label="Facebook">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="https://in.linkedin.com/company/open-hand-solutions" class="social-icon" target="_blank" aria-label="LinkedIn">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-              <a href="https://www.instagram.com/open_hand_solutions/" class="social-icon" target="_blank" aria-label="Instagram">
-                <i class="fab fa-instagram"></i>
-              </a>
+            <div class="premium-copyright-container justify-content-center text-center">
+                <div class="premium-copyright-text">
+                    &copy; 2025 <strong>OHPL</strong>. All Rights Reserved.
+                </div>
             </div>
-          </div>
-
-          <hr class="border-light mt-4" />
-          <div class="row">
-            <div class="col text-center">
-              <p class="mb-0">&copy; 2025 <strong>OHPL</strong>. All Rights Reserved.</p>
-            </div>
-          </div>
         </div>
-      </div>
     </footer>
 
     <!-- JavaScript -->
     <script>
-      // --- CSRF SECURITY HELPER ---
-      function getCookie(name) {
-          let cookieValue = null;
-          if (document.cookie && document.cookie !== '') {
-              const cookies = document.cookie.split(';');
-              for (let i = 0; i < cookies.length; i++) {
-                  const cookie = cookies[i].trim();
-                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                      break;
-                  }
-              }
-          }
-          return cookieValue;
-      }
-
-      function getCsrfToken() {
-          return getCookie('csrftoken') || (document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '');
-      }
-
-      // --- SLIDING POSTER JAVASCRIPT ---
-      window.addEventListener('DOMContentLoaded', () => {
-          const posterContainer = document.getElementById('mainPosterContainer');
-          const closeBtn = document.getElementById('closePoster');
-
-          // Timer: Slide in after 7 seconds
-          setTimeout(() => {
-              posterContainer.classList.add('active');
-          }, 7000);
-
-          // Close function
-          const hidePoster = () => {
-              posterContainer.classList.remove('active');
-          };
-
-          closeBtn.addEventListener('click', hidePoster);
-      });
-
-      // Mobile Menu Toggle
-      const hamburger = document.getElementById("hamburger");
-      const navLinks = document.getElementById("navLinks");
-
-      if (hamburger && navLinks) {
-        hamburger.addEventListener("click", () => {
-          navLinks.classList.toggle("show");
-          hamburger.classList.toggle("active");
-          // Prevent scrolling when menu is open
-          document.body.style.overflow = navLinks.classList.contains("show") ? "hidden" : "auto";
+        // Prevent background scrolling when a Bootstrap modal is open
+        document.addEventListener('show.bs.modal', function () {
+            document.documentElement.classList.add('modal-open');
         });
-      }
-
-      // Mobile Dropdown Toggle
-      document.addEventListener('click', (e) => {
-          const authButton = e.target.closest('.user-dropdown .btn-accounts');
-          if (authButton && window.innerWidth <= 768) {
-              e.preventDefault();
-              const dropdown = authButton.closest('.user-dropdown');
-              dropdown.classList.toggle('mobile-open');
-          }
-      });
-
-      // Floating Services Menu
-      const fab = document.getElementById("servicesFab");
-      const dropdown = document.getElementById("servicesDropdown");
-
-      if (fab && dropdown) {
-        fab.addEventListener("click", (e) => {
-          e.stopPropagation();
-          dropdown.classList.toggle("show");
+        document.addEventListener('hidden.bs.modal', function () {
+            // Add a brief delay so Bootstrap has updated the body classes
+            setTimeout(() => {
+                if (!document.body.classList.contains('modal-open')) {
+                    document.documentElement.classList.remove('modal-open');
+                }
+            }, 50);
         });
 
-        document.addEventListener("click", (e) => {
-          if (!fab.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove("show");
-          }
+        // --- CSRF SECURITY HELPER ---
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function getCsrfToken() {
+            return getCookie('csrftoken') || (document.querySelector('[name=csrfmiddlewaretoken]') ? document.querySelector('[name=csrfmiddlewaretoken]').value : '');
+        }
+
+        // --- SLIDING POSTER JAVASCRIPT ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const posterContainer = document.getElementById('mainPosterContainer');
+            const closeBtn = document.getElementById('closePoster');
+
+            // Timer: Slide in after 7 seconds
+            setTimeout(() => {
+                posterContainer.classList.add('active');
+            }, 7000);
+
+            // Close function
+            const hidePoster = () => {
+                posterContainer.classList.remove('active');
+            };
+
+            closeBtn.addEventListener('click', hidePoster);
         });
 
-        dropdown.addEventListener("click", (e) => {
-          e.stopPropagation();
+        // Mobile Menu Toggle
+        const hamburger = document.getElementById("hamburger");
+        const navLinks = document.getElementById("navLinks");
+
+        if (hamburger && navLinks) {
+            hamburger.addEventListener("click", () => {
+                navLinks.classList.toggle("show");
+                hamburger.classList.toggle("active");
+                // Prevent scrolling when menu is open
+                document.body.style.overflow = navLinks.classList.contains("show") ? "hidden" : "auto";
+            });
+        }
+
+        // Mobile Dropdown Toggle
+        document.addEventListener('click', (e) => {
+            const authButton = e.target.closest('.user-dropdown .btn-accounts');
+            if (authButton && window.innerWidth <= 768) {
+                e.preventDefault();
+                const dropdown = authButton.closest('.user-dropdown');
+                dropdown.classList.toggle('mobile-open');
+            }
         });
-      }
+
+        // Floating Services Menu
+        const fab = document.getElementById("servicesFab");
+        const dropdown = document.getElementById("servicesDropdown");
+
+        if (fab && dropdown) {
+            fab.addEventListener("click", (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle("show");
+            });
+
+            document.addEventListener("click", (e) => {
+                if (!fab.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.remove("show");
+                }
+            });
+
+            dropdown.addEventListener("click", (e) => {
+                e.stopPropagation();
+            });
+        }
 
     </script>
-    <script src="{% static 'js/chatbot.js' %}?v=12"></script>
+    <script src="{% static 'js/chatbot.js' %}?v=12" defer></script>
 
 
-  </body>
+</body>
+
 </html>
