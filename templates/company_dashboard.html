@@ -3282,19 +3282,30 @@
         <h2 class="section-title mb-0">
           <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
         </h2>
+        {% if posh_policy %}
+        <div class="d-flex gap-2">
+          <button class="btn btn-action" data-bs-toggle="modal" data-bs-target="#editPolicyModal">
+            <i class="bi bi-pencil-square me-2"></i>Edit Policy
+          </button>
+          <button class="btn btn-action" onclick="window.print()">
+            <i class="bi bi-printer me-2"></i>Print Policy
+          </button>
+        </div>
+        {% else %}
         <button class="btn btn-action" onclick="window.print()">
           <i class="bi bi-printer me-2"></i>Print Policy
         </button>
+        {% endif %}
       </div>
       
       <div class="policy-text p-4 p-md-5 rounded-4 shadow-sm" style="background: white; border: 1px solid var(--border-color); color: #334155; font-family: 'Poppins', sans-serif;">
         <div class="text-center mb-4 pb-4 border-bottom">
           {% if posh_policy.company_logo %}
-            <img src="{{ posh_policy.company_logo.url }}" alt="Company Logo" style="max-height: 80px; width: auto; object-fit: contain; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
+            <img src="{{ posh_policy.company_logo.url }}" alt="Company Logo" style="max-height: 45px; width: auto; object-fit: contain; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
           {% endif %}
           <h2 class="fw-bold text-dark mb-1">PREVENTION OF SEXUAL HARASSMENT (POSH) POLICY</h2>
           <h4 class="text-uppercase text-secondary fw-semibold">{{ posh_policy.company_name }}</h4>
-          <p class="text-muted small mb-0">{{ posh_policy.registered_address }}</p>
+          <p class="text-muted small mb-0">{{ posh_policy.registered_address }}{% if posh_policy.district_name %}, {{ posh_policy.district_name }}{% endif %}</p>
           <p class="text-muted small">Effective Date: <strong>{{ posh_policy.effective_date }}</strong> &nbsp;|&nbsp; HR Email: <strong>{{ posh_policy.hr_email }}</strong></p>
         </div>
 
@@ -3990,13 +4001,585 @@
             progress before logging out.</p>
 
           <div class="d-flex flex-column gap-3">
-            <a href="{% url 'hr_logout' %}" class="btn btn-logout-confirm">Yes, Logout Now</a>
+            <a href="{% url 'hr_logout' %}" class="btn btn-logout-confirm" onclick="localStorage.removeItem('posh_activeSection');">Yes, Logout Now</a>
             <button type="button" class="btn btn-logout-cancel" data-bs-dismiss="modal">Stay on Dashboard</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- EDIT POLICY MODAL -->
+  <div class="modal fade" id="editPolicyModal" tabindex="-1" aria-labelledby="editPolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 16px; border: 1px solid #cbd5e1; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);">
+        <!-- HEADER -->
+        <div class="modal-header border-0 p-4" style="background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%); color: #fff;">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 48px; height: 48px; background: rgba(255,255,255,0.15);">
+              <i class="bi bi-pencil-square" style="font-size: 1.5rem; color: #ffffff;"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fw-bold mb-0" id="editPolicyModalLabel" style="font-size: 1.25rem; color: #ffffff;">Edit POSH Policy</h5>
+              <small style="opacity: 0.85; color: #ffffff;">Update any fields of your company's statutory POSH policy</small>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <!-- BODY -->
+        <div class="modal-body p-4 bg-light">
+          <form id="editPoshForm" class="needs-validation" novalidate action="{% url 'generate_posh_policy' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs nav-fill mb-4 border-0" id="editPolicyTabs" role="tablist" style="background: #e2e8f0; border-radius: 12px; padding: 4px;">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold py-3 px-4 border-0" id="company-tab" data-bs-toggle="tab" data-bs-target="#company-pane" type="button" role="tab" aria-controls="company-pane" aria-selected="true" style="border-radius: 8px; color: #475569;">
+                  <i class="bi bi-building me-2"></i>1. Company Details
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-3 px-4 border-0" id="committee-tab" data-bs-toggle="tab" data-bs-target="#committee-pane" type="button" role="tab" aria-controls="committee-pane" aria-selected="false" style="border-radius: 8px; color: #475569;">
+                  <i class="bi bi-people me-2"></i>2. IC Committee
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold py-3 px-4 border-0" id="approvals-tab" data-bs-toggle="tab" data-bs-target="#approvals-pane" type="button" role="tab" aria-controls="approvals-pane" aria-selected="false" style="border-radius: 8px; color: #475569;">
+                  <i class="bi bi-file-earmark-check me-2"></i>3. HR & Approvals
+                </button>
+              </li>
+            </ul>
+
+            <!-- Tab Content -->
+            <div class="tab-content" id="editPolicyTabContent">
+              
+              <!-- Tab 1: Company Details -->
+              <div class="tab-pane fade show active" id="company-pane" role="tabpanel" aria-labelledby="company-tab">
+                <div class="card border-0 p-4 shadow-sm" style="border-radius: 12px; background: #ffffff;">
+                  <h6 class="fw-bold mb-4 text-primary" style="font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                    Company & Policy Header Details
+                  </h6>
+                  
+                  <div class="row">
+                    <!-- Company Name -->
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold text-secondary small">Company Name <span class="text-danger">*</span></label>
+                      <input type="text" name="companyName" class="form-control" value="{{ posh_policy.company_name }}" placeholder="e.g. HanuAI Pvt. Ltd." minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                      <div class="invalid-feedback text-danger mt-1">Company Name is required (minimum 3 characters).</div>
+                    </div>
+                    
+                    <!-- District -->
+                    <div class="col-md-6 mb-3">
+                      <label class="form-label fw-semibold text-secondary small">District <span class="text-danger">*</span></label>
+                      <input type="text" name="districtName" class="form-control" value="{{ posh_policy.district_name }}" placeholder="e.g. Gurgaon" minlength="2" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                      <div class="invalid-feedback text-danger mt-1">District name is required (minimum 2 characters).</div>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <!-- Registered Address -->
+                    <label class="form-label fw-semibold text-secondary small">Registered Office Address <span class="text-danger">*</span></label>
+                    <textarea name="registeredAddress" class="form-control" rows="2" placeholder="Full address including city, state, PIN" minlength="10" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;">{{ posh_policy.registered_address }}</textarea>
+                    <div class="invalid-feedback text-danger mt-1">Complete registered address is required (minimum 10 characters).</div>
+                  </div>
+
+                  <div class="row">
+                    <!-- HR Email -->
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label fw-semibold text-secondary small">HR Email <span class="text-danger">*</span></label>
+                      <input type="email" name="hrEmail" class="form-control" value="{{ posh_policy.hr_email }}" placeholder="hr@company.com" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                      <div class="invalid-feedback text-danger mt-1">A valid HR email is required.</div>
+                    </div>
+                    
+                    <!-- POSH Email -->
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label fw-semibold text-secondary small">POSH Email <span class="text-danger">*</span></label>
+                      <input type="email" name="poshEmail" class="form-control" value="{{ posh_policy.posh_email }}" placeholder="posh@company.com" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                      <div class="invalid-feedback text-danger mt-1">A valid POSH email is required.</div>
+                    </div>
+
+                    <!-- Effective Date -->
+                    <div class="col-md-4 mb-3">
+                      <label class="form-label fw-semibold text-secondary small">Policy Effective Date <span class="text-danger">*</span></label>
+                      <input type="date" name="effectiveDate" class="form-control" value="{{ posh_policy.effective_date|date:'Y-m-d' }}" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                      <div class="invalid-feedback text-danger mt-1">Policy effective date is required.</div>
+                    </div>
+                  </div>
+
+                  <!-- Logo upload -->
+                  <div class="mb-2">
+                    <label class="form-label fw-semibold text-secondary small">Company Logo</label>
+                    <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                      {% if posh_policy.company_logo %}
+                        <div class="flex-shrink-0">
+                          <img src="{{ posh_policy.company_logo.url }}" alt="Current Logo" class="rounded shadow-sm" style="max-height: 48px; width: auto; object-fit: contain;" />
+                        </div>
+                      {% endif %}
+                      <div class="flex-grow-1">
+                        <input type="file" name="companyLogo" class="form-control form-control-sm" accept="image/png, image/jpeg, image/jpg, image/webp" style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <small class="text-muted d-block mt-1">Leave empty to keep the current logo. Upload PNG or JPG (Max 2MB) to change.</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 2: IC Committee -->
+              <div class="tab-pane fade" id="committee-pane" role="tabpanel" aria-labelledby="committee-tab">
+                <div class="card border-0 p-4 shadow-sm" style="border-radius: 12px; background: #ffffff;">
+                  <h6 class="fw-bold mb-3 text-primary" style="font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                    Internal Committee (IC) Members
+                  </h6>
+                  <p class="text-muted small mb-4">
+                    The POSH Act requires 1 Presiding Officer (Senior Woman), at least 4 internal members, and 1 external NGO/Advocate member.
+                  </p>
+
+                  <!-- Presiding Officer -->
+                  <div class="p-3 mb-4 rounded-3" style="background: rgba(79, 70, 229, 0.03); border: 1px dashed rgba(79, 70, 229, 0.3);">
+                    <label class="form-label fw-bold text-primary mb-2 small"><i class="bi bi-award me-1"></i> Presiding Officer (Senior Woman Employee) <span class="text-danger">*</span></label>
+                    <div class="row g-2">
+                      <div class="col-md-4">
+                        <input type="text" name="poName" value="{{ posh_policy.po_name }}" placeholder="Name" class="form-control" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                      </div>
+                      <div class="col-md-5">
+                        <input type="email" name="poEmail" value="{{ posh_policy.po_email }}" placeholder="Email" class="form-control" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Valid email required.</div>
+                      </div>
+                      <div class="col-md-3">
+                        <input type="text" name="poPhone" value="{{ posh_policy.po_phone }}" placeholder="Phone" class="form-control" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Valid 10-digit mobile.</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Members 1 and 2 in a row -->
+                  <div class="row mb-4">
+                    <!-- Member 1 -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                      <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <label class="form-label fw-bold text-secondary mb-2 small">IC Member 1 <span class="text-danger">*</span></label>
+                        <div class="row g-2">
+                          <div class="col-12 mb-2">
+                            <input type="text" name="m1Name" value="{{ posh_policy.m1_name }}" placeholder="Name" class="form-control form-control-sm" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                          </div>
+                          <div class="col-md-7">
+                            <input type="email" name="m1Email" value="{{ posh_policy.m1_email }}" placeholder="Email" class="form-control form-control-sm" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Valid email.</div>
+                          </div>
+                          <div class="col-md-5">
+                            <input type="text" name="m1Phone" value="{{ posh_policy.m1_phone }}" placeholder="Phone" class="form-control form-control-sm" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">10-digit mobile.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Member 2 -->
+                    <div class="col-md-6">
+                      <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <label class="form-label fw-bold text-secondary mb-2 small">IC Member 2 <span class="text-danger">*</span></label>
+                        <div class="row g-2">
+                          <div class="col-12 mb-2">
+                            <input type="text" name="m2Name" value="{{ posh_policy.m2_name }}" placeholder="Name" class="form-control form-control-sm" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                          </div>
+                          <div class="col-md-7">
+                            <input type="email" name="m2Email" value="{{ posh_policy.m2_email }}" placeholder="Email" class="form-control form-control-sm" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Valid email.</div>
+                          </div>
+                          <div class="col-md-5">
+                            <input type="text" name="m2Phone" value="{{ posh_policy.m2_phone }}" placeholder="Phone" class="form-control form-control-sm" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">10-digit mobile.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Members 3 and 4 in a row -->
+                  <div class="row mb-4">
+                    <!-- Member 3 -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                      <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <label class="form-label fw-bold text-secondary mb-2 small">IC Member 3 <span class="text-danger">*</span></label>
+                        <div class="row g-2">
+                          <div class="col-12 mb-2">
+                            <input type="text" name="m3Name" value="{{ posh_policy.m3_name }}" placeholder="Name" class="form-control form-control-sm" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                          </div>
+                          <div class="col-md-7">
+                            <input type="email" name="m3Email" value="{{ posh_policy.m3_email }}" placeholder="Email" class="form-control form-control-sm" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Valid email.</div>
+                          </div>
+                          <div class="col-md-5">
+                            <input type="text" name="m3Phone" value="{{ posh_policy.m3_phone }}" placeholder="Phone" class="form-control form-control-sm" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">10-digit mobile.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Member 4 -->
+                    <div class="col-md-6">
+                      <div class="p-3 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                        <label class="form-label fw-bold text-secondary mb-2 small">IC Member 4 <span class="text-danger">*</span></label>
+                        <div class="row g-2">
+                          <div class="col-12 mb-2">
+                            <input type="text" name="m4Name" value="{{ posh_policy.m4_name }}" placeholder="Name" class="form-control form-control-sm" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                          </div>
+                          <div class="col-md-7">
+                            <input type="email" name="m4Email" value="{{ posh_policy.m4_email }}" placeholder="Email" class="form-control form-control-sm" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">Valid email.</div>
+                          </div>
+                          <div class="col-md-5">
+                            <input type="text" name="m4Phone" value="{{ posh_policy.m4_phone }}" placeholder="Phone" class="form-control form-control-sm" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                            <div class="invalid-feedback text-danger mt-1">10-digit mobile.</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- External Member NGO/Advocate -->
+                  <div class="p-3 rounded-3" style="background: rgba(16, 185, 129, 0.03); border: 1px dashed rgba(16, 185, 129, 0.3);">
+                    <label class="form-label fw-bold text-success mb-2 small"><i class="bi bi-shield-check me-1"></i> External Member (NGO / Advocate) <span class="text-danger">*</span></label>
+                    <div class="row g-2">
+                      <div class="col-md-4">
+                        <input type="text" name="extName" value="{{ posh_policy.ext_name }}" placeholder="Name" class="form-control" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Required (min 3 letters, no numbers).</div>
+                      </div>
+                      <div class="col-md-5">
+                        <input type="email" name="extEmail" value="{{ posh_policy.ext_email }}" placeholder="Email" class="form-control" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Valid email required.</div>
+                      </div>
+                      <div class="col-md-3">
+                        <input type="text" name="extPhone" value="{{ posh_policy.ext_phone }}" placeholder="Phone" class="form-control" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Valid 10-digit mobile.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tab 3: HR Head, Escalations & Approvals -->
+              <div class="tab-pane fade" id="approvals-pane" role="tabpanel" aria-labelledby="approvals-tab">
+                <div class="card border-0 p-4 shadow-sm" style="border-radius: 12px; background: #ffffff;">
+                  <h6 class="fw-bold mb-4 text-primary" style="font-size: 1.1rem; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px;">
+                    HR Head & Policy Approval Details
+                  </h6>
+
+                  <!-- HR Head -->
+                  <div class="mb-4">
+                    <label class="form-label fw-semibold text-secondary small">HR Head Name <span class="text-danger">*</span></label>
+                    <input type="text" name="hrHeadName" value="{{ posh_policy.hr_head_name }}" class="form-control" placeholder="e.g. Jane Doe" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 8px 12px !important;" />
+                    <div class="invalid-feedback text-danger mt-1">HR Head name is required (minimum 3 characters, no numbers).</div>
+                  </div>
+
+                  <!-- Escalation Matrix -->
+                  <div class="p-3 mb-4 rounded-3" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+                    <label class="form-label fw-bold text-secondary mb-3 small"><i class="bi bi-arrow-up-right-circle me-1"></i> Escalation Officer Matrix</label>
+                    <div class="row">
+                      <div class="col-md-6 mb-3 mb-md-0">
+                        <label class="form-label text-muted small">Escalation Officer Name <span class="text-danger">*</span></label>
+                        <input type="text" name="escalationName" value="{{ posh_policy.escalation_officer_name }}" class="form-control form-control-sm" placeholder="e.g. John Doe" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Escalation Officer name is required (minimum 3 characters, no numbers).</div>
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label text-muted small">Escalation Officer Designation <span class="text-danger">*</span></label>
+                        <input type="text" name="escalationDesignation" value="{{ posh_policy.escalation_officer_designation }}" class="form-control form-control-sm" placeholder="e.g. Chief HR Officer" minlength="2" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Designation is required (minimum 2 characters).</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Policy Approval details -->
+                  <div class="p-3 rounded-3" style="background: rgba(79, 70, 229, 0.02); border: 1px solid rgba(79, 70, 229, 0.1);">
+                    <label class="form-label fw-bold text-primary mb-3 small"><i class="bi bi-file-earmark-check me-1"></i> Policy Authorization & Sign-off</label>
+                    <div class="row">
+                      <div class="col-md-4 mb-3 mb-md-0">
+                        <label class="form-label text-muted small">Approver Name <span class="text-danger">*</span></label>
+                        <input type="text" name="approverName" value="{{ posh_policy.approver_name }}" class="form-control form-control-sm" placeholder="e.g. CEO / Director Name" minlength="3" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Approver name is required (minimum 3 characters, no numbers).</div>
+                      </div>
+                      <div class="col-md-4 mb-3 mb-md-0">
+                        <label class="form-label text-muted small">Approver Designation <span class="text-danger">*</span></label>
+                        <input type="text" name="approverDesignation" value="{{ posh_policy.approver_designation }}" class="form-control form-control-sm" placeholder="e.g. Managing Director" minlength="2" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Approver designation is required (minimum 2 characters).</div>
+                      </div>
+                      <div class="col-md-4">
+                        <label class="form-label text-muted small">Approval Date <span class="text-danger">*</span></label>
+                        <input type="date" name="approvalDate" value="{{ posh_policy.approval_date|date:'Y-m-d' }}" class="form-control form-control-sm" required style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; color: #1e293b !important; border-radius: 8px !important; padding: 6px 12px !important;" />
+                        <div class="invalid-feedback text-danger mt-1">Valid approval date is required (cannot be in the future).</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- FOOTER -->
+            <div class="modal-footer border-0 p-4 mt-3" style="background: #f8fafc; margin: -24px -24px -24px -24px; border-top: 1px solid #e2e8f0 !important;">
+              <div class="form-check me-auto">
+                <input class="form-check-input" type="checkbox" id="editConsentCheck" required style="border: 1px solid #cbd5e1; background-color: #ffffff;" />
+                <label class="form-check-label text-secondary small" for="editConsentCheck" style="cursor: pointer;">
+                  I declare that the updated committee details and policies are accurate.
+                </label>
+                <div class="invalid-feedback text-danger small">You must confirm prior to saving.</div>
+              </div>
+              
+              <button type="button" class="btn btn-secondary px-4 py-2 fw-semibold" data-bs-dismiss="modal" style="border-radius: 8px;">Cancel</button>
+              <button type="submit" class="btn px-4 py-2 fw-bold text-white" style="border-radius: 8px; background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%); border: none; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);">
+                Save Changes
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCOPED CUSTOM STYLES AND FRONTEND VALIDATION SCRIPT FOR EDIT MODAL -->
+  <style>
+    #editPolicyModal .nav-tabs .nav-link {
+      color: #475569 !important;
+      border: none !important;
+      background: transparent !important;
+      border-radius: 8px !important;
+      font-weight: 600 !important;
+      transition: all 0.2s ease !important;
+    }
+    #editPolicyModal .nav-tabs .nav-link:hover {
+      color: #4f46e5 !important;
+      background: #f1f5f9 !important;
+    }
+    #editPolicyModal .nav-tabs .nav-link.active {
+      color: #ffffff !important;
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2) !important;
+    }
+    #editPolicyModal .form-control {
+      background-color: #ffffff !important;
+      border: 1px solid #cbd5e1 !important;
+      color: #1e293b !important;
+      border-radius: 8px !important;
+      padding: 8px 12px !important;
+    }
+    #editPolicyModal .form-control:focus {
+      border-color: #6366f1 !important;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
+    }
+    #editPolicyModal .modal-content {
+      background: #ffffff !important;
+      color: #1e293b !important;
+    }
+    #editPolicyModal .modal-header {
+      background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+    }
+    #editPolicyModal .modal-title {
+      color: #ffffff !important;
+    }
+  </style>
+
+  <script>
+    (function () {
+      'use strict';
+      
+      // Wait for document to load
+      window.addEventListener('DOMContentLoaded', () => {
+        const editForm = document.getElementById('editPoshForm');
+        if (!editForm) return;
+        
+        const inputs = editForm.querySelectorAll('input, textarea');
+
+        const validateEditField = function (input) {
+          const value = input.value.trim();
+          let isValid = true;
+          let customError = '';
+
+          // Required validation
+          if (input.hasAttribute('required') && value === '') {
+            isValid = false;
+            customError = 'This field is required.';
+          } else if (value !== '') {
+            // Specific validations
+            if (input.type === 'email') {
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRegex.test(value)) {
+                isValid = false;
+                customError = 'Please enter a valid email address (must contain @ and a domain name).';
+              }
+              
+              // Real-time unique email check for HR & POSH email inputs
+              if (isValid && (input.name === 'hrEmail' || input.name === 'poshEmail')) {
+                const otherInputName = input.name === 'hrEmail' ? 'poshEmail' : 'hrEmail';
+                const otherInput = editForm.querySelector(`input[name="${otherInputName}"]`);
+                if (otherInput && otherInput.value.trim() !== '') {
+                  if (value === otherInput.value.trim()) {
+                    isValid = false;
+                    customError = 'HR Email and POSH Email must be different.';
+                  } else {
+                    // Synchronously clear the matching error on the other field if it has the difference warning
+                    if (otherInput.validationMessage === 'HR Email and POSH Email must be different.') {
+                      otherInput.setCustomValidity('');
+                      otherInput.classList.remove('is-invalid');
+                      otherInput.classList.add('is-valid');
+                    }
+                  }
+                }
+              }
+            } else if (input.placeholder === 'Phone') {
+              const phoneRegex = /^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$/;
+              if (!phoneRegex.test(value)) {
+                isValid = false;
+                customError = 'Please enter a valid 10-digit mobile number.';
+              }
+            } else if (input.placeholder === 'Name' || input.name === 'hrHeadName' || input.name === 'approverName' || input.name === 'escalationName') {
+              const hasNumbers = /\d/.test(value);
+              if (hasNumbers) {
+                isValid = false;
+                customError = 'Names cannot contain numbers.';
+              } else if (value.length < 3) {
+                isValid = false;
+                customError = 'Name must be at least 3 characters long.';
+              }
+            } else if (input.name === 'companyName' && value.length < 3) {
+              isValid = false;
+              customError = 'Company Name must be at least 3 characters.';
+            } else if (input.name === 'registeredAddress' && value.length < 10) {
+              isValid = false;
+              customError = 'Address must be at least 10 characters.';
+            } else if (input.name === 'districtName' && value.length < 2) {
+              isValid = false;
+              customError = 'District must be at least 2 characters.';
+            } else if ((input.name === 'approverDesignation' || input.name === 'escalationDesignation') && value.length < 2) {
+              isValid = false;
+              customError = 'Designation must be at least 2 characters.';
+            } else if (input.name === 'effectiveDate') {
+              const selectedDate = new Date(value);
+              const maxFutureDate = new Date();
+              maxFutureDate.setFullYear(maxFutureDate.getFullYear() + 1);
+              if (selectedDate > maxFutureDate) {
+                isValid = false;
+                customError = 'Effective date cannot be more than 1 year in the future.';
+              }
+            } else if (input.name === 'approvalDate') {
+              const selectedDate = new Date(value);
+              const today = new Date();
+              today.setHours(23, 59, 59, 999);
+              if (selectedDate > today) {
+                isValid = false;
+                customError = 'Approval date cannot be in the future.';
+              }
+            } else if (input.type === 'file') {
+              const file = input.files[0];
+              if (file) {
+                const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                if (!validTypes.includes(file.type)) {
+                  isValid = false;
+                  customError = 'Only PNG, JPG, JPEG, and WEBP files are allowed.';
+                } else if (file.size > 2 * 1024 * 1024) {
+                  isValid = false;
+                  customError = 'File size exceeds the 2MB limit.';
+                }
+              }
+            }
+          }
+
+          // For checkboxes
+          if (input.type === 'checkbox') {
+            if (input.hasAttribute('required') && !input.checked) {
+              isValid = false;
+              customError = 'You must confirm this field.';
+            }
+          }
+
+          // Set browser validity
+          input.setCustomValidity(customError);
+
+          // Apply Bootstrap validation classes immediately
+          if (!isValid) {
+            input.classList.add('is-invalid');
+            input.classList.remove('is-valid');
+            
+            // Find and update feedback label dynamically
+            const feedback = input.closest('.mb-3, .mb-2, .mb-4, .col-md-6, .col-md-4, .col-md-5, .col-md-3, .form-check, .col-12')?.querySelector('.invalid-feedback');
+            if (feedback && customError) {
+              feedback.textContent = customError;
+            }
+          } else {
+            input.classList.remove('is-invalid');
+            if (value !== '' || (input.type === 'checkbox' && input.checked) || (input.type === 'file' && input.files.length > 0)) {
+              input.classList.add('is-valid');
+            } else {
+              input.classList.remove('is-valid');
+            }
+          }
+
+          return isValid;
+        };
+
+        // Attach instant dynamic listeners for all input and interaction states
+        inputs.forEach(input => {
+          input.addEventListener('input', function () {
+            validateEditField(input);
+          });
+          input.addEventListener('blur', function () {
+            validateEditField(input);
+          });
+          input.addEventListener('change', function () {
+            validateEditField(input);
+          });
+        });
+
+        // Strict submit check handler
+        editForm.addEventListener('submit', function (event) {
+          let isFormValid = true;
+          let firstInvalidInput = null;
+
+          inputs.forEach(input => {
+            const isFieldValid = validateEditField(input);
+            if (!isFieldValid) {
+              isFormValid = false;
+              if (!firstInvalidInput) {
+                firstInvalidInput = input;
+              }
+            }
+          });
+
+          if (!isFormValid) {
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (firstInvalidInput) {
+              // Dynamically switch tabs based on where the error is located
+              const tabPane = firstInvalidInput.closest('.tab-pane');
+              if (tabPane) {
+                const paneId = tabPane.getAttribute('id');
+                const tabTrigger = document.querySelector(`[data-bs-target="#${paneId}"]`);
+                if (tabTrigger) {
+                  const bsTab = bootstrap.Tab.getOrCreateInstance(tabTrigger);
+                  bsTab.show();
+                }
+              }
+              
+              setTimeout(() => {
+                firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstInvalidInput.focus();
+              }, 150);
+            }
+          }
+          
+          editForm.classList.add('was-validated');
+        }, false);
+      });
+    })();
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -4233,10 +4816,20 @@
 
     // Show notification when page loads after refresh
     window.addEventListener("load", function () {
+      const _urlParams = new URLSearchParams(window.location.search);
+      if (_urlParams.get("login") === "true") {
+        localStorage.removeItem(SECTION_KEY);
+        // Remove the parameter from URL to keep it clean
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname,
+        );
+      }
+
       // RESTORE ACTIVE SECTION
       // Priority: 1) URL hash (set by user navigation) 2) localStorage 3) ?section= query param
       const _hash = window.location.hash.substring(1);
-      const _urlParams = new URLSearchParams(window.location.search);
       const _sectionParam = _urlParams.get("section");
       const _savedSection = localStorage.getItem(SECTION_KEY);
       const _sectionToRestore = _hash || _savedSection || _sectionParam;

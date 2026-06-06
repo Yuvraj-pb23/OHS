@@ -395,6 +395,7 @@ class POSHRegistration(models.Model):
         ("PENDING", "Pending"),
         ("SUBMITTED", "Submitted"),
         ("VERIFIED", "Verified"),
+        ("REJECTED", "Rejected"),
     ]
     payment_status = models.CharField(
         max_length=20, choices=PAYMENT_STATUS_CHOICES, default="PENDING"
@@ -747,6 +748,7 @@ class POCSORegistration(models.Model):
         ("PENDING", "Pending"),
         ("SUBMITTED", "Submitted"),
         ("VERIFIED", "Verified"),
+        ("REJECTED", "Rejected"),
     ]
     payment_status = models.CharField(
         max_length=20, choices=PAYMENT_STATUS_CHOICES, default="PENDING"

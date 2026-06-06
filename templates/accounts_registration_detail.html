@@ -140,6 +140,12 @@
             border: 1px solid rgba(245, 158, 11, 0.2);
         }
 
+        .status-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
         .btn-approve {
             display: inline-flex;
             align-items: center;
@@ -260,10 +266,11 @@
                 <span class="text-[0.65rem] font-bold uppercase tracking-widest text-text-muted">Ref #{{ reg.id }}</span>
                 <span class="
                     px-3 py-1 rounded-lg text-[0.65rem] font-bold uppercase tracking-wider
-                    {% if reg.payment_status == 'VERIFIED' %}status-verified{% elif reg.payment_status == 'SUBMITTED' %}status-submitted{% else %}status-pending{% endif %}
+                    {% if reg.payment_status == 'VERIFIED' %}status-verified{% elif reg.payment_status == 'SUBMITTED' %}status-submitted{% elif reg.payment_status == 'REJECTED' %}status-rejected{% else %}status-pending{% endif %}
                 ">
                     {% if reg.payment_status == 'VERIFIED' %}Verified
                     {% elif reg.payment_status == 'SUBMITTED' %}Pending Review
+                    {% elif reg.payment_status == 'REJECTED' %}Rejected
                     {% else %}Awaiting Submission{% endif %}
                 </span>
             </div>
@@ -536,6 +543,10 @@
                             onclick="return confirm('Reject this payment and reset status to Pending?')">
                             <i class="fas fa-times-circle"></i> Reject Payment
                         </a>
+                        {% elif reg.payment_status == 'REJECTED' %}
+                        <div class="text-center py-3 text-red-400 text-sm">
+                            <i class="fas fa-times-circle mr-2"></i> Payment Rejected. Awaiting re-submission from client.
+                        </div>
                         {% else %}
                         <div class="text-center py-3 text-text-muted text-sm">
                             <i class="fas fa-clock mr-2"></i> Awaiting payment submission from client.

@@ -1071,6 +1071,8 @@
                                     <span class="tag tag-green">Verified</span>
                                     {% elif reg.payment_status == 'SUBMITTED' %}
                                     <span class="tag tag-blue active animate-pulse">Pending Review</span>
+                                    {% elif reg.payment_status == 'REJECTED' %}
+                                    <span class="tag tag-red">Rejected</span>
                                     {% else %}
                                     <span class="tag tag-amber opacity-40">Awaiting Sub.</span>
                                     {% endif %}
@@ -1160,6 +1162,8 @@
                                     <span class="tag tag-green">Verified</span>
                                     {% elif reg.payment_status == 'SUBMITTED' %}
                                     <span class="tag tag-blue active animate-pulse">Pending Review</span>
+                                    {% elif reg.payment_status == 'REJECTED' %}
+                                    <span class="tag tag-red">Rejected</span>
                                     {% else %}
                                     <span class="tag tag-amber opacity-40">Awaiting Sub.</span>
                                     {% endif %}

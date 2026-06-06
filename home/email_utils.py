@@ -249,3 +249,67 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
     except Exception as e:
         print(f"DEBUG: CRITICAL error sending tiered email: {e}")
         return False
+
+
+def send_payment_rejected_email(registration):
+    """
+    Send an email when a payment is rejected by the accounts department for the POSH queue.
+    """
+    from django.core.mail import EmailMultiAlternatives
+    from django.template.loader import render_to_string
+    from django.utils.html import strip_tags
+    from django.conf import settings
+    from .utils import get_posh_billing_data
+
+    hr_name = registration.contact_person or "HR Team"
+    subject = "Payment Rejected - POSH Act Compliance Training Program"
+    
+    body_content = f"""Dear {hr_name},
+
+Thank you for your interest in the POSH Act Compliance Training Program and for completing the registration process.
+
+We would like to inform you that we are currently unable to confirm your nomination/registration as we have not yet received the payment. There may have been a processing delay or an issue with the transaction.
+
+We request you to kindly verify the payment status and share the transaction details or proof of payment with us. Once the payment is received and verified, we will be happy to confirm your registration and share the joining details.
+
+Thank you for your cooperation. We look forward to your participation.
+
+Warm regards,
+
+Open Hand Solutions"""
+
+    # Get billing data and site URL to render using proforma_email.html
+    billing_data = get_posh_billing_data(registration)
+    site_url = getattr(settings, "SITE_URL", "https://openhandsolutions.com")
+    logo_url = f"{site_url}/static/img/logo_new.png"
+
+    # Construct HTML email
+    html_content = render_to_string(
+        "emails/proforma_email.html",
+        {
+            "registration": registration,
+            "billing_data": billing_data,
+            "body_content": body_content,
+            "registration_type": "POSH",
+            "tier_key": "PAYMENT_REJECTED",
+            "logo_url": logo_url,
+        },
+    )
+    text_content = strip_tags(html_content)
+
+    raw_recipients = [registration.email, "openhandpvtltd@gmail.com"]
+    recipients = [
+        r for r in set(raw_recipients) if r and isinstance(r, str) and "@" in r
+    ]
+
+    try:
+        msg = EmailMultiAlternatives(
+            subject, text_content, settings.DEFAULT_FROM_EMAIL, recipients
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send()
+        return True
+    except Exception as e:
+        print(f"DEBUG: Error sending payment rejection email: {e}")
+        return False
+

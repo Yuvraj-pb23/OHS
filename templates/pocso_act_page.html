@@ -598,7 +598,8 @@
                 fetch(`/ajax/update-watch-time/`, {
                     method: 'POST',
                     headers: { 'X-CSRFToken': getCsrfToken(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ seconds: secsToSync })
+                    body: JSON.stringify({ seconds: secsToSync }),
+                    keepalive: true
                 }).catch(e => {
                     console.error("Sync failed:", e);
                     pendingSyncSeconds += secsToSync;
@@ -616,7 +617,8 @@
                     body: JSON.stringify({
                         module_id: mod.id,
                         position: player.currentTime
-                    })
+                    }),
+                    keepalive: true
                 }).catch(e => console.error("Failed to save progress:", e));
             }
         }
@@ -669,6 +671,9 @@
         }
 
         function logout() {
+            if (player && !player.paused) {
+                player.pause();
+            }
             if (confirm("Are you sure you want to logout?")) {
                 window.location.href = "{% url 'logout' %}";
             }

@@ -466,7 +466,8 @@ def custom_login_redirect(request):
                 return redirect("pocso_act_page_corp")
             return redirect("tutorial")
 
-        return redirect("company_dashboard")
+        from django.urls import reverse
+        return redirect(reverse("company_dashboard") + "?login=true")
 
     # 1.5 ACCOUNTS -> Accounts Dashboard
     if user.account_type == "ACCOUNTS":
@@ -3172,8 +3173,17 @@ def accounts_reject_payment_view(request, registration_id):
         return redirect("home")
 
     registration = get_object_or_404(POSHRegistration, id=registration_id)
-    registration.payment_status = "PENDING"
+    registration.payment_status = "REJECTED"
     registration.save()
+
+    # Send payment rejection email
+    try:
+        from .email_utils import send_payment_rejected_email
+        send_payment_rejected_email(registration)
+    except Exception as e:
+        logger.warning(
+            f"Payment rejection email failed for {registration.company_name}: {e}"
+        )
 
     messages.warning(request, f"Payment for {registration.company_name} rejected.")
     return redirect("accounts_registration_detail", registration_id=registration_id)
@@ -3357,7 +3367,7 @@ def accounts_reject_pocso_payment_view(request, registration_id):
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
     registration = get_object_or_404(POCSORegistration, id=registration_id)
-    registration.payment_status = "PENDING"
+    registration.payment_status = "REJECTED"
     registration.save()
     messages.warning(
         request, f"Payment for {registration.school_name} has been rejected."
@@ -3816,7 +3826,8 @@ def generate_posh_policy(request):
         policy.save()
         
         messages.success(request, "POSH Policy has been generated successfully!")
-        return redirect("company_dashboard")
+        from django.urls import reverse
+        return redirect(reverse("company_dashboard") + "?section=policy#policy")
         
     return redirect("company_dashboard")
 
