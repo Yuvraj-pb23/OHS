@@ -169,10 +169,10 @@
 
                 <div class="max-w-md mx-auto space-y-4 mb-12">
                     <p class="text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
-                        Your request is under preview.
+                        Your registration is confirmed.
                     </p>
                     <p class="text-slate-500 font-medium leading-relaxed">
-                        As soon as the payment approves, a confirmation mail will be sent to you at <b
+                        A confirmation mail has been sent to you at <b
                             class="text-slate-700">{{ registration.email }}</b>.
                     </p>
                     <div class="h-px w-20 bg-slate-100 mx-auto mt-6"></div>
@@ -190,13 +190,7 @@
         <div class="invoice-wrapper" id="invoiceWrapper">
             <div class="certificate-card rounded-3xl p-4" id="invoiceCard">
                 <div class="certificate-inner-border rounded-2xl overflow-hidden">
-                    <div class="watermark">OFFICIAL BILLING</div>
-
-                    <!-- Disclaimer -->
-                    <div class="disclaimer-strip px-4 py-2 text-center rounded-lg mb-10">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>
-                        This document is for billing purpose only and is not printable.
-                    </div>
+                    <div class="watermark">OFFICIAL SUMMARY</div>
 
                     <div class="relative z-10">
                         <!-- Header -->
@@ -208,10 +202,10 @@
                                 </div>
                                 <div
                                     class="text-[0.65rem] font-black text-certificate-gold uppercase tracking-[0.3em] mb-4">
-                                    Official POCSO Billing</div>
+                                    Official POCSO Registration Summary</div>
                                 <h1
                                     class="text-2xl md:text-3xl font-black text-primary heading-font tracking-tight mb-2">
-                                    Proforma Invoice</h1>
+                                    Registration Details</h1>
                                 <p class="text-slate-400 text-sm">Ref: #POCSO-{{ registration.id }}-{{ registration.created_at|date:"Ymd" }}</p>
                             </div>
                             <div class="text-left md:text-right">
@@ -234,9 +228,7 @@
                                 </div>
                                 <div>
                                     <p class="text-sm font-bold">Services Offered</p>
-                                    <p class="text-xs text-slate-400">Total Statutory Documentation & Institutional
-                                        Safety
-                                    </p>
+                                    <p class="text-xs text-slate-400">Total Statutory Documentation & Institutional Safety</p>
                                 </div>
                             </div>
                         </div>
@@ -267,62 +259,18 @@
                             {% endfor %}
                         </div>
 
-
-                        <!-- Grand Total - Tiered Pricing -->
-                        <div class="p-8 bg-rose-50 rounded-2xl border border-rose-100">
-                            <p
-                                class="text-[0.65rem] font-black text-rose-400 uppercase tracking-[0.3em] mb-6 text-center">
-                                Total Amount Payable (Early Bird Discounts)</p>
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <!-- Tier 1: 20% Off (Selected by default) -->
-                                <div id="card-tier-1" onclick="selectTier(1)"
-                                    class="pricing-card selected text-center p-4 bg-white rounded-xl shadow-sm border border-emerald-100">
-                                    <p class="text-[0.6rem] font-black text-emerald-500 uppercase tracking-wider mb-2">
-                                        Pay Now</p>
-                                    <p class="text-2xl font-black text-primary heading-font">₹{{ total_tier_1|floatformat:0 }}</p>
-                                </div>
-
-                                <!-- Tier 2: 10% Off -->
-                                <div id="card-tier-2" onclick="selectTier(2)"
-                                    class="pricing-card text-center p-4 bg-white rounded-xl shadow-sm border border-rose-100">
-                                    <p class="text-[0.6rem] font-black text-rose-500 uppercase tracking-wider mb-2">
-                                        Before 15th May</p>
-                                    <p class="text-2xl font-black text-primary heading-font">₹{{ total_tier_2|floatformat:0 }}</p>
-                                </div>
-
-                                <!-- Tier 3: Full -->
-                                <div id="card-tier-3" onclick="selectTier(3)"
-                                    class="pricing-card text-center p-4 bg-rose-50 rounded-xl border border-rose-200 opacity-80">
-                                    <p class="text-[0.6rem] font-black text-slate-500 uppercase tracking-wider mb-2">
-                                        Regular Price</p>
-                                    <p class="text-2xl font-black text-slate-600 heading-font">₹{{ total_tier_3|floatformat:0 }}</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-6 flex justify-center">
-                                <div
-                                    class="flex items-center gap-2 px-3 py-1 bg-white border border-rose-200 rounded-full text-[0.65rem] font-bold text-rose-500">
-                                    <span>All prices are inclusive of GST ({{ gst_percentage|floatformat:0 }}%)</span>
-                                </div>
-                            </div>
-                        </div>
-
                         <!-- Action Buttons -->
-                        <div class="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
+                        <form method="POST" action="{% url 'pocso_billing' %}" class="mt-12 flex flex-col md:flex-row items-center justify-center gap-4">
+                            {% csrf_token %}
                             <a href="{% url 'pocso_registration' %}?edit=true"
                                 class="px-8 py-4 border-2 border-slate-200 text-slate-500 rounded-2xl font-black text-lg heading-font hover:bg-slate-50 transition-all flex items-center gap-3">
                                 <i class="fas fa-arrow-left"></i> RE-SUBMIT
                             </a>
-                            <a id="btn-pay-now" onclick="openModal()"
+                            <button type="submit"
                                 class="px-12 py-4 bg-primary text-white rounded-2xl font-black text-lg heading-font shadow-xl shadow-rose-200 hover:scale-[1.02] transition-all flex items-center gap-3 cursor-pointer">
-                                SCAN & PAY NOW <i class="fas fa-qrcode"></i>
-                            </a>
-                            <a id="btn-register-later" onclick="handleRegisterLater()"
-                                class="hidden px-12 py-4 bg-slate-900 text-white rounded-2xl font-black text-lg heading-font shadow-xl shadow-slate-200 hover:scale-[1.02] transition-all flex items-center gap-3 cursor-pointer">
-                                REGISTER LATER <i class="fas fa-clock"></i>
-                            </a>
-                        </div>
+                                REGISTER <i class="fas fa-check-circle"></i>
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Footer -->
@@ -346,59 +294,6 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div id="paymentModal"
-        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10001] flex items-center justify-center hidden opacity-0 transition-opacity duration-300 p-4">
-        <div class="bg-white rounded-[1.5rem] w-full max-w-sm p-6 shadow-2xl relative">
-            <button onclick="closeModal()"
-                class="absolute right-3 top-3 w-7 h-7 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center hover:bg-rose-50 hover:text-rose-500 transition-all">
-                <i class="fas fa-times text-xs"></i>
-            </button>
-
-            <div class="text-center mb-4">
-                <h2 class="text-lg font-black text-primary heading-font">Scan QR to Complete</h2>
-            </div>
-
-            <div class="flex flex-col items-center">
-                <!-- QR CODE BOX -->
-                <div class="p-2 bg-white border border-slate-100 rounded-xl shadow-sm mb-4 w-36 h-36 overflow-hidden">
-                    <img src="/media/QR%20OHPL.png" alt="Payment QR" class="w-full h-full object-contain">
-                </div>
-
-                <!-- UPLOAD SECTION -->
-                <form action="{% url 'submit_payment' registration.id %}" method="POST" enctype="multipart/form-data"
-                    class="w-full space-y-3" onsubmit="handlePaymentSubmit(this)">
-                    {% csrf_token %}
-                    <div class="space-y-1">
-                        <label class="text-[0.55rem] font-black text-slate-400 uppercase tracking-widest ml-1">Upload
-                            Payment Screenshot</label>
-                        <div class="relative group">
-                            <input type="file" name="payment_screenshot" id="screenshot-input" required class="hidden"
-                                onchange="updateFileName(this)">
-                            <label for="screenshot-input"
-                                class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-slate-200 bg-slate-50 rounded-xl cursor-pointer group-hover:bg-rose-50/50 group-hover:border-accent transition-all">
-                                <div class="flex flex-col items-center justify-center p-2">
-                                    <i
-                                        class="fas fa-cloud-upload-alt text-lg text-slate-300 group-hover:text-accent mb-0.5 transition-colors"></i>
-                                    <p class="text-[0.6rem] text-slate-400 group-hover:text-accent font-bold uppercase tracking-tight text-center"
-                                        id="filename-label">Select screenshot</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" id="btn-payment-done"
-                        class="w-full py-3 bg-success text-white rounded-xl font-black text-sm heading-font shadow-lg shadow-emerald-100 hover:bg-emerald-600 transition-all flex items-center justify-center gap-2">
-                        PAYMENT DONE <i class="fas fa-check text-xs"></i>
-                    </button>
-                </form>
-
-                <p class="mt-3 text-[0.55rem] text-slate-400 font-bold uppercase tracking-widest text-center">
-                    <i class="fas fa-shield-alt mr-1"></i> Data encrypted and secure
-                </p>
-            </div>
-        </div>
-    </div>
 
     <script>
         function scaleInvoice() {
@@ -425,96 +320,5 @@
         window.addEventListener('load', scaleInvoice);
         // Initial call
         setTimeout(scaleInvoice, 100);
-
-        let selectedTierKey = null;
-
-        function handlePaymentSubmit(form) {
-            const btn = document.getElementById('btn-payment-done');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
-            btn.style.opacity = '0.7';
-            btn.style.cursor = 'not-allowed';
-        }
-
-        function selectTier(tierIdx) {
-            // Update card visuals
-            document.querySelectorAll('.pricing-card').forEach(el => el.classList.remove('selected'));
-            document.getElementById(`card-tier-${tierIdx}`).classList.add('selected');
-
-            // Update button visibility
-            const payBtn = document.getElementById('btn-pay-now');
-            const laterBtn = document.getElementById('btn-register-later');
-
-            if (tierIdx === 1) {
-                payBtn.classList.remove('hidden');
-                laterBtn.classList.add('hidden');
-                selectedTierKey = 'PAY_NOW';
-            } else {
-                payBtn.classList.add('hidden');
-                laterBtn.classList.remove('hidden');
-                selectedTierKey = tierIdx === 2 ? 'BEFORE_15' : 'REGULAR';
-            }
-        }
-
-        async function handleRegisterLater() {
-            if (!selectedTierKey || selectedTierKey === 'PAY_NOW') return;
-
-            const btn = document.getElementById('btn-register-later');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            btn.disabled = true;
-
-            try {
-                const response = await fetch('{% url "trigger_tier_email" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        registration_id: '{{ registration.id }}',
-                        tier_key: selectedTierKey,
-                        registration_type: 'POCSO'
-                    })
-                });
-
-                if (response.ok) {
-                    // Redirect without success message in URL
-                    window.location.href = "{% url 'home' %}";
-                } else {
-                    alert('There was an issue sending your registration email. Please try again or contact support.');
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Something went wrong. Please check your connection.');
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        function openModal() {
-            const modal = document.getElementById('paymentModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => modal.classList.remove('opacity-0'), 10);
-        }
-        function closeModal() {
-            const modal = document.getElementById('paymentModal');
-            modal.classList.add('opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            }, 300);
-        }
-
-        function updateFileName(input) {
-            const label = document.getElementById('filename-label');
-            if (input.files && input.files[0]) {
-                label.textContent = input.files[0].name;
-                label.classList.add('text-accent');
-            }
-        }
     </script>
     {% endblock %}

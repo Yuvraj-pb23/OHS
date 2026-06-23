@@ -17,7 +17,7 @@
 
   <!-- Fonts -->
   <link
-    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@400;700&display=swap"
     rel="stylesheet" />
 
   <style>
@@ -28,50 +28,64 @@
     }
 
     :root {
-      /* LIGHT THEME - PROFESSIONAL CORPORATE */
       --sidebar-width: 280px;
 
-      /* Primary Colors - Indigo & Professional */
-      --color-primary: #4f46e5;
-      --color-primary-light: #a5b4fc;
-      --color-primary-dark: #4338ca;
+      /* Premium Color System */
+      --color-primary: #4f46e5;      /* Indigo */
+      --color-primary-light: #e0e7ff;
+      --color-primary-dark: #3730a3;
+      --color-accent: #7c3aed;       /* Violet */
+      --color-accent-light: #f3e8ff;
 
-      /* Backgrounds - Light & Clean */
-      --bg-main: #ffffff;
-      --bg-secondary: #f9fafb;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f3f4f6;
-      --bg-sidebar: #ffffff;
+      /* Modern Light Gradients & Backgrounds */
+      --bg-main: transparent;
+      --bg-sidebar: rgba(255, 255, 255, 0.7);
+      --bg-card: rgba(255, 255, 255, 0.7);
+      --bg-card-hover: #ffffff;
+      --bg-secondary: #f8fafc;
 
-      /* Borders - Subtle */
-      --border-color: #e5e7eb;
-      --border-soft: #f3f4f6;
+      /* Glassmorphic Borders & Highlights */
+      --border-color: rgba(226, 232, 240, 0.8);
+      --border-soft: rgba(241, 245, 249, 0.6);
+      --border-glow: rgba(99, 102, 241, 0.12);
 
-      /* Text Colors */
-      --text-primary: #1f2937;
-      --text-secondary: #6b7280;
-      --text-muted: #9ca3af;
+      /* Modern Slate Typography */
+      --text-primary: #0f172a;       /* Slate 900 */
+      --text-secondary: #475569;     /* Slate 600 */
+      --text-muted: #94a3b8;         /* Slate 400 */
 
-      /* Status Colors */
-      --color-success: #10b981;
-      --color-warning: #f59e0b;
-      --color-danger: #ef4444;
-      --color-info: #4f46e5;
+      /* Premium Status Color System */
+      --color-success: #10b981;      /* Emerald */
+      --color-success-bg: rgba(16, 185, 129, 0.06);
+      --color-success-border: rgba(16, 185, 129, 0.15);
+      
+      --color-warning: #f59e0b;      /* Amber */
+      --color-warning-bg: rgba(245, 158, 11, 0.06);
+      --color-warning-border: rgba(245, 158, 11, 0.15);
+
+      --color-danger: #f43f5e;       /* Rose */
+      --color-danger-bg: rgba(244, 63, 94, 0.06);
+      --color-danger-border: rgba(244, 63, 94, 0.15);
+
+      --color-info: #0ea5e9;         /* Sky Blue */
 
       /* LMS Colors */
       --lms-primary: #4f46e5;
       --lms-pending: #f59e0b;
 
-      /* Shadows - Refined */
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-      --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+      /* Shadow Design System */
+      --shadow-sm: 0 2px 8px -1px rgba(15, 23, 42, 0.04);
+      --shadow-md: 0 10px 20px -5px rgba(15, 23, 42, 0.05), 0 4px 6px -2px rgba(15, 23, 42, 0.02);
+      --shadow-lg: 0 20px 25px -5px rgba(99, 102, 241, 0.06), 0 10px 10px -5px rgba(99, 102, 241, 0.02);
+      --shadow-glow-blue: 0 12px 24px -4px rgba(99, 102, 241, 0.16);
+      --shadow-glow-green: 0 12px 24px -4px rgba(16, 185, 129, 0.16);
+      --shadow-glow-orange: 0 12px 24px -4px rgba(245, 158, 11, 0.16);
 
       /* Border Radius */
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      --radius-xl: 16px;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
 
       /* Spacing */
       --space-1: 4px;
@@ -84,43 +98,57 @@
     }
 
     body {
-      background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+      background-color: #f4f6fa;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(124, 58, 237, 0.08) 0px, transparent 50%),
+        radial-gradient(at 50% 100%, rgba(59, 130, 246, 0.06) 0px, transparent 50%),
+        linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
       color: var(--text-primary);
-      font-family:
-        "Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif;
+      font-family: "Plus Jakarta Sans", "Inter", sans-serif;
       margin: 0;
       overflow-x: hidden;
       font-size: 0.95rem;
       line-height: 1.6;
     }
 
-    /* SIDEBAR */
+    /* FLOATING SIDEBAR */
     .sidebar {
       position: fixed;
+      left: 20px;
+      top: 20px;
+      bottom: 20px;
       width: var(--sidebar-width);
-      height: 100vh;
-      height: 100dvh;
-      background: var(--bg-sidebar);
-      border-right: 1px solid var(--border-color);
+      height: calc(100vh - 40px);
+      height: calc(100dvh - 40px);
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: var(--radius-xl);
       display: flex;
       flex-direction: column;
       z-index: 1000;
       overflow: hidden;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.03);
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     .sidebar-brand {
-      padding: var(--space-6) var(--space-5) var(--space-4) var(--space-5);
+      padding: var(--space-6) var(--space-6) var(--space-5) var(--space-6);
       font-size: 1.25rem;
       font-weight: 800;
-      color: var(--color-primary);
+      color: var(--text-primary);
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       text-decoration: none;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
       margin-bottom: var(--space-2);
+      font-family: "Outfit", sans-serif;
+      letter-spacing: -0.01em;
     }
 
     @media (max-width: 992px) {
@@ -132,8 +160,11 @@
     }
 
     .sidebar-brand i {
-      font-size: 1.8rem;
-      color: var(--color-primary);
+      font-size: 1.6rem;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.15));
     }
 
     .sidebar-menu-wrapper {
@@ -144,194 +175,771 @@
     }
 
     .menu-label {
-      padding: var(--space-2) var(--space-5);
+      padding: var(--space-2) var(--space-6);
       font-size: 0.75rem;
       font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
       margin-top: var(--space-4);
+      font-family: "Outfit", sans-serif;
     }
 
     .nav-link {
       color: var(--text-secondary) !important;
-      padding: var(--space-3) var(--space-5);
-      margin: var(--space-1) 0;
+      padding: var(--space-3) var(--space-6);
+      margin: 4px var(--space-3);
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
-      gap: 12px;
-      transition: all 0.2s ease;
+      gap: 14px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       text-decoration: none;
       font-weight: 600;
       cursor: pointer;
       font-size: 0.95rem;
-      border-left: 4px solid transparent;
+      border-left: none;
+    }
+
+    .nav-link i {
+      font-size: 1.15rem;
+      transition: transform 0.25s ease;
+      color: var(--text-muted);
     }
 
     .nav-link:hover {
-      background: var(--bg-secondary);
-      color: var(--color-primary) !important;
+      background: rgba(99, 102, 241, 0.04);
+      color: var(--color-primary-dark) !important;
+      transform: translateX(4px);
+    }
+
+    .nav-link:hover i {
+      color: var(--color-primary);
+      transform: scale(1.1);
     }
 
     .nav-link.active {
-      background: rgba(79, 70, 229, 0.08);
-      color: var(--color-primary) !important;
-      border-left-color: var(--color-primary);
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(124, 58, 237, 0.04) 100%);
+      color: var(--color-primary-dark) !important;
+      font-weight: 700;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(99, 102, 241, 0.12);
+    }
+
+    .nav-link.active i {
+      color: var(--color-primary);
+    }
+
+    .nav-link.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 15%;
+      height: 70%;
+      width: 4px;
+      background: linear-gradient(180deg, var(--color-primary) 0%, var(--color-accent) 100%);
+      border-radius: 0 4px 4px 0;
     }
 
     .sidebar-footer {
       padding: var(--space-4) 0;
-      border-top: 1px solid var(--border-color);
-      background: var(--bg-sidebar);
+      border-top: 1px solid rgba(226, 232, 240, 0.6);
+      background: rgba(255, 255, 255, 0.4);
       margin-top: auto;
     }
 
     .footer-link {
-      margin: 0 !important;
-      border-left: 4px solid transparent !important;
+      margin: 2px var(--space-3) !important;
+      border-left: none !important;
     }
 
     .logout-link:hover {
-      background: rgba(239, 68, 68, 0.08);
-      color: #ef4444 !important;
+      background: var(--color-danger-bg);
+      color: var(--color-danger) !important;
     }
 
-    /* MAIN */
+    .logout-link:hover i {
+      color: var(--color-danger);
+    }
+
+    /* MAIN CONTENT */
     .main-content {
-      margin-left: var(--sidebar-width);
-      padding: var(--space-8);
+      margin-left: calc(var(--sidebar-width) + 40px);
+      padding: var(--space-8) var(--space-8) 100px 0;
       min-height: 100vh;
-      background: var(--bg-main);
+      background: transparent;
       position: relative;
+      box-sizing: border-box;
     }
 
     .section-title {
-      font-size: 1.5rem;
-      font-weight: 700;
+      font-family: "Outfit", sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
       color: var(--text-primary);
       margin-bottom: var(--space-6);
     }
 
     .content-section {
       display: none;
-      animation: fadeIn 0.3s ease;
+      animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .content-section.active {
       display: block;
     }
 
-    @keyframes fadeIn {
+    @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(12px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
       }
     }
 
-    /* STATS GRID - 3 COLUMN RESPONSIVE LAYOUT */
+    /* WELCOME HERO */
+    .welcome-hero {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.55) 0%, rgba(240, 242, 254, 0.45) 100%);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6) var(--space-8);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+    
+    .welcome-title {
+      font-family: "Outfit", sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-2);
+      letter-spacing: -0.01em;
+    }
+    
+    .welcome-text {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      margin: 0;
+      max-width: 650px;
+    }
+
+    /* Hero Buttons styling */
+    .btn-hero-primary {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%) !important;
+      color: white !important;
+      border: none !important;
+      padding: 12px 24px !important;
+      border-radius: var(--radius-md) !important;
+      font-weight: 700 !important;
+      font-size: 0.92rem !important;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.25) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+      font-family: "Outfit", sans-serif !important;
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 8px 22px rgba(99, 102, 241, 0.35) !important;
+      opacity: 0.95 !important;
+    }
+    .btn-hero-primary:active {
+      transform: translateY(0) !important;
+    }
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.8) !important;
+      color: var(--color-primary) !important;
+      border: 1px solid rgba(99, 102, 241, 0.2) !important;
+      padding: 12px 24px !important;
+      border-radius: var(--radius-md) !important;
+      font-weight: 700 !important;
+      font-size: 0.92rem !important;
+      box-shadow: var(--shadow-sm) !important;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+      font-family: "Outfit", sans-serif !important;
+    }
+    .btn-hero-secondary:hover {
+      background: #ffffff !important;
+      transform: translateY(-2px) !important;
+      box-shadow: var(--shadow-md) !important;
+      color: var(--color-primary-dark) !important;
+      border-color: var(--color-primary) !important;
+    }
+    .btn-hero-secondary:active {
+      transform: translateY(0) !important;
+    }
+    
+    .welcome-status-badge {
+      background: var(--color-success-bg);
+      border: 1px solid var(--color-success-border);
+      padding: 6px 14px;
+      border-radius: 40px;
+    }
+    
+    .status-pulse-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-success);
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+      animation: pulseGreen 2s infinite;
+    }
+    
+    @keyframes pulseGreen {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
+
+    /* STATS GRID & STATS CARDS */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-6);
-      margin-bottom: var(--space-8);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
     }
 
     .stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      padding: var(--space-6);
-      border-radius: var(--radius-xl);
-      text-align: center;
-      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      padding: var(--space-5) var(--space-4);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
       cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
     }
 
+    .stat-card-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      transition: all 0.35s ease;
+      flex-shrink: 0;
+    }
+
+    .stat-card-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+      font-family: "Outfit", sans-serif;
+    }
+
+    .stat-value {
+      font-family: "Outfit", sans-serif;
+      font-size: 1.85rem;
+      font-weight: 800;
+      line-height: 1.1;
+      color: var(--text-primary);
+    }
+
+    /* Active Stat Cards */
     .stat-card.active {
-      border-color: var(--color-primary);
-      background: var(--bg-card-hover);
-      box-shadow: var(--shadow-lg);
-      transform: scale(1.02);
+      background: #ffffff;
+      transform: translateY(-2px);
     }
 
-    .stat-card:hover {
-      background: var(--bg-card-hover);
-      box-shadow: var(--shadow-md);
+    .stat-card.active:nth-child(1) {
       border-color: var(--color-primary);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .stat-card.active:nth-child(2) {
+      border-color: var(--color-success);
+      box-shadow: var(--shadow-glow-green);
+    }
+
+    .stat-card.active:nth-child(3) {
+      border-color: var(--color-warning);
+      box-shadow: var(--shadow-glow-orange);
+    }
+
+    /* Hover Effects */
+    .stat-card:hover {
+      background: #ffffff;
       transform: translateY(-4px);
+    }
+
+    .stat-card:hover:nth-child(1) {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-glow-blue);
+    }
+
+    .stat-card:hover:nth-child(2) {
+      border-color: var(--color-success);
+      box-shadow: var(--shadow-glow-green);
+    }
+
+    .stat-card:hover:nth-child(3) {
+      border-color: var(--color-warning);
+      box-shadow: var(--shadow-glow-orange);
+    }
+
+    .stat-card:hover .stat-card-icon-wrapper {
+      transform: scale(1.08);
     }
 
     /* PAGE HEADER */
     .page-header {
-      margin-bottom: var(--space-8);
-      padding: var(--space-6) 0;
-      border-bottom: 1px solid var(--border-color);
+      margin-bottom: var(--space-6);
+      padding: var(--space-3) 0 var(--space-4) 0;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
       position: relative;
       overflow: hidden;
-      text-align: center;
+      text-align: left;
     }
 
     .header-main-title {
+      font-family: "Outfit", sans-serif;
       font-size: 2.25rem;
       font-weight: 800;
       color: var(--text-primary);
-      letter-spacing: -0.02em;
-      margin-bottom: var(--space-1);
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--color-primary) 100%);
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+      background: linear-gradient(135deg, var(--text-primary) 30%, var(--color-primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .header-subtitle {
       color: var(--text-secondary);
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 500;
       max-width: 600px;
+    }
+
+    /* GLASS CARD SYSTEM */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-widget-title {
+      font-family: "Outfit", sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      text-align: left;
+      border-left: 3px solid var(--color-primary);
+      padding-left: var(--space-2);
+      letter-spacing: -0.01em;
+    }
+
+    /* Roadmap Checklist Styles */
+    .roadmap-list {
+      position: relative;
+      padding-left: 20px;
+      list-style: none;
+      margin-bottom: 0;
+    }
+
+    .roadmap-list::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 15px;
+      bottom: 15px;
+      width: 2px;
+      background: var(--border-color);
+      z-index: 1;
+    }
+
+    .roadmap-item {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 24px;
+      z-index: 2;
+    }
+
+    .roadmap-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .roadmap-indicator {
+      position: absolute;
+      left: -20px;
+      top: 4px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      border: 2px solid var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      z-index: 3;
+    }
+
+    .roadmap-item.completed .roadmap-indicator {
+      border-color: var(--color-success);
+      background: var(--color-success);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+    }
+
+    .roadmap-item.active .roadmap-indicator {
+      border-color: var(--color-primary);
+      background: #fff;
+      box-shadow: 0 0 8px rgba(99, 102, 241, 0.4);
+    }
+
+    .roadmap-item.active .roadmap-indicator::after {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      display: block;
+    }
+
+    .roadmap-item.pending .roadmap-indicator {
+      border-color: var(--text-muted);
+      background: #fff;
+    }
+
+    .roadmap-indicator i {
+      font-size: 0.6rem;
+      color: #fff;
+      display: none;
+    }
+
+    .roadmap-item.completed .roadmap-indicator i {
+      display: block;
+    }
+
+    .roadmap-content {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      transition: all 0.3s ease;
+    }
+
+    .roadmap-item:hover .roadmap-content {
+      background: #ffffff;
+      border-color: rgba(99, 102, 241, 0.2);
+      transform: translateX(4px);
+    }
+
+    .roadmap-title {
+      font-family: "Outfit", sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .roadmap-desc {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-2);
+    }
+
+    .roadmap-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 20px;
+      display: inline-block;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .roadmap-badge.completed {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+
+    .roadmap-badge.active {
+      background: var(--color-primary-light);
+      color: var(--color-primary-dark);
+    }
+
+    .roadmap-badge.pending {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+    }
+
+    /* Action Cards Styles */
+    .action-card {
+      background: rgba(255, 255, 255, 0.4);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .action-card:hover {
+      background: #ffffff;
+      border-color: rgba(99, 102, 241, 0.2);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .action-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .action-card:hover .action-icon {
+      transform: scale(1.1);
+    }
+
+    .action-text {
+      text-align: left;
+    }
+
+    .action-title {
+      font-family: "Outfit", sans-serif;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+
+    .action-desc {
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+    }
+
+    /* COMPLIANCE HEALTH CIRCULAR GAUGE */
+    .compliance-gauge-wrapper {
+      position: relative;
+      width: 140px;
+      height: 140px;
       margin: 0 auto;
     }
-
-    @media (max-width: 992px) {
-      .page-header {
-        margin-top: 0;
-        margin-bottom: var(--space-4);
-      }
-
-      .header-main-title {
-        font-size: 1.75rem;
-      }
-
-      .header-subtitle {
-        font-size: 0.85rem;
-        padding: 0 var(--space-4);
-      }
+    
+    .compliance-gauge {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+    
+    .compliance-gauge .gauge-bg {
+      fill: none;
+      stroke: rgba(226, 232, 240, 0.7);
+      stroke-width: 8;
+    }
+    
+    .compliance-gauge .gauge-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 1s ease-out;
+    }
+    
+    .gauge-percentage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: "Outfit", sans-serif;
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
     }
 
-    /* MOBILE RESPONSIVENESS */
+    /* TABLE DATABASE LAYOUT */
+    .modern-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      background: transparent;
+    }
+    
+    .modern-table th {
+      background: rgba(248, 250, 252, 0.6);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      padding: var(--space-4) var(--space-5);
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .modern-table td {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+      color: var(--text-primary);
+      vertical-align: middle;
+      font-size: 0.9rem;
+      transition: background 0.2s ease;
+    }
+    
+    .modern-table tbody tr {
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    
+    .modern-table tbody tr:hover td {
+      background: rgba(99, 102, 241, 0.02);
+    }
+    
+    .modern-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .table-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      font-family: "Outfit", sans-serif;
+      box-shadow: 0 2px 6px rgba(99, 102, 241, 0.15);
+    }
+    
+    .table-emp-name {
+      font-weight: 700;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+    }
+    
+    .table-emp-email {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    
+    .quiz-score-badge {
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    
+    .quiz-score-badge.passed {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+    
+    .quiz-score-badge.failed {
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
+    }
+    
+    .table-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    
+    .table-status-pill.completed {
+      background: var(--color-success-bg);
+      color: var(--color-success);
+    }
+    
+    .table-status-pill.pending {
+      background: var(--color-warning-bg);
+      color: var(--color-warning);
+    }
+
+    .table-status-pill.not-started {
+      background: rgba(100, 116, 139, 0.12);
+      color: #64748b;
+    }
+
+    /* MOBILE RESPONSIVENESS OVERRIDES */
     @media (max-width: 992px) {
       :root {
         --sidebar-width: 260px;
       }
 
       .sidebar {
-        left: calc(-1 * var(--sidebar-width));
+        left: 20px;
+        top: 20px;
+        bottom: auto;
+        width: var(--sidebar-width);
+        height: auto;
+        left: calc(-1 * var(--sidebar-width) - 20px);
         transition: all 0.3s ease;
         z-index: 1050;
       }
 
       .sidebar.show {
-        left: 0;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        left: 20px;
+        box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
       }
 
       .main-content {
         margin-left: 0 !important;
         padding: var(--space-4) !important;
-        padding-top: 60px !important;
-        /* Space for fixed hamburger */
+        padding-top: 80px !important;
       }
 
       .hamburger-btn {
@@ -345,7 +953,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(15, 23, 42, 0.3);
         z-index: 1040;
         backdrop-filter: blur(4px);
       }
@@ -355,46 +963,24 @@
       }
 
       .stats-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: var(--space-2) !important;
+        grid-template-columns: 1fr !important;
+        gap: var(--space-3) !important;
       }
 
       .stat-card {
-        padding: var(--space-3) var(--space-2) !important;
-        display: flex !important;
-        flex-direction: column !important;
-        min-height: 110px !important;
-        justify-content: flex-start !important;
-      }
-
-      .stat-label {
-        font-size: 0.75rem !important;
-        line-height: 1.3 !important;
-        margin-bottom: var(--space-1) !important;
-        font-weight: 700 !important;
+        padding: var(--space-4) !important;
       }
 
       .stat-value {
-        font-size: 1.6rem !important;
-        margin-top: auto !important;
+        font-size: 1.8rem !important;
       }
 
       .glass-toolbar {
         padding: var(--space-4) !important;
       }
 
-      .icon-box {
-        width: 38px !important;
-        height: 38px !important;
-        font-size: 1.1rem !important;
-      }
-
       .title-main {
         font-size: 1.2rem !important;
-      }
-
-      .refresh-timestamp {
-        font-size: 0.7rem !important;
       }
 
       .action-group {
@@ -407,7 +993,6 @@
       .search-wrapper {
         grid-column: span 2 !important;
         min-width: 100% !important;
-        order: -1;
       }
 
       .btn-gradient-action {
@@ -416,71 +1001,26 @@
 
       .btn-action,
       .btn-gradient-action {
-        padding: 6px 12px !important;
-        font-size: 0.8rem !important;
-        width: fit-content !important;
-        display: inline-flex !important;
-        justify-content: center !important;
-        align-items: center !important;
-        white-space: nowrap !important;
-      }
-
-      .action-group .btn-action,
-      .action-group .btn-gradient-action {
+        padding: 8px 14px !important;
+        font-size: 0.85rem !important;
         width: 100% !important;
         display: flex !important;
+        justify-content: center !important;
       }
 
       .members-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: var(--space-2) !important;
+        grid-template-columns: 1fr !important;
+        gap: var(--space-3) !important;
       }
 
       .member-card {
-        padding: var(--space-2) !important;
+        padding: var(--space-4) !important;
       }
 
       .avatar {
-        width: 40px !important;
-        height: 40px !important;
+        width: 48px !important;
+        height: 48px !important;
         font-size: 1rem !important;
-        margin-bottom: var(--space-2) !important;
-      }
-
-      .member-name {
-        font-size: 0.85rem !important;
-        text-align: center;
-      }
-
-      .member-email {
-        font-size: 0.65rem !important;
-        margin-bottom: var(--space-2) !important;
-        word-break: break-all;
-        text-align: center;
-      }
-
-      .role-badge {
-        font-size: 0.6rem !important;
-        padding: 2px 6px !important;
-      }
-
-      .section-title {
-        font-size: 1.2rem;
-      }
-
-      .certificate-card {
-        padding: 15px 10px !important;
-      }
-
-      .certificate-card .avatar {
-        width: 50px !important;
-        height: 50px !important;
-        font-size: 1.2rem !important;
-      }
-
-      .certificate-card .btn {
-        padding: 6px 10px !important;
-        font-size: 0.75rem !important;
       }
     }
 
@@ -490,7 +1030,7 @@
       top: 15px;
       left: 15px;
       z-index: 1030;
-      background: var(--lms-primary, #4f46e5);
+      background: var(--color-primary);
       color: white;
       border: none;
       width: 45px;
@@ -499,86 +1039,61 @@
       align-items: center;
       justify-content: center;
       font-size: 1.4rem;
-      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
     }
 
-    /* Removed conflicting z-index overrides */
-
-    .stat-label {
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .stat-value {
-      font-size: 2.8rem;
-      font-weight: 800;
-      color: var(--color-primary);
-      line-height: 1.2;
-    }
-
-    /* POSTER GRID */
+    /* AWARENESS POSTERS */
     .poster-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
       gap: var(--space-8);
       margin-bottom: var(--space-8);
+      align-items: start;
     }
 
     .poster-item {
       padding: var(--space-4);
+      background: rgba(255, 255, 255, 0.4);
       border-radius: var(--radius-lg);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      box-shadow: var(--shadow-sm);
       transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .poster-item:hover {
+      background: #ffffff;
+      border-color: var(--color-primary-light);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
     }
 
     .poster-item h5 {
       color: var(--text-primary);
       font-weight: 700;
       margin-top: var(--space-4) !important;
+      font-family: "Outfit", sans-serif;
     }
 
-    .poster-item p {
-      color: var(--text-muted);
-    }
-
-    .poster-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 500px;
-      background: var(--bg-secondary);
-      border: 2px dashed var(--border-color);
-      border-radius: var(--radius-lg);
-      color: var(--text-muted);
-    }
-
-    /* POLICY TEXT */
+    /* POLICY DOCUMENTS */
     .policy-text {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.8);
       border-radius: var(--radius-lg);
       padding: var(--space-8);
       color: var(--text-primary);
       line-height: 1.8;
-    }
-
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: var(--bg-main);
-      color: var(--text-primary);
-      min-height: 100vh;
-    }
-
-    body.no-scroll {
-      overflow: hidden;
+      box-shadow: var(--shadow-sm);
     }
 
     .policy-text h3 {
-      color: var(--color-primary);
+      color: var(--color-primary-dark);
       font-weight: 700;
+      font-family: "Outfit", sans-serif;
+      margin-bottom: var(--space-4);
     }
 
     .policy-text strong {
@@ -586,88 +1101,149 @@
       font-weight: 700;
     }
 
-    /* MEMBERS GRID */
+    /* MEMBERS GRID & PROFILE CARDS (Grid view backup if needed) */
     .members-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: var(--space-6);
     }
 
     .member-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       border-radius: var(--radius-lg);
       padding: var(--space-5);
-      transition: all 0.3s ease;
+      transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
       cursor: pointer;
       box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
     }
 
     .member-card:hover {
       transform: translateY(-6px);
       border-color: var(--color-primary);
       box-shadow: var(--shadow-lg);
-      background: var(--bg-card-hover);
+      background: #ffffff;
     }
 
     .avatar {
-      width: 60px;
-      height: 60px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
-      background: linear-gradient(135deg,
-          var(--color-primary),
-          var(--color-primary-light));
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-weight: 800;
       color: white;
-      margin-bottom: var(--space-4);
-      font-size: 1.3rem;
+      margin-bottom: var(--space-3);
+      font-size: 1.15rem;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+      font-family: "Outfit", sans-serif;
+    }
+
+    .member-card[data-status="completed"] .avatar {
+      box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px var(--color-success), 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .member-card[data-status="pending"] .avatar {
+      box-shadow: 0 0 0 3px #ffffff, 0 0 0 5px var(--color-warning), 0 4px 12px rgba(245, 158, 11, 0.2);
     }
 
     .member-name {
+      font-family: "Outfit", sans-serif;
       font-weight: 700;
       color: var(--text-primary);
       font-size: 1.05rem;
-      margin-bottom: var(--space-1);
+      margin-bottom: 2px;
     }
 
     .member-email {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
       margin-bottom: var(--space-3);
+      word-break: break-all;
+    }
+
+    .member-id {
+      font-size: 0.78rem;
+      color: var(--color-warning);
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.06);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: var(--space-2);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
     .role-badge {
-      background: rgba(79, 70, 229, 0.1);
-      color: var(--color-primary);
-      padding: var(--space-1) var(--space-3);
-      border-radius: 20px;
-      font-size: 0.75rem;
+      background: rgba(99, 102, 241, 0.06);
+      color: var(--color-primary-dark);
+      padding: 4px var(--space-3);
+      border-radius: 30px;
+      font-size: 0.72rem;
       font-weight: 700;
-      border: 1px solid rgba(79, 70, 229, 0.3);
+      border: 1px solid rgba(99, 102, 241, 0.12);
       display: inline-block;
-      margin-top: var(--space-3);
+      margin-top: auto;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    /* GLASS TOOLBAR */
+    /* GLASS TOOLBAR & CONSOLE */
     .glass-toolbar {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: var(--radius-xl);
       padding: var(--space-4) var(--space-6);
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
       margin-bottom: var(--space-6);
+    }
+
+    .icon-box {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    }
+
+    .title-main {
+      font-family: "Outfit", sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--text-primary);
+    }
+
+    .refresh-timestamp {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-top: 2px;
     }
 
     /* BUTTONS */
     .btn-action {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      background: rgba(248, 250, 252, 0.8);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       color: var(--text-secondary);
       border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-4);
+      padding: 10px var(--space-4);
       font-weight: 600;
       transition: all 0.2s ease;
       display: flex;
@@ -677,68 +1253,80 @@
     }
 
     .btn-action:hover {
-      background: var(--bg-secondary);
+      background: #ffffff;
       color: var(--color-primary);
       border-color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+      transform: translateY(-1px);
+    }
+
+    .btn-refresh:hover i {
+      transform: rotate(180deg);
+    }
+
+    .btn-refresh i {
+      transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     .btn-gradient-action {
-      background: var(--color-primary);
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
       color: white;
       border: none;
       border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-5);
+      padding: 10px var(--space-5);
       font-weight: 700;
-      transition: all 0.2s ease;
-      box-shadow: 0 2px 8px rgba(79, 70, 229, 0.2);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
       display: flex;
       align-items: center;
       gap: 8px;
       cursor: pointer;
+      font-family: "Outfit", sans-serif;
     }
 
     .btn-gradient-action:hover {
-      background: var(--color-primary-dark);
+      background: linear-gradient(135deg, var(--color-primary-dark) 0%, var(--color-accent) 100%);
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
     }
 
     .btn-gradient {
-      background: linear-gradient(135deg, var(--color-primary), #6366f1);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
       color: white !important;
       border: none;
       padding: var(--space-3) var(--space-6);
       border-radius: var(--radius-lg);
       font-weight: 700;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
+      font-family: "Outfit", sans-serif;
     }
 
     .btn-gradient:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.5);
-      opacity: 0.9;
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+      opacity: 0.95;
     }
 
     /* FORM CONTROLS */
     .form-control {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
       color: var(--text-primary) !important;
       border-radius: var(--radius-md);
-      padding: var(--space-2) var(--space-3);
+      padding: 10px var(--space-3);
       font-size: 0.95rem;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
     }
 
     .form-control:focus {
-      background: var(--bg-card);
+      background: #ffffff;
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
       outline: none;
     }
 
@@ -750,54 +1338,60 @@
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: 14px;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
+      transition: color 0.25s ease;
     }
 
     .search-input {
-      background: var(--bg-secondary) !important;
-      border: 1px solid var(--border-color) !important;
+      background: rgba(248, 250, 252, 0.8) !important;
+      border: 1px solid rgba(226, 232, 240, 0.8) !important;
       border-radius: var(--radius-md) !important;
-      padding: var(--space-2) var(--space-3) var(--space-2) 2.5rem !important;
+      padding: 10px var(--space-3) 10px 2.6rem !important;
       color: var(--text-primary) !important;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
     }
 
     .search-input:focus {
-      background: var(--bg-card) !important;
+      background: #ffffff !important;
       border-color: var(--color-primary) !important;
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1) !important;
+      box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
     }
 
     /* MODAL & LMS STYLES */
     .modal-content {
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       color: var(--text-primary);
-      box-shadow: var(--shadow-lg);
+      box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.1);
+      overflow: hidden;
     }
 
     .modal-header {
-      background: linear-gradient(135deg,
-          var(--color-primary),
-          var(--color-primary-dark));
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
       color: white;
       border-bottom: none;
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-      padding: var(--space-5);
+      padding: var(--space-5) var(--space-6);
+    }
+
+    .modal-title {
+      font-family: "Outfit", sans-serif;
+      font-weight: 800;
+      letter-spacing: -0.01em;
     }
 
     .lms-tab-btn {
-      background: var(--bg-secondary);
-      border: 2px solid var(--border-color);
+      background: rgba(248, 250, 252, 0.8);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       color: var(--text-secondary);
-      padding: var(--space-2) var(--space-4);
-      border-radius: 20px;
+      padding: 8px var(--space-4);
+      border-radius: 30px;
       cursor: pointer;
       font-weight: 600;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       font-size: 0.85rem;
     }
 
@@ -805,64 +1399,67 @@
       background: var(--color-primary);
       color: white;
       border-color: var(--color-primary);
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
     }
 
     .lms-tab-header {
       display: flex;
       gap: var(--space-3);
       margin: var(--space-4) 0 var(--space-3) 0;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
       padding-bottom: var(--space-3);
     }
 
     .mini-stat-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.8);
       border-radius: var(--radius-md);
       padding: var(--space-2) var(--space-3);
       box-shadow: var(--shadow-sm);
       text-align: center;
-      min-height: 65px;
+      min-height: 80px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       gap: 2px;
     }
 
     .mini-stat-card h3 {
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       color: var(--text-muted);
-      font-weight: 600;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 0.15px;
+      letter-spacing: 0.5px;
       margin: 0;
       line-height: 1;
     }
 
     .mini-stat-card small {
-      font-size: 0.6rem;
+      font-size: 0.65rem;
       color: var(--text-muted);
       line-height: 1.2;
       margin: 0;
     }
 
     .time-text {
-      font-size: 0.95rem;
+      font-family: "Outfit", sans-serif;
+      font-size: 1.1rem;
       font-weight: 800;
-      color: var(--color-primary);
+      color: var(--color-primary-dark);
       line-height: 1.1;
-      margin: 1px 0;
+      margin: 2px 0;
     }
 
     .stats-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: var(--space-3);
-      margin-bottom: var(--space-3);
+      margin-bottom: var(--space-4);
     }
 
     .chart-container {
-      height: 35px;
+      height: 38px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -876,30 +1473,28 @@
 
     .progress-track {
       width: 100%;
-      height: 2px;
-      background: var(--bg-secondary);
-      border-radius: 2px;
+      height: 4px;
+      background: rgba(226, 232, 240, 0.8);
+      border-radius: 4px;
       overflow: hidden;
-      margin-top: 2px;
+      margin-top: 4px;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg,
-          var(--color-primary),
-          var(--color-primary-light));
-      border-radius: 2px;
-      transition: width 0.3s ease;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+      border-radius: 4px;
+      transition: width 0.4s ease;
     }
 
     /* BADGES */
     .bg-complete {
-      background: rgba(16, 185, 129, 0.1);
+      background: var(--color-success-bg);
       color: var(--color-success);
     }
 
     .bg-pending {
-      background: rgba(245, 158, 11, 0.1);
+      background: var(--color-warning-bg);
       color: var(--color-warning);
     }
 
@@ -925,38 +1520,11 @@
     .alert {
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-color);
-      background: var(--bg-secondary);
+      background: rgba(255, 255, 255, 0.8);
       color: var(--text-primary);
       font-size: 0.95rem;
       padding: var(--space-4);
-    }
-
-    /* ICON BOX */
-    .icon-box {
-      background: linear-gradient(135deg,
-          var(--color-primary),
-          var(--color-primary-light));
-      width: 50px;
-      height: 50px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 1.3rem;
-    }
-
-    .title-main {
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--text-primary);
-    }
-
-    .refresh-timestamp {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
+      box-shadow: var(--shadow-sm);
     }
 
     /* RECORD ITEM */
@@ -964,67 +1532,35 @@
       display: grid;
       grid-template-columns: 80px 1fr auto;
       gap: 12px;
-      background: var(--bg-secondary);
+      background: rgba(248, 250, 252, 0.7);
       padding: var(--space-3);
       border-radius: var(--radius-md);
-      border: 1px solid var(--border-color);
+      border: 1px solid rgba(226, 232, 240, 0.8);
       margin-bottom: var(--space-3);
       transition: all 0.2s ease;
       align-items: center;
     }
 
     .record-item:hover {
-      background: var(--bg-card);
-      border-color: var(--color-primary);
+      background: #ffffff;
+      border-color: var(--color-primary-light);
+      box-shadow: var(--shadow-sm);
     }
 
     .record-thumb {
       width: 100%;
       height: 50px;
-      background: var(--border-color);
-      border-radius: 8px;
+      background: rgba(226, 232, 240, 0.6);
+      border-radius: var(--radius-sm);
       background-size: cover;
       background-position: center;
     }
 
     .record-info h6 {
       color: var(--text-primary);
-      font-weight: 600;
-      margin-bottom: var(--space-1);
-    }
-
-    /* PRINT STYLES */
-    @media print {
-
-      .sidebar,
-      .hamburger-btn,
-      .page-header,
-      .sidebar-overlay,
-      .btn-action {
-        display: none !important;
-      }
-
-      .main-content {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-      }
-
-      .content-section {
-        display: none !important;
-      }
-
-      .content-section#policy {
-        display: block !important;
-        padding: 0 !important;
-        border: none !important;
-      }
-
-      .policy-text {
-        padding: 0 !important;
-        border: none !important;
-        box-shadow: none !important;
-      }
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-size: 0.9rem;
     }
 
     /* Premium Modal System - Unified Fix */
@@ -1037,37 +1573,8 @@
     }
 
     .modal-backdrop.show {
-      opacity: 0.45 !important;
-      backdrop-filter: blur(3px);
-    }
-
-    .modal-content {
-      border-radius: 28px !important;
-      border: none !important;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
-      overflow: hidden;
-    }
-
-    /* Premium Logout Modal Specifics */
-    /* Premium Modal System - Unified Fix */
-    .modal {
-      z-index: 10000 !important;
-    }
-
-    .modal-backdrop {
-      z-index: 9999 !important;
-    }
-
-    .modal-backdrop.show {
-      opacity: 0.45 !important;
-      backdrop-filter: blur(3px);
-    }
-
-    .modal-content {
-      border-radius: 28px !important;
-      border: none !important;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2) !important;
-      overflow: hidden;
+      opacity: 0.3 !important;
+      backdrop-filter: blur(4px);
     }
 
     /* Premium Logout Modal Specifics */
@@ -1079,8 +1586,8 @@
     .logout-icon-wrapper {
       width: 72px;
       height: 72px;
-      background: #fff1f2;
-      color: #e11d48;
+      background: var(--color-danger-bg);
+      color: var(--color-danger);
       border-radius: 20px;
       display: flex;
       align-items: center;
@@ -1092,11 +1599,11 @@
 
     .logout-modal-content:hover .logout-icon-wrapper {
       transform: scale(1.05);
-      background: #ffe4e6;
+      box-shadow: 0 8px 20px rgba(244, 63, 94, 0.15);
     }
 
     .btn-logout-confirm {
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      background: linear-gradient(135deg, var(--color-danger) 0%, #be123c 100%);
       color: white !important;
       border: none;
       padding: 14px 28px;
@@ -1107,11 +1614,12 @@
       text-decoration: none;
       display: inline-block;
       width: 100%;
+      box-shadow: 0 4px 12px rgba(244, 63, 94, 0.2);
     }
 
     .btn-logout-confirm:hover {
       transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+      box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
       color: white !important;
     }
 
@@ -1135,6 +1643,7 @@
       color: #0f172a;
       font-weight: 800;
       font-size: 1.5rem;
+      font-family: "Outfit", sans-serif;
     }
 
     .logout-modal-text {
@@ -1144,41 +1653,49 @@
     }
 
     /* User Profile Top Right */
-    .user-profile-top {
+    .user-profile-top-container {
       position: absolute;
-      top: 20px;
-      right: 40px;
-      z-index: 100;
+      top: 16px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .user-profile-top {
       display: flex;
       align-items: center;
-      gap: 12px;
-      background: white;
-      padding: 6px 16px;
-      border-radius: 50px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      border: 1px solid var(--border-color);
-      transition: all 0.3s ease;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 40px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
     }
 
     .user-profile-top:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.1);
       border-color: var(--color-primary);
     }
 
     .user-avatar-top {
       width: 32px;
       height: 32px;
-      background: linear-gradient(135deg, var(--color-primary), #6366f1);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
       color: white;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 0.85rem;
-      box-shadow: 0 2px 5px rgba(79, 70, 229, 0.2);
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
     }
 
     .user-name-top {
@@ -1186,12 +1703,55 @@
       color: var(--text-primary);
       font-size: 0.85rem;
       letter-spacing: 0.3px;
+      font-family: "Outfit", sans-serif;
+    }
+
+    .profile-dropdown {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-top: 8px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      padding: 8px 16px;
+      min-width: 102px;
+      text-align: right;
+    }
+
+    .profile-dropdown a {
+      color: var(--color-danger) !important;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      transition: opacity 0.2s ease;
+    }
+
+    .profile-dropdown a:hover {
+      opacity: 0.8;
+    }
+
+    .user-profile-top-container:hover .profile-dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
     }
 
     @media (max-width: 992px) {
-      .user-profile-top {
+      .user-profile-top-container {
         top: 15px;
         right: 15px;
+      }
+
+      .user-profile-top {
         padding: 5px 10px;
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(10px);
@@ -1200,6 +1760,74 @@
       .user-name-top {
         display: none;
       }
+    }
+
+    /* Premium Policy Prompt Modal Styling */
+    .policy-prompt-content {
+      background: #ffffff !important;
+      padding: 3rem 2.5rem !important;
+      border-radius: 24px !important;
+      border: none !important;
+      box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04) !important;
+    }
+    
+    .policy-icon-wrapper {
+      width: 80px;
+      height: 80px;
+      background: rgba(99, 102, 241, 0.08);
+      color: var(--color-primary);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 1.5rem;
+      animation: pulse-indigo 2s infinite;
+    }
+    
+    @keyframes pulse-indigo {
+      0% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+      }
+      70% {
+        box-shadow: 0 0 0 15px rgba(99, 102, 241, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+      }
+    }
+
+    .btn-generate-now {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%) !important;
+      color: white !important;
+      border: none !important;
+      padding: 14px 28px !important;
+      border-radius: 14px !important;
+      font-weight: 700 !important;
+      font-size: 1rem !important;
+      transition: all 0.3s ease !important;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25) !important;
+    }
+    
+    .btn-generate-now:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 10px 20px rgba(99, 102, 241, 0.35) !important;
+    }
+    
+    .btn-maybe-later {
+      background: #f8fafc !important;
+      color: #64748b !important;
+      border: 1px solid #e2e8f0 !important;
+      padding: 14px 28px !important;
+      border-radius: 14px !important;
+      font-weight: 600 !important;
+      font-size: 1rem !important;
+      transition: all 0.2s ease !important;
+    }
+    
+    .btn-maybe-later:hover {
+      background: #f1f5f9 !important;
+      color: #1e293b !important;
     }
   </style>
 </head>
@@ -1224,6 +1852,12 @@
           <a class="nav-link active" onclick="showSection('dashboard', this)">
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="showSection('team-directory', this)">
+            <i class="bi bi-people-fill"></i>
+            <span>Team Directory</span>
           </a>
         </li>
       </ul>
@@ -1257,606 +1891,12 @@
         <i class="bi bi-gear"></i>
         <span>Settings</span>
       </a>
-      <a href="javascript:void(0);" class="nav-link footer-link logout-link" data-bs-toggle="modal"
-        data-bs-target="#logoutConfirmModal">
-        <i class="bi bi-box-arrow-left"></i>
-        <span>Logout</span>
-      </a>
     </div>
   </nav>
 
   <main class="main-content">
-    {% if show_policy_form %}
-      <style>
-        /* Opt-out of forced dark mode or automatic browser color inversions on this form page */
-        html, body, .main-content, .card, .form-control, input, select, textarea, button, label, span, p, h1, legend, fieldset, div {
-          color-scheme: only light !important;
-        }
 
-        .sidebar { display: none !important; }
-        
-        body { 
-          background: #f3f4f6 !important; 
-          color: #1f2937 !important; 
-        }
-        
-        .main-content { 
-          margin-left: 0 !important; 
-          padding: 40px var(--space-4) !important; 
-          background: #f3f4f6 !important; 
-          min-height: 100vh; 
-        }
-        
-        .page-header { display: none !important; }
-        .user-profile-top { display: none !important; }
-        
-        /* Premium Card style with top accent gradient */
-        .policy-form-card {
-          background: #ffffff !important; 
-          border: 1px solid #e5e7eb !important; 
-          border-radius: 20px !important; 
-          color: #1f2937 !important;
-          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
-          position: relative;
-          overflow: hidden;
-        }
-        
-        .policy-form-card::before {
-          content: "";
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 6px;
-          background: linear-gradient(90deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%) !important;
-          z-index: 10;
-        }
-        
-        /* Clean corporate fieldsets */
-        .form-section-fieldset {
-          border: 1px solid #e5e7eb !important; 
-          background: #f9fafb !important;
-          border-radius: 12px !important;
-          padding: 24px !important;
-          margin-bottom: 24px !important;
-        }
-        
-        .form-section-legend {
-          float: none !important;
-          width: auto !important;
-          padding: 4px 16px !important;
-          font-size: 0.85rem !important;
-          font-weight: 700 !important;
-          letter-spacing: 1px !important;
-          text-transform: uppercase !important;
-          color: #4f46e5 !important;
-          background: #ffffff !important;
-          border: 1px solid #e5e7eb !important;
-          border-radius: 20px !important;
-          margin-bottom: 0 !important;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
-        }
-        
-        .form-label-light {
-          color: #374151 !important; 
-          font-size: 0.85rem !important;
-          font-weight: 600 !important;
-          margin-bottom: 6px !important;
-          display: inline-block !important;
-        }
-        
-        /* Bulletproof white inputs */
-        .form-control-light {
-          background: #ffffff !important;
-          border: 1px solid #d1d5db !important;
-          color: #1f2937 !important;
-          border-radius: 8px !important;
-          padding: 10px 14px !important;
-          font-size: 0.95rem !important;
-          transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
-        }
-        
-        .form-control-light:focus {
-          border-color: #4f46e5 !important;
-          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
-          outline: 0 !important;
-          background: #ffffff !important;
-          color: #1f2937 !important;
-        }
 
-        .form-control-light::placeholder {
-          color: #9ca3af !important;
-          opacity: 1 !important;
-        }
-        
-        .text-dark-custom {
-          color: #1f2937 !important;
-        }
-        
-        .text-secondary-custom {
-          color: #4b5563 !important;
-        }
-
-        .form-check-input-light {
-          border: 1px solid #d1d5db !important;
-          background-color: #ffffff !important;
-        }
-        
-        .form-check-input-light:checked {
-          background-color: #4f46e5 !important;
-          border-color: #4f46e5 !important;
-        }
-
-        .btn-gradient-submit {
-          background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
-          border: none !important;
-          color: #ffffff !important;
-          font-weight: 700 !important;
-          border-radius: 10px !important;
-          padding: 14px 20px !important;
-          font-size: 1.05rem !important;
-          transition: all 0.3s ease !important;
-          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
-        }
-
-        .btn-gradient-submit:hover {
-          transform: translateY(-2px) !important;
-          box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35) !important;
-          color: #ffffff !important;
-        }
-
-        .btn-gradient-submit:active {
-          transform: translateY(0) !important;
-        }
-      </style>
-      
-      <!-- POSH Policy Generator Form Card (Light Theme) -->
-      <div class="container py-4 animate__animated animate__fadeIn" style="max-width: 850px;">
-        <div class="card border-0 shadow-lg policy-form-card">
-          <div class="card-body p-4 p-md-5">
-            <div class="text-center mb-5">
-              <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px; background: rgba(79, 70, 229, 0.08);">
-                <i class="bi bi-shield-check" style="font-size: 3rem; color: #4f46e5;"></i>
-              </div>
-              <h1 class="fw-bold mt-2 text-dark-custom" style="font-size: 2.2rem; letter-spacing: -0.02em;">POSH Policy Generator</h1>
-              <p class="text-secondary-custom mt-2" style="font-size: 1rem;">Please fill in the details below to generate your statutory-compliant POSH Policy and activate your dashboard.</p>
-            </div>
-
-            <form id="poshForm" class="needs-validation" novalidate action="{% url 'generate_posh_policy' %}" method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-
-              <!-- Section A: Company & Header Details -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">1. Company & Policy Header</legend>
-                
-                <div class="mb-3">
-                  <label class="form-label-light">Company Logo <span class="text-danger">*</span></label>
-                  <input type="file" name="companyLogo" class="form-control form-control-light" accept="image/png, image/jpeg, image/jpg, image/webp" required />
-                  <span class="text-secondary-custom small d-block mt-1">Upload PNG or JPG logo (Max 2MB).</span>
-                  <div class="invalid-feedback">Please upload a valid PNG, JPG, or WEBP logo less than 2MB.</div>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label-light">Company Name <span class="text-danger">*</span></label>
-                  <input type="text" name="companyName" class="form-control form-control-light" placeholder="e.g., HanuAI Pvt. Ltd." minlength="3" required />
-                  <div class="invalid-feedback">Please enter the Company Name (minimum 3 characters).</div>
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label-light">Registered Office Address <span class="text-danger">*</span></label>
-                  <input type="text" name="registeredAddress" class="form-control form-control-light" placeholder="Full address including city, state, PIN" minlength="10" required />
-                  <div class="invalid-feedback">Please enter the complete registered address (minimum 10 characters).</div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">HR Email <span class="text-danger">*</span></label>
-                    <input type="email" name="hrEmail" class="form-control form-control-light" placeholder="hr@company.com" required />
-                    <div class="invalid-feedback">Please enter a valid HR email address (must be different from POSH email).</div>
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">POSH Email <span class="text-danger">*</span></label>
-                    <input type="email" name="poshEmail" class="form-control form-control-light" placeholder="posh@company.com" required />
-                    <div class="invalid-feedback">Please enter a valid POSH email address (must be different from HR email).</div>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">Policy Effective Date <span class="text-danger">*</span></label>
-                    <input type="date" name="effectiveDate" class="form-control form-control-light" required />
-                    <div class="invalid-feedback">Please select a valid policy effective date (cannot be more than 1 year in the future).</div>
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">District <span class="text-danger">*</span></label>
-                    <input type="text" name="districtName" class="form-control form-control-light" placeholder="e.g., Gurgaon, Pune, Mumbai" minlength="2" required />
-                    <div class="invalid-feedback">Please enter a valid district name (minimum 2 characters).</div>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- Section B: Internal Committee (IC) -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">2. Internal Committee (IC) Members</legend>
-                <span class="text-secondary-custom small d-block mb-4">As per POSH Act: 1 Presiding Officer (senior woman), at least 4 internal members, and 1 external member.</span>
-
-                <!-- Presiding Officer -->
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
-                  <label class="form-label-light" style="color: #4338ca !important;">Presiding Officer (Senior Woman Employee) <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="poName" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="poEmail" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="poPhone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Member 1 -->
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
-                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 1 <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="m1Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="m1Email" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="m1Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Member 2 -->
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
-                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 2 <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="m2Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="m2Email" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="m2Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Member 3 -->
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
-                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 3 <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="m3Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="m3Email" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="m3Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Member 4 -->
-                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
-                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 4 <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="m4Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="m4Email" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="m4Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- External Member -->
-                <div class="mb-2">
-                  <label class="form-label-light" style="color: #4338ca !important;">External Member (NGO / Advocate) <span class="text-danger">*</span></label>
-                  <div class="row g-2">
-                    <div class="col-md-4">
-                      <input type="text" name="extName" placeholder="Name" class="form-control form-control-light" minlength="3" required />
-                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
-                    </div>
-                    <div class="col-md-5">
-                      <input type="email" name="extEmail" placeholder="Email" class="form-control form-control-light" required />
-                      <div class="invalid-feedback">Valid email required.</div>
-                    </div>
-                    <div class="col-md-3">
-                      <input type="text" name="extPhone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
-                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- Section C: HR Head -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">3. HR Head Details</legend>
-                <div class="mb-3">
-                  <label class="form-label-light">HR Head Name <span class="text-danger">*</span></label>
-                  <input type="text" name="hrHeadName" class="form-control form-control-light" placeholder="e.g., Jane Doe" minlength="3" required />
-                  <div class="invalid-feedback">Please enter a valid HR Head name (minimum 3 characters, no numbers).</div>
-                </div>
-              </fieldset>
-
-              <!-- Section C.2: Escalation Matrix -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">4. Escalation Matrix</legend>
-                <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">Escalation Officer Name <span class="text-danger">*</span></label>
-                    <input type="text" name="escalationName" class="form-control form-control-light" placeholder="e.g., Jane Doe" minlength="3" required />
-                    <div class="invalid-feedback">Please enter a valid Escalation Officer name (minimum 3 characters, no numbers).</div>
-                  </div>
-                  <div class="col-md-6 mb-3">
-                    <label class="form-label-light">Escalation Officer Designation <span class="text-danger">*</span></label>
-                    <input type="text" name="escalationDesignation" class="form-control form-control-light" placeholder="e.g., Chief Human Resources Officer" minlength="2" required />
-                    <div class="invalid-feedback">Please enter a designation (minimum 2 characters).</div>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- Section D: Approval -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">5. Policy Approval</legend>
-                <div class="row">
-                  <div class="col-md-4 mb-3">
-                    <label class="form-label-light">Approver Name <span class="text-danger">*</span></label>
-                    <input type="text" name="approverName" class="form-control form-control-light" placeholder="e.g., CEO / Director Name" minlength="3" required />
-                    <div class="invalid-feedback">Please enter a valid approver name (minimum 3 characters, no numbers).</div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <label class="form-label-light">Approver Designation <span class="text-danger">*</span></label>
-                    <input type="text" name="approverDesignation" class="form-control form-control-light" placeholder="e.g., Managing Director" minlength="2" required />
-                    <div class="invalid-feedback">Please enter the designation (minimum 2 characters).</div>
-                  </div>
-                  <div class="col-md-4 mb-3">
-                    <label class="form-label-light">Approval Date <span class="text-danger">*</span></label>
-                    <input type="date" name="approvalDate" class="form-control form-control-light" required />
-                    <div class="invalid-feedback">Please select a valid approval date (cannot be in the future).</div>
-                  </div>
-                </div>
-              </fieldset>
-
-              <!-- Section E: Consent -->
-              <fieldset class="form-section-fieldset">
-                <legend class="form-section-legend">6. Confirmation</legend>
-                <div class="form-check">
-                  <input type="checkbox" name="confirm" class="form-check-input form-check-input-light" id="confirmCheck" required />
-                  <label class="form-check-label text-secondary-custom small fw-medium" for="confirmCheck">
-                    I confirm that the above information is accurate and that the organization will comply with the POSH Act, 2013.
-                  </label>
-                  <div class="invalid-feedback text-danger mt-1">You must confirm before generating the policy.</div>
-                </div>
-              </fieldset>
-
-              <button type="submit" class="btn w-100 btn-gradient-submit mt-3">
-                Generate POSH Policy
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <!-- STRICT FRONTEND CUSTOM VALIDATION SCRIPT -->
-      <script>
-        (function () {
-          'use strict';
-          
-          const form = document.getElementById('poshForm');
-          if (!form) return;
-          
-          const inputs = form.querySelectorAll('input');
-
-          const validateField = function (input) {
-            const value = input.value.trim();
-            let isValid = true;
-            let customError = '';
-
-            // Required validation
-            if (input.hasAttribute('required') && value === '') {
-              isValid = false;
-              customError = 'This field is required.';
-            } else if (value !== '') {
-              // Specific validations
-              if (input.type === 'email') {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(value)) {
-                  isValid = false;
-                  customError = 'Please enter a valid email address (must contain @ and a domain name).';
-                }
-                
-                // Real-time unique email check for HR & POSH email inputs
-                if (isValid && (input.name === 'hrEmail' || input.name === 'poshEmail')) {
-                  const otherInputName = input.name === 'hrEmail' ? 'poshEmail' : 'hrEmail';
-                  const otherInput = form.querySelector(`input[name="${otherInputName}"]`);
-                  if (otherInput && otherInput.value.trim() !== '') {
-                    if (value === otherInput.value.trim()) {
-                      isValid = false;
-                      customError = 'HR Email and POSH Email must be different.';
-                    } else {
-                      // Synchronously clear the matching error on the other field if it has the difference warning
-                      if (otherInput.validationMessage === 'HR Email and POSH Email must be different.') {
-                        otherInput.setCustomValidity('');
-                        otherInput.classList.remove('is-invalid');
-                        otherInput.classList.add('is-valid');
-                      }
-                    }
-                  }
-                }
-              } else if (input.placeholder === 'Phone') {
-                const phoneRegex = /^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$/;
-                if (!phoneRegex.test(value)) {
-                  isValid = false;
-                  customError = 'Please enter a valid 10-digit mobile number.';
-                }
-              } else if (input.placeholder === 'Name' || input.name === 'hrHeadName' || input.name === 'approverName' || input.name === 'escalationName') {
-                const hasNumbers = /\d/.test(value);
-                if (hasNumbers) {
-                  isValid = false;
-                  customError = 'Names cannot contain numbers.';
-                } else if (value.length < 3) {
-                  isValid = false;
-                  customError = 'Name must be at least 3 characters long.';
-                }
-              } else if (input.name === 'companyName' && value.length < 3) {
-                isValid = false;
-                customError = 'Company Name must be at least 3 characters.';
-              } else if (input.name === 'registeredAddress' && value.length < 10) {
-                isValid = false;
-                customError = 'Address must be at least 10 characters.';
-              } else if (input.name === 'districtName' && value.length < 2) {
-                isValid = false;
-                customError = 'District must be at least 2 characters.';
-              } else if ((input.name === 'approverDesignation' || input.name === 'escalationDesignation') && value.length < 2) {
-                isValid = false;
-                customError = 'Designation must be at least 2 characters.';
-              } else if (input.name === 'effectiveDate') {
-                const selectedDate = new Date(value);
-                const maxFutureDate = new Date();
-                maxFutureDate.setFullYear(maxFutureDate.getFullYear() + 1);
-                if (selectedDate > maxFutureDate) {
-                  isValid = false;
-                  customError = 'Effective date cannot be more than 1 year in the future.';
-                }
-              } else if (input.name === 'approvalDate') {
-                const selectedDate = new Date(value);
-                const today = new Date();
-                today.setHours(23, 59, 59, 999);
-                if (selectedDate > today) {
-                  isValid = false;
-                  customError = 'Approval date cannot be in the future.';
-                }
-              } else if (input.type === 'file') {
-                const file = input.files[0];
-                if (file) {
-                  const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
-                  if (!validTypes.includes(file.type)) {
-                    isValid = false;
-                    customError = 'Only PNG, JPG, JPEG, and WEBP files are allowed.';
-                  } else if (file.size > 2 * 1024 * 1024) {
-                    isValid = false;
-                    customError = 'File size exceeds the 2MB limit.';
-                  }
-                }
-              }
-            }
-
-            // For checkboxes
-            if (input.type === 'checkbox') {
-              if (input.hasAttribute('required') && !input.checked) {
-                isValid = false;
-                customError = 'You must confirm this field.';
-              }
-            }
-
-            // Set browser validity
-            input.setCustomValidity(customError);
-
-            // Apply Bootstrap validation classes immediately
-            if (!isValid) {
-              input.classList.add('is-invalid');
-              input.classList.remove('is-valid');
-              
-              // Find and update feedback label dynamically
-              const feedback = input.closest('.mb-3, .col-md-6, .col-md-4, .col-md-5, .col-md-3, .form-check')?.querySelector('.invalid-feedback');
-              if (feedback && customError) {
-                feedback.textContent = customError;
-              }
-            } else {
-              input.classList.remove('is-invalid');
-              if (value !== '' || (input.type === 'checkbox' && input.checked) || (input.type === 'file' && input.files.length > 0)) {
-                input.classList.add('is-valid');
-              } else {
-                input.classList.remove('is-valid');
-              }
-            }
-
-            return isValid;
-          };
-
-          // Attach instant dynamic listeners for all input and interaction states
-          inputs.forEach(input => {
-            input.addEventListener('input', function () {
-              validateField(input);
-            });
-            input.addEventListener('blur', function () {
-              validateField(input);
-            });
-            input.addEventListener('change', function () {
-              validateField(input);
-            });
-          });
-
-          // Strict submit check handler
-          form.addEventListener('submit', function (event) {
-            let isFormValid = true;
-            let firstInvalidInput = null;
-
-            inputs.forEach(input => {
-              const isFieldValid = validateField(input);
-              if (!isFieldValid) {
-                isFormValid = false;
-                if (!firstInvalidInput) {
-                  firstInvalidInput = input;
-                }
-              }
-            });
-
-            if (!isFormValid) {
-              event.preventDefault();
-              event.stopPropagation();
-              
-              if (firstInvalidInput) {
-                firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstInvalidInput.focus();
-              }
-            }
-            
-            form.classList.add('was-validated');
-          }, false);
-        })();
-      </script>
-    {% else %}
-      <!-- User Profile Top Right -->
-      <div class="user-profile-top" onclick="showSection('settings', document.querySelector('[onclick*=\'settings\']'))">
-        <span class="user-name-top">{{ request.user.get_full_name|default:request.user.username|title }}</span>
-        <div class="user-avatar-top">
-          {{ request.user.username|slice:":1"|upper }}
-        </div>
-      </div>
-
-      <!-- Page Header -->
-      <header class="page-header">
-        <h1 class="header-main-title">Company Dashboard</h1>
-        <p class="header-subtitle">Overview of your organization's POSH compliance and training health.</p>
-      </header>
 
     <!-- === DJANGO MESSAGES (toast notifications) === -->
     {% if messages %}
@@ -1905,237 +1945,414 @@
 
     <!-- === SECTION 1: DASHBOARD === -->
     <div id="dashboard" class="content-section active">
-      <div class="stats-grid">
-        <div class="stat-card active" onclick="filterMembers('all', this)">
-          <div class="stat-label">Total Employees</div>
-          <div class="stat-value">{{ total_employees }}</div>
-        </div>
-        <div class="stat-card" onclick="filterMembers('completed', this)">
-          <div class="stat-label">Training Completed</div>
-          <div class="stat-value" style="color: #4ade80">
-            {{ training_completed }}
+      
+      <!-- Welcome Hero Banner -->
+      <div class="welcome-hero mb-4">
+        <!-- User Profile Top Right -->
+        <div class="user-profile-top-container">
+          <div class="user-profile-top">
+            <span class="user-name-top">{{ request.user.get_full_name|default:request.user.username|title }}</span>
+            <div class="user-avatar-top">
+              {{ request.user.username|slice:":1"|upper }}
+            </div>
+          </div>
+          <div class="profile-dropdown">
+            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#logoutConfirmModal">
+              <i class="bi bi-box-arrow-left"></i> Logout
+            </a>
           </div>
         </div>
-        <div class="stat-card" onclick="filterMembers('pending', this)">
-          <div class="stat-label">Training Pending</div>
-          <div class="stat-value" style="color: #fb923c">
-            {{ training_pending }}
+        <h2 class="welcome-title">Welcome back, {{ request.user.get_full_name|default:request.user.username }}!</h2>
+        <p class="welcome-text mb-0">Manage your workspace compliance assets, track team training metrics, and export statutory POSH records in one consolidated dashboard.</p>
+      </div>
+
+      <!-- Split Column Layout Grid -->
+      <div class="row g-4">
+        <!-- Left Column: Stats & Employee Table (75% width on large screens) -->
+        <div class="col-xl-8 col-lg-7">
+          
+          <!-- Stats Row -->
+          <div class="stats-grid">
+            <div class="stat-card active" onclick="filterMembers('all', this)">
+              <div class="stat-card-icon-wrapper" style="background: rgba(79, 70, 229, 0.08); color: var(--color-primary);">
+                <i class="bi bi-people-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-label">Total Employees</div>
+                <div class="stat-value">{{ total_employees }}</div>
+              </div>
+            </div>
+            <div class="stat-card" onclick="filterMembers('completed', this)">
+              <div class="stat-card-icon-wrapper" style="background: rgba(16, 185, 129, 0.08); color: var(--color-success);">
+                <i class="bi bi-patch-check-fill"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-label">Training Completed</div>
+                <div class="stat-value" style="color: var(--color-success)">
+                  {{ training_completed }}
+                </div>
+              </div>
+            </div>
+            <div class="stat-card" onclick="filterMembers('pending', this)">
+              <div class="stat-card-icon-wrapper" style="background: rgba(245, 158, 11, 0.08); color: var(--color-warning);">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+              <div class="stat-card-content">
+                <div class="stat-label">Training Pending</div>
+                <div class="stat-value" style="color: var(--color-warning)">
+                  {{ training_pending }}
+                </div>
+              </div>
+            </div>
           </div>
+
+          <!-- Training Metrics & Analytics Card -->
+          <div class="glass-card p-4 mb-4">
+            <h5 class="card-widget-title mb-4">Training Metrics & Distribution</h5>
+            <div class="row align-items-center">
+              <div class="col-md-5 text-center">
+                <div class="chart-wrapper" style="position: relative; height: 180px; width: 100%;">
+                  <canvas id="trainingDistributionChart"></canvas>
+                </div>
+              </div>
+              <div class="col-md-7">
+                <div class="ps-md-4 mt-3 mt-md-0">
+                  <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="indicator-dot" style="background-color: var(--color-success); width: 12px; height: 12px; border-radius: 50%;"></div>
+                    <div>
+                      <div class="small text-muted fw-semibold">Completed Training</div>
+                      <div class="fw-bold fs-5 text-success">{{ training_completed }} Employees</div>
+                    </div>
+                  </div>
+                  <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="indicator-dot" style="background-color: var(--color-warning); width: 12px; height: 12px; border-radius: 50%;"></div>
+                    <div>
+                      <div class="small text-muted fw-semibold">In Progress / Pending</div>
+                      <div class="fw-bold fs-5 text-warning">{{ training_pending }} Employees</div>
+                    </div>
+                  </div>
+                  <div class="progress-track mt-4" style="height: 8px;">
+                    <div class="progress-fill" style="width: {% if total_employees %}{% widthratio training_completed total_employees 100 %}{% else %}0{% endif %}%; background: linear-gradient(90deg, var(--color-success) 0%, #34d399 100%);"></div>
+                  </div>
+                  <div class="d-flex justify-content-between mt-2">
+                    <span class="small text-muted">Overall Progress</span>
+                    <span class="small fw-bold text-secondary">{% if total_employees %}{% widthratio training_completed total_employees 100 %}% Completed{% else %}0% Completed{% endif %}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Internal Committee (IC) Widget -->
+          <div class="glass-card p-4">
+            <h5 class="card-widget-title mb-3">Internal Committee (IC)</h5>
+            {% if posh_policy %}
+            <p class="small text-secondary mb-4">The statutory committee constituted to receive and redress complaints of sexual harassment at your organization.</p>
+            <div class="row g-3">
+              <!-- Presiding Officer -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); font-size: 0.8rem; width: 34px; height: 34px;">PO</div>
+                  <div>
+                    <div class="fw-bold small text-primary" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Presiding Officer</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.po_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.po_email }}</div>
+                  </div>
+                </div>
+              </div>
+              <!-- External Member -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--color-success), #34d399); font-size: 0.8rem; width: 34px; height: 34px;">EM</div>
+                  <div>
+                    <div class="fw-bold small text-success" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">External Member</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.ext_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.ext_email }}</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Internal Member 1 -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--text-secondary), var(--text-muted)); font-size: 0.8rem; width: 34px; height: 34px;">M1</div>
+                  <div>
+                    <div class="fw-bold small text-secondary" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Committee Member</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.m1_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.m1_email }}</div>
+                  </div>
+                </div>
+              </div>
+              <!-- Internal Member 2 -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--text-secondary), var(--text-muted)); font-size: 0.8rem; width: 34px; height: 34px;">M2</div>
+                  <div>
+                    <div class="fw-bold small text-secondary" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Committee Member</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.m2_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.m2_email }}</div>
+                  </div>
+                </div>
+              </div>
+              {% if posh_policy.m3_name %}
+              <!-- Internal Member 3 -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--text-secondary), var(--text-muted)); font-size: 0.8rem; width: 34px; height: 34px;">M3</div>
+                  <div>
+                    <div class="fw-bold small text-secondary" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Committee Member</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.m3_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.m3_email }}</div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if posh_policy.m4_name %}
+              <!-- Internal Member 4 -->
+              <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3 p-3 rounded-3" style="background: rgba(255, 255, 255, 0.4); border: 1px solid var(--border-soft); height: 100%;">
+                  <div class="table-avatar" style="background: linear-gradient(135deg, var(--text-secondary), var(--text-muted)); font-size: 0.8rem; width: 34px; height: 34px;">M4</div>
+                  <div>
+                    <div class="fw-bold small text-secondary" style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px;">Committee Member</div>
+                    <div class="fw-bold" style="font-size: 0.88rem; color: var(--text-primary);">{{ posh_policy.m4_name }}</div>
+                    <div class="text-muted" style="font-size: 0.75rem;">{{ posh_policy.m4_email }}</div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+            </div>
+            {% else %}
+            <div class="text-center py-4 px-3 rounded-4" style="background: rgba(245, 158, 11, 0.03); border: 1px dashed rgba(245, 158, 11, 0.3);">
+              <div class="mb-3" style="color: var(--color-warning); font-size: 2rem;">
+                <i class="bi bi-shield-exclamation"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-1" style="font-family: 'Outfit', sans-serif;">IC Constitution Pending</h6>
+              <p class="small text-secondary mb-3 mx-auto" style="max-width: 420px;">An Internal Committee (IC) has not been constituted yet. Constitution of an IC is legally mandated under the POSH Act for offices with 10 or more employees.</p>
+              <button class="btn btn-hero-primary py-2 px-4" style="font-size: 0.82rem !important;" onclick="showSection('policy', document.querySelector('[onclick*=\'policy\']'))">
+                <i class="bi bi-file-earmark-text-fill"></i> Set Up Committee Now
+              </button>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <!-- Right Column: Sidebar Analytics Widgets (25% width on large screens) -->
+        <div class="col-xl-4 col-lg-5">
+
+          <!-- POSH Compliance Roadmap -->
+          <div class="glass-card p-4 mb-4">
+            <h5 class="card-widget-title mb-4">Compliance Roadmap</h5>
+            
+            <ul class="roadmap-list">
+              <!-- Step 1: Onboard Employees -->
+              <li class="roadmap-item {% if total_employees > 0 %}completed{% else %}active{% endif %}">
+                <div class="roadmap-indicator">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="roadmap-content">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="roadmap-title">1. Onboard Team</span>
+                    {% if total_employees > 0 %}
+                    <span class="roadmap-badge completed">Done</span>
+                    {% else %}
+                    <span class="roadmap-badge active">In Progress</span>
+                    {% endif %}
+                  </div>
+                  <p class="roadmap-desc mb-2">Add your employees to configure training paths and track progress.</p>
+                  {% if total_employees == 0 %}
+                  <button class="btn btn-hero-primary py-1 px-3 fs-7" style="font-size: 0.75rem !important; padding: 6px 12px !important;" onclick="showSection('team-directory', document.querySelector('[onclick*=\'team-directory\']'))">
+                    <i class="bi bi-person-plus-fill"></i> Add Employees
+                  </button>
+                  {% endif %}
+                </div>
+              </li>
+
+              <!-- Step 2: Define POSH Policy -->
+              <li class="roadmap-item {% if posh_policy %}completed{% elif total_employees > 0 %}active{% else %}pending{% endif %}">
+                <div class="roadmap-indicator">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="roadmap-content">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="roadmap-title">2. POSH Policy</span>
+                    {% if posh_policy %}
+                    <span class="roadmap-badge completed">Done</span>
+                    {% elif total_employees > 0 %}
+                    <span class="roadmap-badge active">In Progress</span>
+                    {% else %}
+                    <span class="roadmap-badge pending">Pending</span>
+                    {% endif %}
+                  </div>
+                  <p class="roadmap-desc mb-2">Create, customize, and publish your statutory company POSH policy document.</p>
+                  {% if not posh_policy and total_employees > 0 %}
+                  <button class="btn btn-hero-primary py-1 px-3 fs-7" style="font-size: 0.75rem !important; padding: 6px 12px !important;" onclick="showSection('policy', document.querySelector('[onclick*=\'policy\']'))">
+                    <i class="bi bi-file-earmark-text-fill"></i> Configure Policy
+                  </button>
+                  {% endif %}
+                </div>
+              </li>
+
+              <!-- Step 3: Complete Training -->
+              <li class="roadmap-item {% if total_employees > 0 and training_completed == total_employees %}completed{% elif total_employees > 0 %}active{% else %}pending{% endif %}">
+                <div class="roadmap-indicator">
+                  <i class="bi bi-check-lg"></i>
+                </div>
+                <div class="roadmap-content">
+                  <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="roadmap-title">3. Employee Training</span>
+                    {% if total_employees > 0 and training_completed == total_employees %}
+                    <span class="roadmap-badge completed">Done</span>
+                    {% elif total_employees > 0 %}
+                    <span class="roadmap-badge active">In Progress</span>
+                    {% else %}
+                    <span class="roadmap-badge pending">Pending</span>
+                    {% endif %}
+                  </div>
+                  <p class="roadmap-desc mb-0">Ensure all registered team members complete their mandatory modules and quiz.</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Seat Occupancy Card -->
+          <div class="glass-card p-4 mb-4">
+            <h5 class="card-widget-title mb-4">Seat Occupancy</h5>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="small text-secondary fw-semibold">Seats Used</span>
+              <span class="small fw-bold text-primary">{{ seats_used }} / {{ posh_reg_employee_count|default:organization.max_users }}</span>
+            </div>
+            <div class="progress-track" style="height: 8px; border-radius: 10px; margin: 0;">
+              <div class="progress-fill" style="width: {% widthratio seats_used posh_reg_employee_count|default:organization.max_users 100 %}%; border-radius: 10px;"></div>
+            </div>
+            <div class="mt-3 d-flex align-items-center justify-content-between">
+              <span class="small text-muted">{{ seats_remaining }} seats left</span>
+              {% if seats_remaining <= 0 %}
+              <span class="small badge bg-danger-bg text-danger px-2 py-1" style="font-size: 0.72rem;">Limit Reached</span>
+              {% else %}
+              <span class="small badge bg-success-bg text-success px-2 py-1" style="font-size: 0.72rem;">Seats Available</span>
+              {% endif %}
+            </div>
+          </div>
+
+
         </div>
       </div>
 
-      <div class="glass-toolbar animate__animated animate__fadeInDown mb-5">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
-          <!-- Title Section -->
+
+
+    </div>
+
+    <!-- === SECTION 1.5: TEAM DIRECTORY === -->
+    <div id="team-directory" class="content-section">
+      <h2 class="mb-4 section-title">
+        <i class="bi bi-people-fill me-2"></i>Team Directory
+      </h2>
+      
+      <!-- Glass Console Toolbar -->
+      <div class="glass-toolbar mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
           <div class="title-group">
-            <h2 class="section-title mb-0 d-flex align-items-center">
+            <h2 class="section-title mb-0 d-flex align-items-center" style="font-size: 1.15rem;">
               <div class="icon-box me-3">
                 <i class="bi bi-people-fill"></i>
               </div>
               <div>
-                <span class="title-main">Team Members</span>
+                <span class="title-main">Team Directory</span>
                 <small class="refresh-timestamp d-block" id="lastRefreshTime">
                   <i class="bi bi-clock-history me-1"></i> Loading...
                 </small>
               </div>
             </h2>
           </div>
-
-          <!-- Actions Section -->
-          <div class="action-group d-flex flex-wrap gap-3 align-items-center">
-            <!-- Refresh Button -->
-            <button class="btn btn-action btn-refresh" onclick="refreshDashboard()" id="refreshBtn"
-              title="Refresh employee progress">
+          
+          <div class="action-group d-flex flex-wrap gap-2 align-items-center">
+            <button class="btn btn-hero-primary py-2 px-3 border-0" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" style="height: 38px; display: inline-flex; align-items: center; justify-content: center;">
+              <i class="bi bi-person-plus-fill"></i> Add Employee
+            </button>
+            <button class="btn btn-hero-secondary py-2 px-3" data-bs-toggle="modal" data-bs-target="#bulkImportModal" style="height: 38px; display: inline-flex; align-items: center; justify-content: center;">
+              <i class="bi bi-file-earmark-spreadsheet-fill"></i> Bulk Import CSV
+            </button>
+            <button class="btn btn-action btn-refresh" onclick="refreshDashboard()" id="refreshBtn" title="Refresh employee progress" style="height: 38px;">
               <i class="bi bi-arrow-clockwise"></i>
               <span>Refresh</span>
             </button>
-
-            <!-- Animated Search -->
-            <div class="search-wrapper" style="order: -1;">
+            <div class="search-wrapper">
               <i class="bi bi-search search-icon"></i>
-              <input type="text" id="memberSearch" class="form-control search-input" placeholder="Search user..." />
+              <input type="text" id="memberSearch" class="form-control search-input" placeholder="Search user..." style="height: 38px;" />
             </div>
-
-            <!-- Bulk Import Button -->
-            <button class="btn btn-action btn-import" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
-              <i class="bi bi-file-earmark-spreadsheet me-2"></i>
-              <span>Bulk Import</span>
-            </button>
-
-            <!-- Add Employee Button -->
-            <button class="btn btn-gradient-action" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-              <i class="bi bi-person-plus-fill me-2"></i>
-              <span>Add Employee</span>
-            </button>
           </div>
         </div>
       </div>
 
-      <div class="members-grid" id="membersGrid">
-        {% for member in members %}
-        <div class="member-card"
-          data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}"
-          data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}">
-          <div class="avatar">{{ member.user.first_name|first|upper }}</div>
-          <h3 class="member-name">
-            {{ member.user.get_full_name|default:member.user.first_name }}
-          </h3>
-          <p class="member-email">{{ member.user.email }}</p>
-          {% if member.employee_id %}
-          <p class="small mb-1" style="font-size: 0.9rem; color: #fbbf24; font-weight: 600">
-            <i class="bi bi-credit-card-2-front me-1"></i>ID: {{ member.employee_id }}
-          </p>
-          {% endif %}
-          <span class="role-badge">{{ member.role }}</span>
-        </div>
-
-        <!-- EMPLOYEE MODAL (Dynamic Charts) -->
-        <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header border-0">
-                <h5 class="modal-title">
-                  {{ member.user.first_name }}'s Status
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-              </div>
-
-              <div class="modal-body" style="padding: 16px">
-                <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
-                <div class="stats-row" id="stats-vids-{{ member.id }}">
-                  <!-- Video Pie -->
-                  <div class="mini-stat-card">
-                    <h3>Video Health</h3>
-                    <div class="chart-container">
-                      <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.video_percent }}" width="35"
-                        height="35" style="display: block"></canvas>
-                    </div>
+      <!-- Interactive Employee Table -->
+      <div class="glass-card overflow-hidden mb-5">
+        <div class="table-responsive">
+          <table class="table modern-table mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email ID</th>
+                <th>Department</th>
+                <th>Date Joined</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody id="membersTableBody">
+              {% for member in members %}
+              <tr data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}">
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="table-avatar">{{ member.user.first_name|first|upper }}</div>
+                    <div class="table-emp-name">{{ member.user.get_full_name|default:member.user.first_name }}</div>
                   </div>
-
-                  <!-- Video Time -->
-                  <div class="mini-stat-card">
-                    <h3>Watch Time</h3>
-                    <p class="time-text">{{ member.total_active_time }}</p>
-                    <small class="text-muted">Total Activity</small>
-                  </div>
-
-                  <!-- Video Progress Bar -->
-                  <div class="mini-stat-card">
-                    <h3>Video Comp.</h3>
-                    <h2 style="
-                          margin: 0;
-                          color: var(--lms-primary);
-                          font-size: 0.95rem;
-                          font-weight: 800;
-                          line-height: 1.1;
-                        ">
-                      {{ member.video_percent }}%
-                    </h2>
-                    <div class="progress-track">
-                      <div class="progress-fill" style="width: {{ member.video_percent }}%;"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- === LIST HEADER === -->
-                <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}">
-                    Videos &amp; Quiz
+                </td>
+                <td>
+                  <div class="table-emp-email">{{ member.user.email }}</div>
+                </td>
+                <td>
+                  <div class="table-emp-dept" style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">{{ member.user.department|default:"—" }}</div>
+                </td>
+                <td>
+                  <div style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary);">{{ member.joined_at|date:"M d, Y" }}</div>
+                </td>
+                <td>
+                  {% if member.training_status == 'completed' %}
+                  <span class="table-status-pill completed">
+                    <i class="bi bi-check-circle-fill"></i> Completed
+                  </span>
+                  {% elif member.training_status == 'in_progress' %}
+                  <span class="table-status-pill pending">
+                    <i class="bi bi-hourglass-split"></i> In Progress
+                  </span>
+                  {% else %}
+                  <span class="table-status-pill not-started">
+                    <i class="bi bi-circle"></i> Not Started
+                  </span>
+                  {% endif %}
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-action" data-bs-toggle="modal" data-bs-target="#userProgressModal-{{ member.id }}" style="font-size: 0.75rem; border-radius: 8px; font-weight: 600; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                    <i class="bi bi-eye-fill"></i> View Details
                   </button>
-                </div>
-
-                <!-- === CONTENT LISTS === -->
-
-                <!-- Video List -->
-                <div id="content-vids-{{ member.id }}">
-                  {% for mod in member.video_lesson_modules %}
-                  <!-- Video module row -->
-                  <div class="record-item">
-                    <div class="record-thumb" {% if mod.thumbnail_url %}
-                      style="background-image: url('{{ mod.thumbnail_url }}');" {% else %}
-                      style="background-color: var(--border-color); display:flex; align-items:center; justify-content:center;"
-                      {% endif %}>
-                      {% if not mod.thumbnail_url %}
-                      <i class="bi bi-play-btn-fill" style="font-size:1.5rem; color: var(--lms-primary);"></i>
-                      {% endif %}
-                    </div>
-                    <div class="record-info">
-                      <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
-                      <p>🎬 Video Lesson</p>
-                    </div>
-                    {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">✅ Completed</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending">⏳ Pending</span>
-                    {% endif %}
-                  </div>
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">
-                    No video modules assigned
-                  </div>
-                  {% endfor %}
-
-                  <!-- Practice Quiz Status Card -->
-                  <div class="record-item" id="quiz-card-{{ member.id }}" style="margin-top: 10px;">
-                    <div class="record-thumb"
-                      style="background-color: var(--border-color); display:flex; align-items:center; justify-content:center;">
-                      <i class="bi bi-patch-question-fill" style="font-size:1.5rem; color: var(--color-primary);"></i>
-                    </div>
-                    <div class="record-info">
-                      <h6 style="margin-bottom: 2px">📝 Quiz</h6>
-                      {% if member.quiz_completed %}
-                      <p style="color: #27ae60; font-weight: 600; margin: 0">
-                        ✅ Completed
-                      </p>
-                      {% elif member.quiz_score != None %}
-                      <p style="color: #e67e22; font-weight: 600; margin: 0">
-                        ⏳ Attempted
-                      </p>
-                      {% else %}
-                      <p style="color: #999; font-weight: 600; margin: 0">
-                        — Not Attempted
-                      </p>
-                      {% endif %}
-                      {% if member.quiz_score != None %}
-                      <small style="color: #555">
-                        Score: <strong>{{ member.quiz_score }}%</strong>
-                        {% if member.quiz_passed %}
-                        &nbsp;<span style="color: #27ae60; font-weight: 700">PASS ✔</span>
-                        {% else %}
-                        &nbsp;<span style="color: #e74c3c; font-weight: 700">FAIL ✗</span>
-                        {% endif %}
-                      </small>
-                      {% else %}
-                      <small style="color: #aaa">No score recorded yet</small>
-                      {% endif %}
-                    </div>
-                    {% if member.quiz_completed %}
-                    <span class="lms-badge bg-complete">✅ Completed</span>
-                    {% elif member.quiz_score != None %}
-                    <span class="lms-badge" style="background: #e67e22; color: #fff;">⏳ Attempted</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending">— Pending</span>
-                    {% endif %}
-                  </div>
-
-
-                </div>
-              </div>
-            </div>
-          </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        {% endfor %}
       </div>
+
     </div>
 
     <!-- === SECTION 2: POSTERS === -->
     <div id="posters" class="content-section">
       <h2 class="mb-4 section-title">
         <i class="bi bi-images me-2"></i>Awareness Posters
-      </h2>
-      <div class="poster-grid">
+      </h2>      <div class="poster-grid">
+        {% for poster in posters_list %}
         <div class="poster-item">
-          <div class="d-inline-block position-relative" id="poster-editor-container" style="
+          <div class="d-inline-block position-relative" style="
                 border-radius: 12px;
                 overflow: hidden;
                 border: 1px solid var(--border-color);
@@ -2144,60 +2361,53 @@
                 max-width: 100%;
               ">
             <!-- Base Poster Image -->
-            <img src="/media/Posters/POSH Poster.webp" alt="POSH Poster"
-              style="max-height: 500px; max-width: 100%; height: auto; display: block" id="base-poster-posh" />
+            <img src="{{ poster.path }}" alt="{{ poster.title }}"
+              style="max-height: 500px; max-width: 100%; height: auto; display: block" />
 
             <!-- Draggable Logo Container -->
-            <div id="draggable-logo"
+            <div class="draggable-logo-preview"
               style="position: absolute; 
-                        top: {{ poster_configs.posh_1.logo_y|default:organization.logo_y }}%; 
-                        left: {{ poster_configs.posh_1.logo_x|default:organization.logo_x }}%; 
-                        width: {{ poster_configs.posh_1.logo_width|default:organization.logo_width }}%; 
-                        cursor: default; 
-                        user-select: none;
-                        touch-action: none;
-                        border: 2px dashed transparent;
-                        transition: border 0.2s;
-                        z-index: 10;
-                        display: {% if poster_configs.posh_1.logo or organization.logo %}block{% else %}none{% endif %};">
+                        top: {{ poster.logo_y }}%; 
+                        left: {{ poster.logo_x }}%; 
+                        width: {{ poster.logo_width }}%; 
+                        pointer-events: none;
+                        display: {% if poster.logo_url %}block{% else %}none{% endif %};">
               <img
-                src="{% if poster_configs.posh_1.logo %}{{ poster_configs.posh_1.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
+                src="{{ poster.logo_url|default:'' }}"
                 alt="Company Logo" style="
                     width: 100%;
                     height: auto;
-                    pointer-events: none;
                     display: block;
                   " />
-              <!-- Resize handle removed from dashboard view -->
             </div>
 
             <!-- Company Name & Address Overlay -->
-            <div class="card-text-overlay" data-text-size="{{ poster_configs.posh_1.text_size|default:2.2 }}" data-text-color="{{ poster_configs.posh_1.text_color|default:'#000000' }}"
+            <div class="card-text-overlay" data-text-size="{{ poster.text_size }}" data-text-color="{{ poster.text_color }}"
               style="position: absolute; 
-                top: {{ poster_configs.posh_1.text_y|default:88.0 }}%; 
-                left: {{ poster_configs.posh_1.text_x|default:3.0 }}%; 
+                top: {{ poster.text_y }}%; 
+                left: {{ poster.text_x }}%; 
                 pointer-events: none;
                 font-family: 'Nunito', sans-serif;
-                color: {{ poster_configs.posh_1.text_color|default:'#000000' }};
+                color: {{ poster.text_color }};
                 text-align: center;
                 padding: 4px 8px;
                 z-index: 99;
-                display: {% if poster_configs.posh_1.company_name or poster_configs.posh_1.company_address %}block{% else %}none{% endif %};">
+                display: {% if poster.company_name or poster.company_address %}block{% else %}none{% endif %};">
               <div style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;">
-                {{ poster_configs.posh_1.company_name }}
+                {{ poster.company_name }}
               </div>
               <div style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
-                {{ poster_configs.posh_1.company_address }}
+                {{ poster.company_address }}
               </div>
             </div>
           </div>
 
-          <h5 class="mt-3">POSH Act Guidelines</h5>
+          <h5 class="mt-3">{{ poster.title }}</h5>
           <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="{% url 'get_poster_with_logo' 'posh_1' %}" target="_blank" class="btn btn-sm btn-action">
+            <a href="{% url 'get_poster_with_logo' poster.key %}" target="_blank" class="btn btn-sm btn-action">
               <i class="bi bi-eye me-1"></i>View
             </a>
-            <a href="{% url 'get_poster_with_logo' 'posh_1' %}?download=1" download class="btn btn-sm btn-action">
+            <a href="{% url 'get_poster_with_logo' poster.key %}?download=1" download class="btn btn-sm btn-action">
               <i class="bi bi-download me-1"></i>Download
             </a>
             <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal"
@@ -2207,186 +2417,8 @@
           </div>
 
         </div>
-
-        <!-- Poster 2: Spot It - Stop It -->
-        <div class="poster-item">
-          <div class="d-inline-block position-relative" style="
-                border-radius: 12px;
-                overflow: hidden;
-                border: 1px solid var(--border-color);
-                background: var(--bg-card);
-                box-shadow: var(--shadow-lg);
-                max-width: 100%;
-              ">
-            <img src="/media/Posters/POSH Poster 2.webp" alt="Spot It Stop It Poster"
-              style="max-height: 500px; max-width: 100%; height: auto; display: block" />
-
-            <div class="draggable-logo-preview" style="position: absolute; 
-                top: {{ poster_configs.posh_2.logo_y|default:organization.logo_y }}%; 
-                left: {{ poster_configs.posh_2.logo_x|default:organization.logo_x }}%; 
-                width: {{ poster_configs.posh_2.logo_width|default:organization.logo_width }}%; 
-                pointer-events: none;
-                display: {% if poster_configs.posh_2.logo or organization.logo %}block{% else %}none{% endif %};">
-              <img
-                src="{% if poster_configs.posh_2.logo %}{{ poster_configs.posh_2.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
-                style="width: 100%; height: auto; display: block" />
-            </div>
-
-            <!-- Company Name & Address Overlay -->
-            <div class="card-text-overlay" data-text-size="{{ poster_configs.posh_2.text_size|default:2.2 }}" data-text-color="{{ poster_configs.posh_2.text_color|default:'#000000' }}"
-              style="position: absolute; 
-                top: {{ poster_configs.posh_2.text_y|default:88.0 }}%; 
-                left: {{ poster_configs.posh_2.text_x|default:3.0 }}%; 
-                pointer-events: none;
-                font-family: 'Nunito', sans-serif;
-                color: {{ poster_configs.posh_2.text_color|default:'#000000' }};
-                text-align: center;
-                padding: 4px 8px;
-                z-index: 99;
-                display: {% if poster_configs.posh_2.company_name or poster_configs.posh_2.company_address %}block{% else %}none{% endif %};">
-              <div style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;">
-                {{ poster_configs.posh_2.company_name }}
-              </div>
-              <div style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
-                {{ poster_configs.posh_2.company_address }}
-              </div>
-            </div>
-          </div>
-          <h5 class="mt-3">Spot It – Stop It</h5>
-          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="{% url 'get_poster_with_logo' 'posh_2' %}" target="_blank" class="btn btn-sm btn-action">
-              <i class="bi bi-eye me-1"></i>View
-            </a>
-            <a href="{% url 'get_poster_with_logo' 'posh_2' %}?download=1" download class="btn btn-sm btn-action">
-              <i class="bi bi-download me-1"></i>Download
-            </a>
-            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal"
-              data-bs-target="#fullscreenEditorModal">
-              <i class="bi bi-pencil-square me-1"></i>Edit Layout
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Poster 3: POSH POCSO -->
-        <div class="poster-item">
-          <div class="d-inline-block position-relative" style="
-                border-radius: 12px;
-                overflow: hidden;
-                border: 1px solid var(--border-color);
-                background: var(--bg-card);
-                box-shadow: var(--shadow-lg);
-                max-width: 100%;
-              ">
-            <img src="/media/Posters/posh-pocso.webp" alt="POSH POCSO Poster"
-              style="max-height: 500px; max-width: 100%; height: auto; display: block" />
-
-            <div class="draggable-logo-preview" style="position: absolute; 
-                top: {{ poster_configs.posh_pocso.logo_y|default:organization.logo_y }}%; 
-                left: {{ poster_configs.posh_pocso.logo_x|default:organization.logo_x }}%; 
-                width: {{ poster_configs.posh_pocso.logo_width|default:organization.logo_width }}%; 
-                pointer-events: none;
-                display: {% if poster_configs.posh_pocso.logo or organization.logo %}block{% else %}none{% endif %};">
-              <img
-                src="{% if poster_configs.posh_pocso.logo %}{{ poster_configs.posh_pocso.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
-                style="width: 100%; height: auto; display: block" />
-            </div>
-
-            <!-- Company Name & Address Overlay -->
-            <div class="card-text-overlay" data-text-size="{{ poster_configs.posh_pocso.text_size|default:2.2 }}" data-text-color="{{ poster_configs.posh_pocso.text_color|default:'#000000' }}"
-              style="position: absolute; 
-                top: {{ poster_configs.posh_pocso.text_y|default:88.0 }}%; 
-                left: {{ poster_configs.posh_pocso.text_x|default:3.0 }}%; 
-                pointer-events: none;
-                font-family: 'Nunito', sans-serif;
-                color: {{ poster_configs.posh_pocso.text_color|default:'#000000' }};
-                text-align: center;
-                padding: 4px 8px;
-                z-index: 99;
-                display: {% if poster_configs.posh_pocso.company_name or poster_configs.posh_pocso.company_address %}block{% else %}none{% endif %};">
-              <div style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;">
-                {{ poster_configs.posh_pocso.company_name }}
-              </div>
-              <div style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
-                {{ poster_configs.posh_pocso.company_address }}
-              </div>
-            </div>
-          </div>
-          <h5 class="mt-3">Combined POSH & POCSO</h5>
-          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="{% url 'get_poster_with_logo' 'posh_pocso' %}" target="_blank" class="btn btn-sm btn-action">
-              <i class="bi bi-eye me-1"></i>View
-            </a>
-            <a href="{% url 'get_poster_with_logo' 'posh_pocso' %}?download=1" download class="btn btn-sm btn-action">
-              <i class="bi bi-download me-1"></i>Download
-            </a>
-            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal"
-              data-bs-target="#fullscreenEditorModal">
-              <i class="bi bi-pencil-square me-1"></i>Edit Layout
-            </button>
-          </div>
-
-        </div>
-
-        <!-- Poster 4: POSH Company -->
-        <div class="poster-item">
-          <div class="d-inline-block position-relative" style="
-                border-radius: 12px;
-                overflow: hidden;
-                border: 1px solid var(--border-color);
-                background: var(--bg-card);
-                box-shadow: var(--shadow-lg);
-                max-width: 100%;
-              ">
-            <img src="/media/Posters/posh-company.webp" alt="POSH Company Poster"
-              style="max-height: 500px; max-width: 100%; height: auto; display: block" />
-
-            <div class="draggable-logo-preview" style="position: absolute; 
-                top: {{ poster_configs.posh_company.logo_y|default:organization.logo_y }}%; 
-                left: {{ poster_configs.posh_company.logo_x|default:organization.logo_x }}%; 
-                width: {{ poster_configs.posh_company.logo_width|default:organization.logo_width }}%; 
-                pointer-events: none;
-                display: {% if poster_configs.posh_company.logo or organization.logo %}block{% else %}none{% endif %};">
-              <img
-                src="{% if poster_configs.posh_company.logo %}{{ poster_configs.posh_company.logo.url }}{% elif organization.logo %}{{ organization.logo.url }}{% endif %}"
-                style="width: 100%; height: auto; display: block" />
-            </div>
-
-            <!-- Company Name & Address Overlay -->
-            <div class="card-text-overlay" data-text-size="{{ poster_configs.posh_company.text_size|default:2.2 }}" data-text-color="{{ poster_configs.posh_company.text_color|default:'#000000' }}"
-              style="position: absolute; 
-                top: {{ poster_configs.posh_company.text_y|default:88.0 }}%; 
-                left: {{ poster_configs.posh_company.text_x|default:3.0 }}%; 
-                pointer-events: none;
-                font-family: 'Nunito', sans-serif;
-                color: {{ poster_configs.posh_company.text_color|default:'#000000' }};
-                text-align: center;
-                padding: 4px 8px;
-                z-index: 99;
-                display: {% if poster_configs.posh_company.company_name or poster_configs.posh_company.company_address %}block{% else %}none{% endif %};">
-              <div style="font-weight: 700; font-size: 1.25em; line-height: 1.1; white-space: nowrap;">
-                {{ poster_configs.posh_company.company_name }}
-              </div>
-              <div style="font-weight: 400; font-size: 0.9em; opacity: 0.9; line-height: 1.1; white-space: nowrap; letter-spacing: 0.08em;">
-                {{ poster_configs.posh_company.company_address }}
-              </div>
-            </div>
-          </div>
-          <h5 class="mt-3">POSH Corporate Guidelines</h5>
-          <div class="d-flex justify-content-center flex-wrap gap-2 mt-2">
-            <a href="{% url 'get_poster_with_logo' 'posh_company' %}" target="_blank" class="btn btn-sm btn-action">
-              <i class="bi bi-eye me-1"></i>View
-            </a>
-            <a href="{% url 'get_poster_with_logo' 'posh_company' %}?download=1" download class="btn btn-sm btn-action">
-              <i class="bi bi-download me-1"></i>Download
-            </a>
-            <button class="btn btn-sm btn-gradient-action" data-bs-toggle="modal"
-              data-bs-target="#fullscreenEditorModal">
-              <i class="bi bi-pencil-square me-1"></i>Edit Layout
-            </button>
-          </div>
-
-        </div>
+        {% endfor %}
+      </div>
 
         <style>
           /* Studio Dark Editor Theme */
@@ -3278,11 +3310,11 @@
 
     <!-- === SECTION 3: POLICY === -->
     <div id="policy" class="content-section">
+      {% if posh_policy %}
       <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 no-print">
         <h2 class="section-title mb-0">
           <i class="bi bi-file-earmark-text me-2"></i>POSH Policy
         </h2>
-        {% if posh_policy %}
         <div class="d-flex gap-2">
           <button class="btn btn-action" data-bs-toggle="modal" data-bs-target="#editPolicyModal">
             <i class="bi bi-pencil-square me-2"></i>Edit Policy
@@ -3291,11 +3323,6 @@
             <i class="bi bi-printer me-2"></i>Print Policy
           </button>
         </div>
-        {% else %}
-        <button class="btn btn-action" onclick="window.print()">
-          <i class="bi bi-printer me-2"></i>Print Policy
-        </button>
-        {% endif %}
       </div>
       
       <div class="policy-text p-4 p-md-5 rounded-4 shadow-sm" style="background: white; border: 1px solid var(--border-color); color: #334155; font-family: 'Poppins', sans-serif;">
@@ -3433,7 +3460,7 @@
           <p><strong>6.3 Sexual Harassment:</strong> "Sexual Harassment" includes any unwelcome act or behavior (whether directly or by implication), such as:</p>
           <ul>
             <li>Physical contact and advances.</li>
-            <li>Demand or request for sexual favors.</li>
+            <li>Demand or request of sexual favors.</li>
             <li>Making sexually colored remarks.</li>
             <li>Showing pornography.</li>
             <li>Any other unwelcome physical, verbal, non-verbal or written conduct of a sexual nature.</li>
@@ -3533,6 +3560,562 @@
 
         <p class="text-muted text-center mt-5 small">-- Confidential Property &copy; {{ posh_policy.company_name }} --</p>
       </div>
+      {% else %}
+      <!-- POSH Policy Generator Form Card (Light Theme) -->
+      <div class="container py-4 animate__animated animate__fadeIn" style="max-width: 850px;">
+        <div class="card border-0 shadow-lg policy-form-card">
+          <div class="card-body p-4 p-md-5">
+            <div class="text-center mb-5">
+              <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 80px; height: 80px; background: rgba(79, 70, 229, 0.08);">
+                <i class="bi bi-shield-check" style="font-size: 3rem; color: #4f46e5;"></i>
+              </div>
+              <h1 class="fw-bold mt-2 text-dark-custom" style="font-size: 2.2rem; letter-spacing: -0.02em;">POSH Policy Generator</h1>
+              <p class="text-secondary-custom mt-2" style="font-size: 1rem;">Please fill in the details below to generate your statutory-compliant POSH Policy and activate your dashboard.</p>
+            </div>
+
+            <form id="poshForm" class="needs-validation" novalidate action="{% url 'generate_posh_policy' %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <!-- Section A: Company & Header Details -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">1. Company & Policy Header</legend>
+                
+                <div class="mb-3">
+                  <label class="form-label-light">Company Logo <span class="text-danger">*</span></label>
+                  <input type="file" name="companyLogo" class="form-control form-control-light" accept="image/png, image/jpeg, image/jpg, image/webp" required />
+                  <span class="text-secondary-custom small d-block mt-1">Upload PNG or JPG logo (Max 2MB).</span>
+                  <div class="invalid-feedback">Please upload a valid PNG, JPG, or WEBP logo less than 2MB.</div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label-light">Company Name <span class="text-danger">*</span></label>
+                  <input type="text" name="companyName" class="form-control form-control-light" placeholder="e.g., HanuAI Pvt. Ltd." minlength="3" required />
+                  <div class="invalid-feedback">Please enter the Company Name (minimum 3 characters).</div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label-light">Registered Office Address <span class="text-danger">*</span></label>
+                  <input type="text" name="registeredAddress" class="form-control form-control-light" placeholder="Full address including city, state, PIN" minlength="10" required />
+                  <div class="invalid-feedback">Please enter the complete registered address (minimum 10 characters).</div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">HR Email <span class="text-danger">*</span></label>
+                    <input type="email" name="hrEmail" class="form-control form-control-light" placeholder="hr@company.com" required />
+                    <div class="invalid-feedback">Please enter a valid HR email address (must be different from POSH email).</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">POSH Email <span class="text-danger">*</span></label>
+                    <input type="email" name="poshEmail" class="form-control form-control-light" placeholder="posh@company.com" required />
+                    <div class="invalid-feedback">Please enter a valid POSH email address (must be different from HR email).</div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">Policy Effective Date <span class="text-danger">*</span></label>
+                    <input type="date" name="effectiveDate" class="form-control form-control-light" required />
+                    <div class="invalid-feedback">Please select a valid policy effective date (cannot be more than 1 year in the future).</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">District <span class="text-danger">*</span></label>
+                    <input type="text" name="districtName" class="form-control form-control-light" placeholder="e.g., Gurgaon, Pune, Mumbai" minlength="2" required />
+                    <div class="invalid-feedback">Please enter a valid district name (minimum 2 characters).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section B: Internal Committee (IC) -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">2. Internal Committee (IC) Members</legend>
+                <span class="text-secondary-custom small d-block mb-4">As per POSH Act: 1 Presiding Officer (senior woman), at least 4 internal members, and 1 external member.</span>
+
+                <!-- Presiding Officer -->
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                  <label class="form-label-light" style="color: #4338ca !important;">Presiding Officer (Senior Woman Employee) <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="poName" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="poEmail" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="poPhone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Member 1 -->
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 1 <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="m1Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="m1Email" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="m1Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 2 <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="m2Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="m2Email" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="m2Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 3 <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="m3Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="m3Email" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="m3Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Member 4 -->
+                <div class="mb-4 pb-3" style="border-bottom: 1px solid #e5e7eb;">
+                  <label class="form-label-light" style="color: #4338ca !important;">IC Member 4 <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="m4Name" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="m4Email" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="m4Phone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- External Member -->
+                <div class="mb-2">
+                  <label class="form-label-light" style="color: #4338ca !important;">External Member (NGO / Advocate) <span class="text-danger">*</span></label>
+                  <div class="row g-2">
+                    <div class="col-md-4">
+                      <input type="text" name="extName" placeholder="Name" class="form-control form-control-light" minlength="3" required />
+                      <div class="invalid-feedback">Required (min 3 letters, no numbers).</div>
+                    </div>
+                    <div class="col-md-5">
+                      <input type="email" name="extEmail" placeholder="Email" class="form-control form-control-light" required />
+                      <div class="invalid-feedback">Valid email required.</div>
+                    </div>
+                    <div class="col-md-3">
+                      <input type="text" name="extPhone" placeholder="Phone" class="form-control form-control-light" pattern="^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$" required />
+                      <div class="invalid-feedback">Valid 10-digit mobile.</div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section C: HR Head -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">3. HR Head Details</legend>
+                <div class="mb-3">
+                  <label class="form-label-light">HR Head Name <span class="text-danger">*</span></label>
+                  <input type="text" name="hrHeadName" class="form-control form-control-light" placeholder="e.g., Jane Doe" minlength="3" required />
+                  <div class="invalid-feedback">Please enter a valid HR Head name (minimum 3 characters, no numbers).</div>
+                </div>
+              </fieldset>
+
+              <!-- Section C.2: Escalation Matrix -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">4. Escalation Matrix</legend>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">Escalation Officer Name <span class="text-danger">*</span></label>
+                    <input type="text" name="escalationName" class="form-control form-control-light" placeholder="e.g., Jane Doe" minlength="3" required />
+                    <div class="invalid-feedback">Please enter a valid Escalation Officer name (minimum 3 characters, no numbers).</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label class="form-label-light">Escalation Officer Designation <span class="text-danger">*</span></label>
+                    <input type="text" name="escalationDesignation" class="form-control form-control-light" placeholder="e.g., Chief Human Resources Officer" minlength="2" required />
+                    <div class="invalid-feedback">Please enter a designation (minimum 2 characters).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section D: Approval -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">5. Policy Approval</legend>
+                <div class="row">
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label-light">Approver Name <span class="text-danger">*</span></label>
+                    <input type="text" name="approverName" class="form-control form-control-light" placeholder="e.g., CEO / Director Name" minlength="3" required />
+                    <div class="invalid-feedback">Please enter a valid approver name (minimum 3 characters, no numbers).</div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label-light">Approver Designation <span class="text-danger">*</span></label>
+                    <input type="text" name="approverDesignation" class="form-control form-control-light" placeholder="e.g., Managing Director" minlength="2" required />
+                    <div class="invalid-feedback">Please enter the designation (minimum 2 characters).</div>
+                  </div>
+                  <div class="col-md-4 mb-3">
+                    <label class="form-label-light">Approval Date <span class="text-danger">*</span></label>
+                    <input type="date" name="approvalDate" class="form-control form-control-light" required />
+                    <div class="invalid-feedback">Please select a valid approval date (cannot be in the future).</div>
+                  </div>
+                </div>
+              </fieldset>
+
+              <!-- Section E: Consent -->
+              <fieldset class="form-section-fieldset">
+                <legend class="form-section-legend">6. Confirmation</legend>
+                <div class="form-check">
+                  <input type="checkbox" name="confirm" class="form-check-input form-check-input-light" id="confirmCheck" required />
+                  <label class="form-check-label text-secondary-custom small fw-medium" for="confirmCheck" style="cursor: pointer;">
+                    I confirm that the above information is accurate and that the organization will comply with the POSH Act, 2013.
+                  </label>
+                  <div class="invalid-feedback text-danger mt-1">You must confirm before generating the policy.</div>
+                </div>
+              </fieldset>
+
+              <button type="submit" class="btn w-100 btn-gradient-submit mt-3">
+                Generate POSH Policy
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scoped styling for the generator form -->
+      <style>
+        #policy .policy-form-card {
+          background: #ffffff !important; 
+          border: 1px solid #e5e7eb !important; 
+          border-radius: 20px !important; 
+          color: #1f2937 !important;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
+          position: relative;
+          overflow: hidden;
+        }
+        
+        #policy .policy-form-card::before {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 6px;
+          background: linear-gradient(90deg, #4f46e5 0%, #6366f1 50%, #06b6d4 100%) !important;
+          z-index: 10;
+        }
+        
+        #policy .form-section-fieldset {
+          border: 1px solid #e5e7eb !important; 
+          background: #f9fafb !important;
+          border-radius: 12px !important;
+          padding: 24px !important;
+          margin-bottom: 24px !important;
+        }
+        
+        #policy .form-section-legend {
+          float: none !important;
+          width: auto !important;
+          padding: 4px 16px !important;
+          font-size: 0.85rem !important;
+          font-weight: 700 !important;
+          letter-spacing: 1px !important;
+          text-transform: uppercase !important;
+          color: #4f46e5 !important;
+          background: #ffffff !important;
+          border: 1px solid #e5e7eb !important;
+          border-radius: 20px !important;
+          margin-bottom: 0 !important;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
+        }
+        
+        #policy .form-label-light {
+          color: #374151 !important; 
+          font-size: 0.85rem !important;
+          font-weight: 600 !important;
+          margin-bottom: 6px !important;
+          display: inline-block !important;
+        }
+        
+        #policy .form-control-light {
+          background: #ffffff !important;
+          border: 1px solid #d1d5db !important;
+          color: #1f2937 !important;
+          border-radius: 8px !important;
+          padding: 10px 14px !important;
+          font-size: 0.95rem !important;
+          transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+        }
+        
+        #policy .form-control-light:focus {
+          border-color: #4f46e5 !important;
+          box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important;
+          outline: 0 !important;
+          background: #ffffff !important;
+          color: #1f2937 !important;
+        }
+
+        #policy .form-control-light::placeholder {
+          color: #9ca3af !important;
+          opacity: 1 !important;
+        }
+        
+        #policy .text-dark-custom {
+          color: #1f2937 !important;
+        }
+        
+        #policy .text-secondary-custom {
+          color: #4b5563 !important;
+        }
+
+        #policy .form-check-input-light {
+          border: 1px solid #d1d5db !important;
+          background-color: #ffffff !important;
+        }
+        
+        #policy .form-check-input-light:checked {
+          background-color: #4f46e5 !important;
+          border-color: #4f46e5 !important;
+        }
+
+        #policy .btn-gradient-submit {
+          background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+          border: none !important;
+          color: #ffffff !important;
+          font-weight: 700 !important;
+          border-radius: 10px !important;
+          padding: 14px 20px !important;
+          font-size: 1.05rem !important;
+          transition: all 0.3s ease !important;
+          box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25) !important;
+        }
+
+        #policy .btn-gradient-submit:hover {
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35) !important;
+          color: #ffffff !important;
+        }
+
+        #policy .btn-gradient-submit:active {
+          transform: translateY(0) !important;
+        }
+      </style>
+
+      <!-- STRICT FRONTEND CUSTOM VALIDATION SCRIPT FOR GENERATE FORM -->
+      <script>
+        (function () {
+          'use strict';
+          
+          window.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('poshForm');
+            if (!form) return;
+            
+            const inputs = form.querySelectorAll('input, textarea');
+
+            const validateField = function (input) {
+              const value = input.value.trim();
+              let isValid = true;
+              let customError = '';
+
+              // Required validation
+              if (input.hasAttribute('required') && value === '') {
+                isValid = false;
+                customError = 'This field is required.';
+              } else if (value !== '') {
+                // Specific validations
+                if (input.type === 'email') {
+                  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  if (!emailRegex.test(value)) {
+                    isValid = false;
+                    customError = 'Please enter a valid email address (must contain @ and a domain name).';
+                  }
+                  
+                  // Real-time unique email check for HR & POSH email inputs
+                  if (isValid && (input.name === 'hrEmail' || input.name === 'poshEmail')) {
+                    const otherInputName = input.name === 'hrEmail' ? 'poshEmail' : 'hrEmail';
+                    const otherInput = form.querySelector(`input[name="${otherInputName}"]`);
+                    if (otherInput && otherInput.value.trim() !== '') {
+                      if (value === otherInput.value.trim()) {
+                        isValid = false;
+                        customError = 'HR Email and POSH Email must be different.';
+                      } else {
+                        // Synchronously clear the matching error on the other field if it has the difference warning
+                        if (otherInput.validationMessage === 'HR Email and POSH Email must be different.') {
+                          otherInput.setCustomValidity('');
+                          otherInput.classList.remove('is-invalid');
+                          otherInput.classList.add('is-valid');
+                        }
+                      }
+                    }
+                  }
+                } else if (input.placeholder === 'Phone') {
+                  const phoneRegex = /^\+?([0-9]{1,3})?[-. ]?([0-9]{10})$/;
+                  if (!phoneRegex.test(value)) {
+                    isValid = false;
+                    customError = 'Please enter a valid 10-digit mobile number.';
+                  }
+                } else if (input.placeholder === 'Name' || input.name === 'hrHeadName' || input.name === 'approverName' || input.name === 'escalationName') {
+                  const hasNumbers = /\d/.test(value);
+                  if (hasNumbers) {
+                    isValid = false;
+                    customError = 'Names cannot contain numbers.';
+                  } else if (value.length < 3) {
+                    isValid = false;
+                    customError = 'Name must be at least 3 characters long.';
+                  }
+                } else if (input.name === 'companyName' && value.length < 3) {
+                  isValid = false;
+                  customError = 'Company Name must be at least 3 characters.';
+                } else if (input.name === 'registeredAddress' && value.length < 10) {
+                  isValid = false;
+                  customError = 'Address must be at least 10 characters.';
+                } else if (input.name === 'districtName' && value.length < 2) {
+                  isValid = false;
+                  customError = 'District must be at least 2 characters.';
+                } else if ((input.name === 'approverDesignation' || input.name === 'escalationDesignation') && value.length < 2) {
+                  isValid = false;
+                  customError = 'Designation must be at least 2 characters.';
+                } else if (input.name === 'effectiveDate') {
+                  const selectedDate = new Date(value);
+                  const maxFutureDate = new Date();
+                  maxFutureDate.setFullYear(maxFutureDate.getFullYear() + 1);
+                  if (selectedDate > maxFutureDate) {
+                    isValid = false;
+                    customError = 'Effective date cannot be more than 1 year in the future.';
+                  }
+                } else if (input.name === 'approvalDate') {
+                  const selectedDate = new Date(value);
+                  const today = new Date();
+                  today.setHours(23, 59, 59, 999);
+                  if (selectedDate > today) {
+                    isValid = false;
+                    customError = 'Approval date cannot be in the future.';
+                  }
+                } else if (input.type === 'file') {
+                  const file = input.files[0];
+                  if (file) {
+                    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+                    if (!validTypes.includes(file.type)) {
+                      isValid = false;
+                      customError = 'Only PNG, JPG, JPEG, and WEBP files are allowed.';
+                    } else if (file.size > 2 * 1024 * 1024) {
+                      isValid = false;
+                      customError = 'File size exceeds the 2MB limit.';
+                    }
+                  }
+                }
+              }
+
+              // For checkboxes
+              if (input.type === 'checkbox') {
+                if (input.hasAttribute('required') && !input.checked) {
+                  isValid = false;
+                  customError = 'You must confirm this field.';
+                }
+              }
+
+              // Set browser validity
+              input.setCustomValidity(customError);
+
+              // Apply Bootstrap validation classes immediately
+              if (!isValid) {
+                input.classList.add('is-invalid');
+                input.classList.remove('is-valid');
+                
+                // Find and update feedback label dynamically
+                const feedback = input.closest('.mb-3, .col-md-6, .col-md-4, .col-md-5, .col-md-3, .form-check')?.querySelector('.invalid-feedback');
+                if (feedback && customError) {
+                  feedback.textContent = customError;
+                }
+              } else {
+                input.classList.remove('is-invalid');
+                if (value !== '' || (input.type === 'checkbox' && input.checked) || (input.type === 'file' && input.files.length > 0)) {
+                  input.classList.add('is-valid');
+                } else {
+                  input.classList.remove('is-valid');
+                }
+              }
+
+              return isValid;
+            };
+
+            // Attach instant dynamic listeners for all input and interaction states
+            inputs.forEach(input => {
+              input.addEventListener('input', function () {
+                validateField(input);
+              });
+              input.addEventListener('blur', function () {
+                validateField(input);
+              });
+              input.addEventListener('change', function () {
+                validateField(input);
+              });
+            });
+
+            // Strict submit check handler
+            form.addEventListener('submit', function (event) {
+              let isFormValid = true;
+              let firstInvalidInput = null;
+
+              inputs.forEach(input => {
+                const isFieldValid = validateField(input);
+                if (!isFieldValid) {
+                  isFormValid = false;
+                  if (!firstInvalidInput) {
+                    firstInvalidInput = input;
+                  }
+                }
+              });
+
+              if (!isFormValid) {
+                event.preventDefault();
+                event.stopPropagation();
+                
+                if (firstInvalidInput) {
+                  firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  firstInvalidInput.focus();
+                }
+              }
+              
+              form.classList.add('was-validated');
+            }, false);
+          });
+        })();
+      </script>
+      {% endif %}
     </div>
     
     <style>
@@ -3796,8 +4379,152 @@
         </div>
       </div>
     </div>
-    {% endif %}
+
+    <!-- Branded Footer -->
+    <footer style="position: absolute; bottom: 0; left: 0; right: var(--space-8); padding: 20px 0; border-top: 1px solid rgba(99, 102, 241, 0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; z-index: 10;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Solutions Logo" style="height: 32px; width: auto; opacity: 0.85; filter: grayscale(20%); transition: all 0.3s;" onmouseover="this.style.opacity='1'; this.style.filter='grayscale(0%)'" onmouseout="this.style.opacity='0.85'; this.style.filter='grayscale(20%)'">
+        <span style="font-family: 'Outfit', 'Poppins', 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-muted, var(--text-secondary, #94a3b8)); letter-spacing: -0.01em;">Open Hand Solutions</span>
+      </div>
+    </footer>
   </main>
+
+  <!-- Employee Progress Modals -->
+  {% for member in members %}
+  <!-- EMPLOYEE MODAL (Dynamic Charts) -->
+  <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">
+            {{ member.user.first_name }}'s Status
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body" style="padding: 16px">
+          <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+          <div class="stats-row" id="stats-vids-{{ member.id }}">
+            <!-- Video Pie -->
+            <div class="mini-stat-card">
+              <h3>Video Health</h3>
+              <div class="chart-container">
+                <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.video_percent }}" width="35"
+                  height="35" style="display: block"></canvas>
+              </div>
+            </div>
+
+            <!-- Video Time -->
+            <div class="mini-stat-card">
+              <h3>Watch Time</h3>
+              <p class="time-text">{{ member.total_active_time }}</p>
+              <small class="text-muted">Total Activity</small>
+            </div>
+
+            <!-- Video Progress Bar -->
+            <div class="mini-stat-card">
+              <h3>Video Comp.</h3>
+              <h2 style="
+                    margin: 0;
+                    color: var(--lms-primary);
+                    font-size: 0.95rem;
+                    font-weight: 800;
+                    line-height: 1.1;
+                  ">
+                {{ member.video_percent }}%
+              </h2>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: {{ member.video_percent }}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- === LIST HEADER === -->
+          <div class="lms-tab-header">
+            <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}">
+              Videos &amp; Quiz
+            </button>
+          </div>
+
+          <!-- === CONTENT LISTS === -->
+
+          <!-- Video List -->
+          <div id="content-vids-{{ member.id }}">
+            {% for mod in member.video_lesson_modules %}
+            <!-- Video module row -->
+            <div class="record-item">
+              <div class="record-thumb" {% if mod.thumbnail_url %}
+                style="background-image: url('{{ mod.thumbnail_url }}');" {% else %}
+                style="background-color: rgba(226, 232, 240, 0.6); display:flex; align-items:center; justify-content:center;"
+                {% endif %}>
+                {% if not mod.thumbnail_url %}
+                <i class="bi bi-play-btn-fill" style="font-size:1.5rem; color: var(--lms-primary);"></i>
+                {% endif %}
+              </div>
+              <div class="record-info">
+                <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                <p>🎬 Video Lesson</p>
+              </div>
+              {% if mod.is_completed %}
+              <span class="lms-badge bg-complete">✅ Completed</span>
+              {% else %}
+              <span class="lms-badge bg-pending">⏳ Pending</span>
+              {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center text-muted p-2 small">
+              No video modules assigned
+            </div>
+            {% endfor %}
+
+            <!-- Practice Quiz Status Card -->
+            <div class="record-item" id="quiz-card-{{ member.id }}" style="margin-top: 10px;">
+              <div class="record-thumb"
+                style="background-color: rgba(226, 232, 240, 0.6); display:flex; align-items:center; justify-content:center;">
+                <i class="bi bi-patch-question-fill" style="font-size:1.5rem; color: var(--color-primary);"></i>
+              </div>
+              <div class="record-info">
+                <h6 style="margin-bottom: 2px">📝 Quiz</h6>
+                {% if member.quiz_completed %}
+                <p style="color: #27ae60; font-weight: 600; margin: 0">
+                  ✅ Completed
+                </p>
+                {% elif member.quiz_score != None %}
+                <p style="color: #e67e22; font-weight: 600; margin: 0">
+                  ⏳ Attempted
+                </p>
+                {% else %}
+                <p style="color: #999; font-weight: 600; margin: 0">
+                  — Not Attempted
+                </p>
+                {% endif %}
+                {% if member.quiz_score != None %}
+                <small style="color: #555">
+                  Score: <strong>{{ member.quiz_score }}%</strong>
+                  {% if member.quiz_passed %}
+                  &nbsp;<span style="color: #27ae60; font-weight: 700">PASS ✔</span>
+                  {% else %}
+                  &nbsp;<span style="color: #e74c3c; font-weight: 700">FAIL ✗</span>
+                  {% endif %}
+                </small>
+                {% else %}
+                <small style="color: #aaa">No score recorded yet</small>
+                {% endif %}
+              </div>
+              {% if member.quiz_completed %}
+              <span class="lms-badge bg-complete">✅ Completed</span>
+              {% elif member.quiz_score != None %}
+              <span class="lms-badge" style="background: #e67e22; color: #fff;">⏳ Attempted</span>
+              {% else %}
+              <span class="lms-badge bg-pending">— Pending</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 
   <!-- Add Single Employee Modal -->
   <!-- ADD EMPLOYEE MODAL -->
@@ -3819,8 +4546,8 @@
 
             <input class="form-control mb-3" name="emp_email" type="email" placeholder="Email" required />
 
-            <input class="form-control mb-3" name="emp_designation"
-              placeholder="Designation (e.g. Manager, Developer)" />
+            <input class="form-control mb-3" name="emp_department"
+              placeholder="Department (e.g. IT, HR)" />
 
             <div class="mb-3">
               <label class="form-label small">Employee Limit (from Registration)</label>
@@ -3885,11 +4612,11 @@
             <h6 class="mb-2">Step 1: Get the Format</h6>
 
             <p class="small text-muted mb-2">
-              Download the standard CSV template. Required columns:
+              Download the standard CSV template. Required and optional columns:
             </p>
             <div class="mb-3" style="background: rgba(255,255,255,0.05); border-radius: 8px; padding: 10px 14px;">
               <code style="font-size: 0.78rem; color: #fbbf24; word-break: break-all;">
-                  Name, Last name, Department, Email, Mobile
+                  Name, Last name, Department, Email, Mobile (Optional)
                 </code>
             </div>
 
@@ -4584,6 +5311,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
+    const urlParams = new URLSearchParams(window.location.search);
     const SECTION_KEY = 'posh_activeSection';
 
     function showSection(sectionId, element) {
@@ -4607,18 +5335,20 @@
       .getElementById("memberSearch")
       .addEventListener("input", function () {
         const filter = this.value.toLowerCase();
-        const cards = document.querySelectorAll("#membersGrid .member-card");
-        cards.forEach((card) => {
-          const name = card
-            .querySelector(".member-name")
+        const rows = document.querySelectorAll("#membersTableBody tr");
+        rows.forEach((row) => {
+          const name = row
+            .querySelector(".table-emp-name")
             .innerText.toLowerCase();
-          const email = card
-            .querySelector(".member-email")
+          const email = row
+            .querySelector(".table-emp-email")
             .innerText.toLowerCase();
-          if (name.includes(filter) || email.includes(filter)) {
-            card.style.display = "";
+          const deptEl = row.querySelector(".table-emp-dept");
+          const dept = deptEl ? deptEl.innerText.toLowerCase() : "";
+          if (name.includes(filter) || email.includes(filter) || dept.includes(filter)) {
+            row.style.display = "";
           } else {
-            card.style.display = "none";
+            row.style.display = "none";
           }
         });
       });
@@ -4811,8 +5541,56 @@
       }
     }
 
-    // Set initial refresh time
+    // Initialize training distribution doughnut chart using Chart.js
+    function initTrainingChart() {
+      const canvas = document.getElementById("trainingDistributionChart");
+      if (!canvas) return;
+
+      const completed = parseInt("{{ training_completed }}") || 0;
+      const pending = parseInt("{{ training_pending }}") || 0;
+      const total = parseInt("{{ total_employees }}") || 0;
+
+      // If no employees, render empty placeholder state
+      const dataValues = total > 0 ? [completed, pending] : [0, 100];
+      const bgColors = total > 0 ? ["#10b981", "#f59e0b"] : ["#e2e8f0", "#f1f5f9"];
+
+      new Chart(canvas, {
+        type: "doughnut",
+        data: {
+          labels: ["Completed", "Pending"],
+          datasets: [{
+            data: dataValues,
+            backgroundColor: bgColors,
+            hoverOffset: 4,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: "75%",
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  if (total === 0) return "No employees registered";
+                  return ` ${context.label}: ${context.raw} employees`;
+                }
+              }
+            }
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      });
+    }
+
+    // Set initial refresh time & compliance metrics
     updateRefreshTime();
+    initTrainingChart();
 
     // Show notification when page loads after refresh
     window.addEventListener("load", function () {
@@ -4870,20 +5648,20 @@
 
       // Initialize filtering logic
       window.filterMembers = (status, element) => {
-        const cards = document.querySelectorAll(".member-card");
+        const rows = document.querySelectorAll("#membersTableBody tr");
         const statCards = document.querySelectorAll(".stat-card");
 
         // Update active state on buttons
         statCards.forEach((btn) => btn.classList.remove("active"));
         element.classList.add("active");
 
-        cards.forEach((card) => {
+        rows.forEach((row) => {
           if (status === "all") {
-            card.style.display = "block";
-          } else if (card.getAttribute("data-status") === status) {
-            card.style.display = "block";
+            row.style.display = "";
+          } else if (row.getAttribute("data-status") === status) {
+            row.style.display = "";
           } else {
-            card.style.display = "none";
+            row.style.display = "none";
           }
         });
       };
@@ -4891,54 +5669,20 @@
       // URL section param handled above in load listener
 
       const posterConfigs = {
-        "/media/Posters/POSH Poster.webp": {
-          x: {{ poster_configs.posh_1.logo_x|default:organization.logo_x|default:2.0 }},
-          y: {{ poster_configs.posh_1.logo_y|default:organization.logo_y|default:2.0 }},
-          width: {{ poster_configs.posh_1.logo_width|default:organization.logo_width|default:15.0 }},
-          logo_url: "{% if poster_configs.posh_1.logo %}{{ poster_configs.posh_1.logo.url }}{% endif %}",
-          company_name: "{{ poster_configs.posh_1.company_name|default:''|escapejs }}",
-          company_address: "{{ poster_configs.posh_1.company_address|default:''|escapejs }}",
-          text_x: {{ poster_configs.posh_1.text_x|default:3.0 }},
-          text_y: {{ poster_configs.posh_1.text_y|default:88.0 }},
-          text_size: {{ poster_configs.posh_1.text_size|default:2.2 }},
-          text_color: "{{ poster_configs.posh_1.text_color|default:'#000000' }}"
+        {% for poster in posters_list %}
+        "{{ poster.path }}": {
+          x: {{ poster.logo_x }},
+          y: {{ poster.logo_y }},
+          width: {{ poster.logo_width }},
+          logo_url: "{{ poster.logo_url|default:'' }}",
+          company_name: "{{ poster.company_name|escapejs }}",
+          company_address: "{{ poster.company_address|escapejs }}",
+          text_x: {{ poster.text_x }},
+          text_y: {{ poster.text_y }},
+          text_size: {{ poster.text_size }},
+          text_color: "{{ poster.text_color }}"
         },
-        "/media/Posters/POSH Poster 2.webp": {
-          x: {{ poster_configs.posh_2.logo_x|default:organization.logo_x|default:2.0 }},
-          y: {{ poster_configs.posh_2.logo_y|default:organization.logo_y|default:2.0 }},
-          width: {{ poster_configs.posh_2.logo_width|default:organization.logo_width|default:15.0 }},
-          logo_url: "{% if poster_configs.posh_2.logo %}{{ poster_configs.posh_2.logo.url }}{% endif %}",
-          company_name: "{{ poster_configs.posh_2.company_name|default:''|escapejs }}",
-          company_address: "{{ poster_configs.posh_2.company_address|default:''|escapejs }}",
-          text_x: {{ poster_configs.posh_2.text_x|default:3.0 }},
-          text_y: {{ poster_configs.posh_2.text_y|default:88.0 }},
-          text_size: {{ poster_configs.posh_2.text_size|default:2.2 }},
-          text_color: "{{ poster_configs.posh_2.text_color|default:'#000000' }}"
-        },
-        "/media/Posters/posh-company.webp": {
-          x: {{ poster_configs.posh_company.logo_x|default:organization.logo_x|default:2.0 }},
-          y: {{ poster_configs.posh_company.logo_y|default:organization.logo_y|default:2.0 }},
-          width: {{ poster_configs.posh_company.logo_width|default:organization.logo_width|default:15.0 }},
-          logo_url: "{% if poster_configs.posh_company.logo %}{{ poster_configs.posh_company.logo.url }}{% endif %}",
-          company_name: "{{ poster_configs.posh_company.company_name|default:''|escapejs }}",
-          company_address: "{{ poster_configs.posh_company.company_address|default:''|escapejs }}",
-          text_x: {{ poster_configs.posh_company.text_x|default:3.0 }},
-          text_y: {{ poster_configs.posh_company.text_y|default:88.0 }},
-          text_size: {{ poster_configs.posh_company.text_size|default:2.2 }},
-          text_color: "{{ poster_configs.posh_company.text_color|default:'#000000' }}"
-        },
-        "/media/Posters/posh-pocso.webp": {
-          x: {{ poster_configs.posh_pocso.logo_x|default:organization.logo_x|default:2.0 }},
-          y: {{ poster_configs.posh_pocso.logo_y|default:organization.logo_y|default:2.0 }},
-          width: {{ poster_configs.posh_pocso.logo_width|default:organization.logo_width|default:15.0 }},
-          logo_url: "{% if poster_configs.posh_pocso.logo %}{{ poster_configs.posh_pocso.logo.url }}{% endif %}",
-          company_name: "{{ poster_configs.posh_pocso.company_name|default:''|escapejs }}",
-          company_address: "{{ poster_configs.posh_pocso.company_address|default:''|escapejs }}",
-          text_x: {{ poster_configs.posh_pocso.text_x|default:3.0 }},
-          text_y: {{ poster_configs.posh_pocso.text_y|default:88.0 }},
-          text_size: {{ poster_configs.posh_pocso.text_size|default:2.2 }},
-          text_color: "{{ poster_configs.posh_pocso.text_color|default:'#000000' }}"
-        }
+        {% endfor %}
       };
 
     // Handle Edit Layout button clicks to update modal image and positions
@@ -5106,6 +5850,85 @@
     }
       });
   </script>
+
+  <!-- POLICY PROMPT MODAL -->
+  <div class="modal fade" id="policyPromptModal" tabindex="-1" aria-labelledby="policyPromptModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content policy-prompt-content">
+        <div class="modal-body text-center p-0">
+          <div class="policy-icon-wrapper">
+            <i class="bi bi-shield-check"></i>
+          </div>
+          <h3 class="fw-bold mb-3 text-dark" style="font-size: 1.6rem; letter-spacing: -0.01em;">Generate POSH Policy</h3>
+          <p class="text-muted mb-4 px-2" style="font-size: 0.95rem; line-height: 1.6;">Your organization does not have a generated POSH Policy yet. Generate it now to ensure full statutory compliance for your company and activate all features.</p>
+          
+          <div class="d-grid gap-3">
+            <button type="button" class="btn btn-generate-now" id="btnPolicyPromptNow">
+              <i class="bi bi-magic me-2"></i>Generate Now
+            </button>
+            <button type="button" class="btn btn-maybe-later" id="btnPolicyPromptLater">
+              Maybe Later
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const btnNow = document.getElementById("btnPolicyPromptNow");
+      const btnLater = document.getElementById("btnPolicyPromptLater");
+      
+      if (btnNow) {
+        btnNow.addEventListener("click", function () {
+          sessionStorage.setItem("dismissedPolicyPrompt", "true");
+          // Dismiss modal
+          const modalEl = document.getElementById("policyPromptModal");
+          if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+          }
+          // Switch section to policy
+          const targetLink = document.querySelector('[onclick*="showSection(\'policy\'"]');
+          if (targetLink) {
+            showSection('policy', targetLink);
+          }
+        });
+      }
+      
+      if (btnLater) {
+        btnLater.addEventListener("click", function () {
+          sessionStorage.setItem("dismissedPolicyPrompt", "true");
+          // Dismiss modal
+          const modalEl = document.getElementById("policyPromptModal");
+          if (modalEl) {
+            const modalInstance = bootstrap.Modal.getInstance(modalEl);
+            if (modalInstance) modalInstance.hide();
+          }
+        });
+      }
+
+      // Trigger POSH Policy Generator modal after 3 seconds if needed
+      const showPolicyForm = {{ show_policy_form|yesno:"true,false" }};
+      if (showPolicyForm) {
+        const alreadyDismissed = sessionStorage.getItem("dismissedPolicyPrompt");
+        if (!alreadyDismissed) {
+          setTimeout(function () {
+            const modalElem = document.getElementById("policyPromptModal");
+            if (modalElem) {
+              const myModal = new bootstrap.Modal(modalElem, {
+                backdrop: 'static',
+                keyboard: false
+              });
+              myModal.show();
+            }
+          }, 3000); // 3-second delay
+        }
+      }
+    });
+  </script>
+
   <!-- === TAB-CLOSE AUTO LOGOUT === -->
   <script>
     (function () {

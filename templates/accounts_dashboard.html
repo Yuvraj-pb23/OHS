@@ -36,7 +36,10 @@
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2rem 2rem 100px 2rem;
+            min-height: calc(100vh - 80px);
+            position: relative;
+            box-sizing: border-box;
         }
 
         .card {
@@ -243,6 +246,9 @@
                 </button>
                 <button onclick="switchTab('emails')" id="tab-emails" class="tab-btn">
                     <i class="fas fa-envelope mr-2"></i> Email Templates
+                </button>
+                <button onclick="switchTab('posters')" id="tab-posters" class="tab-btn">
+                    <i class="fas fa-images mr-2"></i> Awareness Posters
                 </button>
             </div>
         </div>
@@ -1312,6 +1318,246 @@
             </div>
             {% endif %}
         </div>
+
+        <!-- AWARENESS POSTERS TAB -->
+        <div id="content-posters" class="tab-content hidden">
+            <div class="mb-8">
+                <h3 class="heading-font text-2xl font-black">Awareness Poster Library</h3>
+                <p class="text-text-muted text-sm mt-1">View and download POSH awareness posters. These are available to all enrolled companies.</p>
+            </div>
+
+            <style>
+                .poster-gallery-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                    gap: 1.5rem;
+                }
+                .poster-gallery-card {
+                    background: var(--card-dark);
+                    border: 1px solid var(--border-color);
+                    border-radius: 1.25rem;
+                    overflow: hidden;
+                    transition: all 0.3s ease;
+                    display: flex;
+                    flex-direction: column;
+                }
+                .poster-gallery-card:hover {
+                    border-color: rgba(99, 102, 241, 0.4);
+                    transform: translateY(-4px);
+                    box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.25);
+                }
+                .poster-gallery-thumb {
+                    width: 100%;
+                    aspect-ratio: 3/4;
+                    object-fit: cover;
+                    object-position: top;
+                    display: block;
+                    background: #0a0f1e;
+                }
+                .poster-gallery-body {
+                    padding: 1rem;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+                    flex: 1;
+                }
+                .poster-gallery-title {
+                    font-size: 0.8rem;
+                    font-weight: 700;
+                    color: #f8fafc;
+                    line-height: 1.3;
+                }
+                .poster-gallery-actions {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-top: auto;
+                }
+                .poster-btn-view {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.4rem;
+                    padding: 0.5rem;
+                    border-radius: 0.6rem;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    text-decoration: none;
+                    background: rgba(99, 102, 241, 0.1);
+                    color: #818cf8;
+                    border: 1px solid rgba(99, 102, 241, 0.2);
+                    transition: all 0.2s;
+                }
+                .poster-btn-view:hover {
+                    background: rgba(99, 102, 241, 0.2);
+                    color: #a5b4fc;
+                }
+                .poster-btn-download {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.4rem;
+                    padding: 0.5rem;
+                    border-radius: 0.6rem;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    text-decoration: none;
+                    background: rgba(16, 185, 129, 0.1);
+                    color: #34d399;
+                    border: 1px solid rgba(16, 185, 129, 0.2);
+                    transition: all 0.2s;
+                }
+                .poster-btn-download:hover {
+                    background: rgba(16, 185, 129, 0.2);
+                    color: #6ee7b7;
+                }
+            </style>
+
+            <div class="poster-gallery-grid">
+
+                <!-- POSH Act Guidelines -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster.webp" alt="POSH Act Guidelines" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">POSH Act Guidelines</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spot It – Stop It -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 2.webp" alt="Spot It – Stop It" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Spot It – Stop It</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 2.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 2.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Respectful Workplace -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 3.webp" alt="Respectful Workplace" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Respectful Workplace</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 3.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 3.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zero Tolerance Policy -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 4.webp" alt="Zero Tolerance Policy" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Zero Tolerance Policy</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 4.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 4.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equality vs Equity -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 5.webp" alt="Equality vs Equity" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Equality vs Equity</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 5.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 5.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Compliance & Care -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 6.webp" alt="Compliance &amp; Care" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Compliance &amp; Care</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 6.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 6.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Types of Harassment (Hindi) -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 7.webp" alt="Types of Harassment (Hindi)" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Types of Harassment (Hindi)</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 7.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 7.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Respect is Non-Negotiable -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 8.webp" alt="Respect is Non-Negotiable" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Respect is Non-Negotiable</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 8.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 8.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Culture & Safety -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POSH Poster 9.webp" alt="Culture &amp; Safety" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Culture &amp; Safety</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POSH Poster 9.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POSH Poster 9.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Combined POSH & POCSO -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/posh-pocso.webp" alt="Combined POSH &amp; POCSO" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">Combined POSH &amp; POCSO</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/posh-pocso.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/posh-pocso.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- POSH Corporate Guidelines -->
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/posh-company.webp" alt="POSH Corporate Guidelines" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">POSH Corporate Guidelines</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/posh-company.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/posh-company.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Branded Footer -->
+        <footer style="position: absolute; bottom: 0; left: 2rem; right: 2rem; padding: 20px 0; border-top: 1px solid rgba(99, 102, 241, 0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; z-index: 10;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Solutions Logo" style="height: 32px; width: auto; opacity: 0.85; filter: grayscale(20%); transition: all 0.3s;" onmouseover="this.style.opacity='1'; this.style.filter='grayscale(0%)'" onmouseout="this.style.opacity='0.85'; this.style.filter='grayscale(20%)'">
+            <span style="font-family: 'Outfit', 'Poppins', 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-muted, var(--text-secondary, #94a3b8)); letter-spacing: -0.01em;">Open Hand Solutions</span>
+          </div>
+        </footer>
     </main>
 
     <script>

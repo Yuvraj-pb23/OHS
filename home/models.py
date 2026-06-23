@@ -9,6 +9,7 @@ from django.utils import timezone
 class User(AbstractUser):
     # AbstractUser has username, email, password, first_name, date_joined
     phone = models.CharField(max_length=15, blank=True, null=True)
+    department = models.CharField(max_length=100, blank=True, null=True)
 
     # NEW: Distinct types for data separation
     USER_TYPES = (

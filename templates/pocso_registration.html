@@ -278,6 +278,27 @@
         .phone-group .floating-input:focus {
             box-shadow: none;
         }
+
+        /* PREMIUM VALIDATION STYLES */
+        .error-message {
+            color: #f43f5e;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.35rem;
+            margin-left: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .error-message.show {
+            opacity: 1;
+            max-height: 40px;
+        }
     </style>
 </head>
 <body class="py-10 px-4 antialiased">
@@ -290,8 +311,9 @@
 
         <!-- Stepper Removed for Single Page Experience -->
 
-        <form id="pocsoForm" method="POST" action="{% url 'pocso_registration' %}" onsubmit="return validateForm()" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
+        <form id="pocsoForm" method="POST" action="{% url 'pocso_registration' %}" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
             {% csrf_token %}
+            <input type="hidden" name="captcha" id="id_captcha_hidden">
 
             <div class="p-6 md:p-10">
                 <!-- STEP 1: CONTACT INFO -->
@@ -494,6 +516,7 @@
 
                 <!-- Navigation -->
                 <div class="mt-8 pt-8 border-t border-slate-100">
+
                     <button type="submit" id="submitBtn" class="btn-premium w-full flex items-center justify-center gap-3 text-lg py-5 bg-rose-600 shadow-xl shadow-rose-100">
                         SUBMIT REGISTRATION <i class="fas fa-paper-plane text-xs"></i>
                     </button>
@@ -505,6 +528,45 @@
         <p class="mt-8 text-center text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest">
             &copy; 2026 Open Hand Private Limited &bull; Child Safety Compliance
         </p>
+    </div>
+
+    <!-- CAPTCHA Modal Backdrop -->
+    <div id="captchaModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-955/60 backdrop-blur-sm transition-all duration-300 opacity-0">
+        <!-- Modal Box -->
+        <div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300">
+            <!-- Header -->
+            <div class="bg-rose-900 text-white px-6 py-5 flex items-center justify-between">
+                <h3 class="font-extrabold text-lg heading-font tracking-tight flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-rose-400"></i> Security Verification
+                </h3>
+                <button type="button" onclick="closeCaptchaModal()" class="text-white/70 hover:text-white transition-all text-xl">&times;</button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-6">
+                <p class="text-sm text-slate-500 text-center font-medium">Please enter the security code shown below to complete your registration.</p>
+                
+                <div class="flex items-center justify-center gap-4">
+                    <img src="" id="captchaImage" class="rounded-xl border border-rose-200 shadow-sm" alt="CAPTCHA" style="height: 50px; width: 180px;" />
+                    <button type="button" onclick="refreshCaptcha()" class="w-12 h-12 flex items-center justify-center bg-rose-50 text-rose-600 rounded-xl hover:bg-rose-100 transition-all shadow-sm" title="Refresh CAPTCHA">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-2">
+                    <input type="text" id="captchaInput" class="floating-input text-center font-bold tracking-widest max-w-xs mx-auto block" placeholder="Enter Code" required autocomplete="off" maxlength="6" />
+                    <div class="error-message text-center mt-2" id="error_captcha"></div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <button type="button" onclick="closeCaptchaModal()" class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-rose-50 hover:text-rose-600 transition-all text-sm">
+                    Cancel
+                </button>
+                <button type="button" onclick="verifyCaptchaFlow()" id="modalVerifyBtn" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-bold transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-rose-100">
+                    Verify & Submit <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -554,6 +616,7 @@
                  const firstError = document.querySelector(".border-rose-300");
                 if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
+
             return valid;
         }
 
@@ -627,6 +690,138 @@
                 activeTrigger.classList.remove('active');
             });
         });
+    </script>
+    <script>
+        let captchaVerified = false;
+        const formEl = document.getElementById("pocsoForm");
+        
+        if (formEl) {
+            formEl.addEventListener("submit", function(e) {
+                if (captchaVerified) return; // allow default submit
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    openCaptchaModal();
+                }
+            });
+        }
+        
+        function openCaptchaModal() {
+            const modal = document.getElementById("captchaModal");
+            const modalBox = modal.querySelector(".transform");
+            
+            refreshCaptcha();
+            document.getElementById("captchaInput").value = "";
+            
+            const errorCaptcha = document.getElementById("error_captcha");
+            if (errorCaptcha) {
+                errorCaptcha.classList.remove("show");
+                errorCaptcha.textContent = "";
+            }
+            
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modal.classList.add("opacity-100");
+                modalBox.classList.remove("scale-95");
+                modalBox.classList.add("scale-100");
+            }, 10);
+        }
+        
+        function closeCaptchaModal() {
+            const modal = document.getElementById("captchaModal");
+            const modalBox = modal.querySelector(".transform");
+            
+            modal.classList.remove("opacity-100");
+            modal.classList.add("opacity-0");
+            modalBox.classList.remove("scale-100");
+            modalBox.classList.add("scale-95");
+            
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300);
+        }
+        
+        function verifyCaptchaFlow() {
+            const captchaInput = document.getElementById("captchaInput");
+            if (!captchaInput) return;
+            const code = captchaInput.value.trim();
+            
+            const errorCaptcha = document.getElementById("error_captcha");
+            if (code === "") {
+                if (errorCaptcha) {
+                    errorCaptcha.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> Please enter the CAPTCHA code.`;
+                    errorCaptcha.classList.add("show");
+                }
+                captchaInput.focus();
+                return;
+            }
+            
+            const verifyBtn = document.getElementById("modalVerifyBtn");
+            const originalBtnHtml = verifyBtn.innerHTML;
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Verifying...`;
+            
+            if (errorCaptcha) {
+                errorCaptcha.classList.remove("show");
+            }
+            
+            fetch('/ajax/verify-captcha/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ captcha: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = originalBtnHtml;
+                
+                if (data.success) {
+                    captchaVerified = true;
+                    const hiddenInput = document.getElementById("id_captcha_hidden");
+                    if (hiddenInput) {
+                        hiddenInput.value = code;
+                    }
+                    closeCaptchaModal();
+                    formEl.submit();
+                } else {
+                    if (errorCaptcha) {
+                        errorCaptcha.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ${data.error || "Incorrect CAPTCHA."}`;
+                        errorCaptcha.classList.add("show");
+                    }
+                    refreshCaptcha();
+                    captchaInput.value = "";
+                    captchaInput.focus();
+                }
+            })
+            .catch(error => {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = originalBtnHtml;
+                console.error("Error verifying CAPTCHA:", error);
+                alert("An error occurred during verification. Please try again.");
+            });
+        }
+        
+        function refreshCaptcha() {
+            const img = document.getElementById("captchaImage");
+            if (img) {
+                img.src = '/generate-captcha/?t=' + new Date().getTime();
+            }
+        }
+
+        // Bind Enter key on captcha input to verify
+        const captchaInputEl = document.getElementById("captchaInput");
+        if (captchaInputEl) {
+            captchaInputEl.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    verifyCaptchaFlow();
+                }
+            });
+        }
     </script>
 </body>
 </html>

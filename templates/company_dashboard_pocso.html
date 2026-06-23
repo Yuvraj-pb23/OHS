@@ -117,8 +117,10 @@
     /* MAIN */
     .main-content {
       margin-left: var(--sidebar-width);
-      padding: 2.5rem;
+      padding: 2.5rem 2.5rem 100px 2.5rem;
       min-height: 100vh;
+      position: relative;
+      box-sizing: border-box;
     }
 
     .section-title {
@@ -918,173 +920,6 @@
           <h3 class="member-name">{{ member.user.get_full_name|default:member.user.first_name }}</h3>
           <p class="member-email">{{ member.user.email }}</p>
           <span class="role-badge">{{ member.role }}</span>
-        </div>
-
-        <!-- EMPLOYEE MODAL -->
-        <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header border-0">
-                <h5 class="modal-title">POCSO Training: {{ member.user.first_name }}</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-              </div>
-
-              <div class="modal-body" style="padding: 20px;">
-                <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
-                <div class="stats-row" id="stats-vids-{{ member.id }}">
-                  <!-- Video Pie -->
-                  <div class="mini-stat-card">
-                    <h3>Video Health</h3>
-                    <div class="chart-container">
-                      <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.video_percent }}"></canvas>
-                    </div>
-                  </div>
-
-                  <!-- Video Time -->
-                  <div class="mini-stat-card">
-                    <h3>Watch Time</h3>
-                    <p class="time-text">{{ member.total_active_time }}</p>
-                    <small class="text-muted">Total Activity</small>
-                  </div>
-
-                  <!-- Video Progress Bar -->
-                  <div class="mini-stat-card">
-                    <h3>Video Comp.</h3>
-                    <h2 style="
-                          margin: 0;
-                          color: var(--lms-primary);
-                          font-size: 1.8rem;
-                        ">
-                      {{ member.video_percent }}%
-                    </h2>
-                    <div class="progress-track">
-                      <div class="progress-fill" style="width: {{ member.video_percent }}%;"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
-                <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none">
-                  <!-- PPT Pie -->
-                  <div class="mini-stat-card">
-                    <h3>Quiz Health</h3>
-                    <div class="chart-container">
-                      <canvas id="pie-ppts-{{ member.id }}" data-percent="{{ member.ppt_percent }}"></canvas>
-                    </div>
-                  </div>
-
-                  <!-- PPT Time -->
-                  <div class="mini-stat-card">
-                    <h3>Reading Time</h3>
-                    <!-- Different color to show change -->
-                    <p class="time-text" style="color: var(--lms-pending); font-size: 1.2rem;">
-                      (In Total)
-                    </p>
-                    <small class="text-muted">Tracked in Watch Time</small>
-                  </div>
-
-                  <!-- PPT Progress Bar -->
-                  <div class="mini-stat-card">
-                    <h3>Quiz Comp.</h3>
-                    <h2 style="
-                          margin: 0;
-                          color: var(--lms-pending);
-                          font-size: 1.8rem;
-                        ">
-                      {{ member.ppt_percent }}%
-                    </h2>
-                    <div class="progress-track">
-                      <div class="progress-fill"
-                        style="width: {{ member.ppt_percent }}%; background: var(--lms-pending)"></div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- === TABS === -->
-                <div class="lms-tab-header">
-                  <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}"
-                    onclick="switchModalTab('{{ member.id }}', 'vids')">
-                    Video Modules
-                  </button>
-                  <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}"
-                    onclick="switchModalTab('{{ member.id }}', 'ppts')">
-                    PPT & Quiz
-                  </button>
-                </div>
-
-                <!-- === CONTENT LISTS === -->
-
-                <!-- Video List -->
-                <div id="content-vids-{{ member.id }}">
-                  {% for mod in member.video_modules %}
-                  <div class="record-item">
-                    <div class="record-thumb" {% if mod.thumbnail_url %}
-                      style="background-image: url('{{ mod.thumbnail_url }}');" {% else %}
-                      style="background-color: var(--border-soft); display:flex; align-items:center; justify-content:center;"
-                      {% endif %}>
-                      {% if not mod.thumbnail_url %}
-                      <i class="bi bi-play-btn-fill" style="font-size:1.5rem; color: var(--lms-primary);"></i>
-                      {% endif %}
-                    </div>
-                    <div class="record-info">
-                      <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
-                      <p>Video Lesson</p>
-                    </div>
-                    {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">Completed</span>
-                    {% else %}
-                    <span class="lms-badge bg-pending">Pending</span>
-                    {% endif %}
-                  </div>
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">
-                    No video modules assigned
-                  </div>
-                  {% endfor %}
-                </div>
-
-                <!-- PPT List -->
-                <div id="content-ppts-{{ member.id }}" style="display: none">
-                  {% for mod in member.ppt_modules %}
-                  <div class="record-item">
-                    <!-- Use a generic icon or thumbnail for PPT -->
-                    <div class="record-thumb" style="
-                          background-color: #ffeaa7;
-                          display: flex;
-                          align-items: center;
-                          justify-content: center;
-                        ">
-                      {% if 'quiz' in mod.title|lower %}
-                      <i class="bi bi-question-circle" style="font-size: 1.5rem; color: #d35400;"></i>
-                      {% else %}
-                      <i class="bi bi-file-text" style="font-size: 1.5rem; color: #d35400;"></i>
-                      {% endif %}
-                    </div>
-                    <div class="record-info">
-                      <h6>{{ mod.title }}</h6>
-                      <p>{% if 'quiz' in mod.title|lower %}Practice Quiz{% else %}Reading Material{% endif %}</p>
-                    </div>
-
-                    {% if mod.is_completed %}
-                    <span class="lms-badge bg-complete">Completed</span>
-                    {% else %}
-                    <!-- In POCSO, usually unlocked if previous is done, or logic handled in view -->
-                    <!-- Reuse the 'is_locked' logic? The view calculates 'is_completed'. 
-                               We don't have explicit 'is_locked' passed in the simple list, 
-                               but usually pending implies accessible or next. 
-                               For visual congruency, just show Pending/View if not complete. -->
-                    <span class="lms-badge bg-pending">View</span>
-                    {% endif %}
-                  </div>
-                  {% empty %}
-                  <div class="text-center text-muted p-2 small">
-                    No quizzes or PPTs found
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
         {% endfor %}
       </div>
@@ -1982,7 +1817,184 @@
         <button class="btn btn-outline-light btn-sm"><i class="bi bi-eye me-2"></i>View Report</button>
       </div>
     </div>
+
+    <!-- Branded Footer -->
+    <footer style="position: absolute; bottom: 0; left: 0; right: 2.5rem; padding: 20px 0; border-top: 1px solid rgba(249, 115, 22, 0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; z-index: 10;">
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <img src="{% static 'img/logo_new.png' %}" alt="Open Hand Solutions Logo" style="height: 32px; width: auto; opacity: 0.85; filter: grayscale(20%); transition: all 0.3s;" onmouseover="this.style.opacity='1'; this.style.filter='grayscale(0%)'" onmouseout="this.style.opacity='0.85'; this.style.filter='grayscale(20%)'">
+        <span style="font-family: 'Outfit', 'Poppins', 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-muted, var(--text-secondary, #94a3b8)); letter-spacing: -0.01em;">Open Hand Solutions</span>
+      </div>
+    </footer>
   </main>
+
+  <!-- Student Progress Modals -->
+  {% for member in members %}
+  <div class="modal fade" id="userProgressModal-{{ member.id }}" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">POCSO Training: {{ member.user.first_name }}</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body" style="padding: 20px;">
+          <!-- === 1. VIDEO CHARTS ROW (Visible by default) === -->
+          <div class="stats-row" id="stats-vids-{{ member.id }}">
+            <!-- Video Pie -->
+            <div class="mini-stat-card">
+              <h3>Video Health</h3>
+              <div class="chart-container">
+                <canvas id="pie-vids-{{ member.id }}" data-percent="{{ member.video_percent }}"></canvas>
+              </div>
+            </div>
+
+            <!-- Video Time -->
+            <div class="mini-stat-card">
+              <h3>Watch Time</h3>
+              <p class="time-text">{{ member.total_active_time }}</p>
+              <small class="text-muted">Total Activity</small>
+            </div>
+
+            <!-- Video Progress Bar -->
+            <div class="mini-stat-card">
+              <h3>Video Comp.</h3>
+              <h2 style="
+                    margin: 0;
+                    color: var(--lms-primary);
+                    font-size: 1.8rem;
+                  ">
+                {{ member.video_percent }}%
+              </h2>
+              <div class="progress-track">
+                <div class="progress-fill" style="width: {{ member.video_percent }}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- === 2. PPT CHARTS ROW (Hidden by default) === -->
+          <div class="stats-row" id="stats-ppts-{{ member.id }}" style="display: none">
+            <!-- PPT Pie -->
+            <div class="mini-stat-card">
+              <h3>Quiz Health</h3>
+              <div class="chart-container">
+                <canvas id="pie-ppts-{{ member.id }}" data-percent="{{ member.ppt_percent }}"></canvas>
+              </div>
+            </div>
+
+            <!-- PPT Time -->
+            <div class="mini-stat-card">
+              <h3>Reading Time</h3>
+              <!-- Different color to show change -->
+              <p class="time-text" style="color: var(--lms-pending); font-size: 1.2rem;">
+                (In Total)
+              </p>
+              <small class="text-muted">Tracked in Watch Time</small>
+            </div>
+
+            <!-- PPT Progress Bar -->
+            <div class="mini-stat-card">
+              <h3>Quiz Comp.</h3>
+              <h2 style="
+                    margin: 0;
+                    color: var(--lms-pending);
+                    font-size: 1.8rem;
+                  ">
+                {{ member.ppt_percent }}%
+              </h2>
+              <div class="progress-track">
+                <div class="progress-fill"
+                  style="width: {{ member.ppt_percent }}%; background: var(--lms-pending)"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- === TABS === -->
+          <div class="lms-tab-header">
+            <button class="lms-tab-btn active" id="btn-vids-{{ member.id }}"
+              onclick="switchModalTab('{{ member.id }}', 'vids')">
+              Video Modules
+            </button>
+            <button class="lms-tab-btn" id="btn-ppts-{{ member.id }}"
+              onclick="switchModalTab('{{ member.id }}', 'ppts')">
+              PPT & Quiz
+            </button>
+          </div>
+
+          <!-- === CONTENT LISTS === -->
+
+          <!-- Video List -->
+          <div id="content-vids-{{ member.id }}">
+            {% for mod in member.video_modules %}
+            <div class="record-item">
+              <div class="record-thumb" {% if mod.thumbnail_url %}
+                style="background-image: url('{{ mod.thumbnail_url }}');" {% else %}
+                style="background-color: var(--border-soft); display:flex; align-items:center; justify-content:center;"
+                {% endif %}>
+                {% if not mod.thumbnail_url %}
+                <i class="bi bi-play-btn-fill" style="font-size:1.5rem; color: var(--lms-primary);"></i>
+                {% endif %}
+              </div>
+              <div class="record-info">
+                <h6>{{ forloop.counter }}. {{ mod.title }}</h6>
+                <p>Video Lesson</p>
+              </div>
+              {% if mod.is_completed %}
+              <span class="lms-badge bg-complete">Completed</span>
+              {% else %}
+              <span class="lms-badge bg-pending">Pending</span>
+              {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center text-muted p-2 small">
+              No video modules assigned
+            </div>
+            {% endfor %}
+          </div>
+
+          <!-- PPT List -->
+          <div id="content-ppts-{{ member.id }}" style="display: none">
+            {% for mod in member.ppt_modules %}
+            <div class="record-item">
+              <!-- Use a generic icon or thumbnail for PPT -->
+              <div class="record-thumb" style="
+                    background-color: #ffeaa7;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                {% if 'quiz' in mod.title|lower %}
+                <i class="bi bi-question-circle" style="font-size: 1.5rem; color: #d35400;"></i>
+                {% else %}
+                <i class="bi bi-file-text" style="font-size: 1.5rem; color: #d35400;"></i>
+                {% endif %}
+              </div>
+              <div class="record-info">
+                <h6>{{ mod.title }}</h6>
+                <p>{% if 'quiz' in mod.title|lower %}Practice Quiz{% else %}Reading Material{% endif %}</p>
+              </div>
+
+              {% if mod.is_completed %}
+              <span class="lms-badge bg-complete">Completed</span>
+              {% else %}
+              <!-- In POCSO, usually unlocked if previous is done, or logic handled in view -->
+              <!-- Reuse the 'is_locked' logic? The view calculates 'is_completed'. 
+                         We don't have explicit 'is_locked' passed in the simple list, 
+                         but usually pending implies accessible or next. 
+                         For visual congruency, just show Pending/View if not complete. -->
+              <span class="lms-badge bg-pending">View</span>
+              {% endif %}
+            </div>
+            {% empty %}
+            <div class="text-center text-muted p-2 small">
+              No quizzes or PPTs found
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
 
   <!-- MODALS & SCRIPTS (REMAIN UNCHANGED) -->
   <!-- ADD STAFF MODAL -->

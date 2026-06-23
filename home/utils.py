@@ -16,7 +16,7 @@ def generate_certificate(user, course_type="POSH"):
     """
     # 1. Determine Template Image
     if course_type == "POSH":
-        template_name = "Certificate/Open Hands Pvt Ltd (1).png"
+        template_name = "Certificate/Posh Certificate.png"
     else:
         template_name = "Certificate/POCSO CERT.png"
 
@@ -42,63 +42,183 @@ def generate_certificate(user, course_type="POSH"):
         "image_path": image_uri,
     }
 
-    # Determine date position (adjusting based on user request to be after "held on")
-    # Tweak these percentages to align with the template's 'Held on' gap
-    date_top = "64.3%"
-    date_left = "35.3%"
+    # 3. Handle specific layout details
+    if course_type == "POSH":
+        # Retrieve company logo if member of an organization
+        logo_uri = None
+        from home.models import OrganizationMember, POSHPolicy
+        membership = OrganizationMember.objects.filter(user=user).first()
+        if membership:
+            org = membership.organization
+            policy = POSHPolicy.objects.filter(organization=org).first()
+            if policy and policy.company_logo:
+                logo_path = Path(policy.company_logo.path)
+                if logo_path.exists():
+                    logo_uri = logo_path.as_uri()
+            elif org.logo:
+                logo_path = Path(org.logo.path)
+                if logo_path.exists():
+                    logo_uri = logo_path.as_uri()
 
-    # 3. Generate HTML
-    # Inline CSS for pixel-perfect positioning (based on user requirement)
-    html_string = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            @page {{
-                size: 297mm 210mm; /* A4 Landscape */
-                margin: 0;
-            }}
-            body {{
-                margin: 0;
-                padding: 0;
-                width: 297mm;
-                height: 210mm;
-                background-image: url('{context['image_path']}');
-                background-size: cover;
-                background-repeat: no-repeat;
-                font-family: 'Helvetica', 'Arial', sans-serif;
-                position: relative;
-                color: #333;
-            }}
-            .candidate-name {{
-                position: absolute;
-                top: 48%; /* Centered in the middle of the certificate */
-                left: 0;
-                width: 100%;
-                text-align: center;
-                font-size: 28pt;
-                font-weight: bold;
-                color: #1e3a8a; /* Using a professional dark blue to match template accents */
-                text-transform: uppercase;
-            }}
-            .date {{
-                position: absolute;
-                top: {date_top};
-                left: {date_left};
-                font-size: 14pt;
-                font-weight: bold;
-                color: #000;
-                display: inline-block;
-                width: auto;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="candidate-name">{context['candidate_name']}</div>
-        <div class="date">{context['completion_date']}</div>
-    </body>
-    </html>
-    """
+        # Render logo container (covers default "COMPANY LOGO" placeholder with white circle background)
+        logo_html = ""
+        if logo_uri:
+            logo_html = f'<div class="logo-container"><img class="logo-img" src="{logo_uri}" /></div>'
+        else:
+            logo_html = '<div class="logo-container"></div>'
+
+        html_string = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                @page {{
+                    size: 297mm 210mm; /* A4 Landscape */
+                    margin: 0;
+                }}
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    width: 297mm;
+                    height: 210mm;
+                    background-image: url('{context['image_path']}');
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    font-family: 'Helvetica', 'Arial', sans-serif;
+                    position: relative;
+                    color: #333;
+                }}
+                .candidate-name-container {{
+                    position: absolute;
+                    top: 33%;
+                    left: 21%;
+                    width: 58%;
+                    height: 10%;
+                    background-color: #ffffff; /* Cover the template's placeholder name */
+                    border-bottom: 2px solid #223e72; /* Redraw name line cleanly */
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-end;
+                    align-items: center;
+                    padding-bottom: 8px;
+                    box-sizing: border-box;
+                    z-index: 10;
+                }}
+                .candidate-name-text {{
+                    font-size: 30pt;
+                    font-weight: bold;
+                    color: #1e3a8a;
+                    font-family: 'Georgia', 'Times New Roman', serif;
+                    text-transform: uppercase;
+                    margin: 0;
+                    line-height: 1;
+                }}
+                .date-on {{
+                    position: absolute;
+                    top: 60.5%;
+                    left: 41.5%;
+                    width: 19%;
+                    text-align: center;
+                    font-size: 15pt;
+                    font-weight: bold;
+                    color: #1e3a8a;
+                }}
+                .date-bottom {{
+                    position: absolute;
+                    top: 78.5%;
+                    left: 67.5%;
+                    width: 11.5%;
+                    text-align: center;
+                    font-size: 14pt;
+                    font-weight: bold;
+                    color: #333;
+                }}
+                .logo-container {{
+                    position: absolute;
+                    top: 9%;
+                    left: 82%;
+                    width: 11.5%;
+                    height: 16%;
+                    background-color: #ffffff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 50%;
+                }}
+                .logo-img {{
+                    max-width: 90%;
+                    max-height: 90%;
+                    object-fit: contain;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="candidate-name-container">
+                <div class="candidate-name-text">{context['candidate_name']}</div>
+            </div>
+            <div class="date-on">{context['completion_date']}</div>
+            <div class="date-bottom">{context['completion_date']}</div>
+            {logo_html}
+        </body>
+        </html>
+        """
+    else:
+        # Determine date position (adjusting based on user request to be after "held on")
+        # Tweak these percentages to align with the template's 'Held on' gap
+        date_top = "64.3%"
+        date_left = "35.3%"
+
+        # Inline CSS for pixel-perfect positioning (based on user requirement)
+        html_string = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                @page {{
+                    size: 297mm 210mm; /* A4 Landscape */
+                    margin: 0;
+                }}
+                body {{
+                    margin: 0;
+                    padding: 0;
+                    width: 297mm;
+                    height: 210mm;
+                    background-image: url('{context['image_path']}');
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    font-family: 'Helvetica', 'Arial', sans-serif;
+                    position: relative;
+                    color: #333;
+                }}
+                .candidate-name {{
+                    position: absolute;
+                    top: 48%; /* Centered in the middle of the certificate */
+                    left: 0;
+                    width: 100%;
+                    text-align: center;
+                    font-size: 28pt;
+                    font-weight: bold;
+                    color: #1e3a8a; /* Using a professional dark blue to match template accents */
+                    text-transform: uppercase;
+                }}
+                .date {{
+                    position: absolute;
+                    top: {date_top};
+                    left: {date_left};
+                    font-size: 14pt;
+                    font-weight: bold;
+                    color: #000;
+                    display: inline-block;
+                    width: auto;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="candidate-name">{context['candidate_name']}</div>
+            <div class="date">{context['completion_date']}</div>
+        </body>
+        </html>
+        """
 
     # 4. Convert to PDF
     try:

@@ -36,11 +36,9 @@
     <!-- Chatbot CSS -->
     <link rel="stylesheet" href="{% static 'css/chatbot.css' %}?v=1" />
 
-    <!-- External CSS - Preloaded for high speed -->
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" /></noscript>
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /></noscript>
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- INTERNAL STYLES FOR LOGIN/LOGOUT BUTTONS AND GLASSY NAVBAR -->
     <style>
@@ -867,6 +865,9 @@
             <!-- Home: Exact match check -->
             <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
 
+            <!-- Services Section -->
+            <a href="{% url 'services' %}" class="nav-link {% if request.path == '/services/' %}active{% endif %}">Services</a>
+
             <!-- Other pages: Contains check (handles sub-pages) -->
             <div class="dropdown">
                 <a href="/about" class="nav-link {% if '/about' in request.path %}active{% endif %}">Our Team</a>
@@ -895,11 +896,11 @@
                 </button>
                 <div class="dropdown-content">
                     {% if user.account_type == "ACCOUNTS" or user.is_superuser %}
-                    <a href="{% url 'accounts_dashboard' %}">
+                    <a href="{% url 'login_redirect' %}">
                         <i class="fas fa-chart-bar"></i> Dashboard
                     </a>
                     <div class="dd-divider"></div>
-                    <form action="{% url 'accounts_logout' %}" method="post" style="display:contents;">
+                    <form action="{% url 'logout' %}" method="post" style="display:contents;">
                         {% csrf_token %}
                         <button type="submit" class="dd-item">
                             <i class="fas fa-sign-out-alt"></i> Sign Out
@@ -963,6 +964,11 @@
                         <li class="mb-3">
                             <a href="/" class="footer-link">
                                 <i class="fas fa-chevron-right me-2"></i>Home
+                            </a>
+                        </li>
+                        <li class="mb-3">
+                            <a href="{% url 'services' %}" class="footer-link">
+                                <i class="fas fa-chevron-right me-2"></i>Services
                             </a>
                         </li>
                         <li class="mb-3">

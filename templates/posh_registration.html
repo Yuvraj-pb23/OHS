@@ -473,6 +473,11 @@
             20%, 60% { transform: translateX(-4px); }
             40%, 80% { transform: translateX(4px); }
         }
+
+        #office_locations_container.is-invalid input {
+            border-color: #f43f5e !important;
+            background-color: #fffafb !important;
+        }
     </style>
 </head>
 <body class="py-10 px-4 antialiased">
@@ -485,8 +490,9 @@
 
         <!-- Stepper Removed for Single Page Experience -->
 
-        <form id="multiStepForm" method="POST" action="{% url 'posh_registration' %}" onsubmit="return validateForm()" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
+        <form id="multiStepForm" method="POST" action="{% url 'posh_registration' %}" class="glass-container rounded-3xl overflow-hidden shadow-xl border border-white">
             {% csrf_token %}
+            <input type="hidden" name="captcha" id="id_captcha_hidden">
 
             <!-- Messages Block -->
             {% if messages %}
@@ -531,18 +537,14 @@
                             <div class="error-message" id="error_designation"></div>
                         </div>
                         <div>
-                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">City</label>
-                            <div class="custom-select-wrapper" id="city_wrapper">
-                                <input type="hidden" name="city" id="city" value="{{ registration.city|default:'' }}" required>
-                                <div class="custom-select-trigger floating-input">
-                                    <span>{% if registration.city %}{{ registration.city }}{% else %}Select City{% endif %}</span>
-                                    <i class="fas fa-chevron-down text-accent text-xs"></i>
-                                </div>
-                                <div class="custom-select-options">
-                                    <div class="custom-option {% if registration.city == 'Chandigarh' %}selected{% endif %}" data-value="Chandigarh">Chandigarh</div>
-                                    <div class="custom-option {% if registration.city == 'Mohali' %}selected{% endif %}" data-value="Mohali">Mohali</div>
-                                    <div class="custom-option {% if registration.city == 'Panchkula' %}selected{% endif %}" data-value="Panchkula">Panchkula</div>
-                                    <div class="custom-option {% if registration.city == 'Delhi' %}selected{% endif %}" data-value="Delhi">Delhi</div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Office Location</label>
+                            <input type="hidden" id="initial_cities" value="{{ registration.city|default:'' }}">
+                            <div id="office_locations_container" class="space-y-2">
+                                <div class="flex items-center gap-2">
+                                    <input type="text" name="city" class="floating-input office-location-input" placeholder="e.g. Chandigarh" required>
+                                    <button type="button" onclick="addOfficeLocationInput()" class="w-10 h-10 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl hover:bg-indigo-200 transition-all font-bold text-lg" title="Add another office location">
+                                        +
+                                    </button>
                                 </div>
                             </div>
                             <div class="error-message" id="error_city"></div>
@@ -804,6 +806,8 @@
 
                 <!-- Navigation -->
                 <div class="mt-8 pt-8 border-t border-slate-100">
+
+
                     <button type="submit" id="submitBtn" class="btn-premium w-full flex items-center justify-center gap-3 text-lg py-5 bg-indigo-600 shadow-xl shadow-indigo-100">
                         SUBMIT REGISTRATION <i class="fas fa-paper-plane text-xs"></i>
                     </button>
@@ -817,8 +821,68 @@
         </p>
     </div>
 
+    <!-- CAPTCHA Modal Backdrop -->
+    <div id="captchaModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-slate-950/60 backdrop-blur-sm transition-all duration-300 opacity-0">
+        <!-- Modal Box -->
+        <div class="bg-white rounded-3xl max-w-md w-full mx-4 overflow-hidden shadow-2xl border border-slate-100 transform scale-95 transition-all duration-300">
+            <!-- Header -->
+            <div class="bg-indigo-900 text-white px-6 py-5 flex items-center justify-between">
+                <h3 class="font-extrabold text-lg heading-font tracking-tight flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-indigo-400"></i> Security Verification
+                </h3>
+                <button type="button" onclick="closeCaptchaModal()" class="text-white/70 hover:text-white transition-all text-xl">&times;</button>
+            </div>
+            <!-- Body -->
+            <div class="p-6 space-y-6">
+                <p class="text-sm text-slate-500 text-center font-medium">Please enter the security code shown below to complete your registration.</p>
+                
+                <div class="flex items-center justify-center gap-4">
+                    <img src="" id="captchaImage" class="rounded-xl border border-slate-200 shadow-sm" alt="CAPTCHA" style="height: 50px; width: 180px;" />
+                    <button type="button" onclick="refreshCaptcha()" class="w-12 h-12 flex items-center justify-center bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-100 transition-all shadow-sm" title="Refresh CAPTCHA">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-2">
+                    <input type="text" id="captchaInput" class="floating-input text-center font-bold tracking-widest max-w-xs mx-auto block animate-none" placeholder="Enter Code" required autocomplete="off" maxlength="6" />
+                    <div class="error-message text-center mt-2" id="error_captcha"></div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                <button type="button" onclick="closeCaptchaModal()" class="flex-1 py-3 border border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-100 transition-all text-sm">
+                    Cancel
+                </button>
+                <button type="button" onclick="verifyCaptchaFlow()" id="modalVerifyBtn" class="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition-all text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-100">
+                    Verify & Submit <i class="fas fa-check"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // PREMIUM REAL-TIME & SUBMIT VALIDATION ENGINE
+
+        function addOfficeLocationInput() {
+            const container = document.getElementById("office_locations_container");
+            const div = document.createElement("div");
+            div.className = "flex items-center gap-2 animate-fadeIn";
+            div.innerHTML = `
+                <input type="text" name="city" class="floating-input office-location-input" placeholder="e.g. Delhi" value="" required>
+                <button type="button" onclick="removeOfficeLocationInput(this)" class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all font-bold text-lg" title="Remove office location">&times;</button>
+            `;
+            container.appendChild(div);
+            
+            // Bind input and blur events to the new input
+            const newInput = div.querySelector('input');
+            newInput.addEventListener("input", () => validateField("city"));
+            newInput.addEventListener("blur", () => validateField("city"));
+        }
+
+        function removeOfficeLocationInput(button) {
+            button.parentElement.remove();
+            validateField("city");
+        }
 
         function getFieldRule(name) {
             const rules = {
@@ -842,11 +906,18 @@
                 },
                 city: {
                     validate: val => {
-                        if (val === "" || val === "Select City") return { isValid: false, message: "Please select a valid city from the list." };
+                        const inputs = document.querySelectorAll(".office-location-input");
+                        let valid = true;
+                        inputs.forEach(input => {
+                            if (input.value.trim() === "") valid = false;
+                        });
+                        if (!valid || inputs.length === 0) {
+                            return { isValid: false, message: "Please enter at least one office location, and ensure no office location fields are left blank." };
+                        }
                         return { isValid: true };
                     },
                     errorId: "error_city",
-                    container: document.querySelector("#city_wrapper .custom-select-trigger")
+                    container: document.getElementById("office_locations_container")
                 },
                 phone: {
                     validate: val => {
@@ -1251,6 +1322,28 @@
 
             window.formInitializing = false;
 
+            // Populate initial office locations if editing
+            const initialCitiesVal = document.getElementById("initial_cities") ? document.getElementById("initial_cities").value : "";
+            if (initialCitiesVal) {
+                const cities = initialCitiesVal.split(",").map(c => c.trim()).filter(c => c);
+                const container = document.getElementById("office_locations_container");
+                if (container && cities.length > 0) {
+                    container.innerHTML = ""; // clear
+                    cities.forEach((city, index) => {
+                        const div = document.createElement("div");
+                        div.className = "flex items-center gap-2";
+                        div.innerHTML = `
+                            <input type="text" name="city" class="floating-input office-location-input" placeholder="e.g. Chandigarh" value="${city}" required>
+                            ${index === 0 ? 
+                                `<button type="button" onclick="addOfficeLocationInput()" class="w-10 h-10 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-xl hover:bg-indigo-200 transition-all font-bold text-lg" title="Add another office location">+</button>` : 
+                                `<button type="button" onclick="removeOfficeLocationInput(this)" class="w-10 h-10 flex items-center justify-center bg-red-100 text-red-600 rounded-xl hover:bg-red-200 transition-all font-bold text-lg" title="Remove office location">&times;</button>`
+                            }
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            }
+
             // Bind real-time input fields
             const fieldsToBind = [
                 "contact_person",
@@ -1277,6 +1370,15 @@
                 }
             });
 
+            // Bind real-time office-location input fields dynamically
+            const officeLocationsContainer = document.getElementById("office_locations_container");
+            if (officeLocationsContainer) {
+                officeLocationsContainer.querySelectorAll("input").forEach(input => {
+                    input.addEventListener("input", () => validateField("city"));
+                    input.addEventListener("blur", () => validateField("city"));
+                });
+            }
+
             // Bind radio toggles
             const radioFields = [
                 "has_posh_policy",
@@ -1300,7 +1402,6 @@
 
             // Bind hidden custom select inputs
             const hiddenSelects = [
-                "city",
                 "last_training_year",
                 "ic_last_training_year"
             ];
@@ -1373,6 +1474,137 @@
         });
 
         // Specialized training toggle handled in the main validation script
+        
+        let captchaVerified = false;
+        const formEl = document.getElementById("multiStepForm");
+        
+        if (formEl) {
+            formEl.addEventListener("submit", function(e) {
+                if (captchaVerified) return; // allow default submit
+                e.preventDefault();
+                
+                if (validateForm()) {
+                    openCaptchaModal();
+                }
+            });
+        }
+        
+        function openCaptchaModal() {
+            const modal = document.getElementById("captchaModal");
+            const modalBox = modal.querySelector(".transform");
+            
+            refreshCaptcha();
+            document.getElementById("captchaInput").value = "";
+            
+            const errorCaptcha = document.getElementById("error_captcha");
+            if (errorCaptcha) {
+                errorCaptcha.classList.remove("show");
+                errorCaptcha.textContent = "";
+            }
+            
+            modal.classList.remove("hidden");
+            setTimeout(() => {
+                modal.classList.remove("opacity-0");
+                modal.classList.add("opacity-100");
+                modalBox.classList.remove("scale-95");
+                modalBox.classList.add("scale-100");
+            }, 10);
+        }
+        
+        function closeCaptchaModal() {
+            const modal = document.getElementById("captchaModal");
+            const modalBox = modal.querySelector(".transform");
+            
+            modal.classList.remove("opacity-100");
+            modal.classList.add("opacity-0");
+            modalBox.classList.remove("scale-100");
+            modalBox.classList.add("scale-95");
+            
+            setTimeout(() => {
+                modal.classList.add("hidden");
+            }, 300);
+        }
+        
+        function verifyCaptchaFlow() {
+            const captchaInput = document.getElementById("captchaInput");
+            if (!captchaInput) return;
+            const code = captchaInput.value.trim();
+            
+            const errorCaptcha = document.getElementById("error_captcha");
+            if (code === "") {
+                if (errorCaptcha) {
+                    errorCaptcha.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> Please enter the CAPTCHA code.`;
+                    errorCaptcha.classList.add("show");
+                }
+                captchaInput.focus();
+                return;
+            }
+            
+            const verifyBtn = document.getElementById("modalVerifyBtn");
+            const originalBtnHtml = verifyBtn.innerHTML;
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = `<i class="fas fa-spinner fa-spin mr-2"></i> Verifying...`;
+            
+            if (errorCaptcha) {
+                errorCaptcha.classList.remove("show");
+            }
+            
+            fetch('/ajax/verify-captcha/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: JSON.stringify({ captcha: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = originalBtnHtml;
+                
+                if (data.success) {
+                    captchaVerified = true;
+                    const hiddenInput = document.getElementById("id_captcha_hidden");
+                    if (hiddenInput) {
+                        hiddenInput.value = code;
+                    }
+                    closeCaptchaModal();
+                    formEl.submit();
+                } else {
+                    if (errorCaptcha) {
+                        errorCaptcha.innerHTML = `<i class="fas fa-exclamation-circle mr-1"></i> ${data.error || "Incorrect CAPTCHA."}`;
+                        errorCaptcha.classList.add("show");
+                    }
+                    refreshCaptcha();
+                    captchaInput.value = "";
+                    captchaInput.focus();
+                }
+            })
+            .catch(error => {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = originalBtnHtml;
+                console.error("Error verifying CAPTCHA:", error);
+                alert("An error occurred during verification. Please try again.");
+            });
+        }
+        
+        function refreshCaptcha() {
+            const img = document.getElementById("captchaImage");
+            if (img) {
+                img.src = '/generate-captcha/?t=' + new Date().getTime();
+            }
+        }
+
+        // Bind Enter key on captcha input to verify
+        const captchaInputEl = document.getElementById("captchaInput");
+        if (captchaInputEl) {
+            captchaInputEl.addEventListener("keydown", function(e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    verifyCaptchaFlow();
+                }
+            });
+        }
     </script>
 </body>
 </html>

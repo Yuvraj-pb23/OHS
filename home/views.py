@@ -113,6 +113,8 @@ def get_poster_with_logo(request, poster_type):
         poster_filename = "POSH Poster.webp"
     elif poster_type == "posh_2":
         poster_filename = "POSH Poster 2.webp"
+    elif poster_type.startswith("posh_") and poster_type[5:].isdigit() and 3 <= int(poster_type[5:]) <= 9:
+        poster_filename = f"POSH Poster {poster_type[5:]}.webp"
     elif poster_type == "posh_company":
         poster_filename = "posh-company.webp"
     elif poster_type == "posh_pocso":
@@ -449,6 +451,9 @@ def custom_login_redirect(request):
 
     # 1. ADMIN -> Dashboard
     if user.account_type == "COMPANY_ADMIN":
+        if user.force_password_change:
+            return redirect("force_password_change")
+
         if request.session.get("hr_as_employee"):
             has_posh = Subscription.objects.filter(
                 Q(user=user) | Q(organization__organizationmember__user=user),
@@ -659,6 +664,97 @@ def verify_registration_otp(request):
     return JsonResponse({"success": False, "error": "Incorrect OTP. Please try again."})
 
 
+# --- CUSTOM CAPTCHA VIEWS ---
+@csrf_exempt
+def generate_captcha_image(request):
+    """Generate a random alphanumeric + symbols CAPTCHA image using Pillow."""
+    import random
+    import string
+    import io
+    from PIL import Image, ImageDraw, ImageFont
+    from django.http import HttpResponse
+
+    # Generate a random 6-character code containing alphanumeric characters and select symbols
+    symbols = "!@#$*?"
+    chars = string.ascii_letters + string.digits + symbols
+    captcha_text = "".join(random.choice(chars) for _ in range(6))
+    
+    # Save the expected code in session
+    request.session["captcha_text"] = captcha_text
+    request.session.modified = True
+    
+    # Create the captcha image
+    width, height = 180, 50
+    image = Image.new("RGB", (width, height), color=(248, 250, 252)) # Light slate/gray background
+    draw = ImageDraw.Draw(image)
+    
+    # Try to load a standard system font, fallback to default
+    try:
+        font_paths = [
+            "arial.ttf", "calibri.ttf", "LiberationSans-Regular.ttf", "DejaVuSans.ttf"
+        ]
+        font = None
+        for fp in font_paths:
+            try:
+                font = ImageFont.truetype(fp, 28)
+                break
+            except IOError:
+                continue
+        if not font:
+            font = ImageFont.load_default()
+    except Exception:
+        font = ImageFont.load_default()
+        
+    # Draw noise lines
+    for _ in range(8):
+        x1 = random.randint(0, width)
+        y1 = random.randint(0, height)
+        x2 = random.randint(0, width)
+        y2 = random.randint(0, height)
+        line_color = (random.randint(150, 220), random.randint(150, 220), random.randint(150, 220))
+        draw.line((x1, y1, x2, y2), fill=line_color, width=2)
+        
+    # Draw noise dots
+    for _ in range(100):
+        x = random.randint(0, width)
+        y = random.randint(0, height)
+        dot_color = (random.randint(100, 200), random.randint(100, 200), random.randint(100, 200))
+        draw.point((x, y), fill=dot_color)
+        
+    # Draw each character with random rotation/offset/color
+    char_width = width / 7
+    for i, char in enumerate(captcha_text):
+        char_color = (random.randint(15, 90), random.randint(15, 90), random.randint(15, 90))
+        x_pos = 10 + i * char_width + random.randint(-4, 4)
+        y_pos = 10 + random.randint(-5, 5)
+        draw.text((x_pos, y_pos), char, fill=char_color, font=font)
+        
+    # Return as PNG HttpResponse
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    buf.seek(0)
+    
+    return HttpResponse(buf.read(), content_type="image/png")
+
+
+@csrf_exempt
+def verify_captcha_view(request):
+    """Verify the submitted CAPTCHA value against session dynamically."""
+    if request.method == "POST":
+        import json
+        try:
+            data = json.loads(request.body)
+            code = data.get("captcha", "").strip()
+        except Exception:
+            code = request.POST.get("captcha", "").strip()
+            
+        session_code = request.session.get("captcha_text", "")
+        if session_code and code.lower() == session_code.lower():
+            return JsonResponse({"success": True})
+        return JsonResponse({"success": False, "error": "Incorrect CAPTCHA code. Please try again."})
+    return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
+
+
 # --- 2. COMPANY SUBSCRIPTION (FORM) ---
 def company_subscription(request, plan_type):
     db_type = "POSH" if "POSH" in plan_type else "POCSO"
@@ -851,7 +947,7 @@ def add_employee(request):
         emp_name = request.POST.get("emp_name")
         emp_email = request.POST.get("emp_email")
         emp_password = request.POST.get("emp_password")
-        emp_designation = request.POST.get("emp_designation", "").strip()
+        emp_department = request.POST.get("emp_department", "").strip()
 
         # Use employee_count from POSH registration as the seat limit if available
 
@@ -886,7 +982,7 @@ def add_employee(request):
                 )
                 new_user.first_name = emp_name
                 new_user.account_type = "EMPLOYEE"
-                new_user.designation = emp_designation or None
+                new_user.department = emp_department or None
                 new_user.force_password_change = (
                     True  # Force password change on first login
                 )
@@ -915,7 +1011,6 @@ def add_employee(request):
                 is_company_employee=True,
                 organization_name=company_name,
                 training_link=training_link,
-                designation=emp_designation,
             )
 
             messages.success(request, f"✅ {emp_name} added successfully! Login credentials sent to {emp_email}.")
@@ -940,6 +1035,9 @@ def company_dashboard(request):
         request.session.pop("logged_out_of_hr", None)
 
     user = request.user
+    if user.force_password_change:
+        return redirect("force_password_change")
+
     membership = OrganizationMember.objects.filter(user=user, role="ADMIN").first()
 
     if not membership:
@@ -1095,6 +1193,25 @@ def company_dashboard(request):
         minutes = (grand_total_seconds % 3600) // 60
         mem.total_active_time = f"{hours}h {minutes}m"
         mem.employee_id = user_obj.user_id if user_obj else None
+
+        # Check if user has started training
+        has_started = False
+        if grand_total_seconds > 0:
+            has_started = True
+        else:
+            has_started = ModuleProgress.objects.filter(
+                user=user_obj,
+                module_id__in=visible_module_ids
+            ).filter(
+                Q(is_completed=True) | Q(last_position__gt=0.0)
+            ).exists()
+
+        if mem.is_training_completed:
+            mem.training_status = "completed"
+        elif has_started:
+            mem.training_status = "in_progress"
+        else:
+            mem.training_status = "not_started"
         # Check if employee has passed the final quiz (for certificate eligibility)
         if training_type == "POSH":
             # For POSH corporate employees, coursework (video + interactive quiz) complete is certificate eligible.
@@ -1179,13 +1296,50 @@ def company_dashboard(request):
         "posh_pocso": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/posh-pocso.webp").first(),
         "pocso": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POCSO Poster.webp").first(),
     }
-    
+    for i in range(3, 10):
+        poster_configs[f"posh_{i}"] = PosterLogoConfig.objects.filter(
+            organization=org, poster_path=f"/media/Posters/POSH Poster {i}.webp"
+        ).first()
+
+    raw_posters = [
+        ("posh_1", "/media/Posters/POSH Poster.webp", "POSH Act Guidelines"),
+        ("posh_2", "/media/Posters/POSH Poster 2.webp", "Spot It – Stop It"),
+        ("posh_3", "/media/Posters/POSH Poster 3.webp", "Respectful Workplace"),
+        ("posh_4", "/media/Posters/POSH Poster 4.webp", "Zero Tolerance Policy"),
+        ("posh_6", "/media/Posters/POSH Poster 6.webp", "Compliance & Care"),
+        ("posh_7", "/media/Posters/POSH Poster 7.webp", "Types of Harassment (Hindi)"),
+        ("posh_8", "/media/Posters/POSH Poster 8.webp", "Respect is Non-Negotiable"),
+        ("posh_9", "/media/Posters/POSH Poster 9.webp", "Culture & Safety"),
+        ("posh_pocso", "/media/Posters/posh-pocso.webp", "Combined POSH & POCSO"),
+        ("posh_5", "/media/Posters/POSH Poster 5.webp", "Equality vs Equity"),
+        ("posh_company", "/media/Posters/posh-company.webp", "POSH Corporate Guidelines"),
+    ]
+    posters_list = []
+    for key, path, title in raw_posters:
+        config = poster_configs.get(key)
+        posters_list.append({
+            "key": key,
+            "path": path,
+            "title": title,
+            "logo_x": config.logo_x if config else org.logo_x,
+            "logo_y": config.logo_y if config else org.logo_y,
+            "logo_width": config.logo_width if config else org.logo_width,
+            "logo_url": config.logo.url if (config and config.logo) else (org.logo.url if org.logo else None),
+            "company_name": config.company_name if config else "",
+            "company_address": config.company_address if config else "",
+            "text_x": config.text_x if config else 3.0,
+            "text_y": config.text_y if config else 88.0,
+            "text_size": config.text_size if config else 2.2,
+            "text_color": config.text_color if config else "#000000",
+        })
+
     posh_policy = POSHPolicy.objects.filter(organization=org).first()
     show_policy_form = (training_type == "POSH" and posh_policy is None)
 
     context = {
         "organization": org,
         "poster_configs": poster_configs,
+        "posters_list": posters_list,
         "posh_company_name": posh_company_name,
         "posh_reg_employee_count": seat_limit,
         "active_plan": active_sub,
@@ -2329,7 +2483,7 @@ def download_employee_template(request):
     response["Pragma"] = "no-cache"
     response["Expires"] = "0"
     writer = csv.writer(response)
-    writer.writerow(["Name", "Last name", "Department", "Email", "Mobile"])
+    writer.writerow(["Name", "Last name", "Department", "Email", "Mobile (Optional)"])
     writer.writerow(["John", "Doe", "IT", "john.doe@company.com", "9999999999"])
     return response
 
@@ -2382,7 +2536,16 @@ def upload_employee_bulk(request):
                 department = row.get("Department", "").strip()
                 email = row.get("Email", "").strip()
                 password = row.get("Default password", "").strip()
-                phone = row.get("Mobile", row.get("Mobile Number", row.get("Phone", ""))).strip()
+                phone = row.get("Mobile")
+                if phone is None: 
+                    phone = row.get("Mobile (Optional)")
+                if phone is None:
+                    phone = row.get("Mobile Number")
+                if phone is None:
+                    phone = row.get("Phone")
+                if phone is None:
+                    phone = ""
+                phone = phone.strip()
 
                 # Use organization's default password if not provided in CSV
                 if not password:
@@ -2999,7 +3162,20 @@ def billing_view(request):
     if not registration:
         return redirect("posh_registration")
 
+    if request.method == "POST":
+        registration.payment_status = "PENDING"
+        registration.is_paid = False
+        registration.save()
+        try:
+            from .email_utils import send_interest_email
+            send_interest_email(registration, "POSH", request=request)
+        except Exception as e:
+            logger.warning(f"Failed to send interest email for POSH registration {registration.id}: {e}")
+        request.session["registration_submitted"] = True
+        return redirect("billing")
+
     context = get_posh_pricing_context(registration)
+    context["registration_submitted"] = request.session.pop("registration_submitted", False)
     return render(request, "billing.html", context)
 
 
@@ -3146,23 +3322,23 @@ def accounts_verify_payment_view(request, registration_id):
 
     registration = get_object_or_404(POSHRegistration, id=registration_id)
 
-    registration.payment_status = "VERIFIED"
-    registration.is_paid = True
-    registration.save()
-
-    # Send payment verification email
     try:
-        from .email_utils import send_tiered_email
+        registration.payment_status = "VERIFIED"
+        registration.is_paid = True
+        registration.save()
 
+        # Send payment verification email (creates the setup token & link)
+        from .email_utils import send_tiered_email
         send_tiered_email(registration, "PAYMENT_VERIFIED", "POSH")
 
     except Exception as e:
         logger.warning(
             f"Payment verified but email failed for {registration.company_name}: {e}"
         )
+        messages.error(request, f"Error verifying payment: {str(e)}")
+        return redirect("accounts_registration_detail", registration_id=registration_id)
 
-    messages.success(request, f"Payment for {registration.company_name} has been verified!")
-
+    messages.success(request, f"Payment for {registration.company_name} has been verified!", extra_tags="payment_approved")
     return redirect("accounts_registration_detail", registration_id=registration_id)
 
 
@@ -3185,7 +3361,7 @@ def accounts_reject_payment_view(request, registration_id):
             f"Payment rejection email failed for {registration.company_name}: {e}"
         )
 
-    messages.warning(request, f"Payment for {registration.company_name} rejected.")
+    messages.warning(request, f"Payment for {registration.company_name} rejected.", extra_tags="payment_rejected")
     return redirect("accounts_registration_detail", registration_id=registration_id)
 
 
@@ -3356,7 +3532,7 @@ def accounts_verify_pocso_payment_view(request, registration_id):
             f"Payment verified but email failed for {registration.school_name}: {e}"
         )
 
-    messages.success(request, f"Payment for {registration.school_name} has been verified!")
+    messages.success(request, f"Payment for {registration.school_name} has been verified!", extra_tags="payment_approved")
 
     return redirect("accounts_pocso_registration_detail", registration_id=registration_id)
 
@@ -3370,7 +3546,7 @@ def accounts_reject_pocso_payment_view(request, registration_id):
     registration.payment_status = "REJECTED"
     registration.save()
     messages.warning(
-        request, f"Payment for {registration.school_name} has been rejected."
+        request, f"Payment for {registration.school_name} has been rejected.", extra_tags="payment_rejected"
     )
     return redirect("accounts_pocso_registration_detail", registration_id=registration_id)
 
@@ -3461,14 +3637,25 @@ def posh_registration_view(request):
     if request.method == "POST":
         data = request.POST
 
+        # Verify custom CAPTCHA
+        captcha_code = request.POST.get("captcha", "").strip()
+        session_captcha = request.session.get("captcha_text", "")
+        if not session_captcha or captcha_code.lower() != session_captcha.lower():
+            messages.error(request, "CAPTCHA verification failed. Please try again.")
+            return redirect("posh_registration")
+
         # Determine IC training mode from hidden fields or radio
         ic_training_mode = data.get("requested_ic_training_mode")
         expert_led_type = data.get("requested_expert_led_type")
 
+        # Join multiple office locations if present
+        cities = request.POST.getlist("city")
+        city_str = ", ".join([c.strip() for c in cities if c.strip()])
+
         reg = POSHRegistration(
             contact_person=data.get("contact_person"),
             designation=data.get("designation"),
-            city=data.get("city"),
+            city=city_str,
             phone=data.get("phone"),
             email=data.get("email"),
             website=data.get("website"),
@@ -3494,6 +3681,15 @@ def posh_registration_view(request):
         )
         reg.save()
         request.session["last_registration_id"] = reg.id
+        
+        # Send interest email immediately upon registration form submission
+        try:
+            from .email_utils import send_interest_email
+            send_interest_email(reg, "POSH", request=request)
+        except Exception as e:
+            logger.warning(f"Failed to send interest email for POSH registration {reg.id}: {e}")
+            
+        request.session["registration_submitted"] = True
         return redirect("billing")
 
     registration = None
@@ -3516,6 +3712,14 @@ def pocso_registration_view(request):
     """Handle POCSO compliance registration submission"""
     if request.method == "POST":
         data = request.POST
+
+        # Verify custom CAPTCHA
+        captcha_code = request.POST.get("captcha", "").strip()
+        session_captcha = request.session.get("captcha_text", "")
+        if not session_captcha or captcha_code.lower() != session_captcha.lower():
+            messages.error(request, "CAPTCHA verification failed. Please try again.")
+            return redirect("pocso_registration")
+
         reg = POCSORegistration(
             school_name=data.get("school_name"),
             person_name=data.get("person_name"),
@@ -3574,13 +3778,23 @@ def pocso_billing_view(request):
     if not registration:
         return redirect("pocso_registration")
 
+    if request.method == "POST":
+        registration.payment_status = "VERIFIED"
+        registration.is_paid = True
+        registration.save()
+        try:
+            from .email_utils import send_tiered_email
+            send_tiered_email(registration, "PAYMENT_VERIFIED", "POCSO")
+        except Exception as e:
+            logger.warning(f"Failed to send confirmation email for POCSO registration {registration.id}: {e}")
+        return redirect("pocso_billing")
+
     context = get_pocso_pricing_context(registration)
     return render(request, "pocso_billing.html", context)
 
 
 def submit_payment_view(request, registration_id):
     """Handle payment screenshot upload for POSH/POCSO"""
-    # Detect type from URL or session if possible, or try both models
     registration = POSHRegistration.objects.filter(id=registration_id).first()
     reg_type = "POSH"
 
@@ -3588,25 +3802,29 @@ def submit_payment_view(request, registration_id):
         registration = get_object_or_404(POCSORegistration, id=registration_id)
         reg_type = "POCSO"
 
+    from .utils import get_posh_billing_data, get_pocso_billing_data
+    if reg_type == "POSH":
+        billing_data = get_posh_billing_data(registration)
+    else:
+        billing_data = get_pocso_billing_data(registration)
+
     if request.method == "POST":
         screenshot = request.FILES.get("payment_screenshot")
         if screenshot:
             registration.payment_screenshot = screenshot
             registration.payment_status = "SUBMITTED"
             registration.save()
+            
+            messages.success(request, "Payment proof uploaded successfully! Our accounts team will review and verify your payment.")
+            return redirect("submit_payment", registration_id=registration.id)
 
-            # Send 'PAY_NOW' email
-            from .email_utils import send_tiered_email
-
-            send_tiered_email(registration, "PAY_NOW", reg_type)
-
-            # Redirect to the respective billing page to show the success screen
-            if reg_type == "POSH":
-                return redirect("billing")
-            else:
-                return redirect("pocso_billing")
-
-    return render(request, "submit_payment.html", {"registration": registration})
+    context = {
+        "registration": registration,
+        "reg_type": reg_type,
+        "billing_data": billing_data,
+        "total_amount": billing_data["total_amount"],
+    }
+    return render(request, "submit_payment.html", context)
 
 
 @login_required(login_url="login")

@@ -679,10 +679,14 @@
         // Fire toasts from Django messages
         document.addEventListener('DOMContentLoaded', () => {
             {% for message in messages %}
-                {% if 'success' in message.tags %}
+                {% if 'payment_approved' in message.tags %}
                     showToast('success', 'Payment Approved', '{{ message|escapejs }}');
-                {% elif 'warning' in message.tags %}
+                {% elif 'payment_rejected' in message.tags %}
                     showToast('warning', 'Payment Rejected', '{{ message|escapejs }}');
+                {% elif 'success' in message.tags %}
+                    showToast('success', 'Success', '{{ message|escapejs }}');
+                {% elif 'warning' in message.tags %}
+                    showToast('warning', 'Warning', '{{ message|escapejs }}');
                 {% endif %}
             {% endfor %}
         });

@@ -88,6 +88,16 @@ urlpatterns = [
         views.verify_registration_otp,
         name="verify_registration_otp",
     ),
+    path(
+        "generate-captcha/",
+        views.generate_captcha_image,
+        name="generate_captcha",
+    ),
+    path(
+        "ajax/verify-captcha/",
+        views.verify_captcha_view,
+        name="verify_captcha",
+    ),
     # --- COMPANY DASHBOARD & MANAGEMENT ---
     path("dashboard/company/", views.company_dashboard, name="company_dashboard"),
     path("dashboard/company/generate-policy/", views.generate_posh_policy, name="generate_posh_policy"),
