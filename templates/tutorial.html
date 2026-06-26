@@ -36,9 +36,52 @@
         html,
         body {
             overflow-x: hidden;
-            background-color: #f8fafc;
             font-family: 'Inter', 'Segoe UI', sans-serif;
             color: var(--text-dark);
+            padding-top: 0 !important;
+        }
+
+        body {
+            background-image:
+                linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+                radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+            background-size: 40px 40px, 40px 40px, 100% 100% !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ambient Glow Blobs */
+        .ambient-glow {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+
+        .glow-blue {
+            top: 10%;
+            left: 5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+        }
+
+        .glow-gold {
+            bottom: 10%;
+            right: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+            animation-delay: -4s;
+        }
+
+        @keyframes pulseGlow {
+            0%   { transform: scale(1) translate(0, 0); opacity: 0.2; }
+            100% { transform: scale(1.15) translate(20px, -20px); opacity: 0.35; }
         }
 
         /* =========================================
@@ -87,8 +130,8 @@
            SECTION 2: GLASSMORPHISM TRAINING ACCESS
            ========================================= */
         .tutorial-section-wrapper {
-            background: linear-gradient(to right, #709ee3ff, #ffffff);
-            padding: 100px 20px;
+            background: transparent;
+            padding: 100px 20px 80px;
             position: relative;
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -147,8 +190,11 @@
         .tutorial-container h2 {
             font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 60px;
-            color: #1e293b;
+            margin-bottom: 35px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             letter-spacing: -1px;
         }
 
@@ -219,8 +265,7 @@
            SECTION 3: CORE SERVICES
            ========================================= */
         #core-services {
-            padding: 90px 0;
-            background: #ffffff;
+            background: transparent;
         }
 
         .service-card {
@@ -264,8 +309,8 @@
            SECTION 4: DETAILED TRAINING
            ========================================= */
         .training-section {
-            padding: 90px 0;
-            background: #f8fafc;
+            padding: 75px 0;
+            background: transparent;
         }
 
         .training-grid {
@@ -498,6 +543,10 @@
 
 <body>
 
+    <!-- Ambient Glow Blobs -->
+    <div class="ambient-glow glow-blue"></div>
+    <div class="ambient-glow glow-gold"></div>
+
     <!-- 1. HERO SECTION -->
     <!-- <section class="services-hero">
         <div class="container">
@@ -542,15 +591,14 @@
 
                 {% if show_pocso %}
                 <div class="glass-module module-pocso" data-aos="zoom-in" data-aos-delay="200">
-                    {% if is_accounts_user %}
+                    <!-- Always locked -->
                     <div class="coming-soon-overlay">
                         <div class="coming-soon-content">
                             <i class="fas fa-lock lock-icon-glow"></i>
-                            <h3 class="coming-soon-title" style="font-size: 1.1rem; letter-spacing: 0.18em;">Restricted Access</h3>
-                            <p class="coming-soon-sub" style="font-size: 0.62rem; letter-spacing: 0.3em; margin-top: 8px;">Insufficient Portal Privileges</p>
+                            <h3 class="coming-soon-title" style="font-size: 1.1rem; letter-spacing: 0.18em;">Coming Soon</h3>
+                            <p class="coming-soon-sub" style="font-size: 0.62rem; letter-spacing: 0.3em; margin-top: 8px;">Currently Unavailable</p>
                         </div>
                     </div>
-                    {% endif %}
                     <div class="module-icon">🧒</div>
                     <h2>POCSO Act</h2>
                     <p>Understand child protection laws designed for a secure institutional environment.</p>
@@ -564,6 +612,7 @@
                     </div>
                 </div>
                 {% endif %}
+
             </div>
         </div>
     </section>
@@ -800,97 +849,7 @@
                     </div>
                 </div>
 
-                <!-- Compliance Card -->
-                <div class="training-card compliance" data-aos="fade-up" data-aos-delay="100">
-                    <h3>Legal Compliance</h3>
-                    <div class="training-overview">Mastering regulations, risk management, and security.</div>
 
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Compliance Programs</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Risk assessment mapping</li>
-                                    <li>Internal audit protocols</li>
-                                    <li>Regulatory monitoring</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Data Privacy (DPDP)</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Personal data handling</li>
-                                    <li>Consent frameworks</li>
-                                    <li>Breach prevention</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Anti-Bribery (ABAC)</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Corruption prevention</li>
-                                    <li>Due diligence</li>
-                                    <li>Financial integrity</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Communication Card -->
-                <div class="training-card communication" data-aos="fade-up" data-aos-delay="200">
-                    <h3>Communication</h3>
-                    <div class="training-overview">Effectiveness in collaboration, leadership, and flow.</div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Active Listening</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Trust building</li>
-                                    <li>Body language cues</li>
-                                    <li>Empathy techniques</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Conflict Resolution</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>De-escalation steps</li>
-                                    <li>Win-win negotiation</li>
-                                    <li>Constructive feedback</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Inclusive Language</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Gender neutrality</li>
-                                    <li>Cultural sensitivity</li>
-                                    <li>Unconscious bias</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="training-card dei" data-aos="fade-up">
                     <h3>Diversity & Inclusion</h3>
@@ -931,51 +890,6 @@
                                     <li>Global etiquette & norms</li>
                                     <li>Cross-cultural communication</li>
                                     <li>Respecting religious & social diversity</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="training-card leadership" data-aos="fade-up" data-aos-delay="100">
-                    <h3>Leadership Skills</h3>
-                    <div class="training-overview">Empowering managers to lead with integrity and vision.</div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Performance Coaching</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Goal setting (SMART)</li>
-                                    <li>Continuous feedback loops</li>
-                                    <li>Employee growth plans</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Change Management</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Leading through transitions</li>
-                                    <li>Communication during change</li>
-                                    <li>Overcoming resistance</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Strategic Decision Making</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Data-driven insights</li>
-                                    <li>Ethical decision frameworks</li>
-                                    <li>Long-term impact analysis</li>
                                 </ul>
                             </div>
                         </div>

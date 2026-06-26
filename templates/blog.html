@@ -50,9 +50,55 @@
 
     body {
       font-family: 'Open Sans', sans-serif;
-      background: var(--bg-body);
+      background-image: 
+        linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+        radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+      background-size: 40px 40px, 40px 40px, 100% 100% !important;
       color: var(--text-main);
       overflow-x: hidden;
+      padding-top: 0 !important;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Ambient Glow Blobs */
+    .ambient-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: 0;
+        animation: pulseGlow 8s ease-in-out infinite alternate;
+    }
+
+    .glow-blue {
+        top: 15%;
+        left: 5%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+    }
+
+    .glow-gold {
+        bottom: 15%;
+        right: 5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+        animation-delay: -4s;
+    }
+
+    @keyframes pulseGlow {
+        0% {
+            transform: scale(1) translate(0, 0);
+            opacity: 0.25;
+        }
+        100% {
+            transform: scale(1.15) translate(20px, -20px);
+            opacity: 0.4;
+        }
     }
 
     h1, h2, h3, .card-title {
@@ -62,99 +108,145 @@
     /* --- 2. Hero Section (Animated) --- */
     .hero {
       position: relative;
-      background: linear-gradient(120deg, #0f2027, #203a43, #2c5364); /* Deep Sea Gradient */
-      min-height: 75vh;
+      background: transparent;
+      min-height: 80vh;
       display: flex;
       align-items: center;
-      padding: 100px 20px;
-      overflow: hidden;
-    }
-
-    /* Abstract Background Shapes */
-    .hero::before, .hero::after {
-      content: '';
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(80px);
-      z-index: 0;
-    }
-    .hero::before {
-      background: rgba(59, 130, 246, 0.2);
-      width: 400px; height: 400px;
-      top: -100px; left: -100px;
-    }
-    .hero::after {
-      background: rgba(249, 115, 22, 0.15);
-      width: 500px; height: 500px;
-      bottom: -100px; right: -100px;
-    }
-
-    .hero-content {
-      position: relative;
+      justify-content: center;
+      padding: 100px 20px 40px;
+      overflow: visible;
       z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 50px;
-      flex-wrap: wrap;
     }
 
-    .text-content { flex: 1; min-width: 300px; }
-    
-    .text-content h1 {
-      font-size: clamp(2.5rem, 5vw, 4rem);
-      font-weight: 800;
-      color: white;
-      margin-bottom: 1.5rem;
-      line-height: 1.2;
-      background: linear-gradient(to right, #fff, #94a3b8);
-      -webkit-background-clip: text;
-        
-      -webkit-text-fill-color: transparent;
-    }
-    .text-content p {
-      font-size: 1.2rem;
-      color: #cbd5e1;
-      margin-bottom: 2rem;
-      border-left: 4px solid var(--accent);
-      padding-left: 1rem;
+    .hero-big-title {
+      font-size: 3.8rem !important;
+      font-weight: 850 !important;
+      line-height: 1.15 !important;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      background-clip: text !important;
+      letter-spacing: -1.5px !important;
+      margin-bottom: 25px !important;
+      text-align: left;
     }
 
-    .image-content {
-      flex: 1;
-      min-width: 300px;
+    .highlight-posh {
+      background: linear-gradient(135deg, #0d6efd 0%, #00a2cc 100%) !important;
+      -webkit-background-clip: text !important;
+      -webkit-text-fill-color: transparent !important;
+      font-weight: 850 !important;
+      display: inline-block !important;
+      position: relative;
+    }
+
+    .hero-desc-card {
+      background: rgba(255, 255, 255, 0.45) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(15, 23, 42, 0.06) !important;
+      border-left: 4px solid #0ea5e9 !important;
+      padding: 16px 22px !important;
+      border-radius: 14px !important;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03) !important;
+      margin-bottom: 28px !important;
+      position: relative;
+      max-width: 550px;
+      text-align: left;
+      display: inline-block;
+    }
+
+    .hero-crisp-desc {
+      font-size: 1.15rem !important;
+      font-weight: 500 !important;
+      color: #334155 !important;
+      line-height: 1.7 !important;
+      margin-bottom: 0 !important;
+      text-shadow: none !important;
+      display: inline;
+    }
+
+    /* 3D Floating Image Layout */
+    .hero-image-wrapper {
+      position: relative;
+      padding: 20px;
+      perspective: 1000px;
+      z-index: 10;
+      width: 100%;
       display: flex;
       justify-content: center;
-      perspective: 1000px;
     }
 
-    /* Floating Animation for Hero Image */
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
-      100% { transform: translateY(0px); }
+    .image-glowing-aura {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(13, 110, 253, 0.25) 0%, transparent 60%);
+      filter: blur(40px);
+      pointer-events: none;
+      z-index: -1;
+      transition: all 0.5s ease;
     }
 
-    .image-content img {
+    .hero-img-3d {
+      transform: rotateY(-10deg) rotateX(5deg) scale(0.95);
+      box-shadow: 
+        -10px 15px 30px rgba(0, 0, 0, 0.15),
+        0 0 20px rgba(13, 110, 253, 0.1) !important;
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 1px solid rgba(255, 255, 255, 0.6) !important;
+      object-fit: cover;
+      border-radius: 20px !important;
       width: 100%;
       max-width: 550px;
-      border-radius: 20px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      animation: float 6s ease-in-out infinite;
-      border: 2px solid rgba(255,255,255,0.1);
-      pointer-events: none; /* Hero image protection */
+      height: auto;
+    }
+
+    .hero-image-wrapper:hover .hero-img-3d {
+      transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.25),
+        0 0 35px rgba(13, 110, 253, 0.2) !important;
+    }
+
+    .hero-image-wrapper:hover .image-glowing-aura {
+      width: 90%;
+      height: 90%;
+      background: radial-gradient(circle, rgba(13, 110, 253, 0.3) 0%, transparent 60%);
+      filter: blur(50px);
+    }
+
+    @media (max-width: 992px) {
+      .hero {
+        padding: 100px 20px 40px;
+        text-align: center;
+      }
+      .hero-big-title {
+        font-size: 2.8rem !important;
+        text-align: center;
+      }
+      .hero-desc-card {
+        text-align: center;
+        max-width: 100%;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .hero-big-title {
+        font-size: 2.2rem !important;
+      }
     }
 
     /* --- 3. Topics Grid (Blog) --- */
     .topics-grid {
-      padding: 100px 5%;
-      background: var(--bg-body);
+      padding: 60px 5% 100px;
+      background: transparent;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 30px;
-      margin-top: -80px; /* Overlap effect */
       position: relative;
       z-index: 5;
     }
@@ -354,48 +446,54 @@
     .section-subtitle { color: #cbd5e1; position: relative; z-index: 2; text-align: center; margin-bottom: 60px; max-width: 700px; margin-left: auto; margin-right: auto;}
 
     .download-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08) !important;
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 16px;
-      padding: 30px;
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 35px 30px;
       height: 100%;
       color: white;
-      transition: 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
     }
 
     .download-card::after {
-      content: '';
-      position: absolute; bottom: 0; left: 0; width: 100%; height: 0%;
-      background: white;
-      transition: height 0.4s ease;
-      z-index: -1;
+      display: none !important;
     }
 
     .download-card:hover {
-      transform: translateY(-5px);
-      color: var(--primary-dark);
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.15) !important;
+      border-color: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 25px rgba(249, 115, 22, 0.2);
     }
-    
-    .download-card:hover::after { height: 100%; }
 
     .download-card h3 {
       font-size: 1.5rem;
       font-weight: 700;
       color: var(--accent); /* Orange title */
-      margin-bottom: 15px;
+      margin-bottom: 18px;
+      transition: all 0.3s ease;
     }
     
-    .download-card:hover h3 { color: var(--primary); }
-    .download-card p { font-size: 1.05rem; }
-    .download-card li { margin-bottom: 8px; font-size: 1.05rem; }
+    .download-card:hover h3 {
+      text-shadow: none;
+    }
+
+    .download-card p { font-size: 1.05rem; margin-bottom: 15px; color: #e2e8f0; }
+    .download-card li { margin-bottom: 10px; font-size: 1.02rem; color: #cbd5e1; }
 
     /* --- 6. FAQ Section --- */
     .faq-section {
       padding: 100px 20px;
-      background: linear-gradient(135deg, #fff 0%, #f0f9ff 100%);
+      background-image:
+        linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+        radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%);
+      background-size: 40px 40px, 40px 40px, 100% 100%;
     }
 
     .faq-title { text-align: center; font-size: 2.8rem; font-weight: 800; color: var(--primary-dark); }
@@ -448,27 +546,40 @@
 
     /* --- Responsive --- */
     @media (max-width: 768px) {
-      .hero { text-align: center; padding-top: 120px; }
-      .hero-content { justify-content: center; }
-      .text-content p { border-left: none; border-top: 4px solid var(--accent); padding-top: 15px; padding-left: 0; }
       .section-title, .faq-title, .blog-categories h2 { font-size: 2.2rem; }
     }
   </style>
 </head>
 <body oncontextmenu="return false;"> <!-- Global context menu disable -->
 
+  <!-- Ambient Glow Blobs -->
+  <div class="ambient-glow glow-blue"></div>
+  <div class="ambient-glow glow-gold"></div>
+
   <!-- 1. Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <div class="text-content" data-aos="fade-right" data-aos-duration="1000">
-        <h1>Your Knowledge Hub &<br>Resource Center</h1>
-        <p>Explore curated articles, compliance guides, and expert resources to help you build a safer, more respectful workplace environment.</p>
-        <div class="d-flex gap-3 flex-wrap justify-content-md-start justify-content-center">
-         
+  <section id="hero" class="hero d-flex align-items-center text-center text-lg-start" data-aos="fade-in">
+    <div class="container" style="position: relative; z-index: 10;">
+      <div class="row align-items-center">
+        <div class="col-lg-6" data-aos="fade-right">
+          <h1 class="hero-big-title">
+            Your Knowledge Hub & <br>
+            <span class="highlight-posh">Resource</span> Center
+          </h1>
+          <div class="hero-desc-card">
+            <p class="hero-crisp-desc">
+              Explore curated articles, compliance guides, and expert resources to help you build a safer, more respectful workplace environment.
+            </p>
+          </div>
         </div>
-      </div>
-      <div class="image-content" data-aos="fade-left" data-aos-duration="1000">
-        <img src="{% static 'img/resorce1.png' %}" alt="Resources Illustration">
+        <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
+          <div class="hero-image-wrapper">
+            <!-- Glowing aura behind the image -->
+            <div class="image-glowing-aura"></div>
+            
+            <img src="{% static 'img/resorce1.png' %}" alt="Resources Illustration" width="600" height="400"
+              class="img-fluid rounded-4 hero-img-3d">
+          </div>
+        </div>
       </div>
     </div>
   </section>

@@ -2,66 +2,130 @@
 {% block body %}
 
 <style>
+    body {
+        padding-top: 0 !important;
+        background-image:
+            linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+            radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+        background-size: 40px 40px, 40px 40px, 100% 100% !important;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Ambient Glow Blobs */
+    .ambient-glow {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.25;
+        pointer-events: none;
+        z-index: 0;
+        animation: pulseGlow 8s ease-in-out infinite alternate;
+    }
+    .glow-blue {
+        top: 10%; left: 5%;
+        width: 350px; height: 350px;
+        background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+    }
+    .glow-gold {
+        bottom: 10%; right: 5%;
+        width: 400px; height: 400px;
+        background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+        animation-delay: -4s;
+    }
+    @keyframes pulseGlow {
+        0%   { transform: scale(1) translate(0, 0); opacity: 0.2; }
+        100% { transform: scale(1.15) translate(20px, -20px); opacity: 0.35; }
+    }
+
     .login-container {
-        min-height: 80vh;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #eef2ff, #e0f7fa);
-        padding: 20px;
+        padding: 100px 20px 40px;
+        position: relative;
+        z-index: 2;
     }
+
     .login-card {
-        background: white;
-        padding: 40px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        padding: 48px 44px;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255,255,255,0.7);
+        border: 1px solid rgba(255, 255, 255, 0.5);
         width: 100%;
-        max-width: 400px;
+        max-width: 420px;
         text-align: center;
     }
+
     .login-card h2 {
-        color: #333;
-        margin-bottom: 25px;
-        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 28px;
+        font-weight: 800;
+        font-size: 2rem;
+        letter-spacing: -0.5px;
     }
+
     .form-group {
         margin-bottom: 20px;
         text-align: left;
     }
+
     .form-group label {
         display: block;
         margin-bottom: 8px;
-        color: #666;
-        font-size: 0.9rem;
+        color: #475569;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.3px;
     }
+
     .form-control {
         width: 100%;
-        padding: 12px;
-        border: 2px solid #e1e1e1;
-        border-radius: 8px;
+        padding: 12px 16px;
+        border: 1.5px solid rgba(15, 23, 42, 0.12);
+        border-radius: 10px;
         font-size: 1rem;
-        transition: border-color 0.3s;
+        background: rgba(255,255,255,0.75);
+        color: #0f172a;
+        transition: border-color 0.3s, box-shadow 0.3s;
     }
+
     .form-control:focus {
-        border-color: #5e35b1; /* Purple theme */
+        border-color: #0d6efd;
         outline: none;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.12);
+        background: rgba(255,255,255,0.95);
     }
+
     .btn-login {
         width: 100%;
-        padding: 12px;
-        background: linear-gradient(135deg, #7e57c2, #5e35b1);
+        padding: 13px;
+        background: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
         color: white;
         border: none;
-        border-radius: 8px;
+        border-radius: 10px;
         font-size: 1rem;
-        font-weight: bold;
+        font-weight: 700;
         cursor: pointer;
-        transition: transform 0.2s;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        letter-spacing: 0.3px;
     }
+
     .btn-login:hover {
         transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.4);
     }
 </style>
+
+<!-- Ambient Glow Blobs -->
+<div class="ambient-glow glow-blue"></div>
+<div class="ambient-glow glow-gold"></div>
 
 <div class="login-container">
     <div class="login-card">
@@ -69,7 +133,7 @@
         
         <!-- Error Message Handling -->
         {% if form.errors %}
-            <div style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 5px; margin-bottom: 15px; font-size: 0.9rem;">
+            <div style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9rem; border: 1px solid #ef9a9a;">
                 Your username and password didn't match. Please try again.
             </div>
         {% endif %}
@@ -86,7 +150,7 @@
                 <label>Password</label>
                 <div style="position: relative;">
                     <input type="password" name="password" id="passwordInput" class="form-control" required placeholder="Enter your password" style="padding-right: 45px;">
-                    <button type="button" id="togglePasswordBtn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #7e57c2; outline: none; padding: 0;">
+                    <button type="button" id="togglePasswordBtn" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: #0d6efd; outline: none; padding: 0;">
                         <i class="fas fa-eye" id="passwordEyeIcon" style="font-size: 1.1rem;"></i>
                     </button>
                 </div>
@@ -98,8 +162,8 @@
             <input type="hidden" name="next" value="{{ next }}">
         </form>
 
-        <p style="margin-top: 20px; font-size: 0.9rem; color: #666;">
-            Don't have a subscription? <a href="{% url 'tutorial' %}" style="color: #5e35b1; font-weight: 600;">Get one here</a>
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #64748b;">
+            Don't have a subscription? <a href="{% url 'tutorial' %}" style="color: #0d6efd; font-weight: 600;">Get one here</a>
         </p>
     </div>
 </div>
@@ -127,4 +191,4 @@
         }
     });
 </script>
-{% endblock body %}
+{% endblock body %}

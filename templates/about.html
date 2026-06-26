@@ -50,9 +50,55 @@
         body {
             margin: 0;
             font-family: 'Open Sans', sans-serif;
-            background: linear-gradient(120deg, #f4f9ff 0%, #e0f0ff 100%);
+            background-image: 
+              linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+            background-size: 40px 40px, 40px 40px, 100% 100% !important;
             color: var(--text-dark);
             overflow-x: hidden;
+            padding-top: 0 !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ambient Glow Blobs */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+
+        .glow-blue {
+            top: 15%;
+            left: 5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+        }
+
+        .glow-gold {
+            bottom: 15%;
+            right: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+            animation-delay: -4s;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.25;
+            }
+            100% {
+                transform: scale(1.15) translate(20px, -20px);
+                opacity: 0.4;
+            }
         }
 
         h1, h2, h3, h4 { font-family: 'Poppins', sans-serif; margin: 0; }
@@ -76,82 +122,67 @@
         .section-subtitle {
             text-align: center;
             color: #555;
-            margin-bottom: 50px;
         }
 
-        /* ============================
+        /* ====================
            2. HERO SECTION
-           ============================ */
+           ==================== */
         .about-hero {
             position: relative;
-            height: 70vh;
-            background: url("{% static 'img/about_n.webp' %}") center/cover no-repeat fixed;
+            background: transparent;
+            color: #0f172a;
+            padding: 100px 20px 0px;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
+            overflow: hidden;
+            z-index: 1;
         }
 
-        .about-hero::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 30, 70, 0.7); /* Darker overlay */
+        .about-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            color: #1d4ed8;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.03);
         }
 
-        .hero-glass-card {
-            position: relative;
-            z-index: 2;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            padding: 50px 60px;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            max-width: 800px;
-            animation: floatHero 5s ease-in-out infinite;
+        .hero-title-gradient {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 850;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
         }
 
-        .hero-glass-card h1 {
-            color: #fff;
-            font-size: 3.5rem;
-            margin-bottom: 15px;
-            font-weight: 800;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-
-        .hero-glass-card p {
-            color: #e0e0e0;
-            font-size: 1.25rem;
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            max-width: 700px;
+            margin: 0 auto;
+            color: #475569;
+            font-weight: 400;
             line-height: 1.6;
         }
 
-        @keyframes floatHero {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-
-        /* ============================
+        /* ====================
            3. WHO WE ARE (PREMIUM DESIGN)
-           ============================ */
+           ==================== */
         .company-section {
-            padding: 100px 0;
+            padding: 50px 0;
             position: relative;
-            margin-top: -80px; /* Strong overlap */
             z-index: 10;
         }
-
-        /* Animated Blobs */
-        .blob {
-            position: absolute;
-            filter: blur(70px);
-            z-index: -1;
-            opacity: 0.7;
-            animation: moveBlob 10s infinite alternate;
-        }
-        .blob-1 { top: 10%; left: 5%; width: 300px; height: 300px; background: rgba(0, 150, 255, 0.4); border-radius: 50%; }
-        .blob-2 { bottom: 10%; right: 5%; width: 350px; height: 350px; background: rgba(142, 68, 173, 0.3); border-radius: 50%; animation-delay: 2s; }
 
         @keyframes moveBlob {
             0% { transform: translate(0, 0) scale(1); }
@@ -282,7 +313,7 @@
         /* ============================
            4. TEAM SECTION
            ============================ */
-        .team-section { padding: 60px 0 100px; }
+        .team-section { padding: 60px 0 0px; }
 
         .team-grid {
             display: grid;
@@ -342,8 +373,8 @@
         /* ============================
            5. SUCCESS STORIES
            ============================ */
-        .success-stories { padding: 60px 0; }
-        .stories-container { max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
+        .success-stories { padding: 30px 0 55px; }
+        .stories-container { padding-top: 20px; max-width: 850px; margin: 0 auto; display: flex; flex-direction: column; gap: 25px; }
 
         .story-card {
             background: rgba(255,255,255,0.95);
@@ -360,7 +391,15 @@
         /* ============================
            6. ACHIEVEMENTS
            ============================ */
-        .achievements { padding: 60px 0; background: #fff; overflow: hidden; }
+        .achievements {
+            padding: 60px 0;
+            background-image:
+                linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+                radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            overflow: hidden;
+        }
         .achievements-slider-container { margin-top: 30px; }
         /* CSS Infinite Marquee animations (replaces buggy JS Swiper controls) */
         .swiper-wrapper {
@@ -369,7 +408,7 @@
             align-items: center;
         }
         #teamSlider {
-            padding-top: 80px !important;
+            padding-top: 30px !important;
             padding-bottom: 20px !important;
         }
         #slider1 {
@@ -510,19 +549,21 @@
 
 <body>
 
+  <!-- Ambient Glow Blobs -->
+  <div class="ambient-glow glow-blue"></div>
+  <div class="ambient-glow glow-gold"></div>
+
   <!-- ======= HERO SECTION ======= -->
-  <section class="about-hero">
-    <div class="hero-glass-card" data-aos="zoom-in" data-aos-duration="1200">
-        <h1>About OHPL</h1>
-        <p>Creating respectful, safe, and inclusive workplaces through POSH compliance, training, and expert consulting.</p>
+  <header class="about-hero" data-aos="fade-in">
+    <div class="container">
+        <span class="about-badge" data-aos="fade-down" data-aos-delay="100">About Our Company</span>
+        <h1 class="hero-title-gradient" data-aos="zoom-in" data-aos-duration="1000">About OHPL</h1>
+        <p class="hero-desc" data-aos="fade-up" data-aos-delay="200">Creating respectful, safe, and inclusive workplaces through POSH compliance, training, and expert consulting.</p>
     </div>
-  </section>
+  </header>
 
   <!-- ======= WHO WE ARE (New Attractive Design) ======= -->
   <section class="company-section">
-    <!-- Moving Blobs -->
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
 
     <div class="container">
       <div class="glass-panel" data-aos="fade-up">
