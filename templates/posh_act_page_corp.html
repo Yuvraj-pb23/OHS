@@ -1107,8 +1107,13 @@
 
     const startBtn = document.getElementById('quiz-start-btn');
     if (startBtn) {
-      if (mod.status === 'complete') {
-        startBtn.innerHTML = 'Quiz Completed';
+      if (mod.status === 'locked') {
+        startBtn.innerHTML = '🔒 Complete Videos First';
+        startBtn.style.pointerEvents = 'none';
+        startBtn.style.cursor = 'not-allowed';
+        startBtn.style.opacity = '0.5';
+      } else if (mod.status === 'complete') {
+        startBtn.innerHTML = '✓ Quiz Completed';
         startBtn.style.pointerEvents = 'auto';
         startBtn.style.cursor = 'pointer';
         startBtn.style.opacity = '1';
@@ -1132,7 +1137,12 @@
 
   function startQuizInPlace() {
     const res = modules[window._quizModuleIdx];
-    if (res && res.status === 'complete') return;
+    if (!res) return;
+    if (res.status === 'locked') {
+      alert('🔒 Please complete all video modules first to unlock the Quiz.');
+      return;
+    }
+    if (res.status === 'complete') return;
     document.getElementById('quiz-cover').style.display = 'none';
     document.getElementById('practiceQuizContainer').style.display = 'block';
     initQuiz();
