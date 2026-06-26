@@ -10,7 +10,7 @@ from weasyprint import HTML
 logger = logging.getLogger(__name__)
 
 
-def generate_certificate(user, course_type="POSH"):
+def generate_certificate(user, course_type="POSH", custom_logo_path=None):
     """
     Generates a PDF certificate for the given user and course type.
     """
@@ -44,21 +44,21 @@ def generate_certificate(user, course_type="POSH"):
 
     # 3. Handle specific layout details
     if course_type == "POSH":
-        # Retrieve company logo if member of an organization
+        # Retrieve company logo
         logo_uri = None
-        from home.models import OrganizationMember, POSHPolicy
-        membership = OrganizationMember.objects.filter(user=user).first()
-        if membership:
-            org = membership.organization
-            policy = POSHPolicy.objects.filter(organization=org).first()
-            if policy and policy.company_logo:
-                logo_path = Path(policy.company_logo.path)
-                if logo_path.exists():
-                    logo_uri = logo_path.as_uri()
-            elif org.logo:
-                logo_path = Path(org.logo.path)
-                if logo_path.exists():
-                    logo_uri = logo_path.as_uri()
+        if custom_logo_path:
+            logo_path = Path(custom_logo_path)
+            if logo_path.exists():
+                logo_uri = logo_path.as_uri()
+        else:
+            from home.models import OrganizationMember
+            membership = OrganizationMember.objects.filter(user=user).first()
+            if membership:
+                org = membership.organization
+                if org.logo:
+                    logo_path = Path(org.logo.path)
+                    if logo_path.exists():
+                        logo_uri = logo_path.as_uri()
 
         # Render logo container (covers default "COMPANY LOGO" placeholder with white circle background)
         logo_html = ""
@@ -94,8 +94,6 @@ def generate_certificate(user, course_type="POSH"):
                     left: 21%;
                     width: 58%;
                     height: 10%;
-                    background-color: #ffffff; /* Cover the template's placeholder name */
-                    border-bottom: 2px solid #223e72; /* Redraw name line cleanly */
                     display: flex;
                     flex-direction: column;
                     justify-content: flex-end;

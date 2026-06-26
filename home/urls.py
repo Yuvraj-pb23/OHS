@@ -67,6 +67,7 @@ urlpatterns = [
     path("ajax/reset-progress/", views.reset_progress, name="reset_progress"),
     path("ajax/save-video-progress/", views.save_video_progress, name="save_video_progress"),
     path("ajax/member-progress/<int:member_id>/", views.member_progress_api, name="member_progress_api"),
+    path("ajax/upload-org-logo/", views.upload_org_logo, name="upload_org_logo"),
     path("posh-video-source/", views.posh_video_source, name="posh_video_source"),
     # --- SUBSCRIPTION FLOWS ---
     path(

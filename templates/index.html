@@ -98,8 +98,7 @@
   }
 
   /* GLASS CARDS */
-  .hero-glass-card,
-  .about-glass-card {
+  .hero-glass-card {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -107,6 +106,69 @@
     padding: 2.5rem;
     border-radius: 25px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 3D Floating About Image Layout */
+  .about-image-wrapper {
+    position: relative;
+    padding: 20px;
+    perspective: 1000px;
+    z-index: 10;
+  }
+
+  .about-image-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 60%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+    transition: all 0.5s ease;
+  }
+
+  .about-img-3d {
+    transform: rotateY(10deg) rotateX(5deg) scale(0.95);
+    box-shadow: 
+      10px 15px 30px rgba(0, 0, 0, 0.12),
+      0 0 20px rgba(99, 102, 241, 0.08) !important;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    object-fit: cover;
+    border-radius: 20px !important;
+  }
+
+  .about-image-wrapper:hover .about-img-3d {
+    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.2),
+      0 0 35px rgba(99, 102, 241, 0.15) !important;
+  }
+
+  .about-image-wrapper:hover .about-image-glow {
+    width: 90%;
+    height: 90%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 60%);
+    filter: blur(50px);
+  }
+
+  /* About description card */
+  .about-desc-card {
+    background: rgba(255, 255, 255, 0.45) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(15, 23, 42, 0.06) !important;
+    border-left: 4px solid #6366f1 !important;
+    padding: 16px 22px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03) !important;
+    position: relative;
+    max-width: 580px;
+    text-align: left;
+    display: inline-block;
   }
 
 
@@ -120,8 +182,8 @@
     background-position: center;
     background-size: cover;
     background-attachment: fixed;
-    padding-top: 80px;
-    padding-bottom: 80px;
+    padding-top: 50px;
+    padding-bottom: 50px;
     position: relative;
     z-index: 1;
   }
@@ -221,7 +283,7 @@
     background-attachment: fixed;
     background-position: center;
     background-size: cover;
-    padding: 100px 0;
+    padding: 50px 0;
     color: white;
     position: relative;
   }
@@ -231,7 +293,7 @@
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
     text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
 
@@ -1015,6 +1077,254 @@
     }
   }
 
+  /* =========================================================
+       NEW PREMIUM HERO SECTION STYLES
+       ========================================================= */
+  .hero-about-wrapper {
+    background-image: 
+      linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+      radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+    background-size: 40px 40px, 40px 40px, 100% 100% !important;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  #hero.hero-section {
+    min-height: 85vh;
+    background: transparent !important;
+    position: relative;
+    overflow: visible;
+    padding: 140px 0 0px;
+    z-index: 2;
+  }
+
+  .about-section {
+    position: relative;
+    padding: 60px 0 120px;
+    background: transparent !important;
+    z-index: 2;
+  }
+
+  @media (max-width: 768px) {
+    #hero.hero-section {
+      padding: 100px 0 40px;
+    }
+    .about-section {
+      padding: 40px 0 80px;
+    }
+  }
+
+  /* Ambient Glow Blobs */
+  .ambient-glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+    animation: pulseGlow 8s ease-in-out infinite alternate;
+  }
+
+  .glow-blue {
+    top: 15%;
+    left: 5%;
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+  }
+
+  .glow-gold {
+    bottom: 15%;
+    right: 5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+    animation-delay: -4s;
+  }
+
+  @keyframes pulseGlow {
+    0% {
+      transform: scale(1) translate(0, 0);
+      opacity: 0.25;
+    }
+    100% {
+      transform: scale(1.15) translate(20px, -20px);
+      opacity: 0.4;
+    }
+  }
+
+  .hero-big-title {
+    font-size: 3.8rem !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    color: #0f172a !important;
+    letter-spacing: -1.5px !important;
+    margin-bottom: 25px !important;
+    text-shadow: 0 2px 10px rgba(15, 23, 42, 0.05) !important;
+  }
+
+  .hero-desc-card {
+    background: rgba(255, 255, 255, 0.45) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(15, 23, 42, 0.06) !important;
+    border-left: 4px solid #0ea5e9 !important;
+    padding: 16px 22px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03) !important;
+    margin-bottom: 28px !important;
+    position: relative;
+    max-width: 550px;
+    text-align: left;
+    display: inline-block;
+  }
+
+
+
+  .hero-crisp-desc {
+    font-size: 1.15rem !important;
+    font-weight: 500 !important;
+    color: #334155 !important;
+    line-height: 1.7 !important;
+    margin-bottom: 0 !important;
+    text-shadow: none !important;
+    display: inline;
+  }
+
+  .highlight-posh {
+    background: linear-gradient(135deg, #0d6efd 0%, #00a2cc 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 850 !important;
+    display: inline-block !important;
+    position: relative;
+  }
+
+  .highlight-posh::after {
+    display: none !important;
+  }
+
+  .highlight-pocso {
+    background: linear-gradient(135deg, #dc3545 0%, #e11d48 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    font-weight: 850 !important;
+    display: inline-block !important;
+    position: relative;
+  }
+
+  .highlight-pocso::after {
+    display: none !important;
+  }
+
+  /* 3D Floating Image Layout */
+  .hero-image-wrapper {
+    position: relative;
+    padding: 20px;
+    perspective: 1000px;
+    z-index: 10;
+  }
+
+  .image-glowing-aura {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(13, 110, 253, 0.25) 0%, transparent 60%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+    transition: all 0.5s ease;
+  }
+
+  .hero-img-3d {
+    transform: rotateY(-10deg) rotateX(5deg) scale(0.95);
+    box-shadow: 
+      -10px 15px 30px rgba(0, 0, 0, 0.15),
+      0 0 20px rgba(13, 110, 253, 0.1) !important;
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    object-fit: cover;
+    border-radius: 20px !important;
+  }
+
+  .hero-image-wrapper:hover .hero-img-3d {
+    transform: rotateY(0deg) rotateX(0deg) scale(1.02);
+    box-shadow: 
+      0 20px 40px rgba(0, 0, 0, 0.25),
+      0 0 35px rgba(13, 110, 253, 0.2) !important;
+  }
+
+  .hero-image-wrapper:hover .image-glowing-aura {
+    width: 90%;
+    height: 90%;
+    background: radial-gradient(circle, rgba(13, 110, 253, 0.3) 0%, transparent 60%);
+    filter: blur(50px);
+  }
+
+  /* Buttons inside Hero Section */
+  .hero-btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%) !important;
+    color: white !important;
+    padding: 14px 30px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.25) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    display: inline-block;
+  }
+
+  .hero-btn-primary:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(0, 210, 255, 0.45) !important;
+    color: white !important;
+  }
+
+  .hero-btn-secondary {
+    background: rgba(15, 23, 42, 0.03) !important;
+    color: #1e293b !important;
+    padding: 14px 30px !important;
+    border-radius: 50px !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    backdrop-filter: blur(5px) !important;
+    display: inline-block;
+  }
+
+  .hero-btn-secondary:hover {
+    background: rgba(15, 23, 42, 0.07) !important;
+    border-color: rgba(15, 23, 42, 0.25) !important;
+    transform: translateY(-3px) !important;
+    color: #0f172a !important;
+  }
+
+  @media (max-width: 992px) {
+    .floating-badge {
+      left: 10px;
+      bottom: 10px;
+    }
+    .hero-big-title {
+      font-size: 2.8rem !important;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .hero-big-title {
+      font-size: 2.2rem !important;
+    }
+    .hero-btn-primary, .hero-btn-secondary {
+      width: 100%;
+      text-align: center;
+    }
+  }
 
 </style>
 </head>
@@ -1024,51 +1334,73 @@
 
 
 
-  <!-- Hero Section -->
-  <section id="hero" class="hero-section d-flex align-items-center text-center text-lg-start">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6" data-aos="fade-right">
-          <div class="hero-glass-card">
+  <!-- Hero & About Wrapper (with shared grid background & glows) -->
+  <div class="hero-about-wrapper">
+    <!-- Ambient Glow Blobs -->
+    <div class="ambient-glow glow-blue"></div>
+    <div class="ambient-glow glow-gold"></div>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section d-flex align-items-center text-center text-lg-start">
+      <div class="container" style="position: relative; z-index: 10;">
+        <div class="row align-items-center">
+          <div class="col-lg-6" data-aos="fade-right">
             <h1 class="hero-big-title">
               Complete <span class="highlight-posh">POSH</span> & <br>
               <span class="highlight-pocso">POCSO</span> Compliance
             </h1>
-            <p class="hero-crisp-desc mb-0">
-              Your trusted partner in building safe, respectful, and legally compliant workplaces.
-              We specialize in the Prevention of Sexual Harassment and Child Protection
-              consulting to empower organizations and institutions.
-            </p>
+            <div class="hero-desc-card">
+              <p class="hero-crisp-desc">
+                Your trusted partner in building safe, respectful, and legally compliant workplaces.
+                We specialize in the Prevention of Sexual Harassment and Child Protection
+                consulting to empower organizations and institutions.
+              </p>
+            </div>
+            <div class="hero-actions d-flex flex-wrap gap-3">
+              <a href="/tutorial" class="hero-btn-primary">
+                <i class="fas fa-graduation-cap me-2"></i>Register & Train
+              </a>
+              <a href="/why_choose_ohs" class="hero-btn-secondary">
+                Why Choose Us <i class="fas fa-arrow-right ms-2"></i>
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
-          <img src="{% static 'img/p1.webp' %}" alt="POSH and POCSO Training" width="600" height="400"
-            class="img-fluid rounded-3 shadow">
+          <div class="col-lg-6 mt-5 mt-lg-0" data-aos="fade-left">
+            <div class="hero-image-wrapper">
+              <!-- Glowing aura behind the image -->
+              <div class="image-glowing-aura"></div>
+              
+              <img src="{% static 'img/p1.webp' %}" alt="POSH and POCSO Training" width="600" height="400"
+                class="img-fluid rounded-4 hero-img-3d">
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-
-  <div class="container">
-    <main>
-      <!-- About Section -->
-      <div class="container my-5">
+    <!-- About Section -->
+    <section id="about" class="about-section">
+      <div class="container">
         <div class="row align-items-center">
           <div class="col-md-6" data-aos="fade-right">
-            <img src="{% static 'img/font4.webp' %}" class="img-fluid rounded shadow" alt="Group Collaboration"
-              width="600" height="400" />
+            <div class="about-image-wrapper">
+              <!-- Glowing aura behind the image -->
+              <div class="about-image-glow"></div>
+              <img src="{% static 'img/font4.webp' %}" class="img-fluid about-img-3d" alt="Group Collaboration"
+                width="600" height="400" />
+            </div>
           </div>
           <div class="col-md-6 ps-md-5 mt-4 mt-md-0" data-aos="fade-left">
-            <div class="about-glass-card">
-              <h6 class="text-primary text-uppercase fw-semibold mb-2">About Us</h6>
-              <h2 class="fw-bold mb-3" style="font-size: 2.5rem; color: #1e293b;">
-                Safe Workplaces, <br> Stronger Workforces
-              </h2>
-              <h4 class="text-secondary mb-4" style="font-size: 1.25rem;">Prevention of Sexual Harassment & Child Safety
-              </h4>
-              <p style="font-size: 1.15rem; line-height: 1.8; color: #475569;">
-                We help organizations achieve complete <span class="fw-bold text-primary">POSH Act compliance</span>
+            <h6 class="text-uppercase fw-semibold mb-2" style="color: #6366f1; letter-spacing: 1.5px; font-size: 0.95rem;">About Us</h6>
+            <h2 class="fw-bold mb-3" style="font-size: 2.8rem; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
+              Safe Workplaces, <br> Stronger Workforces
+            </h2>
+            <h4 class="mb-4" style="font-size: 1.2rem; color: #475569; font-weight: 500;">
+              Prevention of Sexual Harassment & Child Safety
+            </h4>
+            <div class="about-desc-card">
+              <p style="font-size: 1.15rem; line-height: 1.8; color: #334155; margin-bottom: 0;">
+                We help organizations achieve complete <span class="fw-bold" style="color: #6366f1;">POSH Act compliance</span>
                 while fostering a culture of safety, dignity, and respect.
                 Our expertise covers every aspect of compliance, including employee sensitisation, setting up Internal
                 Committees, and formulating clear policies.
@@ -1077,40 +1409,45 @@
           </div>
         </div>
       </div>
+    </section>
 
-      <!-- Impact Section -->
-      <section id="milestones">
-        <div class="container text-center">
-          <h2 class="section-title-impact" data-aos="fade-down">Our POSH Impact</h2>
-          <div class="row gy-4 justify-content-center">
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
-              <div class="impact-card style-gold">
-                <div class="icon-wrapper"><i class="fas fa-trophy"></i></div>
-                <h2 class="counter" data-target="10" data-plus="true">0</h2>
-                <p>Years of Excellence</p>
-                <span>Delivering top-notch training</span>
+    <div class="container">
+      <main>
+
+        <!-- Impact Section -->
+        <section id="milestones">
+          <div class="container text-center">
+            <h2 class="section-title-impact" data-aos="fade-down">Our POSH Impact</h2>
+            <div class="row gy-4 justify-content-center">
+              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                <div class="impact-card style-gold">
+                  <div class="icon-wrapper"><i class="fas fa-trophy"></i></div>
+                  <h2 class="counter" data-target="10" data-plus="true">0</h2>
+                  <p>Years of Excellence</p>
+                  <span>Delivering top-notch training</span>
+                </div>
               </div>
-            </div>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
-              <div class="impact-card style-blue">
-                <div class="icon-wrapper"><i class="fas fa-briefcase"></i></div>
-                <h2 class="counter" data-target="200" data-plus="true">0</h2>
-                <p>Cases Handled</p>
-                <span>Solved with legal precision</span>
+              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                <div class="impact-card style-blue">
+                  <div class="icon-wrapper"><i class="fas fa-briefcase"></i></div>
+                  <h2 class="counter" data-target="200" data-plus="true">0</h2>
+                  <p>Cases Handled</p>
+                  <span>Solved with legal precision</span>
+                </div>
               </div>
-            </div>
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-              <div class="impact-card style-pink">
-                <div class="icon-wrapper"><i class="fas fa-users"></i></div>
-                <h2 class="counter" data-target="15000" data-plus="true">0</h2>
-                <p>Candidates Trained</p>
-                <span>Empowered across industries</span>
+              <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="impact-card style-pink">
+                  <div class="icon-wrapper"><i class="fas fa-users"></i></div>
+                  <h2 class="counter" data-target="15000" data-plus="true">0</h2>
+                  <p>Candidates Trained</p>
+                  <span>Empowered across industries</span>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
+    </div>
   </div>
 
   <!-- Why Choose OHPL -->
@@ -1487,13 +1824,6 @@
   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js" defer></script>
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      fetch("../HTML/navbar.html").then(r => r.text()).then(d => {
-        document.getElementById("navbar-placeholder").innerHTML = d;
-        let script = document.createElement("script"); script.src = "../js/navbar.js"; document.body.appendChild(script);
-      });
-
-      fetch("footer.html").then(r => r.text()).then(d => { document.getElementById("footer-container").innerHTML = d; });
-
       const counters = document.querySelectorAll('.counter');
       const speed = 200;
       const animateCounters = () => {

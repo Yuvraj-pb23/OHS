@@ -573,7 +573,7 @@
   <style>
     .emp-poster-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(4, 1fr);
       gap: 1.25rem;
       margin-top: 1.25rem;
     }
@@ -620,18 +620,18 @@
     }
     .emp-poster-btn {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      padding: 0.45rem;
+      padding: 0.55rem 0;
       border-radius: var(--radius-md);
-      font-size: 0.68rem;
+      font-size: 0.76rem;
       font-weight: 700;
       text-decoration: none;
       border: 1px solid;
       transition: all 0.2s;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
     }
     .emp-poster-btn-view {
       background: rgba(99, 102, 241, 0.06);
@@ -651,8 +651,17 @@
       background: rgba(16, 185, 129, 0.12);
       color: var(--color-success);
     }
+    @media (max-width: 1200px) {
+      .emp-poster-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 900px) {
+      .emp-poster-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 600px) {
       .emp-poster-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    }
+    @media (max-width: 450px) {
+      .emp-poster-grid { grid-template-columns: 1fr; }
     }
   </style>
 
@@ -786,6 +795,9 @@
 
 {% block extra_scripts %}
 <script>
+  function isCourseComplete() {
+    return modules && modules.every(m => m.status === 'complete');
+  }
   {% if force_password_change %}
   // Submit temporary password update
   function submitPwChange() {
@@ -849,6 +861,9 @@
 
   // Navigation and multi-view switching
   function switchView(viewName, element) {
+    if (viewName !== 'training' && player && !player.paused) {
+      player.pause();
+    }
     document.getElementById('dashboard-view').style.display = viewName === 'dashboard' ? 'block' : 'none';
     document.getElementById('training-view').style.display = viewName === 'training' ? 'block' : 'none';
     document.getElementById('quizzes-view').style.display = viewName === 'quizzes' ? 'block' : 'none';
@@ -930,16 +945,19 @@
   }
 
   player.onpause = () => {
+    if (isCourseComplete()) return;
     syncWatchTime();
     saveVideoProgress();
     updateTotalStats();
   };
   window.addEventListener('pagehide', () => {
+    if (isCourseComplete()) return;
     syncWatchTime();
     saveVideoProgress();
     updateTotalStats();
   });
   window.addEventListener('beforeunload', () => {
+    if (isCourseComplete()) return;
     syncWatchTime();
     saveVideoProgress();
     updateTotalStats();
@@ -1133,8 +1151,10 @@
 
   function playVideo(idx) {
     if (!modules || modules.length === 0 || idx >= modules.length) return;
-    syncWatchTime();
-    saveVideoProgress();
+    if (!isCourseComplete()) {
+      syncWatchTime();
+      saveVideoProgress();
+    }
     currentIdx = idx;
     const mod = modules[idx];
     player.pause();
@@ -1414,6 +1434,13 @@
 
   // Study timer and watch time synchronization
   setInterval(() => {
+    if (isCourseComplete()) {
+      if (pendingSyncSeconds > 0) {
+        syncWatchTime();
+        saveVideoProgress();
+      }
+      return;
+    }
     const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
     const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex';
 
@@ -1447,6 +1474,7 @@
 
   player.onended = handleVideoComplete;
   player.ontimeupdate = () => {
+    if (isCourseComplete()) return;
     if (player.currentTime > furthestTime + 1.5) {
       player.currentTime = furthestTime;
     } else {

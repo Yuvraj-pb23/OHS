@@ -1877,7 +1877,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" onclick="showSection('certificates', this)">
+          <a class="nav-link" onclick="handleCertificatesTabClick(this)">
             <i class="bi bi-award"></i>
             <span>Certificates</span>
           </a>
@@ -4131,16 +4131,21 @@
     <!-- === SECTION 4: CERTIFICATES === -->
     <div id="certificates" class="content-section">
       <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <h2 class="section-title mb-0 text-center text-md-start w-100">
-          <i class="bi bi-award me-2"></i>Certificates
+        <h2 class="section-title mb-0 d-flex align-items-center justify-content-center justify-content-md-start gap-2">
+          <i class="bi bi-award"></i>Certificates
         </h2>
-        {% if certified_employees %}
-        <div class="search-wrapper">
-          <i class="bi bi-search search-icon"></i>
-          <input type="text" id="certificateSearch" class="form-control search-input"
-            placeholder="Search by employee name..." />
+        <div class="d-flex align-items-center gap-3 w-100 justify-content-md-end justify-content-center">
+          <button onclick="triggerCertLogoPopup()" class="btn btn-sm btn-outline-primary" style="border-color: rgba(99, 102, 241, 0.4); color: #818cf8; display: flex; align-items: center; gap: 6px; white-space: nowrap; border-radius: 8px; padding: 8px 16px; font-weight: 600; background: rgba(99, 102, 241, 0.05); cursor: pointer;">
+            <i class="bi bi-image"></i> Certificate Logo
+          </button>
+          {% if certified_employees %}
+          <div class="search-wrapper" style="margin: 0;">
+            <i class="bi bi-search search-icon"></i>
+            <input type="text" id="certificateSearch" class="form-control search-input"
+              placeholder="Search by employee name..." style="margin: 0;" />
+          </div>
+          {% endif %}
         </div>
-        {% endif %}
       </div>
 
       {% if certified_employees %}
@@ -4188,7 +4193,7 @@
           {% endif %}
 
           <div class="w-100 mt-auto">
-            <a href="{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}"
+            <a href="#" onclick="handleCertDownload(event, '{% url 'download_certificate' training_type %}?user_id={{ member.user.id }}')"
               class="btn btn-dark w-100" style="
                   background: #0f172a;
                   padding: 10px;
@@ -5962,6 +5967,229 @@
 
       // On every new page load, clear the navigation flag.
       sessionStorage.removeItem('_ohs_nav');
+    })();
+  </script>
+
+  <!-- Certificate Company Logo Modal -->
+  <div id="certLogoModal" class="custom-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s ease;">
+    <div class="custom-modal-card" style="background: rgba(30, 41, 59, 0.95); border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.08); padding: 24px; color: #f8fafc; transform: scale(0.9); transition: transform 0.3s ease; display: flex; flex-direction: column; gap: 16px; font-family: 'Plus Jakarta Sans', sans-serif;">
+      <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+        <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">Certificate Company Logo</h3>
+        <button onclick="closeCertLogoModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0;">&times;</button>
+      </div>
+      
+      <!-- Current Logo Preview -->
+      <div id="currentLogoContainer" style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <h4 style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; align-self: flex-start;">Current Logo</h4>
+        <div style="width: 100px; height: 100px; background: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px;">
+          <img id="modalLogoPreview" src="" alt="Current Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+        </div>
+        <span id="noLogoText" style="font-size: 0.88rem; color: #f43f5e; display: none; font-weight: 600; text-align: center;">No company logo uploaded yet.</span>
+      </div>
+
+      <!-- Upload Logo Form -->
+      <div style="padding: 15px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15);">
+        <h4 id="uploadTitleText" style="margin: 0 0 12px; font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">Upload Company Logo</h4>
+        <form id="certLogoForm" onsubmit="handleLogoUploadSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+          {% csrf_token %}
+          <div>
+            <input type="file" id="certLogoInput" accept="image/*" required style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 0.88rem;" />
+          </div>
+          <button type="submit" id="certLogoUploadBtn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+            <span id="uploadBtnText">Save & Apply Logo</span>
+            <div id="uploadSpinner" style="display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite;"></div>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <style>
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  </style>
+
+  <script>
+    // Certificate Logo Modal Logic (Vanilla CSS & JS)
+    (function() {
+      window.currentOrgLogoUrl = "{{ org_logo_url|default:'' }}";
+      window.pendingDownloadUrlAfterUpload = "";
+      window.pendingTabElementAfterUpload = null;
+
+      window.handleCertificatesTabClick = function(element) {
+        // If logo is already uploaded, open the certificates page immediately!
+        if (window.currentOrgLogoUrl) {
+          showSection('certificates', element);
+          return;
+        }
+
+        // Save the element for navigation after successful upload
+        window.pendingTabElementAfterUpload = element;
+
+        // Trigger the popup modal in "blocking tab mode"
+        window.triggerCertLogoPopup(true);
+      };
+
+      window.handleCertDownload = function(event, downloadUrl) {
+        if (event && event.preventDefault) event.preventDefault();
+        
+        // If there is already a logo, download immediately!
+        if (window.currentOrgLogoUrl) {
+          window.location.href = downloadUrl;
+          return;
+        }
+
+        // Otherwise, save the pending download URL and force the logo upload popup
+        window.pendingDownloadUrlAfterUpload = downloadUrl;
+
+        const modal = document.getElementById('certLogoModal');
+        const card = modal.querySelector('.custom-modal-card');
+        const previewImg = document.getElementById('modalLogoPreview');
+        const noLogoSpan = document.getElementById('noLogoText');
+        const uploadTitle = document.getElementById('uploadTitleText');
+
+        previewImg.style.display = 'none';
+        noLogoSpan.style.display = 'block';
+        noLogoSpan.innerText = '⚠️ A company logo is required before downloading certificates.';
+        uploadTitle.innerText = 'Upload Company Logo';
+
+        document.getElementById('certLogoInput').value = '';
+        
+        // Show modal with smooth animations
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+        }, 10);
+      };
+
+      window.triggerCertLogoPopup = function(isTabClick) {
+        // Reset pending downloads when opening via the tab/header button
+        window.pendingDownloadUrlAfterUpload = "";
+        if (!isTabClick) {
+          window.pendingTabElementAfterUpload = null;
+        }
+
+        const modal = document.getElementById('certLogoModal');
+        const card = modal.querySelector('.custom-modal-card');
+        const previewImg = document.getElementById('modalLogoPreview');
+        const noLogoSpan = document.getElementById('noLogoText');
+        const uploadTitle = document.getElementById('uploadTitleText');
+
+        if (window.currentOrgLogoUrl) {
+          previewImg.style.display = 'block';
+          previewImg.src = window.currentOrgLogoUrl;
+          noLogoSpan.style.display = 'none';
+          uploadTitle.innerText = 'Upload New Logo';
+        } else {
+          previewImg.style.display = 'none';
+          noLogoSpan.style.display = 'block';
+          if (isTabClick) {
+            noLogoSpan.innerText = '⚠️ A company logo is required to access the Certificates section. Please upload a logo first.';
+          } else {
+            noLogoSpan.innerText = 'No company logo uploaded yet.';
+          }
+          uploadTitle.innerText = 'Upload Company Logo';
+        }
+
+        document.getElementById('certLogoInput').value = '';
+        
+        // Show modal with smooth animations
+        modal.style.display = 'flex';
+        setTimeout(() => {
+          modal.style.opacity = '1';
+          card.style.transform = 'scale(1)';
+        }, 10);
+      };
+
+      window.closeCertLogoModal = function() {
+        const modal = document.getElementById('certLogoModal');
+        const card = modal.querySelector('.custom-modal-card');
+        modal.style.opacity = '0';
+        card.style.transform = 'scale(0.9)';
+        setTimeout(() => {
+          modal.style.display = 'none';
+          window.pendingTabElementAfterUpload = null;
+          window.pendingDownloadUrlAfterUpload = "";
+        }, 300);
+      };
+
+      window.handleLogoUploadSubmit = function(event) {
+        event.preventDefault();
+        const fileInput = document.getElementById('certLogoInput');
+        if (!fileInput.files || fileInput.files.length === 0) {
+          alert('Please select a logo image file to upload.');
+          return;
+        }
+
+        const file = fileInput.files[0];
+        const formData = new FormData();
+        formData.append('logo', file);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        const submitBtn = document.getElementById('certLogoUploadBtn');
+        const spinner = document.getElementById('uploadSpinner');
+        const btnText = document.getElementById('uploadBtnText');
+
+        submitBtn.disabled = true;
+        spinner.style.display = 'inline-block';
+        btnText.innerText = 'Saving...';
+
+        fetch('{% url "upload_org_logo" %}', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Upload failed with status ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.status === 'success') {
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.innerText = 'Save & Apply Logo';
+            
+            // Success! Save the new logo URL globally
+            window.currentOrgLogoUrl = data.logo_url;
+            
+            // Close the modal
+            closeCertLogoModal();
+            
+            // Show a nice feedback message to the admin
+            alert('Company logo uploaded successfully.');
+            
+            // If there was a pending tab navigation, navigate to it!
+            if (window.pendingTabElementAfterUpload) {
+              showSection('certificates', window.pendingTabElementAfterUpload);
+              window.pendingTabElementAfterUpload = null;
+            }
+            
+            // If there was a pending download blocked by the missing logo, trigger it now!
+            if (window.pendingDownloadUrlAfterUpload) {
+              window.location.href = window.pendingDownloadUrlAfterUpload;
+              window.pendingDownloadUrlAfterUpload = "";
+            }
+          } else {
+            alert('Error: ' + (data.message || 'Unknown error occurred.'));
+            submitBtn.disabled = false;
+            spinner.style.display = 'none';
+            btnText.innerText = 'Save & Apply Logo';
+          }
+        })
+        .catch(error => {
+          console.error('Error uploading logo:', error);
+          alert('Failed to upload company logo. Please try again.');
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnText.innerText = 'Save & Apply Logo';
+        });
+      };
     })();
   </script>
 

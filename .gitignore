@@ -5,6 +5,8 @@ staticfiles/
 db.sqlite3
 *.sqlite3
 *.sqlite3-journal
+**/migrations/*
+!**/migrations/__init__.py
 
 # --------------------
 # Python

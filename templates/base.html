@@ -52,7 +52,7 @@
 
         /* Transparent Glassy Navbar with Sky Blue Tint */
         .navbar {
-            background: linear-gradient(90deg, #040e3f 0%, #0d47a1 45%, #ffffff 100%) !important;
+            background: linear-gradient(90deg, #040e3f 0%, #0d47a1 45%, #ffffff 100%);
             /* Deep Navy to White Gradient */
             backdrop-filter: blur(15px) saturate(180%);
             /* Enhanced blur effect */
@@ -67,17 +67,17 @@
 
         /* Ensure nav links look good on the glassy background */
         .nav-link {
-            color: #000a7d !important;
+            color: #000a7d;
             font-weight: 600;
             transition: all 0.3s ease;
-            padding: 8px 15px !important;
-            border-bottom: 3px solid transparent !important;
+            padding: 8px 15px;
+            border-bottom: 3px solid transparent;
         }
 
         .nav-link:hover,
         .nav-link.active {
-            color: #000a7d !important;
-            border-bottom: 3px solid #ffb400 !important;
+            color: #000a7d;
+            border-bottom: 3px solid #ffb400;
         }
 
         .nav-link.active {
@@ -820,6 +820,155 @@
                 margin-left: 25% !important;
             }
         }
+
+        /* =========================================================
+           REDESIGNED GLASSMORPHIC NAVBAR OVERRIDES (LIGHT THEME)
+           ========================================================= */
+        #mainNavbar.navbar {
+            max-width: 1435px;
+            width: 92%;
+            left: 50%;
+            transform: translateX(-50%);
+            position: fixed;
+            top: 5px;
+            border-radius: 50px;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            border-bottom: none;
+            box-shadow: none;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            padding: 6px 24px;
+        }
+
+        #mainNavbar.navbar.navbar-scrolled {
+            background: rgba(26, 34, 65, 0.85); /* Brand Navy Glass */
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        #mainNavbar.navbar-scrolled .nav-link {
+            color: #f1f5f9;
+        }
+
+        #mainNavbar.navbar-scrolled .nav-link:hover {
+            color: #38bdf8 !important;
+        }
+
+        #mainNavbar.navbar-scrolled .nav-link.active {
+            color: #38bdf8 !important;
+        }
+
+        #mainNavbar.navbar-scrolled .user-greeting {
+            color: #38bdf8;
+        }
+
+        #mainNavbar.navbar-scrolled .hamburger span {
+            background: #ffffff;
+        }
+
+        #mainNavbar .nav-link {
+            color: #334155;
+            font-size: 1.08rem;
+            font-weight: 600;
+            padding: 6px 16px !important;
+            transition: color 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            border-bottom: none !important;
+            text-shadow: none;
+            background: transparent;
+        }
+
+        #mainNavbar .nav-link::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, #0d6efd 0%, #00d2ff 100%);
+            transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+            border-radius: 4px;
+            box-shadow: 0 1px 6px rgba(13, 110, 253, 0.35);
+        }
+
+        #mainNavbar .nav-link:hover {
+            color: #0d6efd !important;
+        }
+
+        #mainNavbar .nav-link:hover::after {
+            width: 65%;
+        }
+
+        #mainNavbar .nav-link.active {
+            color: #0d6efd !important;
+            font-weight: 700;
+        }
+
+        #mainNavbar .nav-link.active::after {
+            width: 65%;
+        }
+
+        #mainNavbar .btn-accounts {
+            background: linear-gradient(135deg, #0d6efd 0%, #00d2ff 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 6px 18px !important;
+        }
+
+        #mainNavbar .btn-accounts:hover {
+            background: linear-gradient(135deg, #0b5ed7 0%, #00a2cc 100%);
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 25px rgba(0, 210, 255, 0.3);
+            color: white;
+        }
+
+        #mainNavbar .user-greeting {
+            color: #0d6efd;
+        }
+
+        #mainNavbar .app-logo {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #mainNavbar .app-logo img {
+            height: 45px !important;
+            width: auto;
+            object-fit: contain;
+        }
+
+        #mainNavbar .app-logo:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            #mainNavbar.navbar {
+                width: 95%;
+                top: 10px;
+                padding: 10px 15px;
+            }
+            #mainNavbar .hamburger span {
+                background: #1e293b;
+            }
+            #mainNavbar .app-logo img {
+                height: 35px;
+            }
+            #mainNavbar .nav-link, 
+            #mainNavbar .user-greeting {
+                color: #ffffff;
+            }
+            #mainNavbar .nav-link.active {
+                background: rgba(255, 180, 0, 0.1);
+                border-bottom: none;
+            }
+            #mainNavbar .nav-link::after {
+                display: none;
+            }
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -845,7 +994,7 @@
     {% csrf_token %}
 
     <!-- Navbar -->
-    <nav class="navbar">
+    <nav class="navbar" id="mainNavbar">
         <div class="hamburger" id="hamburger">
             <span></span>
             <span></span>
@@ -1153,6 +1302,20 @@
                 e.stopPropagation();
             });
         }
+
+        // Navbar Scroll Class Toggle
+        const handleScroll = () => {
+            const nav = document.querySelector('.navbar');
+            if (nav) {
+                if (window.scrollY > 20) {
+                    nav.classList.add('navbar-scrolled');
+                } else {
+                    nav.classList.remove('navbar-scrolled');
+                }
+            }
+        };
+        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('DOMContentLoaded', handleScroll);
 
     </script>
     <script src="{% static 'js/chatbot.js' %}?v=12" defer></script>

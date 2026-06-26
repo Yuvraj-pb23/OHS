@@ -93,6 +93,43 @@ def upload_company_logo(request):
 
 
 @login_required(login_url="login")
+def upload_org_logo(request):
+    """View to upload organization/custom logo via AJAX for certificates"""
+    if request.method == "POST":
+        logo = request.FILES.get("logo") or request.FILES.get("company_logo")
+        if not logo:
+            return JsonResponse({"status": "error", "message": "No logo file selected."}, status=400)
+
+        current_user = request.user
+        membership = OrganizationMember.objects.filter(user=current_user).first()
+        
+        if membership:
+            # Save to organization
+            org = membership.organization
+            org.logo = logo
+            org.save()
+            logo_url = org.logo.url
+            # Also store in session for the current download session
+            request.session['temp_logo_path'] = org.logo.path
+        else:
+            # Save to a temporary folder in MEDIA_ROOT for individual users
+            from django.core.files.storage import default_storage
+            from django.core.files.base import ContentFile
+            import uuid
+            
+            ext = os.path.splitext(logo.name)[1]
+            temp_filename = f"temp_logos/{uuid.uuid4()}{ext}"
+            path = default_storage.save(temp_filename, ContentFile(logo.read()))
+            absolute_path = os.path.join(settings.MEDIA_ROOT, path)
+            
+            request.session['temp_logo_path'] = absolute_path
+            logo_url = default_storage.url(path)
+
+        return JsonResponse({"status": "success", "logo_url": logo_url})
+    return JsonResponse({"status": "error", "message": "Invalid request method."}, status=405)
+
+
+@login_required(login_url="login")
 def get_poster_with_logo(request, poster_type):
     """View to merge company logo into the poster and serve it (view or download)"""
     user = request.user
@@ -1356,6 +1393,8 @@ def company_dashboard(request):
         "logout_url": "hr_logout",
         "posh_policy": posh_policy,
         "show_policy_form": show_policy_form,
+        "has_organization": True,
+        "org_logo_url": org.logo.url if org.logo else None,
     }
 
 
@@ -1555,6 +1594,15 @@ def posh_act_page(request):
         activity = DailyActivity.objects.filter(user=user, date=d).first()
         chart_data.append(activity.minutes_watched if activity else 0)
 
+    has_organization = False
+    org_logo_url = None
+    membership = OrganizationMember.objects.filter(user=user).first()
+    if membership:
+        has_organization = True
+        org = membership.organization
+        if org.logo:
+            org_logo_url = org.logo.url
+
     context = {
         "video_modules": video_list,
         "ppt_modules": ppt_list,
@@ -1574,6 +1622,8 @@ def posh_act_page(request):
             user=user, assessment_type="POSH", is_passed=True
         ).exists(),
         "posh_video_url": "/posh-video-source/",
+        "has_organization": has_organization,
+        "org_logo_url": org_logo_url,
     }
 
     return render(request, "posh_act_page.html", context)
@@ -1993,6 +2043,15 @@ def pocso_act_page(request):
         activity = DailyActivity.objects.filter(user=user, date=d).first()
         chart_data.append(activity.minutes_watched if activity else 0)
 
+    has_organization = False
+    org_logo_url = None
+    membership = OrganizationMember.objects.filter(user=user).first()
+    if membership:
+        has_organization = True
+        org = membership.organization
+        if org.logo:
+            org_logo_url = org.logo.url
+
     context = {
         "video_modules": video_list,
         "ppt_modules": ppt_list,
@@ -2007,6 +2066,8 @@ def pocso_act_page(request):
         "final_quiz_completed": AssessmentProgress.objects.filter(
             user=user, assessment_type="POCSO", is_passed=True
         ).exists(),
+        "has_organization": has_organization,
+        "org_logo_url": org_logo_url,
     }
 
     return render(request, "pocso_act_page.html", context)
@@ -3062,8 +3123,23 @@ def download_certificate(request, course_type="POSH"):
                 else redirect("company_dashboard")
             )
 
-    # 2. Generate PDF
-    pdf_content = generate_certificate(certificate_user, course_type)
+    # 2. Check if company logo is uploaded (mandatory for organization members)
+    membership = OrganizationMember.objects.filter(user=certificate_user).first()
+    if membership:
+        org = membership.organization
+        custom_logo_path = request.session.get('temp_logo_path')
+        if not org.logo and not custom_logo_path:
+            cert_logger.warning(f"Download blocked: Organization '{org.name}' has no logo uploaded.")
+            messages.error(request, "A company logo is required before downloading certificates. Please upload a logo first.")
+            return (
+                redirect("company_dashboard")
+                if is_admin_download
+                else redirect("posh_act_page" if course_type == "POSH" else "pocso_act_page")
+            )
+
+    # 3. Generate PDF
+    custom_logo_path = request.session.get('temp_logo_path')
+    pdf_content = generate_certificate(certificate_user, course_type, custom_logo_path=custom_logo_path)
 
     if not pdf_content:
         cert_logger.error(f"generate_certificate returned None for user {certificate_user.id}, course {course_type}")

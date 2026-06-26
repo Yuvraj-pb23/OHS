@@ -1507,6 +1507,9 @@
         // Check if Final Quiz is completed (Passed from Django view)
         // If context variable doesn't exist, default to false
         const isFinalQuizDone = {% if final_quiz_completed %}true{% else %} false{% endif %};
+        function isCourseComplete() {
+            return isFinalQuizDone;
+        }
 
         // --- 15 POCSO PRACTICE QUESTIONS ---
         const questionBank = [
@@ -1584,16 +1587,19 @@
         }
 
         player.onpause = () => {
+            if (isCourseComplete()) return;
             syncWatchTime();
             saveVideoProgress();
             updateTotalStats();
         };
         window.addEventListener('pagehide', () => {
+            if (isCourseComplete()) return;
             syncWatchTime();
             saveVideoProgress();
             updateTotalStats();
         });
         window.addEventListener('beforeunload', () => {
+            if (isCourseComplete()) return;
             syncWatchTime();
             saveVideoProgress();
             updateTotalStats();
@@ -1930,8 +1936,10 @@
 
         // --- PLAYER & RESOURCE CONTROLS ---
         function playVideo(idx) {
-            syncWatchTime();
-            saveVideoProgress();
+            if (!isCourseComplete()) {
+                syncWatchTime();
+                saveVideoProgress();
+            }
 
             currentIdx = idx;
             const mod = modules[idx];
@@ -2310,6 +2318,7 @@
         };
 
         player.ontimeupdate = () => {
+            if (isCourseComplete()) return;
             // Prevent fast forwarding / skipping ahead
             if (player.currentTime > furthestTime + 1.5) {
                 player.currentTime = furthestTime;
@@ -2352,6 +2361,13 @@
         };
 
         setInterval(() => {
+            if (isCourseComplete()) {
+                if (pendingSyncSeconds > 0) {
+                    syncWatchTime();
+                    saveVideoProgress();
+                }
+                return;
+            }
             const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
             const isPPTOpen = (document.getElementById('pptModal').style.display === 'flex') || (document.getElementById('stageQuizContainer') && document.getElementById('stageQuizContainer').style.display === 'block');
 
