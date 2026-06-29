@@ -38,37 +38,54 @@ def send_welcome_email(
     training_link=None,
     designation=None,
 ):
-    """Send welcome email with login credentials.
-    Uses the EMPLOYEE_WELCOME EmailTemplate from DB if available, otherwise falls back to default.
+    """Send welcome email with login credentials asynchronously.
     """
-    from home.models import EmailTemplate
+    import threading
 
-    template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_WELCOME").first()
+    class SimpleUser:
+        def __init__(self, first_name, last_name, email):
+            self.first_name = first_name
+            self.last_name = last_name
+            self.email = email
+        def get_full_name(self):
+            if self.first_name or self.last_name:
+                return f"{self.first_name} {self.last_name}".strip()
+            return self.email
 
-    site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
+    user_data = SimpleUser(user.first_name, user.last_name, user.email)
 
-    if template and template.subject and template.body:
-        subject = template.subject
-        body = template.body.format(
-            name=user.first_name or user.email,
-            company_name=organization_name or "Open Hand Solution",
-            password=password,
-            email=user.email,
-            login_url=site_base,
-            designation=designation or "Employee",
-            training_link=site_base,
-        )
-    elif is_company_employee:
-        subject = "Welcome to Open Hand Solution – Your Training Account"
-        body = f"""Hello {user.first_name},
+    def _send_thread():
+        from home.models import EmailTemplate
+        try:
+            template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_WELCOME").first()
+        except Exception as db_err:
+            logger.warning(f"DB access in thread failed: {db_err}")
+            template = None
+
+        site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
+
+        if template and template.subject and template.body:
+            subject = template.subject
+            body = template.body.format(
+                name=user_data.first_name or user_data.email,
+                company_name=organization_name or "Open Hand Solution",
+                password=password,
+                email=user_data.email,
+                login_url=site_base,
+                designation=designation or "Employee",
+                training_link=site_base,
+            )
+        elif is_company_employee:
+            subject = "Welcome to Open Hand Solution – Your Training Account"
+            body = f"""Hello {user_data.first_name},
 
 Welcome to Open Hand Solution!
 
 Your training account has been created by {organization_name}. Here are your login credentials:
 
-Name:               {user.get_full_name() or user.first_name}
+Name:               {user_data.get_full_name() or user_data.first_name}
 Designation:        {designation or 'Employee'}
-Email / Username:   {user.email}
+Email / Username:   {user_data.email}
 Temporary Password: {password}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -82,16 +99,16 @@ If you have any questions, please contact your HR department.
 
 Best regards,
 Open Hand Solution Team"""
-    else:
-        subject = "Welcome to Open Hand Solution – Your Account Details"
-        body = f"""Hello {user.first_name},
+        else:
+            subject = "Welcome to Open Hand Solution – Your Account Details"
+            body = f"""Hello {user_data.first_name},
 
 Welcome to Open Hand Solution!
 
 Your account has been successfully created. Here are your login credentials:
 
-Name:     {user.get_full_name() or user.first_name}
-Email:    {user.email}
+Name:     {user_data.get_full_name() or user_data.first_name}
+Email:    {user_data.email}
 Password: {password}
 
 Please keep these credentials safe and secure.
@@ -99,18 +116,19 @@ Please keep these credentials safe and secure.
 Best regards,
 Open Hand Solution Team"""
 
-    try:
-        send_mail(
-            subject,
-            body,
-            settings.DEFAULT_FROM_EMAIL,
-            [user.email],
-            fail_silently=False,
-        )
-        return True
-    except Exception as e:
-        print(f"Error sending email: {e}")
-        return False
+        try:
+            send_mail(
+                subject,
+                body,
+                settings.DEFAULT_FROM_EMAIL,
+                [user_data.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            logger.error(f"Error sending async welcome email: {e}")
+
+    threading.Thread(target=_send_thread).start()
+    return True
 
 
 def send_password_change_email(user):

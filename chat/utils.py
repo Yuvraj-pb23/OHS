@@ -19,7 +19,7 @@ class ImageChatbot:
     Updated to support IRC button clicks that show image suggestions (up to 4 images per IRC).
     """
 
-    def __init__(self, model_path="image_chatbot_model.pkl"):
+    def __init__(self, model_path="chat/data/image_chatbot_model.pkl"):
         self.model_data = None
         self.vectorizer = None
         self.data = None
@@ -639,9 +639,11 @@ class TextChatbot:
 def main():
     try:
         text_chatbot = TextChatbot(
-            "chatbot_model.pkl", "label_encoder.pkl", "semantic_data.pkl"
+            "chat/data/chatbot_model.pkl",
+            "chat/data/label_encoder.pkl",
+            "chat/data/semantic_data.pkl",
         )
-        image_chatbot = ImageChatbot("image_chatbot_model.pkl")
+        image_chatbot = ImageChatbot("chat/data/image_chatbot_model.pkl")
 
         while True:
             print("\n" + "=" * 60)

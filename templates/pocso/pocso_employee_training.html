@@ -1200,6 +1200,7 @@
             btn.disabled = true;
             btn.textContent = 'Saving...';
             msg.textContent = '';
+            showGlobalLoader();
 
             const formData = new FormData();
             formData.append('new_password', newPw);
@@ -1217,13 +1218,16 @@
                         msg.style.color = '#27ae60';
                         msg.textContent = '✓ Password changed! Starting training...';
                         setTimeout(() => {
+                            hideGlobalLoader();
                             document.getElementById('pwChangeOverlay').style.display = 'none';
                         }, 900);
                     } else {
+                        hideGlobalLoader();
                         return res.text().then(t => { throw new Error(t); });
                     }
                 })
                 .catch(() => {
+                    hideGlobalLoader();
                     window.location.href = "{% url 'force_password_change' %}";
                 });
         }
@@ -1512,23 +1516,22 @@
         }
 
         // --- 15 POCSO PRACTICE QUESTIONS ---
-        const questionBank = [
-            { question: "Who is defined as a 'child' under the POCSO Act?", options: ["Under 14", "Under 16", "Under 18", "Under 21"], answer: 2 },
-            { question: "Is reporting of sexual offences mandatory under POCSO?", options: ["Yes, for everyone", "Only for parents", "Only for teachers", "It's optional"], answer: 0 },
-            { question: "Statement of the child must be recorded by the police in?", options: ["The Police Station", "The Child's Residence", "The Open Court", "The School"], answer: 1 },
-            { question: "Which court is designated for POCSO trials?", options: ["Family Court", "Special Court", "Consumer Court", "High Court"], answer: 1 },
-            { question: "Identity of the child in media can be revealed?", options: ["With parent consent", "By Chief Editor", "Never", "Only if child is 16+"], answer: 2 },
-            { question: "The Special Court shall take cognizance within?", options: ["30 Days", "60 Days", "90 Days", "No limit"], answer: 0 },
-            { question: "Medical exam of a girl child must be conducted by?", options: ["Any Doctor", "Female Doctor", "Nurse", "Police"], answer: 1 },
-            { question: "What is the penalty for false reporting under POCSO?", options: ["No penalty", "Fine only", "Imprisonment or Fine", "Job suspension"], answer: 2 },
-            { question: "Police recording statement of child must be in?", options: ["Police Uniform", "Plain Clothes", "Protective Gear", "Masks"], answer: 1 },
-            { question: "Special Courts should complete the trial within?", options: ["6 Months", "1 Year", "2 Years", "5 Years"], answer: 1 },
-            { question: "Does the POCSO Act apply to both boys and girls?", options: ["Only girls", "Only boys", "Yes, it is gender-neutral", "Only those in school"], answer: 2 },
-            { question: "Can a child be called to the police station for recording a statement?", options: ["Yes", "No", "Only if over 16", "Only if parents agree"], answer: 1 },
-            { question: "Mandatory reporting applies to?", options: ["Doctors", "Teachers", "General Public", "All of the above"], answer: 3 },
-            { question: "Who provides care and protection to the child after report?", options: ["CWC", "CEO", "NGO", "HR"], answer: 0 },
-            { question: "POCSO was enacted in which year?", options: ["2010", "2011", "2012", "2013"], answer: 2 }
-        ];
+        let questionBank = [];
+
+        // Fetch questions dynamically from backend
+        function fetchQuestions() {
+            return fetch('/ajax/get-assessment-questions/?type=POCSO_CORP')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        questionBank = data.questions;
+                    } else {
+                        console.error("Failed to load questions:", data.message);
+                    }
+                })
+                .catch(err => console.error("Error fetching questions:", err));
+        }
+        fetchQuestions();
 
         let quizSeconds = 600;
         let quizTimerInterval;
@@ -1647,6 +1650,7 @@
 
         // --- 3. NAVIGATION & TABS ---
         function showView(v) {
+            window.scrollTo(0, 0);
             if (v !== 'training' && player && !player.paused) {
                 player.pause();
             }
@@ -1808,6 +1812,7 @@
             window._alreadyCorrectCount = 0;
             window._correctQuestions = [];
             currentQuizSet = shuffleArray([...questionBank]).slice(0, 15);
+            sessionQuizSet = [...currentQuizSet];
             currentQuizSet.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
             
             document.getElementById('pq-game-area-stage').style.display = 'block';
@@ -2075,10 +2080,12 @@
 
         // --- PRACTICE QUIZ ---
         let qIdx = 0;
+        let sessionQuizSet = [];
         function initQuiz() {
             qIdx = 0; qScore = 0; quizSeconds = 600;
             window._alreadyCorrectCount = 0;
             currentQuizSet = [...questionBank];
+            sessionQuizSet = [...currentQuizSet];
             currentQuizSet.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
             document.getElementById('pq-game-area').style.display = 'block';
             document.getElementById('pq-result-area').style.display = 'none';
@@ -2230,14 +2237,17 @@
                 }
 
                 // Save score to AssessmentProgress backend
+                const answersPayload = sessionQuizSet.map(q => ({
+                    question: q.question,
+                    answer: q.userAnswer !== undefined ? q.userAnswer : -1
+                }));
+
                 fetch('/ajax/submit-assessment/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCsrfToken() },
                     body: JSON.stringify({
-                        type: 'POCSO',
-                        score: totalCorrect,
-                        total: currentQuizSet.length || 15,
-                        passed: passed
+                        type: 'POCSO_CORP',
+                        answers: answersPayload
                     })
                 }).then(res => res.json())
                   .then(data => console.log("POCSO Assessment score saved:", data))
@@ -2279,19 +2289,28 @@
         }
 
         // Unified Completion Logic
+        // Immediately show the completed cover after video finishes — no refresh needed
+        function showCompletedCover() {
+            player.pause();
+            player.style.display = 'none';
+            const cover = document.getElementById('video-cover');
+            if (cover) cover.style.display = 'flex';
+            const startBtn = document.querySelector('#video-cover .btn-start');
+            if (startBtn) {
+                startBtn.innerHTML = '&#10003; Module Completed';
+                startBtn.style.pointerEvents = 'auto';
+                startBtn.style.cursor = 'pointer';
+                startBtn.style.opacity = '1';
+            }
+        }
+
         function handleVideoComplete() {
             console.log('handleVideoComplete called, currentIdx:', currentIdx);
-            console.log('modules array:', modules);
-            console.log('Current module:', modules[currentIdx]);
 
             if (modules[currentIdx]) {
                 const wasComplete = modules[currentIdx].status === 'complete';
-                const backendNotified = modules[currentIdx].backendSaved || false;
-
-                console.log('Module status:', modules[currentIdx].status, 'Backend notified:', backendNotified);
 
                 if (!wasComplete) {
-                    console.log('Marking module complete in UI');
                     modules[currentIdx].status = 'complete';
 
                     // Optimistic UI Update
@@ -2301,14 +2320,11 @@
                     renderModules();
                     renderPPTList();
                     updateTotalStats();
-                    markComplete(mod.id);
-                } else {
-                    console.log('Backend already notified, skipping API call');
+                    markComplete(modules[currentIdx].id);
                 }
-            } else {
-                console.log('currentIdx invalid or module not found');
             }
             saveVideoProgress();
+            showCompletedCover();
         }
 
         // Fallback: Standard 'ended' event
@@ -2317,10 +2333,18 @@
             handleVideoComplete();
         };
 
+        // Block seeking/fast-forwarding: fires as soon as user drags the seek bar
+        player.addEventListener('seeking', () => {
+            if (isCourseComplete()) return;
+            if (player.currentTime > furthestTime + 0.3) {
+                player.currentTime = furthestTime;
+            }
+        });
+
         player.ontimeupdate = () => {
             if (isCourseComplete()) return;
             // Prevent fast forwarding / skipping ahead
-            if (player.currentTime > furthestTime + 1.5) {
+            if (player.currentTime > furthestTime + 0.3) {
                 player.currentTime = furthestTime;
             } else {
                 furthestTime = Math.max(furthestTime, player.currentTime);
@@ -2350,14 +2374,7 @@
                 player.lastTrackedTime = currentRealTime;
             }
 
-            // Duration Check Fallback
-            if (player.duration > 0) {
-                const thresh = player.duration * 0.95;
-                if (player.currentTime > thresh) {
-                    console.log('Video reached 95% threshold, currentTime:', player.currentTime, 'duration:', player.duration);
-                    handleVideoComplete();
-                }
-            }
+            // Completion is handled solely by player.onended — no early threshold
         };
 
         setInterval(() => {

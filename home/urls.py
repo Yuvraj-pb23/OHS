@@ -12,22 +12,14 @@ urlpatterns = [
     path("gallery/", views.gallery, name="gallery"),
     path("achievements/", views.achievements, name="achievements"),
     path("footer/", views.footer, name="footer"),
-    path("posh_T/", views.posh_T, name="posh_T"),
     path("workplace/", views.workplace, name="workplace"),
     path("legal/", views.legal, name="legal"),
-    path("blogdata/", views.blogdata, name="blogdata"),
     path("why_choose_ohs/", views.why_choose_ohs, name="why_choose_ohs"),
-    path("posh-compliance/", views.posh_compliance, name="posh_compliance"),
-    path("posh-registration/", views.posh_registration_view, name="posh_registration"),
     path(
         "registration-selection/",
         views.registration_selection_view,
         name="registration_selection",
     ),
-    path(
-        "pocso-registration/", views.pocso_registration_view, name="pocso_registration"
-    ),
-    path("pocso-billing/", views.pocso_billing_view, name="pocso_billing"),
     # --- MAIN TUTORIAL / TRAINING LANDING ---
     path("tutorial/", views.tutorial_view, name="tutorial"),
     # --- FORCE PASSWORD CHANGE (First-time login) ---
@@ -36,39 +28,15 @@ urlpatterns = [
         views.force_password_change,
         name="force_password_change",
     ),
-    # --- INTERMEDIATE COURSE INFO PAGES ---
-    path("posh-individual-info/", views.posh_i, name="posh_i_page"),
-    path("posh-company-info/", views.posh_c, name="posh_c_page"),
-    path("pocso-individual-info/", views.pocso_i, name="pocso_i_page"),
-    path("pocso-company-info/", views.pocso_c, name="pocso_c_page"),
-    # --- ASSESSMENTS ---
-    path("posh_assessment/", views.posh_assessment, name="posh_assessment"),
-    path("pocso_assessment/", views.pocso_assessment, name="pocso_assessment"),
-    # --- SECURE TRAINING PAGES (Accessed after login/subscription) ---
-    path("tutorial/posh-act/", views.posh_act_page, name="posh_act_page"),
-    path("tutorial/pocso-act/", views.pocso_act_page, name="pocso_act_page"),
-    # backward compatibility for 'pocso_act' name:
-    path("tutorial/pocso-act-legacy/", views.pocso_act_page, name="pocso_act"),
-    # --- COMPANY EMPLOYEE TRAINING PAGES (no certificate) ---
-    path(
-        "tutorial/posh-act-corp/", views.posh_act_page_corp, name="posh_act_page_corp"
-    ),
-    path(
-        "tutorial/pocso-act-corp/",
-        views.pocso_act_page_corp,
-        name="pocso_act_page_corp",
-    ),
-    # --- CHATBOT ---
-    path("chat/", views.chatbot_response, name="chatbot_response"),
     # --- AJAX API for Training ---
     path("ajax/update-watch-time/", views.update_watch_time, name="update_watch_time"),
     path("ajax/mod-complete/<int:module_id>/", views.mod_complete, name="mod_complete"),
+    path("ajax/get-assessment-questions/", views.get_assessment_questions, name="get_assessment_questions"),
     path("ajax/submit-assessment/", views.submit_assessment, name="submit_assessment"),
     path("ajax/reset-progress/", views.reset_progress, name="reset_progress"),
     path("ajax/save-video-progress/", views.save_video_progress, name="save_video_progress"),
     path("ajax/member-progress/<int:member_id>/", views.member_progress_api, name="member_progress_api"),
     path("ajax/upload-org-logo/", views.upload_org_logo, name="upload_org_logo"),
-    path("posh-video-source/", views.posh_video_source, name="posh_video_source"),
     # --- SUBSCRIPTION FLOWS ---
     path(
         "subscription/individual/<str:plan_type>/",
@@ -101,7 +69,6 @@ urlpatterns = [
     ),
     # --- COMPANY DASHBOARD & MANAGEMENT ---
     path("dashboard/company/", views.company_dashboard, name="company_dashboard"),
-    path("dashboard/company/generate-policy/", views.generate_posh_policy, name="generate_posh_policy"),
     path("dashboard/company", views.company_dashboard),
     # Backward-compatible aliases for older bookmarks/links
     path("company-dashboard/", views.company_dashboard),
@@ -139,7 +106,6 @@ urlpatterns = [
         name="download_certificate",
     ),
     path("402/", views.custom_402, name="402"),
-    path("billing/", views.billing_view, name="billing"),
     # --- ACCOUNTS PORTAL ---
     path("accounts-portal/login/", views.accounts_login_view, name="accounts_login"),
     path(
@@ -152,51 +118,6 @@ urlpatterns = [
     path("training/logout/", views.training_logout, name="training_logout"),
     path("session/tab-close/", views.tab_close_logout, name="tab_close_logout"),
     path(
-        "accounts-portal/save-pricing/",
-        views.accounts_save_pricing_view,
-        name="accounts_save_pricing",
-    ),
-    path(
-        "billing/submit-payment/<int:registration_id>/",
-        views.submit_payment_view,
-        name="submit_payment",
-    ),
-    path(
-        "accounts-portal/verify-payment/<int:registration_id>/",
-        views.accounts_verify_payment_view,
-        name="accounts_verify_payment",
-    ),
-    path(
-        "accounts-portal/reject-payment/<int:registration_id>/",
-        views.accounts_reject_payment_view,
-        name="accounts_reject_payment",
-    ),
-    path(
-        "accounts-portal/registration/<int:registration_id>/",
-        views.accounts_registration_detail_view,
-        name="accounts_registration_detail",
-    ),
-    path(
-        "accounts-portal/save-pocso-pricing/",
-        views.accounts_save_pocso_pricing_view,
-        name="accounts_save_pocso_pricing",
-    ),
-    path(
-        "accounts-portal/verify-pocso-payment/<int:registration_id>/",
-        views.accounts_verify_pocso_payment_view,
-        name="accounts_verify_pocso_payment",
-    ),
-    path(
-        "accounts-portal/reject-pocso-payment/<int:registration_id>/",
-        views.accounts_reject_pocso_payment_view,
-        name="accounts_reject_pocso_payment",
-    ),
-    path(
-        "accounts-portal/pocso-registration/<int:registration_id>/",
-        views.accounts_pocso_registration_detail_view,
-        name="accounts_pocso_registration_detail",
-    ),
-    path(
         "accounts-portal/save-email-templates/",
         views.accounts_save_email_templates_view,
         name="accounts_save_email_templates",
@@ -205,5 +126,10 @@ urlpatterns = [
         "billing/trigger-tier-email/",
         views.trigger_tier_email_view,
         name="trigger_tier_email",
+    ),
+    path(
+        "billing/submit-payment/<int:registration_id>/",
+        views.submit_payment_view,
+        name="submit_payment",
     ),
 ]

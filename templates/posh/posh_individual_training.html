@@ -22,10 +22,6 @@
   <i class="bi bi-patch-question"></i>
   <span>Quizzes</span>
 </button>
-<button class="nav-item" id="nav-posters" onclick="switchView('posters', this)">
-  <i class="bi bi-images"></i>
-  <span>Posters</span>
-</button>
 {% endblock %}
 
 {% block extra_styles %}
@@ -131,7 +127,7 @@
     background-position: center;
   }
 
-  .training-modal {
+  .ppt-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -144,7 +140,7 @@
     justify-content: center;
     align-items: center;
   }
-  .training-content {
+  .ppt-content {
     width: 90%;
     height: 85%;
     background: white;
@@ -220,6 +216,15 @@
   }
 
 
+
+  .btn-disabled {
+    background: var(--locked) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-muted) !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    box-shadow: none !important;
+  }
 
   @media (max-width: 992px) {
     .bottom-grid {
@@ -471,29 +476,54 @@
   <!-- Section Header Bar -->
   <div class="page-header-bar fade-in-up">
     <h1 class="page-section-title" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">Training Modules</h1>
-    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Watch all the training video modules and complete quizzes to finish the course.</p>
+    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Watch all the training video modules and read legal resources to complete the course.</p>
   </div>
-  <!-- Video Player Card -->
-  <div class="glass-card" style="padding: 0; overflow: hidden; border-radius: var(--radius-xl);">
-    <div id="video-stage">
-      <div class="stage-container" style="border-radius: 0; box-shadow: none;">
-        <div id="video-cover" class="content-cover">
-          <div class="cover-overlay"></div>
-          <h2 id="cover-title">Module Title</h2>
-          <button class="btn-start" onclick="startVideo()">
-            ▶ Start Module
-          </button>
-        </div>
-        <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none">
-          <source src="{{ posh_video_url }}" type="video/mp4" />
-        </video>
+  <!-- Video Player Stage -->
+  <div id="video-stage" class="glass-card" style="padding: 0; overflow: hidden; border-radius: var(--radius-xl);">
+    <div class="stage-container" style="border-radius: 0; box-shadow: none;">
+      <div id="video-cover" class="content-cover">
+        <div class="cover-overlay"></div>
+        <h2 id="cover-title">Module Title</h2>
+        <button class="btn-start" onclick="startVideo()">
+          ▶ Start Module
+        </button>
+      </div>
+      <video id="mainPlayer" controls controlsList="nodownload" oncontextmenu="return false;" style="display: none">
+        <source src="{{ posh_video_url }}" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+
+  <!-- PPT Stage -->
+  <div id="ppt-stage" class="glass-card" style="padding: 0; overflow: hidden; border-radius: var(--radius-xl); display: none;">
+    <div class="stage-container" style="border-radius: 0; box-shadow: none;">
+      <div id="ppt-main-cover" class="content-cover">
+        <div class="cover-overlay"></div>
+        <h2 id="ppt-main-title">Resource Title</h2>
+        <button class="btn-start" id="ppt-start-btn" onclick="triggerPPTAction()">
+          📂 Open Resource
+        </button>
       </div>
     </div>
   </div>
   
-  <!-- Module List Card -->
+  <!-- Module/PPT Lists Card -->
   <div class="glass-card" style="margin-top: var(--space-5);">
-    <div id="module-list"></div>
+    <div class="tab-header" style="margin-bottom: var(--space-4);">
+      <button class="tab-btn active" id="tab-vids" onclick="switchTab('vids')">
+        Video Modules
+      </button>
+      <button class="tab-btn" id="tab-ppts" onclick="switchTab('ppts')">
+        PPT & Resources
+      </button>
+    </div>
+    
+    <div id="vids-section">
+      <div id="module-list"></div>
+    </div>
+    <div id="ppts-section" style="display: none;">
+      <div id="ppt-list"></div>
+    </div>
   </div>
 </div>
 
@@ -503,6 +533,43 @@
   <div class="page-header-bar fade-in-up">
     <h1 class="page-section-title" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">Module Quizzes</h1>
     <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Complete the training module first to unlock the assessment.</p>
+  </div>
+  <!-- Final Assessment Card -->
+  <div class="glass-card" style="margin-bottom: var(--space-5);">
+    <div class="card-widget-title">Final Assessment</div>
+    
+    {% if is_final_quiz_passed %}
+      <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.15); border-radius: var(--radius-md); padding: var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <div>
+          <h3 style="color: var(--color-success); font-weight: 800; font-size: 1.2rem; margin-bottom: 5px;">🏆 Assessment Completed!</h3>
+          <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0;">Congratulations, you have passed the POSH assessment. You can now download your certificate.</p>
+        </div>
+        <a href="#" onclick="handleCertDownload(event, '{% url 'download_certificate' 'POSH' %}')" class="quick-action-btn btn-start" id="btn-download-cert" style="text-decoration: none; margin: 0; display: inline-flex; align-items: center; gap: 8px;">
+          <i class="bi bi-cloud-arrow-down-fill"></i> Download Certificate
+        </a>
+      </div>
+    {% else %}
+      <div style="background: rgba(99, 102, 241, 0.04); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: var(--space-4); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+        <div style="flex: 1; min-width: 280px;">
+          <h3 style="color: var(--text-primary); font-weight: 800; font-size: 1.2rem; margin-bottom: 5px;">
+            <span id="quiz-lock-icon">🔒</span> POSH Certification Exam
+          </h3>
+          <p style="color: var(--text-secondary); font-size: 0.92rem; margin: 0;" id="quiz-instruction-text">
+            Complete all Training Videos and Legal Resources/PPTs to unlock the final quiz. Pass to earn your certificate.
+          </p>
+        </div>
+        <div>
+          <button onclick="attemptFinalQuiz()" class="quick-action-btn btn-start disabled" id="nav-final-quiz" style="margin: 0; display: inline-flex; align-items: center; gap: 8px;">
+            Start Assessment <i class="bi bi-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Locked Certificate Hint -->
+      <div id="cert-lock-msg" style="margin-top: 15px; color: var(--text-muted); font-size: 0.88rem; font-weight: 600; text-align: center;">
+        ⚠️ Certificate will unlock once you complete the training and pass this assessment.
+      </div>
+    {% endif %}
   </div>
 
   <!-- Quiz Stage Card -->
@@ -557,247 +624,63 @@
     </div>
   </div>
 
+  <!-- Practice Quizzes list -->
   <div class="glass-card" style="margin-top: var(--space-5);">
     <div id="quizzes-module-list"></div>
   </div>
 </div>
 
-<!-- POSTERS VIEW -->
-<div id="posters-view" class="view-section" style="display: none;">
-  <!-- Section Header -->
-  <div class="page-header-bar fade-in-up">
-    <h1 class="page-section-title" style="font-size: 1.6rem; font-weight: 800; color: var(--text-primary); margin-bottom: 4px;">Awareness Posters</h1>
-    <p style="color: var(--text-secondary); font-size: 0.95rem; margin: 0;">Download and print these POSH awareness posters for your workplace.</p>
-  </div>
-
-  <style>
-    .emp-poster-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1.25rem;
-      margin-top: 1.25rem;
-    }
-    .emp-poster-card {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-      box-shadow: var(--shadow-sm);
-    }
-    .emp-poster-card:hover {
-      border-color: var(--color-primary);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 30px -8px rgba(99, 102, 241, 0.2);
-    }
-    .emp-poster-thumb {
-      width: 100%;
-      aspect-ratio: 3/4;
-      object-fit: cover;
-      object-position: top;
-      display: block;
-      background: #f1f5f9;
-    }
-    .emp-poster-body {
-      padding: 0.85rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.6rem;
-      flex: 1;
-    }
-    .emp-poster-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      line-height: 1.3;
-    }
-    .emp-poster-actions {
-      display: flex;
-      gap: 0.4rem;
-      margin-top: auto;
-    }
-    .emp-poster-btn {
-      flex: 1;
-      padding: 0.55rem 0;
-      border-radius: var(--radius-md);
-      font-size: 0.76rem;
-      font-weight: 700;
-      text-decoration: none;
-      border: 1px solid;
-      transition: all 0.2s;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-    }
-    .emp-poster-btn-view {
-      background: rgba(99, 102, 241, 0.06);
-      color: var(--color-primary);
-      border-color: rgba(99, 102, 241, 0.2);
-    }
-    .emp-poster-btn-view:hover {
-      background: rgba(99, 102, 241, 0.12);
-      color: var(--color-primary);
-    }
-    .emp-poster-btn-download {
-      background: rgba(16, 185, 129, 0.06);
-      color: var(--color-success);
-      border-color: rgba(16, 185, 129, 0.2);
-    }
-    .emp-poster-btn-download:hover {
-      background: rgba(16, 185, 129, 0.12);
-      color: var(--color-success);
-    }
-    @media (max-width: 1200px) {
-      .emp-poster-grid { grid-template-columns: repeat(3, 1fr); }
-    }
-    @media (max-width: 900px) {
-      .emp-poster-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 600px) {
-      .emp-poster-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-    }
-    @media (max-width: 450px) {
-      .emp-poster-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-
-  <div class="emp-poster-grid">
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster.webp" alt="POSH Act Guidelines" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">POSH Act Guidelines</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
+<!-- PPT / Quiz Modal Overlay -->
+<div class="ppt-modal" id="pptModal">
+  <div class="ppt-content">
+    <button onclick="closeModal()" style="
+          position: absolute;
+          right: 20px;
+          top: 20px;
+          width: 40px;
+          height: 40px;
+          background: var(--color-danger);
+          color: white;
+          border-radius: 50%;
+          border: none;
+          cursor: pointer;
+          z-index: 1100;
+          font-size: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+      &times;
+    </button>
+    <div id="ppt-timer-badge" style="
+          position: absolute;
+          left: 20px;
+          top: 10px;
+          background: var(--color-primary);
+          color: white;
+          padding: 5px 15px;
+          border-radius: 20px;
+          font-size: 12px;
+          z-index: 1100;
+          display: none;
+          font-weight: 700;
+        ">
+      Time: 0s
     </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 2.webp" alt="Spot It – Stop It" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Spot It – Stop It</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 2.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 2.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 3.webp" alt="Respectful Workplace" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Respectful Workplace</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 3.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 3.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 4.webp" alt="Zero Tolerance Policy" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Zero Tolerance Policy</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 4.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 4.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 5.webp" alt="Equality vs Equity" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Equality vs Equity</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 5.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 5.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 6.webp" alt="Compliance &amp; Care" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Compliance &amp; Care</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 6.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 6.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 7.webp" alt="Types of Harassment (Hindi)" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Types of Harassment (Hindi)</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 7.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 7.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 8.webp" alt="Respect is Non-Negotiable" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Respect is Non-Negotiable</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 8.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 8.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/POSH Poster 9.webp" alt="Culture &amp; Safety" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Culture &amp; Safety</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/POSH Poster 9.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/POSH Poster 9.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/posh-pocso.webp" alt="Combined POSH &amp; POCSO" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">Combined POSH &amp; POCSO</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/posh-pocso.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/posh-pocso.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="emp-poster-card">
-      <img src="/media/Posters/posh-company.webp" alt="POSH Corporate Guidelines" class="emp-poster-thumb">
-      <div class="emp-poster-body">
-        <p class="emp-poster-title">POSH Corporate Guidelines</p>
-        <div class="emp-poster-actions">
-          <a href="/media/Posters/posh-company.webp" target="_blank" class="emp-poster-btn emp-poster-btn-view"><i class="bi bi-eye"></i> View</a>
-          <a href="/media/Posters/posh-company.webp" download class="emp-poster-btn emp-poster-btn-download"><i class="bi bi-download"></i> Save</a>
-        </div>
-      </div>
-    </div>
-
+    
+    <iframe id="pptFrame" src="" style="width: 100%; height: 100%; border: none; display: none;" oncontextmenu="return false;"></iframe>
   </div>
 </div>
-
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
+  // Global check variables
+  const isFinalQuizPassed = {% if is_final_quiz_passed %}true{% else %}false{% endif %};
   function isCourseComplete() {
-    return modules && modules.every(m => m.status === 'complete');
+    return isFinalQuizPassed;
   }
+
   {% if force_password_change %}
   // Submit temporary password update
   function submitPwChange() {
@@ -820,6 +703,7 @@
     btn.disabled = true;
     btn.textContent = "Saving...";
     msg.textContent = "";
+    showGlobalLoader();
 
     const formData = new FormData();
     formData.append("new_password", newPw);
@@ -840,9 +724,11 @@
           msg.style.color = "#27ae60";
           msg.textContent = "✓ Password changed! Starting training...";
           setTimeout(() => {
+            hideGlobalLoader();
             document.getElementById("pwChangeOverlay").style.display = "none";
           }, 900);
         } else {
+          hideGlobalLoader();
           msg.style.color = "#c62828";
           msg.textContent = "⚠ " + (data.message || "Something went wrong.");
           btn.disabled = false;
@@ -850,6 +736,7 @@
         }
       })
       .catch(() => {
+        hideGlobalLoader();
         window.location.href = "{% url 'force_password_change' %}";
       });
   }
@@ -861,13 +748,13 @@
 
   // Navigation and multi-view switching
   function switchView(viewName, element) {
+    window.scrollTo(0, 0);
     if (viewName !== 'training' && player && !player.paused) {
       player.pause();
     }
     document.getElementById('dashboard-view').style.display = viewName === 'dashboard' ? 'block' : 'none';
     document.getElementById('training-view').style.display = viewName === 'training' ? 'block' : 'none';
     document.getElementById('quizzes-view').style.display = viewName === 'quizzes' ? 'block' : 'none';
-    document.getElementById('posters-view').style.display = viewName === 'posters' ? 'block' : 'none';
     
     // Update active class on sidebar navigation items
     const navItems = document.querySelectorAll('.sidebar .nav-item');
@@ -881,8 +768,7 @@
       const targetId = {
         'dashboard': 'nav-dash',
         'training': 'nav-train',
-        'quizzes': 'nav-quiz',
-        'posters': 'nav-posters'
+        'quizzes': 'nav-quiz'
       }[viewName];
       const targetBtn = document.getElementById(targetId);
       if (targetBtn) targetBtn.classList.add('active');
@@ -890,10 +776,11 @@
 
     if (viewName === 'dashboard') {
       renderModules();
+      renderPPTList();
       updateTotalStats();
     } else if (viewName === 'quizzes') {
-      renderModules();
-      const firstQuizIdx = modules.findIndex(m => m.isQuiz);
+      renderPPTList();
+      const firstQuizIdx = ppts.findIndex(p => p.title.toLowerCase().includes('quiz'));
       if (firstQuizIdx !== -1) {
         selectQuiz(firstQuizIdx);
       }
@@ -908,6 +795,7 @@
   // Active module index and video progress variables
   const player = document.getElementById('mainPlayer');
   let currentIdx = 0;
+  let currentPPTIdx = 0;
   let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
   let furthestTime = 0;
   let pendingSyncSeconds = 0;
@@ -978,6 +866,19 @@
     {% endfor %}
   ];
 
+  const ppts = [
+    {% for m in ppt_modules %}
+    {            
+      id: {{ m.id }},
+      type: 'slide',
+      title: "{{ m.title|escapejs }}",
+      status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
+      thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1586281380349-632531db7ed4?auto=format&fit=crop&q=80&w=600' }}",
+      url: "{{ m.url }}"
+    },
+    {% endfor %}
+  ];
+
   const questionBank = [
     { question: "What does POSH stand for?", options: ["Prevention of Social Harassment Act", "Prevention of Sexual Harassment Act", "Protection of Sexual Harassment Act", "Policy on Safety and Harassment Act"], answer: 1 },
     { question: "In which year was the POSH Act enacted in India?", options: ["2010", "2012", "2013", "2015"], answer: 2 },
@@ -1028,7 +929,6 @@
   let quizTimerInterval;
   let currentQuizSet = [];
   let qIdx = 0;
-  let qScore = 0;
 
   function markComplete(moduleId) {
     fetch(`/ajax/mod-complete/${moduleId}/`, {
@@ -1041,27 +941,71 @@
     if (document.hidden && !player.paused) player.pause();
   });
 
-  // Render video modules list and quiz modules separately
+  // Switch between Video list and PPT resource list in Training View
+  function switchTab(type) {
+    document.getElementById('tab-vids').classList.toggle('active', type === 'vids');
+    document.getElementById('tab-ppts').classList.toggle('active', type === 'ppts');
+    document.getElementById('vids-section').style.display = type === 'vids' ? 'block' : 'none';
+    document.getElementById('ppts-section').style.display = type === 'ppts' ? 'block' : 'none';
+    document.getElementById('video-stage').style.display = type === 'vids' ? 'block' : 'none';
+    document.getElementById('ppt-stage').style.display = type === 'ppts' ? 'block' : 'none';
+
+    if (type === 'ppts') {
+      player.pause();
+      renderPPTList();
+      selectResource(currentPPTIdx);
+    } else {
+      closeModal();
+      renderModules();
+      playVideo(currentIdx);
+    }
+  }
+
+  // Render video modules list (Videos only)
   function renderModules() {
     const list = document.getElementById('module-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    modules.forEach((mod, i) => {
+      const item = document.createElement('div');
+      item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
+      item.onclick = () => {
+        if (mod.status !== 'locked') {
+          currentIdx = i;
+          switchView('training');
+          switchTab('vids');
+          playVideo(i);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      };
+      item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+      list.appendChild(item);
+    });
+    updateChart();
+  }
+
+  // Render PPT resource list and separate out quiz slides into the quizzes-view
+  function renderPPTList() {
+    const list = document.getElementById('ppt-list');
     const quizList = document.getElementById('quizzes-module-list');
     if (!list) return;
     list.innerHTML = '';
     if (quizList) quizList.innerHTML = '';
 
-    modules.forEach((mod, i) => {
+    ppts.forEach((ppt, i) => {
       const item = document.createElement('div');
-      item.className = `record-item ${mod.status === 'locked' ? 'locked' : ''}`;
+      item.className = `record-item ${ppt.status === 'locked' ? 'locked' : ''}`;
 
-      if (mod.isQuiz) {
+      if (ppt.title.toLowerCase().includes('quiz')) {
         item.onclick = () => {
-          if (mod.status === 'locked') {
-            alert('🔒 Complete the video module first to unlock the Quiz.');
+          if (ppt.status === 'locked') {
+            alert('🔒 Complete previous modules first to unlock this Quiz.');
             return;
           }
           selectQuiz(i);
         };
-        item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+        item.innerHTML = `<div class="thumb-box" style="background-image:url('${ppt.thumb}')"></div><div><h3>${ppt.title}</h3></div><span class="badge bg-${ppt.status}">${ppt.status}</span>`;
         if (quizList) {
           quizList.appendChild(item);
         } else {
@@ -1069,14 +1013,15 @@
         }
       } else {
         item.onclick = () => {
-          if (mod.status !== 'locked') {
-            currentIdx = i;
+          if (ppt.status !== 'locked') {
+            currentPPTIdx = i;
             switchView('training');
-            playVideo(i);
+            switchTab('ppts');
+            selectResource(i);
             window.scrollTo({ top: 0, behavior: 'smooth' });
           }
         };
-        item.innerHTML = `<div class="thumb-box" style="background-image:url('${mod.thumb}')"></div><div><h3>${mod.title}</h3></div><span class="badge bg-${mod.status}">${mod.status}</span>`;
+        item.innerHTML = `<div class="thumb-box" style="background-image:url('${ppt.thumb}')"></div><div><h3>${ppt.title}</h3></div><span class="badge bg-${ppt.status}">${ppt.status}</span>`;
         list.appendChild(item);
       }
     });
@@ -1084,9 +1029,9 @@
   }
 
   function selectQuiz(idx) {
-    if (!modules || modules.length === 0 || idx >= modules.length) return;
-    const mod = modules[idx];
-    window._quizModuleId = mod.id;
+    if (!ppts || ppts.length === 0 || idx >= ppts.length) return;
+    const ppt = ppts[idx];
+    window._quizModuleId = ppt.id;
     window._quizModuleIdx = idx;
 
     const quizStageCard = document.getElementById('quiz-stage-card');
@@ -1097,23 +1042,18 @@
     const quizCover = document.getElementById('quiz-cover');
     if (quizCover) {
       quizCover.style.display = 'flex';
-      quizCover.style.backgroundImage = `url('${mod.thumb}')`;
+      quizCover.style.backgroundImage = `url('${ppt.thumb}')`;
     }
     
     const quizCoverTitle = document.getElementById('quiz-cover-title');
     if (quizCoverTitle) {
-      quizCoverTitle.innerText = mod.title;
+      quizCoverTitle.innerText = ppt.title;
     }
 
     const startBtn = document.getElementById('quiz-start-btn');
     if (startBtn) {
-      if (mod.status === 'locked') {
-        startBtn.innerHTML = '🔒 Complete Videos First';
-        startBtn.style.pointerEvents = 'none';
-        startBtn.style.cursor = 'not-allowed';
-        startBtn.style.opacity = '0.5';
-      } else if (mod.status === 'complete') {
-        startBtn.innerHTML = '✓ Quiz Completed';
+      if (ppt.status === 'complete') {
+        startBtn.innerHTML = 'Quiz Completed';
         startBtn.style.pointerEvents = 'auto';
         startBtn.style.cursor = 'pointer';
         startBtn.style.opacity = '1';
@@ -1130,19 +1070,11 @@
       quizContainer.style.display = 'none';
     }
 
-    if (quizStageCard) {
-      quizStageCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
   }
 
   function startQuizInPlace() {
-    const res = modules[window._quizModuleIdx];
-    if (!res) return;
-    if (res.status === 'locked') {
-      alert('🔒 Please complete all video modules first to unlock the Quiz.');
-      return;
-    }
-    if (res.status === 'complete') return;
+    const res = ppts[window._quizModuleIdx];
+    if (res && res.status === 'complete') return;
     document.getElementById('quiz-cover').style.display = 'none';
     document.getElementById('practiceQuizContainer').style.display = 'block';
     initQuiz();
@@ -1153,10 +1085,19 @@
     document.getElementById('quiz-cover').style.display = 'flex';
     clearInterval(quizTimerInterval);
     renderModules();
+    renderPPTList();
     updateTotalStats();
     if (window._quizModuleIdx !== undefined) {
       selectQuiz(window._quizModuleIdx);
     }
+  }
+
+  function selectResource(idx) {
+    if (!ppts || ppts.length === 0 || idx >= ppts.length) return;
+    currentPPTIdx = idx;
+    const res = ppts[idx];
+    document.getElementById('ppt-main-cover').style.backgroundImage = `url('${res.thumb}')`;
+    document.getElementById('ppt-main-title').innerText = res.title;
   }
 
   function playVideo(idx) {
@@ -1237,10 +1178,55 @@
     }, 50);
   }
 
+  function triggerPPTAction() {
+    if (!ppts || ppts.length === 0) return;
+    const res = ppts[currentPPTIdx];
+    if (res.status === 'locked') return alert("This resource is locked!");
+    document.getElementById('pptModal').style.display = 'flex';
+
+    if (res.title.toLowerCase().includes('quiz')) {
+      document.getElementById('pptFrame').style.display = 'none';
+      document.getElementById('practiceQuizContainer').style.display = 'block';
+      document.getElementById('quiz-timer-box').style.display = 'block';
+      initQuiz();
+    } else {
+      document.getElementById('practiceQuizContainer').style.display = 'none';
+      document.getElementById('quiz-timer-box').style.display = 'none';
+      document.getElementById('pptFrame').style.display = 'block';
+      document.getElementById('pptFrame').src = res.url;
+      startPPTTimer();
+    }
+  }
+
+  function startPPTTimer() {
+    let viewed = 0;
+    if (window.pptTimerInterval) clearInterval(window.pptTimerInterval);
+    window.pptTimerInterval = setInterval(() => {
+      if (document.getElementById('pptModal').style.display !== 'flex') {
+        clearInterval(window.pptTimerInterval);
+        return;
+      }
+      viewed++;
+      document.getElementById('ppt-timer-badge').style.display = 'block';
+      document.getElementById('ppt-timer-badge').innerText = `Time: ${viewed}s`;
+      if (viewed >= 10 && ppts[currentPPTIdx].status !== 'complete') {
+        ppts[currentPPTIdx].status = 'complete';
+        markComplete(ppts[currentPPTIdx].id);
+        if (ppts[currentPPTIdx + 1]) ppts[currentPPTIdx + 1].status = 'pending';
+        renderPPTList();
+        updateTotalStats();
+      }
+    }, 1000);
+  }
+
   function closeModal() {
-    document.getElementById('trainingModal').style.display = 'none';
+    document.getElementById('pptModal').style.display = 'none';
+    document.getElementById('pptFrame').src = "";
     clearInterval(quizTimerInterval);
+    if (window.pptTimerInterval) clearInterval(window.pptTimerInterval);
+    document.getElementById('ppt-timer-badge').style.display = 'none';
     renderModules();
+    renderPPTList();
     updateTotalStats();
   }
 
@@ -1379,6 +1365,7 @@
             <div style="display: flex; flex-direction: column; max-height: 480px;">
               <h3 style="color: var(--danger, #ff4757); margin-top: 0; margin-bottom: 15px; font-weight: 600; text-align: center;">Incorrect Questions Review</h3>
               <div class="review-scroll-container" style="overflow-y: auto; max-height: 380px; padding-right: 10px;">
+                <!-- Review List -->
                 ${reviewItemsHtml}
               </div>
             </div>
@@ -1398,8 +1385,10 @@
 
       if (passed && window._quizModuleId) {
         const idx = window._quizModuleIdx;
-        if (idx !== undefined && modules[idx]) modules[idx].status = 'complete';
-        markComplete(window._quizModuleId);
+        if (idx !== undefined && ppts[idx]) {
+          ppts[idx].status = 'complete';
+          markComplete(window._quizModuleId);
+        }
       }
       updateTotalStats();
     }
@@ -1442,6 +1431,17 @@
     quizTimerInterval = setInterval(updateTimer, 1000);
   }
 
+  // Attempt final assessment redirect
+  function attemptFinalQuiz() {
+    const videosPending = modules.some(m => m.status !== 'complete');
+    const pptsPending = ppts.some(p => p.status !== 'complete');
+    if (videosPending || pptsPending) {
+      alert("🔒 LOCKED: You must complete all Video Modules and Legal Resources/PPTs before you can take the Final Quiz.");
+    } else {
+      window.location.href = "{% url 'posh_assessment' %}";
+    }
+  }
+
   // Study timer and watch time synchronization
   setInterval(() => {
     if (isCourseComplete()) {
@@ -1452,9 +1452,9 @@
       return;
     }
     const isVideoPlaying = !player.paused && !player.ended && player.readyState > 0;
-    const isQuizOpen = document.getElementById('trainingModal').style.display === 'flex';
+    const isPPTOpen = document.getElementById('pptModal').style.display === 'flex';
 
-    if (isQuizOpen && !isVideoPlaying) {
+    if (isPPTOpen && !isVideoPlaying && !document.hidden) {
       totalActivitySeconds += 1;
       pendingSyncSeconds += 1;
 
@@ -1472,20 +1472,51 @@
     updateTotalStats();
   }, 1000);
 
-  function handleVideoComplete() {
-    if (modules[currentIdx] && modules[currentIdx].status !== 'complete') {
-      modules[currentIdx].status = 'complete';
-      if (modules[currentIdx + 1]) modules[currentIdx + 1].status = 'pending';
-      renderModules();
-      updateTotalStats();
-      markComplete(modules[currentIdx].id);
+  // Immediately show the completed cover after video finishes — no refresh needed
+  function showCompletedCover() {
+    player.pause();
+    player.style.display = 'none';
+    const cover = document.getElementById('video-cover');
+    if (cover) cover.style.display = 'flex';
+    const startBtn = document.querySelector('#video-cover .btn-start');
+    if (startBtn) {
+      startBtn.innerHTML = '&#10003; Module Completed';
+      startBtn.style.pointerEvents = 'auto';
+      startBtn.style.cursor = 'pointer';
+      startBtn.style.opacity = '1';
     }
   }
 
+  function handleVideoComplete() {
+    if (modules[currentIdx] && modules[currentIdx].status !== 'complete') {
+      modules[currentIdx].status = 'complete';
+      if (modules[currentIdx + 1]) {
+        modules[currentIdx + 1].status = 'pending';
+      } else if (ppts[0]) {
+        ppts[0].status = 'pending';
+      }
+      renderModules();
+      renderPPTList();
+      updateTotalStats();
+      markComplete(modules[currentIdx].id);
+    }
+    showCompletedCover();
+  }
+
   player.onended = handleVideoComplete;
+
+  // Block seeking/fast-forwarding: fires as soon as user drags the seek bar
+  player.addEventListener('seeking', () => {
+    if (isCourseComplete()) return;
+    if (player.currentTime > furthestTime + 0.3) {
+      player.currentTime = furthestTime;
+    }
+  });
+
   player.ontimeupdate = () => {
     if (isCourseComplete()) return;
-    if (player.currentTime > furthestTime + 1.5) {
+    // Secondary guard: tight tolerance catches any seek that slipped through
+    if (player.currentTime > furthestTime + 0.3) {
       player.currentTime = furthestTime;
     } else {
       furthestTime = Math.max(furthestTime, player.currentTime);
@@ -1509,7 +1540,7 @@
       player.lastTrackedTime = currentRealTime;
     }
 
-    if (player.duration > 0 && player.currentTime > player.duration * 0.95) handleVideoComplete();
+    // Completion is handled solely by player.onended — no early threshold
   };
 
   function getDetailedStats() {
@@ -1517,11 +1548,14 @@
     let pendingCount = 0;
     let lockedCount = 0;
 
-    modules.forEach((mod, idx) => {
+    const allItems = [...modules, ...ppts];
+
+    allItems.forEach((mod, idx) => {
       if (mod.status === 'complete') {
         completeCount += 1.0;
       } else if (mod.status === 'pending') {
-        if (idx === currentIdx && player && player.duration > 0 && !mod.isQuiz) {
+        // If it's the current video module, show fractional progress
+        if (idx === currentIdx && player && player.duration > 0 && mod.type !== 'slide') {
           const progress = Math.min(0.95, player.currentTime / player.duration);
           completeCount += progress;
           pendingCount += (1.0 - progress);
@@ -1533,14 +1567,15 @@
       }
     });
 
-    return { completeCount, pendingCount, lockedCount };
+    return { completeCount, pendingCount, lockedCount, chartCounts: [completeCount, pendingCount, lockedCount] };
   }
 
   function updateTotalStats() {
     const stats = getDetailedStats();
-    const total = modules.length;
+    const done = [...modules, ...ppts].filter(i => i.status === 'complete').length;
+    const total = modules.length + ppts.length;
     const perc = Math.round((stats.completeCount / total) * 100) || 0;
-    const remaining = Math.max(0, total - modules.filter(m => m.status === 'complete').length);
+    const remaining = Math.max(0, total - done);
     
     if (document.getElementById('perc-text')) document.getElementById('perc-text').innerText = perc + "%";
     if (document.getElementById('completion-stat-val')) document.getElementById('completion-stat-val').innerText = perc + "%";
@@ -1550,16 +1585,54 @@
     if (bar) bar.style.width = perc + "%";
 
     if (document.getElementById('modules-done-stat-val')) {
-      document.getElementById('modules-done-stat-val').innerText = `${modules.filter(m => m.status === 'complete').length}/${total}`;
+      document.getElementById('modules-done-stat-val').innerText = `${done}/${total}`;
     }
     if (document.getElementById('completed-modules-count')) {
-      document.getElementById('completed-modules-count').innerText = modules.filter(m => m.status === 'complete').length;
+      document.getElementById('completed-modules-count').innerText = done;
     }
     if (document.getElementById('remaining-modules-count')) {
       document.getElementById('remaining-modules-count').innerText = remaining;
     }
 
     updateChart(stats);
+    checkButtonLocks();
+  }
+
+  function checkButtonLocks() {
+    const allVideosComplete = modules.every(m => m.status === 'complete');
+    const allPPTsComplete = ppts.every(p => p.status === 'complete');
+    const quizLink = document.getElementById('nav-final-quiz');
+    const lockIcon = document.getElementById('quiz-lock-icon');
+    const certBtn = document.getElementById('btn-download-cert');
+    const certMsg = document.getElementById('cert-lock-msg');
+
+    if (allVideosComplete && allPPTsComplete) {
+      if (quizLink) {
+        quizLink.classList.remove('disabled');
+        quizLink.classList.remove('btn-disabled');
+      }
+      if (lockIcon) lockIcon.innerText = "✅";
+    } else {
+      if (quizLink) {
+        quizLink.classList.add('disabled');
+        quizLink.classList.add('btn-disabled');
+      }
+      if (lockIcon) lockIcon.innerText = "🔒";
+    }
+
+    if (allVideosComplete && allPPTsComplete && isFinalQuizPassed) {
+      if (certBtn) {
+        certBtn.classList.remove('disabled');
+        certBtn.classList.remove('btn-disabled');
+      }
+      if (certMsg) certMsg.style.display = 'none';
+    } else {
+      if (certBtn) {
+        certBtn.classList.add('disabled');
+        certBtn.classList.add('btn-disabled');
+      }
+      if (certMsg) certMsg.style.display = 'block';
+    }
   }
 
   function updateChart(stats) {
@@ -1590,8 +1663,173 @@
 
   window.onload = () => {
     renderModules();
+    renderPPTList();
     playVideo(0);
     updateTotalStats();
   };
+</script>
+
+<!-- Custom Company Logo Modal for POSH/POCSO Dashboard (Vanilla CSS & Glassmorphism) -->
+<div id="certLogoModal" class="custom-modal-overlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 9999; opacity: 0; transition: opacity 0.3s ease;">
+  <div class="custom-modal-card" style="background: rgba(30, 41, 59, 0.95); border-radius: 16px; width: 90%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.55); border: 1px solid rgba(255,255,255,0.08); padding: 24px; color: #f8fafc; transform: scale(0.9); transition: transform 0.3s ease; display: flex; flex-direction: column; gap: 16px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+      <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700; font-family: 'Outfit', sans-serif;">Upload Certificate Logo</h3>
+      <button onclick="closeCertLogoModal()" style="background: none; border: none; color: #94a3b8; font-size: 1.5rem; cursor: pointer; line-height: 1; padding: 0;">&times;</button>
+    </div>
+    
+    <!-- Current Logo Preview / Alert -->
+    <div id="currentLogoContainer" style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display: flex; flex-direction: column; align-items: center; gap: 10px;">
+      <h4 style="margin: 0; font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; align-self: flex-start; font-family: 'Outfit', sans-serif;">Current Logo</h4>
+      <div style="width: 100px; height: 100px; background: #ffffff; border-radius: 8px; display: flex; align-items: center; justify-content: center; padding: 8px;">
+        <img id="modalLogoPreview" src="" alt="Current Logo" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+      </div>
+      <span id="noLogoText" style="font-size: 0.88rem; color: #f43f5e; display: none; font-weight: 600; text-align: center;">No company logo uploaded yet.</span>
+    </div>
+
+    <!-- Upload Logo Form -->
+    <div style="padding: 15px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; border: 1px dashed rgba(255, 255, 255, 0.15);">
+      <h4 style="margin: 0 0 12px; font-size: 0.9rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Outfit', sans-serif;">Select Company Logo Image</h4>
+      <form id="certLogoForm" onsubmit="handleLogoUploadSubmit(event)" style="display: flex; flex-direction: column; gap: 12px;">
+        {% csrf_token %}
+        <div>
+          <input type="file" id="certLogoInput" accept="image/*" required style="width: 100%; padding: 10px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f8fafc; font-size: 0.88rem;" />
+        </div>
+        <button type="submit" id="certLogoUploadBtn" class="quick-action-btn btn-start" style="margin: 0; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; font-size: 0.9rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); font-weight: 600; border: none; width: 100%; color: white; border-radius: 8px; cursor: pointer;">
+          <span id="uploadBtnText">Save & Apply Logo</span>
+          <div id="uploadSpinner" style="display: none; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite;"></div>
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+  (function() {
+    window.currentOrgLogoUrl = "{{ org_logo_url|default:'' }}";
+    window.pendingDownloadUrlAfterUpload = "";
+
+    window.handleCertDownload = function(event, downloadUrl) {
+      if (event && event.preventDefault) event.preventDefault();
+      
+      const hasOrg = {{ has_organization|yesno:"true,false" }};
+      
+      // If individual subscriber (no organization), download immediately!
+      if (!hasOrg) {
+        window.location.href = downloadUrl;
+        return;
+      }
+
+      // If logo already exists, download immediately!
+      if (window.currentOrgLogoUrl) {
+        window.location.href = downloadUrl;
+        return;
+      }
+
+      // Otherwise, save the pending download URL and force the logo upload popup
+      window.pendingDownloadUrlAfterUpload = downloadUrl;
+
+      const modal = document.getElementById('certLogoModal');
+      const card = modal.querySelector('.custom-modal-card');
+      const previewImg = document.getElementById('modalLogoPreview');
+      const noLogoSpan = document.getElementById('noLogoText');
+
+      previewImg.style.display = 'none';
+      noLogoSpan.style.display = 'block';
+      noLogoSpan.innerText = '⚠️ A company logo is required before downloading your certificate.';
+
+      document.getElementById('certLogoInput').value = '';
+      
+      // Show modal with smooth animations
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        card.style.transform = 'scale(1)';
+      }, 10);
+    };
+
+    window.closeCertLogoModal = function() {
+      const modal = document.getElementById('certLogoModal');
+      const card = modal.querySelector('.custom-modal-card');
+      modal.style.opacity = '0';
+      card.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    };
+
+    window.handleLogoUploadSubmit = function(event) {
+      event.preventDefault();
+      const fileInput = document.getElementById('certLogoInput');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Please select a logo image file to upload.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('logo', file);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+      const submitBtn = document.getElementById('certLogoUploadBtn');
+      const spinner = document.getElementById('uploadSpinner');
+      const btnText = document.getElementById('uploadBtnText');
+
+      submitBtn.disabled = true;
+      spinner.style.display = 'inline-block';
+      btnText.innerText = 'Saving...';
+
+      fetch('{% url "upload_org_logo" %}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Upload failed with status ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data.status === 'success') {
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnText.innerText = 'Save & Apply Logo';
+          
+          // Success! Save the new logo URL globally
+          window.currentOrgLogoUrl = data.logo_url;
+          
+          closeCertLogoModal();
+          
+          alert('Company logo uploaded successfully. Your certificate will now display this logo.');
+          
+          // Trigger the pending certificate download
+          if (window.pendingDownloadUrlAfterUpload) {
+            window.location.href = window.pendingDownloadUrlAfterUpload;
+            window.pendingDownloadUrlAfterUpload = "";
+          }
+        } else {
+          alert('Error: ' + (data.message || 'Unknown error occurred.'));
+          submitBtn.disabled = false;
+          spinner.style.display = 'none';
+          btnText.innerText = 'Save & Apply Logo';
+        }
+      })
+      .catch(error => {
+        console.error('Error uploading logo:', error);
+        alert('Failed to upload company logo. Please try again.');
+        submitBtn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.innerText = 'Save & Apply Logo';
+      });
+    };
+  })();
 </script>
 {% endblock %}

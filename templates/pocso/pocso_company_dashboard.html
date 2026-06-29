@@ -2100,6 +2100,7 @@
     const SECTION_KEY = 'pocso_activeSection';
 
     function showSection(sectionId, element) {
+      window.scrollTo(0, 0);
       document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
       document.getElementById(sectionId).classList.add('active');
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
@@ -2114,7 +2115,14 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const sectionParam = urlParams.get('section');
-    if (sectionParam) {
+    const isFirstLogin = urlParams.get('login') === 'true';
+
+    if (isFirstLogin) {
+      // Fresh login: clear saved state and force dashboard section
+      localStorage.removeItem(SECTION_KEY);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      showSection('dashboard', document.querySelector("[onclick*=\"showSection('dashboard'\"]"));
+    } else if (sectionParam) {
       const targetLink = document.querySelector(`[onclick*="showSection('${sectionParam}'"]`);
       if (targetLink) {
         showSection(sectionParam, targetLink);
@@ -2354,7 +2362,17 @@
       cards.forEach(card => {
         const name = card.querySelector('.member-name').innerText.toLowerCase();
         const email = card.querySelector('.member-email').innerText.toLowerCase();
-        if (name.includes(filter) || email.includes(filter)) {
+        const status = (card.getAttribute('data-status') || '').toLowerCase();
+        
+        // Match status aliases (e.g. "not started" or "in progress" -> "pending" in POCSO)
+        let matchesStatus = status.includes(filter);
+        if (status === 'pending') {
+          if ('in progress'.includes(filter) || 'not started'.includes(filter)) {
+            matchesStatus = true;
+          }
+        }
+        
+        if (name.includes(filter) || email.includes(filter) || matchesStatus) {
           card.style.display = "";
         } else {
           card.style.display = "none";
@@ -2826,6 +2844,67 @@
         });
       };
     })();
+  </script>
+
+  <!-- Global Loading Overlay -->
+  <div id="global-loader-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+  ">
+      <div class="loader-spinner" style="
+          width: 50px;
+          height: 50px;
+          border: 5px solid rgba(255, 255, 255, 0.1);
+          border-top-color: #4f46e5;
+          border-radius: 50%;
+          animation: loader-spin 1s linear infinite;
+      "></div>
+      <div style="
+          margin-top: 20px;
+          color: #ffffff;
+          font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+          font-weight: 700;
+          font-size: 1.15rem;
+          letter-spacing: 0.5px;
+      ">Processing... Please wait</div>
+  </div>
+  <style>
+      @keyframes loader-spin {
+          to { transform: rotate(360deg); }
+      }
+      #global-loader-overlay.show {
+          opacity: 1;
+          pointer-events: auto;
+      }
+  </style>
+  <script>
+      function showGlobalLoader() {
+          var loader = document.getElementById('global-loader-overlay');
+          if (loader) {
+              loader.style.opacity = '1';
+              loader.style.pointerEvents = 'auto';
+              loader.classList.add('show');
+          }
+      }
+      document.addEventListener('submit', function (e) {
+          if (!e.defaultPrevented) {
+              showGlobalLoader();
+          }
+      });
   </script>
 </body>
 

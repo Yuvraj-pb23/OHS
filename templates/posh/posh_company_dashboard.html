@@ -1045,10 +1045,22 @@
     /* AWARENESS POSTERS */
     .poster-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: var(--space-8);
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-6);
       margin-bottom: var(--space-8);
       align-items: start;
+    }
+
+    @media (max-width: 1200px) {
+      .poster-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .poster-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .poster-item {
@@ -1857,7 +1869,7 @@
         <li class="nav-item">
           <a class="nav-link" onclick="showSection('team-directory', this)">
             <i class="bi bi-people-fill"></i>
-            <span>Team Directory</span>
+            <span>Employee Registry</span>
           </a>
         </li>
       </ul>
@@ -2242,36 +2254,25 @@
 
     </div>
 
-    <!-- === SECTION 1.5: TEAM DIRECTORY === -->
+    <!-- === SECTION 1.5: EMPLOYEE REGISTRY === -->
     <div id="team-directory" class="content-section">
       <h2 class="mb-4 section-title">
-        <i class="bi bi-people-fill me-2"></i>Team Directory
+        <i class="bi bi-people-fill me-2"></i>Employee Registry
       </h2>
       
       <!-- Glass Console Toolbar -->
       <div class="glass-toolbar mb-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-          <div class="title-group">
-            <h2 class="section-title mb-0 d-flex align-items-center" style="font-size: 1.15rem;">
-              <div class="icon-box me-3">
-                <i class="bi bi-people-fill"></i>
-              </div>
-              <div>
-                <span class="title-main">Team Directory</span>
-                <small class="refresh-timestamp d-block" id="lastRefreshTime">
-                  <i class="bi bi-clock-history me-1"></i> Loading...
-                </small>
-              </div>
-            </h2>
-          </div>
-          
-          <div class="action-group d-flex flex-wrap gap-2 align-items-center">
+          <div class="d-flex flex-wrap gap-2 align-items-center">
             <button class="btn btn-hero-primary py-2 px-3 border-0" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" style="height: 38px; display: inline-flex; align-items: center; justify-content: center;">
               <i class="bi bi-person-plus-fill"></i> Add Employee
             </button>
             <button class="btn btn-hero-secondary py-2 px-3" data-bs-toggle="modal" data-bs-target="#bulkImportModal" style="height: 38px; display: inline-flex; align-items: center; justify-content: center;">
               <i class="bi bi-file-earmark-spreadsheet-fill"></i> Bulk Import CSV
             </button>
+          </div>
+
+          <div class="d-flex flex-wrap gap-2 align-items-center">
             <button class="btn btn-action btn-refresh" onclick="refreshDashboard()" id="refreshBtn" title="Refresh employee progress" style="height: 38px;">
               <i class="bi bi-arrow-clockwise"></i>
               <span>Refresh</span>
@@ -2352,17 +2353,17 @@
       </h2>      <div class="poster-grid">
         {% for poster in posters_list %}
         <div class="poster-item">
-          <div class="d-inline-block position-relative" style="
+          <div class="position-relative w-100" style="
                 border-radius: 12px;
                 overflow: hidden;
                 border: 1px solid var(--border-color);
                 background: var(--bg-card);
                 box-shadow: var(--shadow-lg);
-                max-width: 100%;
+                width: 100%;
               ">
             <!-- Base Poster Image -->
             <img src="{{ poster.path }}" alt="{{ poster.title }}"
-              style="max-height: 500px; max-width: 100%; height: auto; display: block" />
+              style="width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top; display: block" />
 
             <!-- Draggable Logo Container -->
             <div class="draggable-logo-preview"
@@ -5320,6 +5321,7 @@
     const SECTION_KEY = 'posh_activeSection';
 
     function showSection(sectionId, element) {
+      window.scrollTo(0, 0);
       document
         .querySelectorAll(".content-section")
         .forEach((sec) => sec.classList.remove("active"));
@@ -5350,7 +5352,9 @@
             .innerText.toLowerCase();
           const deptEl = row.querySelector(".table-emp-dept");
           const dept = deptEl ? deptEl.innerText.toLowerCase() : "";
-          if (name.includes(filter) || email.includes(filter) || dept.includes(filter)) {
+          const statusEl = row.querySelector(".table-status-pill");
+          const status = statusEl ? statusEl.innerText.toLowerCase() : "";
+          if (name.includes(filter) || email.includes(filter) || dept.includes(filter) || status.includes(filter)) {
             row.style.display = "";
           } else {
             row.style.display = "none";
@@ -5600,17 +5604,23 @@
     // Show notification when page loads after refresh
     window.addEventListener("load", function () {
       const _urlParams = new URLSearchParams(window.location.search);
-      if (_urlParams.get("login") === "true") {
+      const _isFirstLogin = _urlParams.get("login") === "true";
+
+      if (_isFirstLogin) {
+        // Fresh login: clear saved section state AND hash, force to dashboard
         localStorage.removeItem(SECTION_KEY);
-        // Remove the parameter from URL to keep it clean
+        // Remove query param and hash to keep URL clean
         window.history.replaceState(
           {},
           document.title,
           window.location.pathname,
         );
+        // Always show dashboard on fresh login — do NOT restore any previous section
+        showSection('dashboard', document.querySelector("[onclick*=\"showSection('dashboard'\"]"));
+        return;
       }
 
-      // RESTORE ACTIVE SECTION
+      // RESTORE ACTIVE SECTION (for refreshes / back-navigation only)
       // Priority: 1) URL hash (set by user navigation) 2) localStorage 3) ?section= query param
       const _hash = window.location.hash.substring(1);
       const _sectionParam = _urlParams.get("section");
@@ -6193,6 +6203,66 @@
     })();
   </script>
 
+  <!-- Global Loading Overlay -->
+  <div id="global-loader-overlay" style="
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+  ">
+      <div class="loader-spinner" style="
+          width: 50px;
+          height: 50px;
+          border: 5px solid rgba(255, 255, 255, 0.1);
+          border-top-color: #4f46e5;
+          border-radius: 50%;
+          animation: loader-spin 1s linear infinite;
+      "></div>
+      <div style="
+          margin-top: 20px;
+          color: #ffffff;
+          font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+          font-weight: 700;
+          font-size: 1.15rem;
+          letter-spacing: 0.5px;
+      ">Processing... Please wait</div>
+  </div>
+  <style>
+      @keyframes loader-spin {
+          to { transform: rotate(360deg); }
+      }
+      #global-loader-overlay.show {
+          opacity: 1;
+          pointer-events: auto;
+      }
+  </style>
+  <script>
+      function showGlobalLoader() {
+          var loader = document.getElementById('global-loader-overlay');
+          if (loader) {
+              loader.style.opacity = '1';
+              loader.style.pointerEvents = 'auto';
+              loader.classList.add('show');
+          }
+      }
+      document.addEventListener('submit', function (e) {
+          if (!e.defaultPrevented) {
+              showGlobalLoader();
+          }
+      });
+  </script>
 </body>
 
 </html>

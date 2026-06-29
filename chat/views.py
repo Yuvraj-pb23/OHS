@@ -244,50 +244,53 @@ class MockTextChatbot:
 
 
 # -----------------------------
-# Load Models (Mock or Real)
+# Lazy Load Models (Mock or Real)
 # -----------------------------
 image_chatbot = None
 text_chatbot = None
 rag_chatbot = None
+_models_loaded = False
 
-try:
-    # Try to load real models if files exist and libs are available
-    # We skip main import if we suspect it will fail, but let's try-catch.
-    from .utils import ImageChatbot, TextChatbot
+def load_real_models():
+    global image_chatbot, text_chatbot, rag_chatbot, _models_loaded
+    if _models_loaded:
+        return
+    try:
+        from .utils import ImageChatbot, TextChatbot
+        print("Lazy-loading real models...")
 
-    print("Attempting to load real models...")
+        image_model_path = os.path.join(settings.BASE_DIR, "chat", "data", "image_chatbot_model.pkl")
+        if os.path.exists(image_model_path):
+            image_chatbot = ImageChatbot(model_path=image_model_path)
 
-    image_model_path = os.path.join(settings.BASE_DIR, "image_chatbot_model.pkl")
-    if os.path.exists(image_model_path):
-        image_chatbot = ImageChatbot(model_path=image_model_path)
+        text_model_path = os.path.join(settings.BASE_DIR, "chat", "data", "chatbot_model.pkl")
+        if os.path.exists(text_model_path):
+            text_chatbot = TextChatbot(
+                model_path=text_model_path,
+                label_encoder_path=os.path.join(settings.BASE_DIR, "chat", "data", "label_encoder.pkl"),
+                semantic_data_path=os.path.join(settings.BASE_DIR, "chat", "data", "semantic_data.pkl"),
+            )
 
-    text_model_path = os.path.join(settings.BASE_DIR, "home", "chatbot_model.pkl")
-    if os.path.exists(text_model_path):
-        text_chatbot = TextChatbot(
-            model_path=text_model_path,
-            label_encoder_path=os.path.join(settings.BASE_DIR, "home", "label_encoder.pkl"),
-            semantic_data_path=os.path.join(settings.BASE_DIR, "home", "semantic_data.pkl"),
-        )
+        # Initialize RAG Chatbot
+        rag_index_path = os.path.join(settings.BASE_DIR, "chat/data/bot.index")
+        rag_answers_path = os.path.join(settings.BASE_DIR, "chat/data/answers.json")
+        if os.path.exists(rag_index_path) and os.path.exists(rag_answers_path):
+            rag_chatbot = RagChatbot(rag_index_path, rag_answers_path)
+        else:
+            print(f"RAG Chatbot files not found at {rag_index_path} or {rag_answers_path}")
 
-    # Initialize RAG Chatbot
-    rag_index_path = os.path.join(settings.BASE_DIR, "chat/data/bot.index")
-    rag_answers_path = os.path.join(settings.BASE_DIR, "chat/data/answers.json")
-    if os.path.exists(rag_index_path) and os.path.exists(rag_answers_path):
-        rag_chatbot = RagChatbot(rag_index_path, rag_answers_path)
-    else:
-        print(f"RAG Chatbot files not found at {rag_index_path} or {rag_answers_path}")
+    except (ImportError, Exception) as e:
+        print(f"Model loading failed or dependencies missing: {e}")
+        print("Using MOCK chatbots.")
+        image_chatbot = None
+        text_chatbot = None
 
-except (ImportError, Exception) as e:
-    print(f"Model loading failed or dependencies missing: {e}")
-    print("Using MOCK chatbots.")
-    # Fallback to mocks
-    image_chatbot = None
-    text_chatbot = None
-
-if image_chatbot is None:
-    image_chatbot = MockImageChatbot()
-if text_chatbot is None:
-    text_chatbot = MockTextChatbot()
+    if image_chatbot is None:
+        image_chatbot = MockImageChatbot()
+    if text_chatbot is None:
+        text_chatbot = MockTextChatbot()
+        
+    _models_loaded = True
 
 
 # -----------------------------
@@ -337,12 +340,13 @@ def load_topic_data(topic_name):
         return {}
 
     try:
-        json_path = os.path.join(settings.BASE_DIR, "data", filename_map[topic_name])
+        json_path = os.path.join(settings.BASE_DIR, "chat", "data", filename_map[topic_name])
         # Fallback to current directory if BASE_DIR/json fails
         if not os.path.exists(json_path):
             json_path = os.path.join(
                 os.path.dirname(os.path.abspath(__file__)),
-                f"../data/{filename_map[topic_name]}",
+                "data",
+                filename_map[topic_name],
             )
 
         if not os.path.exists(json_path):
@@ -416,6 +420,7 @@ def get_answer_for_question(question_text):
 
 @csrf_exempt
 def chatbot_response(request):
+    load_real_models()
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=405)
 

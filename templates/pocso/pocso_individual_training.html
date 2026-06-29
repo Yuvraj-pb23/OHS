@@ -1470,6 +1470,7 @@
 
         // --- 3. NAVIGATION & TABS ---
         function showView(v) {
+            window.scrollTo(0, 0);
             if (v !== 'training' && player && !player.paused) {
                 player.pause();
             }
@@ -1927,6 +1928,21 @@
         }
 
         // Unified Completion Logic
+        // Immediately show the completed cover after video finishes — no refresh needed
+        function showCompletedCover() {
+            player.pause();
+            player.style.display = 'none';
+            const cover = document.getElementById('video-cover');
+            if (cover) cover.style.display = 'flex';
+            const startBtn = document.querySelector('#video-cover .btn-start');
+            if (startBtn) {
+                startBtn.innerHTML = '&#10003; Module Completed';
+                startBtn.style.pointerEvents = 'auto';
+                startBtn.style.cursor = 'pointer';
+                startBtn.style.opacity = '1';
+            }
+        }
+
         function handleVideoComplete() {
             if (modules[currentIdx].status !== 'complete') {
                 modules[currentIdx].status = 'complete';
@@ -1943,15 +1959,24 @@
                 markComplete(modules[currentIdx].id);
             }
             saveVideoProgress();
+            showCompletedCover();
         }
 
         // Fallback: Standard 'ended' event
         player.onended = handleVideoComplete;
 
+        // Block seeking/fast-forwarding: fires as soon as user drags the seek bar
+        player.addEventListener('seeking', () => {
+            if (isCourseComplete()) return;
+            if (player.currentTime > furthestTime + 0.3) {
+                player.currentTime = furthestTime;
+            }
+        });
+
         player.ontimeupdate = () => {
             if (isCourseComplete()) return;
             // Prevent fast forwarding / skipping ahead
-            if (player.currentTime > furthestTime + 1.5) {
+            if (player.currentTime > furthestTime + 0.3) {
                 player.currentTime = furthestTime;
             } else {
                 furthestTime = Math.max(furthestTime, player.currentTime);
@@ -1981,13 +2006,7 @@
                 player.lastTrackedTime = currentRealTime;
             }
 
-            // Duration Check Fallback
-            if (player.duration > 0) {
-                const thresh = player.duration * 0.95;
-                if (player.currentTime > thresh) {
-                    handleVideoComplete();
-                }
-            }
+            // Completion is handled solely by player.onended — no early threshold
         };
 
         setInterval(() => {

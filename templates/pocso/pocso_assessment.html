@@ -208,48 +208,23 @@
 
 <script>
     // [KEEP ORIGINAL QUESTION DATA AND LOGIC INTACT]
-    const allQuestions = [
-        { q: "POCSO stands for Protection of Children from _______ Offences Act.", a: ["Social", "Sexual", "Systemic", "Serious"], c: 1 },
-        { q: "The POCSO Act was enacted in which year?", a: ["2010", "2012", "2015", "2018"], c: 1 },
-        { q: "According to POCSO, a 'child' is any person below the age of:", a: ["14", "16", "18", "21"], c: 2 },
-        { q: "Which of the following describes the POCSO Act?", a: ["Gender-specific", "Gender-neutral", "Only for girls", "Only for boys"], c: 1 },
-        { q: "Reporting an offence under Section 19 of POCSO is:", a: ["Optional", "Mandatory", "Only for police", "Only for doctors"], c: 1 },
-        { q: "Where should a child's statement preferably be recorded?", a: ["Police Station", "Child's residence", "High Court", "Public Park"], c: 1 },
-        { q: "A child's identity should not be disclosed in any media report.", a: ["True", "False", "Only with permission", "Only for minors"], c: 0 },
-        { q: "Special courts under POCSO should complete the trial within:", a: ["3 months", "6 months", "1 year", "2 years"], c: 2 },
-        { q: "Medical examination of a child victim should be done in the presence of:", a: ["Police only", "Parent or a trusted person", "The Accused", "Media"], c: 1 },
-        { q: "Section 3 of POCSO defines:", a: ["Sexual assault", "Penetrative sexual assault", "Harassment", "Pornography"], c: 1 },
-        { q: "What is the age of consent for sexual acts in India?", a: ["15", "16", "18", "21"], c: 2 },
-        { q: "Punishment for aggravated penetrative sexual assault starts from:", a: ["5 years", "10 years", "20 years to Life", "Fine only"], c: 2 },
-        { q: "SJPU stands for:", a: ["Special Joint Police Unit", "Special Juvenile Police Unit", "Social Justice Police Unit", "Sexual Junior Unit"], c: 1 },
-        { q: "The police officer recording the child's statement must not be in uniform.", a: ["True", "False", "Optional", "Only for women officers"], c: 0 },
-        { q: "Can a child be detained in a police station overnight?", a: ["Yes", "No", "Only for questioning", "If parents agree"], c: 1 },
-        { q: "If a person fails to report a POCSO offence, they can be jailed for up to:", a: ["3 months", "6 months", "1 year", "2 years"], c: 1 },
-        { q: "Is child pornography a punishable offence under POCSO?", a: ["Yes", "No", "Only if distributed", "Only if it features adults"], c: 0 },
-        { q: "Who monitors the implementation of POCSO?", a: ["NCPCR", "NITI Aayog", "Ministry of Finance", "RBI"], c: 0 },
-        { q: "Aggravated sexual assault is covered under which Section?", a: ["Section 5", "Section 10", "Section 15", "Section 20"], c: 0 },
-        { q: "The child must not be called to the police station for recording a statement.", a: ["True", "False", "Only for boys", "Only for girls"], c: 0 },
-        { q: "The CWC stands for:", a: ["Child Welfare Committee", "Child Works Council", "Common Welfare Center", "Central Women Cell"], c: 0 },
-        { q: "Who provides a child with legal aid during a POCSO trial?", a: ["Legal Services Authority", "The Accused", "The School", "The Police"], c: 0 },
-        { q: "Recording the child's evidence must be completed in how many days?", a: ["15 days", "30 days", "60 days", "90 days"], c: 1 },
-        { q: "Special Courts are designated by:", a: ["State Government", "Police Commissioner", "NGOs", "Private Schools"], c: 0 },
-        { q: "Mandatory reporting applies to any person having knowledge of an offence.", a: ["True", "False", "Only if they are witnesses", "Only for public officials"], c: 0 },
-        { q: "What is the penalty for false reporting with malicious intent?", a: ["No penalty", "Fine or Imprisonment", "Community service", "Public apology"], c: 1 },
-        { q: "Under POCSO, the burden of proof is on the:", a: ["Child", "Police", "Accused (to prove innocence)", "Judge"], c: 2 },
-        { q: "Can the court allow a child to use a support person during trial?", a: ["Yes", "No", "Only if child is under 5", "Only for girls"], c: 0 },
-        { q: "The POCSO Act was last majorly amended in which year?", a: ["2015", "2017", "2019", "2021"], c: 2 },
-        { q: "Section 11 defines:", a: ["Sexual Harassment", "Sexual Assault", "Pornography", "Rape"], c: 0 },
-        { q: "Digital evidence of abuse is admissible in a POCSO court.", a: ["True", "False", "Only if printed", "Only if original"], c: 0 },
-        { q: "If the victim is a boy, which act applies?", a: ["POSH", "POCSO", "Both", "None"], c: 1 },
-        { q: "Medical examination of a girl child must be done by a:", a: ["Male Doctor", "Female Doctor", "Nurse", "Police"], c: 1 },
-        { q: "Can a child identify an accused through a video link?", a: ["Yes", "No", "Only if accused is out of state", "Only for adults"], c: 0 },
-        { q: "Minimum punishment for sexual harassment under POCSO is:", a: ["Fine only", "1 year", "3 years", "7 years"], c: 2 },
-        { q: "Are POCSO cases bailable?", a: ["Yes", "No (Non-bailable)", "Only for first-time offenders", "Only if fine is paid"], c: 1 },
-        { q: "A child's statement can be recorded in their mother tongue.", a: ["True", "False", "Only in English/Hindi", "Only if translator is unavailable"], c: 0 },
-        { q: "Can the IC (from POSH) handle POCSO cases?", a: ["Yes", "No, they must go to Police/LC", "Only if employer says so", "Only if victim is an adult"], c: 1 },
-        { q: "Using a child for street performing (sexually) is covered under:", a: ["Sexual Assault", "Pornographic purposes", "Harassment", "Not covered"], c: 1 },
-        { q: "Child-friendly environment in court is mandatory.", a: ["True", "False", "Only in big cities", "Only for private cases"], c: 0 }
-    ];
+    let allQuestions = [];
+    let sessionQuestions = [];
+
+    // Fetch questions dynamically from backend
+    function fetchQuestions() {
+        return fetch('/ajax/get-assessment-questions/?type=POCSO')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    allQuestions = data.questions;
+                    initQuiz();
+                } else {
+                    console.error("Failed to load questions:", data.message);
+                }
+            })
+            .catch(err => console.error("Error fetching questions:", err));
+    }
 
     function getCsrfToken() {
         return '{{ csrf_token }}';
@@ -261,10 +236,15 @@
     let timeLeft = 30;
 
     function initQuiz() {
+        if (allQuestions.length === 0) {
+            fetchQuestions();
+            return;
+        }
         window._alreadyCorrectCount = 0;
         const shuffled = allQuestions.sort(() => 0.5 - Math.random());
         selectedQuestions = shuffled.slice(0, 20);
-        selectedQuestions.forEach(q => { delete q.userAnswer; });
+        sessionQuestions = [...selectedQuestions];
+        selectedQuestions.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
         currentIdx = 0;
         loadQuestion();
     }
@@ -332,45 +312,18 @@
 
     function showResult() {
         document.getElementById('quiz-section').style.display = 'none';
-        document.getElementById('result-section').style.display = 'block';
         
-        const correctCount = selectedQuestions.filter(q => q.userAnswer === q.c).length;
-        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
-        
-        document.getElementById('final-score').innerText = `${totalCorrect}/20`;
         const msg = document.getElementById('result-msg');
-        
-        const percentage = Math.round((totalCorrect / 20) * 100);
-        const passed = totalCorrect === 20;
-        const eligibleForReattempt = totalCorrect >= 16 && totalCorrect < 20;
+        msg.innerText = "Grading assessment, please wait...";
+        document.getElementById('final-score').innerText = "--";
+        document.getElementById('result-section').style.display = 'block';
 
-        if (passed) {
-            msg.innerText = "🎉 Congratulations! You have passed the POCSO Assessment with a perfect score! Your certificate is now unlocked.";
-            msg.style.color = "var(--success)";
-            
-            document.getElementById('result-actions').innerHTML = `
-                <button class="btn btn-primary" onclick="window.location.href='{% url 'pocso_act_page' %}'">Go to Dashboard</button>
-                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
-            `;
-        } else if (eligibleForReattempt) {
-            msg.innerText = `⚠️ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You are eligible to complete the assessment by re-attempting only the incorrect questions!</b>`;
-            msg.style.color = "var(--warning)";
-            
-            document.getElementById('result-actions').innerHTML = `
-                <button class="btn btn-primary" onclick="startFinalReattempt()">Re-attempt Incorrect Questions</button>
-                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
-            `;
-        } else {
-            msg.innerText = `❌ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You did not qualify. Please retry the assessment to unlock your certificate.</b>`;
-            msg.style.color = "var(--danger)";
-            
-            document.getElementById('result-actions').innerHTML = `
-                <button class="btn btn-primary" onclick="location.reload()">Retry Assessment</button>
-                <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
-            `;
-        }
+        // Compile all answers from sessionQuestions (which keeps track of the 20 questions in the subset)
+        const answersPayload = sessionQuestions.map(q => ({
+            q: q.q,
+            ans: q.userAnswer !== undefined ? q.userAnswer : -1
+        }));
 
-        // SAVE TO BACKEND
         fetch('/ajax/submit-assessment/', {
             method: 'POST',
             headers: {
@@ -379,19 +332,73 @@
             },
             body: JSON.stringify({
                 type: 'POCSO',
-                score: totalCorrect,
-                total: 20,
-                passed: passed
+                answers: answersPayload
             })
         }).then(res => res.json())
-          .then(data => console.log("Result saved:", data))
-          .catch(err => console.error("Error saving result:", err));
+          .then(data => {
+              if (data.status === 'success') {
+                  const totalCorrect = data.score_raw;
+                  const percentage = data.score_percent;
+                  const passed = data.passed;
+                  const eligibleForReattempt = totalCorrect >= 16 && totalCorrect < 20;
+
+                  // Map server-side correctness back to sessionQuestions and selectedQuestions
+                  sessionQuestions.forEach(q => {
+                      const res = data.results.find(r => r.q === q.q);
+                      if (res) {
+                          q.isCorrect = res.is_correct;
+                          q.correctIndex = res.correct_index;
+                      }
+                  });
+                  selectedQuestions.forEach(q => {
+                      const res = data.results.find(r => r.q === q.q);
+                      if (res) {
+                          q.isCorrect = res.is_correct;
+                          q.correctIndex = res.correct_index;
+                      }
+                  });
+
+                  document.getElementById('final-score').innerText = `${totalCorrect}/20`;
+
+                  if (passed) {
+                      msg.innerText = "🎉 Congratulations! You have passed the POCSO Assessment with a perfect score! Your certificate is now unlocked.";
+                      msg.style.color = "var(--success)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="window.location.href='{% url 'pocso_act_page' %}'">Go to Dashboard</button>
+                          <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+                      `;
+                  } else if (eligibleForReattempt) {
+                      msg.innerText = `⚠️ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You are eligible to complete the assessment by re-attempting only the incorrect questions!</b>`;
+                      msg.style.color = "var(--warning)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="startFinalReattempt()">Re-attempt Incorrect Questions</button>
+                          <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+                      `;
+                  } else {
+                      msg.innerText = `❌ Score: ${totalCorrect}/20 (${percentage}%). <br><br><b>You did not qualify. Please retry the assessment to unlock your certificate.</b>`;
+                      msg.style.color = "var(--danger)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="location.reload()">Retry Assessment</button>
+                          <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
+                      `;
+                  }
+              } else {
+                  msg.innerText = "❌ Error grading assessment: " + data.message;
+              }
+          })
+          .catch(err => {
+              console.error("Error saving result:", err);
+              msg.innerText = "❌ Connection error during grading.";
+          });
     }
 
     function startFinalReattempt() {
-        window._alreadyCorrectCount = (window._alreadyCorrectCount || 0) + selectedQuestions.filter(q => q.userAnswer === q.c).length;
-        selectedQuestions = selectedQuestions.filter(q => q.userAnswer !== q.c);
-        selectedQuestions.forEach(q => { delete q.userAnswer; });
+        // Filter out correct ones based on isCorrect field from server
+        selectedQuestions = selectedQuestions.filter(q => !q.isCorrect);
+        selectedQuestions.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
         currentIdx = 0;
         
         document.getElementById('quiz-section').style.display = 'block';
@@ -412,10 +419,9 @@
         const container = document.getElementById('review-container');
         container.innerHTML = '';
 
-        const correctCount = selectedQuestions.filter(q => q.userAnswer === q.c).length;
-        const totalCorrect = (window._alreadyCorrectCount || 0) + correctCount;
-
-        if (totalCorrect === 20) {
+        // If all are correct, we show perfect score message
+        const incorrectCount = sessionQuestions.filter(q => !q.isCorrect).length;
+        if (incorrectCount === 0) {
             const div = document.createElement('div');
             div.style.textAlign = 'center';
             div.style.padding = '30px';
@@ -427,9 +433,9 @@
             return;
         }
 
-        selectedQuestions.forEach((q, i) => {
+        sessionQuestions.forEach((q, i) => {
             const userPick = q.userAnswer;
-            const isCorrect = userPick === q.c;
+            const isCorrect = q.isCorrect;
             const isTimedOut = userPick === -1 || userPick === undefined;
 
             if (isCorrect) return; // Only show incorrect/timed-out questions
@@ -453,7 +459,7 @@
                     <strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}
                 </p>
                 <p style="margin:5px 0; font-size:0.9rem; color:var(--success);">
-                    <strong>Correct Answer:</strong> ${q.a[q.c]}
+                    <strong>Correct Answer:</strong> ${q.correctIndex !== undefined && q.correctIndex !== null ? q.a[q.correctIndex] : 'Unavailable'}
                 </p>
             `;
             container.appendChild(div);

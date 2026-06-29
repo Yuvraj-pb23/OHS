@@ -27,27 +27,43 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
+POSH_TRAINING_VIDEO_URL = os.getenv(
+    "POSH_TRAINING_VIDEO_URL",
+    "https://website-data-593333832687-ap-south-1-an.s3.ap-south-1.amazonaws.com/Hanuai%20Website/POSH_Training_Video.mp4",
+)
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
 
-ALLOWED_HOSTS = [
-    "*",
-    "127.0.0.1",
-    "localhost",
-    "openhandsolutions.com",
-    "www.openhandsolutions.com",
-]
+allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
+if allowed_hosts_env:
+    ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",") if host.strip()]
+else:
+    ALLOWED_HOSTS = [
+        "*",
+        "127.0.0.1",
+        "localhost",
+        "openhandsolutions.com",
+        "www.openhandsolutions.com",
+    ]
 
-# ⚠️ TEMP: set to localhost for local testing. Change to 'https://openhandsolutions.com' before production deploy.
-SITE_URL = "http://127.0.0.1:8000"
+# Production site URL — used in emails sent to employees (login links, etc.)
+SITE_URL = os.getenv("SITE_URL", "https://openhandsolutions.com")
+
+# Session expires when the browser is closed (no persistent cookie)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Production Security Settings
-CSRF_TRUSTED_ORIGINS = [
-    "https://openhandsolutions.com",
-    "https://www.openhandsolutions.com",
-    "http://127.0.0.1:8000",
-    "http://localhost:8000",
-]
+csrf_trusted_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS")
+if csrf_trusted_origins_env:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_trusted_origins_env.split(",") if origin.strip()]
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://openhandsolutions.com",
+        "https://www.openhandsolutions.com",
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+    ]
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = True
@@ -64,6 +80,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "home",
     "chat",
+    "posh",
+    "pocso",
     "django_extensions",
 ]
 
@@ -74,6 +92,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "home.middleware.TabCloseSessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -210,11 +229,58 @@ STORAGES = {
     },
 }
 
+# WhiteNoise settings for high-performance static asset caching
+WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds
+
 # Email Configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"  # Update if using different email provider
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "openhandpvtltd@gmail.com"
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")  # Update if using different email provider
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("true", "1", "yes")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "openhandpvtltd@gmail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-DEFAULT_FROM_EMAIL = "Open Hand Solutions <openhandpvtltd@gmail.com>"
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "Open Hand Solutions <openhandpvtltd@gmail.com>")
+SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL", "openhandpvtltd@gmail.com")
+
+
+# Logging — writes certificate and general errors to a rotating log file
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": str(BASE_DIR / "logs" / "django.log"),
+            "maxBytes": 5 * 1024 * 1024,  # 5 MB
+            "backupCount": 3,
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "home.certificate": {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        },
+        "home": {
+            "handlers": ["console", "file"],
+            "level": "WARNING",
+            "propagate": False,
+        },
+        "django": {
+            "handlers": ["console"],
+            "level": "WARNING",
+            "propagate": True,
+        },
+    },
+}

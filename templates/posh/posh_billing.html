@@ -18,11 +18,59 @@
         --certificate-gold: #c5a059;
     }
 
+    body {
+        padding-top: 0 !important;
+    }
+
     .billing-page {
         font-family: 'Inter', sans-serif;
-        background-color: #f0f4f8;
-        background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.03) 0px, transparent 50%);
+        background-image: 
+          linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+          radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+        background-size: 40px 40px, 40px 40px, 100% 100% !important;
+        position: relative;
+        color: #0f172a;
+        z-index: 1;
+    }
+
+    /* Ambient Glow Blobs */
+    .ambient-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: 0;
+        animation: pulseGlow 8s ease-in-out infinite alternate;
+    }
+
+    .glow-blue {
+        top: 15%;
+        left: 5%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+    }
+
+    .glow-gold {
+        bottom: 15%;
+        right: 5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+        animation-delay: -4s;
+    }
+
+    @keyframes pulseGlow {
+        0% {
+            transform: scale(1) translate(0, 0);
+            opacity: 0.25;
+        }
+        100% {
+            transform: scale(1.15) translate(20px, -20px);
+            opacity: 0.4;
+        }
     }
 
     .heading-font {
@@ -122,8 +170,10 @@
     }
 </style>
 
-<div class="billing-page min-h-screen py-6 md:py-20 flex items-center justify-center">
-    <div class="max-w-4xl w-full px-2 md:px-4">
+<div class="billing-page min-h-screen pt-28 pb-20 px-4 flex items-center justify-center overflow-hidden">
+    <div class="ambient-glow glow-blue"></div>
+    <div class="ambient-glow glow-gold"></div>
+    <div class="max-w-4xl w-full px-2 md:px-4 relative z-10">
 
         {% if payment_status == 'PENDING' or payment_status == 'SUBMITTED' or payment_status == 'VERIFIED' or registration_submitted %}
         <!-- SUCCESS / CONGRATULATIONS SCREEN -->

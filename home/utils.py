@@ -137,11 +137,9 @@ def generate_certificate(user, course_type="POSH", custom_logo_path=None):
                     left: 82%;
                     width: 11.5%;
                     height: 16%;
-                    background-color: #ffffff;
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    border-radius: 50%;
                 }}
                 .logo-img {{
                     max-width: 90%;

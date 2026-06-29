@@ -1,0 +1,549 @@
+{% extends "base.html" %}
+{% load static %}
+{% block body %}
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary: #6200ea;
+        --primary-light: #ede7f6;
+        --primary-hover: #5a00d6;
+        --bg-body: #f8f9fa;
+        --surface: #ffffff;
+        --text-main: #1f2937;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --radius: 16px;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-body);
+        margin: 0;
+        color: var(--text-main);
+    }
+
+    .lms-container {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        min-height: 100vh;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+
+    /* Sidebar */
+    .sidebar {
+        background: var(--surface);
+        border-right: 1px solid var(--border-color);
+        padding: 25px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 14px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--text-main);
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+
+    .nav-item.active {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    /* Main Content */
+    .main-content {
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .quiz-card {
+        background: var(--surface);
+        max-width: 850px;
+        width: 100%;
+        padding: 40px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    /* Timer Style */
+    .timer-badge {
+        position: absolute;
+        top: 25px;
+        right: 40px;
+        background: var(--bg-body);
+        padding: 8px 15px;
+        border-radius: 30px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border: 2px solid var(--border-color);
+        min-width: 80px;
+        justify-content: center;
+    }
+
+    .timer-low {
+        color: var(--danger);
+        border-color: var(--danger);
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.5;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .progress-container {
+        width: 100%;
+        background-color: #e5e7eb;
+        border-radius: 10px;
+        height: 8px;
+        margin-bottom: 30px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        background-color: var(--primary);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+
+    .options-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .option-card {
+        padding: 15px 20px;
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-weight: 500;
+    }
+
+    .option-card:hover {
+        border-color: var(--primary);
+        background-color: var(--primary-light);
+    }
+
+    .option-card.selected {
+        border-color: var(--primary);
+        background-color: var(--primary);
+        color: white;
+    }
+
+    /* Review Styles */
+    .review-section {
+        margin-top: 40px;
+        width: 100%;
+        display: none;
+    }
+
+    .review-item {
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        margin-bottom: 15px;
+        background: white;
+    }
+
+    .review-item.correct-border {
+        border-left: 6px solid var(--success);
+    }
+
+    .review-item.wrong-border {
+        border-left: 6px solid var(--danger);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .bg-success-light {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .bg-danger-light {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .bg-warning-light {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: transparent;
+    }
+
+    @media (max-width: 1024px) {
+        .lms-container {
+            grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+            display: none;
+        }
+    }
+</style>
+
+<div class="lms-container">
+    <aside class="sidebar">
+        <div class="sidebar-brand" style="margin-bottom: 40px;">
+            <h2 style="color:var(--primary); margin:0;">POSH Act</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Final Assessment</p>
+        </div>
+        <nav>
+            <a href="#" class="nav-item active">📝 Final Test</a>
+            <a href="javascript:history.back()" class="nav-item">⬅ Exit</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <!-- Quiz UI -->
+        <div class="quiz-card" id="quiz-ui">
+            <!-- Timer Badge -->
+            <div id="timer-box" class="timer-badge">
+                ⏱ <span id="timer-seconds">30</span>s
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <span id="q-counter"
+                style="color:var(--primary); font-weight:700; text-transform:uppercase; font-size:0.8rem;"></span>
+            <h2 id="question-text" style="margin-top:10px; padding-right: 100px;"></h2>
+            <div class="options-grid" id="options-container"></div>
+            <div style="margin-top:30px; display:flex; justify-content:flex-end;">
+                <button class="btn btn-primary" id="next-btn" disabled onclick="handleNext()">Next Question</button>
+            </div>
+        </div>
+
+        <!-- Results UI -->
+        <div class="quiz-card" id="results-ui" style="display:none; text-align:center;">
+            <h1>Results</h1>
+            <div style="font-size:3.5rem; font-weight:800; color:var(--primary); margin:20px 0;" id="score-display">0/42</div>
+            <p id="result-message" style="font-size: 1.1rem; margin-bottom: 30px;"></p>
+            <div style="display:flex; gap:15px; justify-content:center;" id="result-actions">
+                <button class="btn btn-primary" onclick="location.reload()">Retry Test</button>
+                <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+            </div>
+        </div>
+
+        <!-- Review UI -->
+        <div class="review-section" id="review-ui">
+            <h2 style="margin-bottom:20px;">Review Answers</h2>
+            <div id="review-container"></div>
+            <button class="btn btn-primary" style="margin-top:20px; width:100%;" onclick="closeReview()">Close Review</button>
+        </div>
+    </main>
+</div>
+
+<script>
+    function getCsrfToken() {
+        return '{{ csrf_token }}';
+    }
+
+    let questionPool = [];
+
+    // Fetch questions dynamically from backend
+    function fetchQuestions() {
+        return fetch('/ajax/get-assessment-questions/?type=POSH')
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    questionPool = data.questions;
+                    initQuiz();
+                } else {
+                    console.error("Failed to load questions:", data.message);
+                }
+            })
+            .catch(err => console.error("Error fetching questions:", err));
+    }
+
+    let activeQuestions = [];
+    let currentIdx = 0;
+    let timer;
+    let timeLeft = 30;
+
+    function initQuiz() {
+        if (questionPool.length === 0) {
+            fetchQuestions();
+            return;
+        }
+        window._alreadyCorrectCount = 0;
+        activeQuestions = [...questionPool].sort(() => 0.5 - Math.random());
+        activeQuestions.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
+        currentIdx = 0;
+        loadQuestion();
+    }
+
+    function startTimer() {
+        timeLeft = 30;
+        document.getElementById('timer-seconds').innerText = timeLeft;
+        document.getElementById('timer-box').classList.remove('timer-low');
+
+        clearInterval(timer);
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-seconds').innerText = timeLeft;
+
+            if (timeLeft <= 10) {
+                document.getElementById('timer-box').classList.add('timer-low');
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                const qData = activeQuestions[currentIdx];
+                if (qData.userAnswer === undefined) {
+                    qData.userAnswer = -1; // -1 indicates Timed Out
+                }
+                handleNext();
+            }
+        }, 1000);
+    }
+
+    function loadQuestion() {
+        const qData = activeQuestions[currentIdx];
+        document.getElementById('q-counter').innerText = `Question ${currentIdx + 1} of ${activeQuestions.length}`;
+        document.getElementById('question-text').innerText = qData.q;
+        document.getElementById('progress-bar').style.width = `${((currentIdx + 1) / activeQuestions.length) * 100}%`;
+
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        qData.a.forEach((opt, i) => {
+            const div = document.createElement('div');
+            div.className = 'option-card';
+            div.innerText = opt;
+            div.onclick = () => {
+                document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                div.classList.add('selected');
+                qData.userAnswer = i;
+                document.getElementById('next-btn').disabled = false;
+            };
+            container.appendChild(div);
+        });
+
+        document.getElementById('next-btn').disabled = true;
+        startTimer();
+    }
+
+    function handleNext() {
+        clearInterval(timer);
+
+        const qData = activeQuestions[currentIdx];
+        if (qData.userAnswer === undefined) {
+            qData.userAnswer = -1;
+        }
+
+        currentIdx++;
+        if (currentIdx < activeQuestions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById('quiz-ui').style.display = 'none';
+        
+        const msg = document.getElementById('result-message');
+        msg.innerText = "Grading assessment, please wait...";
+        document.getElementById('score-display').innerText = "--";
+        document.getElementById('results-ui').style.display = 'block';
+
+        // Compile all answers from questionPool
+        const answersPayload = questionPool.map(q => ({
+            q: q.q,
+            ans: q.userAnswer !== undefined ? q.userAnswer : -1
+        }));
+
+        fetch('/ajax/submit-assessment/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
+            },
+            body: JSON.stringify({
+                type: 'POSH',
+                answers: answersPayload
+            })
+        }).then(res => res.json())
+          .then(data => {
+              if (data.status === 'success') {
+                  const totalCorrect = data.score_raw;
+                  const percentage = data.score_percent;
+                  const passed = data.passed;
+                  const eligibleForReattempt = totalCorrect >= Math.ceil(questionPool.length * 0.8) && totalCorrect < questionPool.length;
+
+                  // Map server-side correctness back to questionPool
+                  questionPool.forEach(q => {
+                      const res = data.results.find(r => r.q === q.q);
+                      if (res) {
+                          q.isCorrect = res.is_correct;
+                          q.correctIndex = res.correct_index;
+                      }
+                  });
+                  activeQuestions.forEach(q => {
+                      const res = data.results.find(r => r.q === q.q);
+                      if (res) {
+                          q.isCorrect = res.is_correct;
+                          q.correctIndex = res.correct_index;
+                      }
+                  });
+
+                  document.getElementById('score-display').innerText = `${totalCorrect}/${questionPool.length}`;
+
+                  if (passed) {
+                      msg.innerText = "🎉 Congratulations! You passed the POSH Assessment with a perfect score! Your certificate is now unlocked.";
+                      msg.style.color = "var(--success)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="window.location.href='{% url 'posh_act_page' %}'">Go to Dashboard</button>
+                          <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+                      `;
+                  } else if (eligibleForReattempt) {
+                      msg.innerText = `⚠️ Score: ${totalCorrect}/${questionPool.length} (${percentage}%). <br><br><b>You are eligible to complete the assessment by re-attempting only the incorrect questions!</b>`;
+                      msg.style.color = "var(--warning)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="startFinalReattempt()">Re-attempt Incorrect Questions</button>
+                          <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+                      `;
+                  } else {
+                      msg.innerText = `❌ Score: ${totalCorrect}/${questionPool.length} (${percentage}%). <br><br><b>You did not qualify. Please retry the assessment to unlock your certificate.</b>`;
+                      msg.style.color = "var(--danger)";
+                      
+                      document.getElementById('result-actions').innerHTML = `
+                          <button class="btn btn-primary" onclick="location.reload()">Retry Assessment</button>
+                          <button class="btn btn-outline" onclick="generateReview()">Review Answers</button>
+                      `;
+                  }
+              } else {
+                  msg.innerText = "❌ Error grading assessment: " + data.message;
+              }
+          })
+          .catch(err => {
+              console.error("Error saving result:", err);
+              msg.innerText = "❌ Connection error during grading.";
+          });
+    }
+
+    function startFinalReattempt() {
+        // Filter out correct ones based on isCorrect field from server
+        activeQuestions = activeQuestions.filter(q => !q.isCorrect);
+        activeQuestions.forEach(q => { delete q.userAnswer; delete q.isCorrect; });
+        currentIdx = 0;
+        
+        document.getElementById('quiz-ui').style.display = 'block';
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('review-ui').style.display = 'none';
+        
+        loadQuestion();
+    }
+
+    function closeReview() {
+        document.getElementById('review-ui').style.display = 'none';
+        document.getElementById('results-ui').style.display = 'block';
+    }
+
+    function generateReview() {
+        document.getElementById('results-ui').style.display = 'none';
+        document.getElementById('review-ui').style.display = 'block';
+        const container = document.getElementById('review-container');
+        container.innerHTML = '';
+
+        // If all are correct, we show perfect score message
+        const incorrectCount = questionPool.filter(q => !q.isCorrect).length;
+        if (incorrectCount === 0) {
+            const item = document.createElement('div');
+            item.style.textAlign = 'center';
+            item.style.padding = '30px';
+            item.innerHTML = `
+                <div class="status-badge bg-success-light" style="font-size: 1.2rem; padding: 8px 24px; border-radius: 30px; margin-bottom: 15px;">🎉 Perfect Score!</div>
+                <h3 style="margin-top: 15px; color: var(--success, #10b981);">Outstanding! You answered all questions correctly.</h3>
+            `;
+            container.appendChild(item);
+            return;
+        }
+
+        questionPool.forEach((q, i) => {
+            const userPick = q.userAnswer;
+            const isCorrect = q.isCorrect;
+            const isTimedOut = userPick === -1 || userPick === undefined;
+
+            if (isCorrect) return; // Only show incorrect/timed-out questions
+
+            const item = document.createElement('div');
+            item.className = `review-item wrong-border`;
+
+            let statusBadge = `<div class="status-badge bg-danger-light">✗ Incorrect</div>`;
+            if (isTimedOut) {
+                statusBadge = `<div class="status-badge bg-warning-light">⌛ Timed Out</div>`;
+            }
+
+            item.innerHTML = `
+                ${statusBadge}
+                <h3 style="margin:0 0 10px 0;">${i + 1}. ${q.q}</h3>
+                <p><strong>Your Answer:</strong> ${isTimedOut ? 'No Answer Given' : q.a[userPick]}</p>
+                <p style="color:var(--success)"><strong>Correct Answer:</strong> ${q.correctIndex !== undefined && q.correctIndex !== null ? q.a[q.correctIndex] : 'Unavailable'}</p>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    initQuiz();
+</script>
+{% endblock body %}

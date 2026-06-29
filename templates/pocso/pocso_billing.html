@@ -18,11 +18,59 @@
         --certificate-gold: #c5a059;
     }
 
+    body {
+        padding-top: 0 !important;
+    }
+
     .billing-page {
         font-family: 'Inter', sans-serif;
-        background-color: #fff1f2;
-        background-image: radial-gradient(at 0% 0%, rgba(244, 63, 94, 0.03) 0px, transparent 50%),
-            radial-gradient(at 100% 0%, rgba(244, 63, 94, 0.03) 0px, transparent 50%);
+        background-image: 
+          linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+          radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+        background-size: 40px 40px, 40px 40px, 100% 100% !important;
+        position: relative;
+        color: #0f172a;
+        z-index: 1;
+    }
+
+    /* Ambient Glow Blobs */
+    .ambient-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(100px);
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: 0;
+        animation: pulseGlow 8s ease-in-out infinite alternate;
+    }
+
+    .glow-blue {
+        top: 15%;
+        left: 5%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+    }
+
+    .glow-gold {
+        bottom: 15%;
+        right: 5%;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+        animation-delay: -4s;
+    }
+
+    @keyframes pulseGlow {
+        0% {
+            transform: scale(1) translate(0, 0);
+            opacity: 0.25;
+        }
+        100% {
+            transform: scale(1.15) translate(20px, -20px);
+            opacity: 0.4;
+        }
     }
 
     .heading-font {
@@ -146,10 +194,12 @@
     }
 </style>
 
-<div class="billing-page min-h-screen py-6 md:py-20 flex items-center justify-center">
-    <div class="max-w-4xl w-full px-2 md:px-4">
+<div class="billing-page min-h-screen pt-28 pb-20 px-4 flex items-center justify-center overflow-hidden">
+    <div class="ambient-glow glow-blue"></div>
+    <div class="ambient-glow glow-gold"></div>
+    <div class="max-w-4xl w-full px-2 md:px-4 relative z-10">
 
-        {% if payment_status == 'SUBMITTED' or payment_status == 'VERIFIED' %}
+        {% if payment_status == 'PENDING' or payment_status == 'SUBMITTED' or payment_status == 'VERIFIED' or registration_submitted %}
         <!-- SUCCESS SCREEN -->
         <div class="certificate-card rounded-3xl p-2 md:p-4 text-center animate-fadeIn">
             <div class="certificate-inner-border rounded-2xl flex flex-col items-center py-12 px-4 md:py-20 md:px-8">
@@ -164,6 +214,42 @@
                     </div>
                 </div>
 
+                {% if registration_submitted or payment_status == 'PENDING' %}
+                <h1 class="heading-font text-3xl md:text-5xl font-black text-blue-600 mb-6 tracking-tight">
+                    Registration Submitted!</h1>
+
+                <div class="max-w-md mx-auto space-y-4 mb-12">
+                    <p class="text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
+                        Proforma Invoice Sent.
+                    </p>
+                    <p class="text-slate-500 font-medium leading-relaxed">
+                        An email with your proforma invoice and secure payment link has been sent to <b
+                            class="text-slate-700">{{ registration.email }}</b>.
+                    </p>
+                    <p class="text-slate-400 text-xs mt-4 leading-relaxed">
+                        Please open your email inbox, check the details, and click the <b>Pay Now – Secure Payment Link</b> inside to complete your payment and upload your screenshot.
+                    </p>
+                    <div class="h-px w-20 bg-slate-100 mx-auto mt-6"></div>
+                    <p class="text-blue-600 font-black heading-font text-3xl tracking-tight mt-4">Thank You!</p>
+                </div>
+                {% elif payment_status == 'SUBMITTED' %}
+                <h1 class="heading-font text-3xl md:text-5xl font-black text-blue-600 mb-6 tracking-tight">
+                    Verification Pending</h1>
+
+                <div class="max-w-md mx-auto space-y-4 mb-12">
+                    <p class="text-lg md:text-xl font-extrabold text-slate-900 leading-snug">
+                        Payment Proof Submitted.
+                    </p>
+                    <p class="text-slate-500 font-medium leading-relaxed">
+                        We have received your proof of payment for <b class="text-slate-700">{{ registration.school_name }}</b>. Our accounts team is verifying it.
+                    </p>
+                    <p class="text-slate-400 text-xs mt-4 leading-relaxed">
+                        Once verified, login credentials will be emailed to <b class="text-slate-700">{{ registration.email }}</b>.
+                    </p>
+                    <div class="h-px w-20 bg-slate-100 mx-auto mt-6"></div>
+                    <p class="text-blue-600 font-black heading-font text-3xl tracking-tight mt-4">Thank You!</p>
+                </div>
+                {% else %}
                 <h1 class="heading-font text-3xl md:text-5xl font-black text-blue-600 mb-6 tracking-tight">
                     Congratulations!</h1>
 
@@ -178,6 +264,7 @@
                     <div class="h-px w-20 bg-slate-100 mx-auto mt-6"></div>
                     <p class="text-blue-600 font-black heading-font text-3xl tracking-tight mt-4">Thank You!</p>
                 </div>
+                {% endif %}
 
                 <a href="{% url 'home' %}"
                     class="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">

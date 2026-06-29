@@ -9,6 +9,8 @@ urlpatterns = [
     path("favicon.ico", RedirectView.as_view(url=settings.STATIC_URL + "img/favicon_final.ico")),
     path("admin/", admin.site.urls),
     path("", include("home.urls")),
+    path("", include("posh.urls")),
+    path("", include("pocso.urls")),
     path("chat/", include("chat.urls")),
     path(
         "login/",
