@@ -4,7 +4,7 @@ on:
   workflow_run:
     workflows: ["Continuous Integration"]
     types: [completed]
-    branches: [main]
+    branches: [main, k8s]
 
 jobs:
   deploy:

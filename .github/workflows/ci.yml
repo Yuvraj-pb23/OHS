@@ -2,9 +2,9 @@ name: Continuous Integration
 
 on:
   push:
-    branches: ["main", "release/*"]
+    branches: ["main", "release/*", "k8s"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "k8s"]
 
 permissions:
   contents: read
