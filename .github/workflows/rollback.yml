@@ -1,0 +1,26 @@
+name: Manual Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_tag:
+        description: 'Git Tag / Release version to rollback to'
+        required: true
+        type: string
+
+jobs:
+  rollback:
+    name: Rollback Application
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Execute Rollback Script
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "bash /app/OHS/scripts/rollback.sh ${{ github.event.inputs.target_tag }}"

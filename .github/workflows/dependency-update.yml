@@ -1,0 +1,28 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # Monthly
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-updates:
+    name: Check Python Dependency Updates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Audit Dependencies
+        run: |
+          pip install pip-audit
+          pip-audit -r requirements.txt || echo "Pip-audit finished with issues"
