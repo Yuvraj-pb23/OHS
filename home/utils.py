@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from weasyprint import HTML
 
+
 def generate_certificate(user, course_type="POSH"):
     """
     Generates a PDF certificate for the given user and course type.
@@ -13,7 +14,7 @@ def generate_certificate(user, course_type="POSH"):
         template_name = "Certificate/POSH CERT.png"
     else:
         template_name = "Certificate/POCSO CERT.png"
-    
+
     # Construct absolute path to the image for WeasyPrint
     image_path = os.path.join(settings.MEDIA_ROOT, template_name)
     if not os.path.exists(image_path):
@@ -23,10 +24,11 @@ def generate_certificate(user, course_type="POSH"):
 
     # 2. Prepare Context
     context = {
-        "candidate_name": f"{user.first_name} {user.last_name}".strip() or user.username,
+        "candidate_name": f"{user.first_name} {user.last_name}".strip()
+        or user.username,
         "course_type": course_type,
-        "completion_date": timezone.now().strftime("%d/%m/%Y"), # e.g. 05/02/2026
-        "image_path": f"file://{image_path}", # WeasyPrint needs file:// protocol for local images
+        "completion_date": timezone.now().strftime("%d/%m/%Y"),  # e.g. 05/02/2026
+        "image_path": f"file://{image_path}",  # WeasyPrint needs file:// protocol for local images
     }
 
     # Determine date position
@@ -87,5 +89,5 @@ def generate_certificate(user, course_type="POSH"):
 
     # 4. Convert to PDF
     pdf_file = HTML(string=html_string).write_pdf()
-    
+
     return pdf_file

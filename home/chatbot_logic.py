@@ -41,7 +41,7 @@ def _ensure_loaded():
     _embeddings = torch.tensor(_semantic_data["embeddings"])  # Convert to tensor
 
     # Load sentence transformer model
-    _semantic_model = SentenceTransformer('all-MiniLM-L6-v2')
+    _semantic_model = SentenceTransformer("all-MiniLM-L6-v2")
 
     _initialized = True
 
@@ -51,6 +51,7 @@ def _ensure_loaded():
 
 # === Fallback memory for suggested questions ===
 last_suggestions = []
+
 
 # === Match user input to previous suggestions ===
 def match_followup(user_input):
@@ -72,14 +73,19 @@ def match_followup(user_input):
 
     return None
 
+
 # === Suggest top N similar questions ===
 def get_question_suggestions(user_question, top_n=3):
     _ensure_loaded()
     from sentence_transformers import util
+
     user_embedding = _semantic_model.encode(user_question, convert_to_tensor=True)
     cosine_scores = util.pytorch_cos_sim(user_embedding, _embeddings)[0]
     top_indices = torch.topk(cosine_scores, k=top_n).indices.tolist()
-    return [(_questions[i], _answers[i]) for i in top_indices], float(torch.max(cosine_scores))
+    return [(_questions[i], _answers[i]) for i in top_indices], float(
+        torch.max(cosine_scores)
+    )
+
 
 # === Hybrid Predict Function with fallback ===
 def predict_answer(user_question, threshold=0.5):
@@ -101,6 +107,6 @@ def predict_answer(user_question, threshold=0.5):
         last_suggestions = suggestions
         options = "\n".join([f"{i+1}. {q}" for i, (q, _) in enumerate(suggestions)])
         return (
-            f"Apologies I could not understand \"{user_question}\" since it is not related to OHS,\n"
-            f"Did you mean one of these?\n\n{options}\n\n" 
+            f'Apologies I could not understand "{user_question}" since it is not related to OHS,\n'
+            f"Did you mean one of these?\n\n{options}\n\n"
         )

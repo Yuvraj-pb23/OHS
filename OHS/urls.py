@@ -14,19 +14,21 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path,include
-from django.contrib.auth import views as auth_views # Import this
-from django.urls import path
-from home import views 
 
+from django.contrib import admin
+from django.urls import path, include
+from django.contrib.auth import views as auth_views  # Import this
+from django.urls import path
+from home import views
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('',include('home.urls')), 
-    path('chat/', include('chat.urls')),
-    path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(next_page='tutorial'), name='logout'),
+    path("admin/", admin.site.urls),
+    path("", include("home.urls")),
+    path("chat/", include("chat.urls")),
+    path(
+        "login/", auth_views.LoginView.as_view(template_name="login.html"), name="login"
+    ),
+    path("logout/", auth_views.LogoutView.as_view(next_page="tutorial"), name="logout"),
 ]
 
 from django.conf import settings
@@ -36,10 +38,9 @@ from django.views.static import serve
 
 # Always serve media files in this environment, even when DEBUG is False
 urlpatterns += [
-    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
 ]
 
-handler404 = 'home.views.custom_404'
-handler403 = 'home.views.custom_403'
-handler500 = 'home.views.custom_500'
-
+handler404 = "home.views.custom_404"
+handler403 = "home.views.custom_403"
+handler500 = "home.views.custom_500"

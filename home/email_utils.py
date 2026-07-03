@@ -2,10 +2,12 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 
-def send_welcome_email(user, password, is_company_employee=False, organization_name=None):
+def send_welcome_email(
+    user, password, is_company_employee=False, organization_name=None
+):
     """Send welcome email with login credentials"""
-    subject = 'Welcome to Open Hand Solution - Your Account Details'
-    
+    subject = "Welcome to Open Hand Solution - Your Account Details"
+
     if is_company_employee:
         message = f"""
 Hello {user.first_name},
@@ -48,7 +50,7 @@ If you have any questions, please feel free to reply to this email.
 Best regards,
 Open Hand Solution Team
         """
-    
+
     try:
         send_mail(
             subject,
@@ -65,8 +67,8 @@ Open Hand Solution Team
 
 def send_password_change_email(user):
     """Send email notification when password is changed"""
-    subject = 'Password Changed Successfully - Open Hand Solution'
-    
+    subject = "Password Changed Successfully - Open Hand Solution"
+
     message = f"""
 Hello {user.first_name},
 
@@ -82,7 +84,7 @@ Time: Just now
 Best regards,
 Open Hand Solution Team
     """
-    
+
     try:
         send_mail(
             subject,

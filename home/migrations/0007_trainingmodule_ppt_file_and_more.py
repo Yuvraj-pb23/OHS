@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0006_trainingmodule_organization_organization_type_and_more'),
+        ("home", "0006_trainingmodule_organization_organization_type_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='trainingmodule',
-            name='ppt_file',
-            field=models.FileField(blank=True, null=True, upload_to='training_ppts/'),
+            model_name="trainingmodule",
+            name="ppt_file",
+            field=models.FileField(blank=True, null=True, upload_to="training_ppts/"),
         ),
         migrations.AlterField(
-            model_name='trainingmodule',
-            name='video_file',
-            field=models.FileField(blank=True, null=True, upload_to='training_videos/'),
+            model_name="trainingmodule",
+            name="video_file",
+            field=models.FileField(blank=True, null=True, upload_to="training_videos/"),
         ),
     ]

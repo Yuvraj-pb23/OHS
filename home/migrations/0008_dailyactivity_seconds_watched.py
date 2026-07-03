@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('home', '0007_trainingmodule_ppt_file_and_more'),
+        ("home", "0007_trainingmodule_ppt_file_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='dailyactivity',
-            name='seconds_watched',
+            model_name="dailyactivity",
+            name="seconds_watched",
             field=models.IntegerField(default=0),
         ),
     ]

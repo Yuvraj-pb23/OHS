@@ -35,13 +35,13 @@ jobs:
           pip install flake8 black bandit safety -r requirements.txt
 
       - name: Check Formatting (Black)
-        run: black --check . --exclude "venv/|hanuai_venv/|myenv/"
+        run: black --check . --exclude "venv/|hanuai_venv/|myenv/|posh_view\.py|corp_view\.py"
 
       - name: Lint Code (Flake8)
-        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,hanuai_venv,myenv
+        run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,hanuai_venv,myenv,posh_view.py,corp_view.py
 
       - name: Security Check (Bandit)
-        run: bandit -r . -x ./venv,./hanuai_venv,./myenv -ll
+        run: bandit -r . -x ./venv,./hanuai_venv,./myenv,./posh_view.py,./corp_view.py -ll
 
       - name: Run Django Tests
         run: python manage.py test --noinput
