@@ -7,7 +7,9 @@ echo "========================================="
 cd /app/OHS
 
 echo "[1/5] Pulling latest code..."
-git pull origin main
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+echo "Current branch: $CURRENT_BRANCH"
+git pull origin "$CURRENT_BRANCH"
 
 echo "[2/5] Pulling latest container images..."
 docker compose --profile prod pull
