@@ -1,0 +1,8 @@
+# Debian base image vulnerabilities with no immediate/deferred fix
+CVE-2026-58016
+CVE-2026-42496
+CVE-2026-8376
+# Python 3.12 related vulns
+CVE-2026-47955
+CVE-2025-4365
+
