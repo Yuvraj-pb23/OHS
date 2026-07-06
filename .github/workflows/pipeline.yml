@@ -182,6 +182,7 @@ jobs:
           format: 'table'
           severity: 'CRITICAL'
           exit-code: '1'
+          trivyignores: '.trivyignore'
           # To allow-list specific CVEs, create .trivyignore in repo root
           # with one CVE-ID per line (e.g., CVE-2024-12345)
 
@@ -193,6 +194,7 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
+          trivyignores: '.trivyignore'
 
       - name: Upload Trivy SARIF to GitHub Security
         if: always()
