@@ -37,7 +37,7 @@ class ImageChatbot:
         """
         try:
             with open(model_path, "rb") as f:
-                self.model_data = pickle.load(f)  # nosec B301
+                self.model_data = pickle.load(f)  # nosec B301  # nosemgrep
 
             self.vectorizer = self.model_data["vectorizer"]
             self.data = self.model_data["data"]

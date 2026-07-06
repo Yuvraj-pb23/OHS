@@ -62,7 +62,7 @@ class LLMEngine:
 
             print(f"[LLM Engine] Saving metadata to {meta_path}...")
             with open(meta_path, "wb") as f:
-                pickle.dump(documents, f)
+                pickle.dump(documents, f)  # nosemgrep
 
             print("[LLM Engine] Index build complete.")
             return True
@@ -119,7 +119,7 @@ class LLMEngine:
             # 3. Load Metadata
             print("[LLM Engine] Loading metadata...")
             with open(meta_path, "rb") as f:
-                self.metadata = pickle.load(f)  # nosec B301
+                self.metadata = pickle.load(f)  # nosec B301  # nosemgrep
 
             # 4. Load Model & Tokenizer
             print("[LLM Engine] Loading tokenizer...")

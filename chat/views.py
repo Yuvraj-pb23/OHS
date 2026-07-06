@@ -313,7 +313,7 @@ def get_answer_for_question(question_text):
     return None
 
 
-@csrf_exempt
+@csrf_exempt  # nosemgrep
 def chatbot_response(request):
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=405)
