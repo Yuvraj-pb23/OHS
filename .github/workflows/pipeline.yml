@@ -11,9 +11,9 @@ name: Production DevSecOps Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "k8s" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "k8s" ]
   workflow_dispatch:
 
 permissions:
