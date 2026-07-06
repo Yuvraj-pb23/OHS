@@ -1,0 +1,11 @@
+title = "Custom Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+paths = [
+    '''static/img/blog_commu_files/.*''',
+    '''static/img/front1_files/.*''',
+    '''static/img/front3\.htm'''
+]
