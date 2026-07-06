@@ -1,26 +1,261 @@
-name: Manual Rollback
+# ==============================================================================
+# Manual Rollback Workflow — workflow_dispatch ONLY
+# ==============================================================================
+# Triggered manually via GitHub UI or CLI:
+#   gh workflow run rollback.yml -f image_tag=sha-abc123def456
+#
+# This workflow:
+#   1. Validates the specified image tag exists in GHCR
+#   2. SSHs to production EC2
+#   3. Pulls the specified image
+#   4. Stops the current container
+#   5. Starts container from the specified tag
+#   6. Runs smoke test to confirm rollback succeeded
+#   7. Logs tag, actor, and timestamp for audit trail
+#
+# IMPORTANT: image_tag is REQUIRED and must be explicit — no default, no
+# inference. The operator must know exactly which tag to roll back to.
+# ==============================================================================
+
+name: "🔄 Manual Rollback"
 
 on:
   workflow_dispatch:
     inputs:
-      target_tag:
-        description: 'Git Tag / Release version to rollback to'
+      image_tag:
+        description: |
+          Image tag to roll back to (e.g., sha-abc123def456).
+          This must be an existing tagged image in GHCR.
+          No default — you must specify the exact tag.
         required: true
         type: string
 
+permissions:
+  contents: read
+  packages: read
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/yuvraj-pb23/ohs
+
 jobs:
   rollback:
-    name: Rollback Application
+    name: "Rollback Production to ${{ github.event.inputs.image_tag }}"
     runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      # -----------------------------------------------------------------------
+      # Pre-flight: Log rollback intent
+      # -----------------------------------------------------------------------
+      - name: "📋 Rollback Audit Log"
+        run: |
+          echo "============================================="
+          echo "🔄 MANUAL ROLLBACK INITIATED"
+          echo "============================================="
+          echo "  Target Tag:  ${{ github.event.inputs.image_tag }}"
+          echo "  Full Image:  ${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}"
+          echo "  Triggered By: ${{ github.actor }}"
+          echo "  Timestamp:   $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "  Run ID:      ${{ github.run_id }}"
+          echo "  Run URL:     ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "============================================="
 
-      - name: Setup SSH Agent
+      # -----------------------------------------------------------------------
+      # Validate: Check image tag format
+      # -----------------------------------------------------------------------
+      - name: "🔍 Validate image tag input"
+        run: |
+          TAG="${{ github.event.inputs.image_tag }}"
+          if [ -z "${TAG}" ]; then
+            echo "::error::image_tag input is empty. You must specify an explicit tag."
+            exit 1
+          fi
+          # Warn if tag doesn't follow expected sha-* pattern
+          if [[ ! "${TAG}" =~ ^sha-[a-f0-9]+$ ]]; then
+            echo "::warning::Tag '${TAG}' does not match expected format 'sha-<commit-hash>'. Proceeding anyway — ensure this tag exists in GHCR."
+          fi
+          echo "Tag format validated: ${TAG}"
+
+      # -----------------------------------------------------------------------
+      # Verify: Check image exists in GHCR
+      # -----------------------------------------------------------------------
+      - name: "📦 Verify image exists in GHCR"
+        run: |
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}"
+          echo "Checking if ${FULL_IMAGE} exists in registry..."
+          
+          # Try to pull the manifest (doesn't download layers)
+          if docker manifest inspect "${FULL_IMAGE}" > /dev/null 2>&1; then
+            echo "✅ Image ${FULL_IMAGE} found in GHCR"
+          else
+            echo "::error::❌ Image ${FULL_IMAGE} NOT found in GHCR."
+            echo "  The image may have been deleted by cleanup or never existed."
+            echo "  Available tags can be checked at:"
+            echo "  https://github.com/Yuvraj-pb23/OHS/pkgs/container/ohs"
+            exit 1
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # -----------------------------------------------------------------------
+      # SSH setup
+      # -----------------------------------------------------------------------
+      - name: Set up SSH Key connection
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Execute Rollback Script
+      # -----------------------------------------------------------------------
+      # Execute Rollback
+      # -----------------------------------------------------------------------
+      - name: "🔄 Execute Rollback on Production"
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          ROLLBACK_TAG: ${{ github.event.inputs.image_tag }}
+          FULL_IMAGE: "${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}"
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "bash /app/OHS/scripts/rollback.sh ${{ github.event.inputs.target_tag }}"
+          ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} << 'ROLLBACK_EOF'
+          set -euo pipefail
+          echo "============================================="
+          echo "🔄 ROLLBACK — Executing on Production"
+          echo "============================================="
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}"
+          CANARY_NAME="ohs_web_rollback_canary"
+          PROD_COMPOSE_DIR="/app/OHS"
+
+          cd "${PROD_COMPOSE_DIR}"
+
+          # ----------------------------------------------------------------
+          # Step 1: Pull the rollback image
+          # ----------------------------------------------------------------
+          echo "[1/5] Pulling rollback image: ${FULL_IMAGE}..."
+          docker pull "${FULL_IMAGE}"
+
+          # ----------------------------------------------------------------
+          # Step 2: Pre-rollback smoke test on alternate port
+          # ----------------------------------------------------------------
+          echo "[2/5] Starting rollback canary on port 8082..."
+          docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+
+          docker run -d \
+            --name "${CANARY_NAME}" \
+            --env-file .env \
+            -e CONTAINER_ROLE=web \
+            -e DEBUG=False \
+            -p 8082:8000 \
+            --network ohs_app-network \
+            --health-cmd="curl -f http://localhost:8000/ || exit 1" \
+            --health-interval=10s \
+            --health-timeout=5s \
+            --health-retries=3 \
+            --health-start-period=60s \
+            "${FULL_IMAGE}"
+
+          # Wait for canary health
+          echo "[3/5] Waiting for rollback canary to become healthy (max 120s)..."
+          TIMEOUT=120
+          ELAPSED=0
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' "${CANARY_NAME}" 2>/dev/null || echo "not_found")
+            if [ "$STATUS" = "healthy" ]; then
+              echo "  ✅ Rollback canary healthy after ${ELAPSED}s"
+              break
+            elif [ "$STATUS" = "unhealthy" ]; then
+              echo "  ❌ Rollback canary unhealthy"
+              break
+            fi
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+            echo "  ⏳ Status: ${STATUS} (${ELAPSED}s/${TIMEOUT}s)"
+          done
+
+          if [ "$STATUS" != "healthy" ]; then
+            echo "============================================="
+            echo "❌ ROLLBACK CANARY FAILED — aborting rollback"
+            echo "  The rollback image itself failed health check."
+            echo "  Current production is UNTOUCHED."
+            echo "============================================="
+            docker logs --tail 50 "${CANARY_NAME}" 2>&1 || true
+            docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+            exit 1
+          fi
+
+          # HTTP smoke test on canary
+          SMOKE_OK=true
+          for i in 1 2 3; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://localhost:8082/ 2>/dev/null || echo "000")
+            echo "  Smoke check ${i}: HTTP ${HTTP_CODE}"
+            if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 400 ]; then
+              SMOKE_OK=false
+            fi
+            sleep 2
+          done
+
+          if [ "$SMOKE_OK" = false ]; then
+            echo "============================================="
+            echo "❌ ROLLBACK HTTP SMOKE FAILED — aborting"
+            echo "  Current production is UNTOUCHED."
+            echo "============================================="
+            docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+            exit 1
+          fi
+
+          # ----------------------------------------------------------------
+          # Step 3: Stop canary, swap production
+          # ----------------------------------------------------------------
+          echo "[4/5] Canary passed — swapping production to rollback image..."
+          docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+
+          # Update compose stack
+          docker compose --profile prod pull
+          IMAGE_TAG="${FULL_IMAGE}" docker compose --profile prod up -d --remove-orphans
+
+          # ----------------------------------------------------------------
+          # Step 4: Verify production after rollback
+          # ----------------------------------------------------------------
+          echo "[5/5] Verifying production health after rollback..."
+          sleep 15
+          docker compose --profile prod ps
+
+          # Final HTTP check
+          FINAL_OK=true
+          for i in 1 2 3; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://localhost/ 2>/dev/null || echo "000")
+            echo "  Post-rollback check ${i}: HTTP ${HTTP_CODE}"
+            if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 400 ]; then
+              FINAL_OK=false
+            fi
+            sleep 3
+          done
+
+          if [ "$FINAL_OK" = false ]; then
+            echo "::warning::Post-rollback health check showed issues — manual verification recommended"
+          fi
+
+          echo "============================================="
+          echo "✅ ROLLBACK COMPLETED"
+          echo "  Image:       ${FULL_IMAGE}"
+          echo "  Rolled back: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "  Actor:       ${{ github.actor }}"
+          echo "============================================="
+          ROLLBACK_EOF
+
+      # -----------------------------------------------------------------------
+      # Final Audit Summary
+      # -----------------------------------------------------------------------
+      - name: "📋 Rollback Completion Audit"
+        if: always()
+        run: |
+          echo "============================================="
+          echo "ROLLBACK AUDIT TRAIL"
+          echo "============================================="
+          echo "  Target Tag:    ${{ github.event.inputs.image_tag }}"
+          echo "  Full Image:    ${{ env.IMAGE_NAME }}:${{ github.event.inputs.image_tag }}"
+          echo "  Triggered By:  ${{ github.actor }}"
+          echo "  Timestamp:     $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "  Run ID:        ${{ github.run_id }}"
+          echo "  Job Status:    ${{ job.status }}"
+          echo "  Run URL:       ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "============================================="

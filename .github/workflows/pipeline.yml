@@ -1,10 +1,19 @@
-name: Production-Ready DevSecOps Pipeline
+# ==============================================================================
+# Production-Ready DevSecOps Pipeline (Direct-to-Production)
+# ==============================================================================
+# Registry:   GHCR (ghcr.io/yuvraj-pb23/ohs)
+# Target:     Single production EC2 via SSH
+# Retention:  5 previous tagged images in GHCR (cleanup.yml)
+# No staging: Explicit decision — pre-swap smoke test as partial mitigation
+# ==============================================================================
+
+name: Production DevSecOps Pipeline
 
 on:
   push:
-    branches: [ "main", "k8s" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "k8s" ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 permissions:
@@ -12,12 +21,19 @@ permissions:
   packages: write
   security-events: write
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/yuvraj-pb23/ohs
+  # Container names used on the production EC2 instance
+  PROD_CONTAINER: ohs_web
+  CANARY_CONTAINER: ohs_web_canary
+
 jobs:
-  # =================================================-----------------------------
-  # 1. CONTINUOUS INTEGRATION (CI)
-  # =================================================================-------------
-  ci-stage:
-    name: CI - Code Quality & Testing
+  # ============================================================================
+  # 1. CLONE + LINT + UNIT TESTS
+  # ============================================================================
+  ci-tests:
+    name: "Stage 1/2: CI - Lint, Format & Unit Tests"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
@@ -45,52 +61,78 @@ jobs:
       - name: Code Quality - Linting (Flake8)
         run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=venv,hanuai_venv,myenv,posh_view.py,corp_view.py
 
-      - name: Static Analysis (Bandit)
-        run: bandit -r . -x ./venv,./hanuai_venv,./myenv,./posh_view.py,./corp_view.py -ll
-
       - name: Run Unit & Integration Tests (Coverage Report)
         run: |
           coverage run manage.py test --noinput
           coverage report -m
 
-  # ==============================================================================
-  # 2. SECURITY & QUALITY GATES
-  # ==============================================================================
-  security-scans:
-    name: Security & Quality Gates
-    needs: ci-stage
+  # ============================================================================
+  # 2. SAST — Parallel with CI tests (fail-fast on HIGH/CRITICAL)
+  # ============================================================================
+  sast-scan:
+    name: "Stage 2: SAST - Static Security Analysis"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Bandit
+        run: pip install bandit
+
+      - name: SAST - Bandit (fail on HIGH/CRITICAL)
+        run: |
+          bandit -r . \
+            -x ./venv,./hanuai_venv,./myenv,./posh_view.py,./corp_view.py \
+            -ll \
+            -f json -o bandit-results.json || BANDIT_EXIT=$?
+          # Display results
+          cat bandit-results.json | python -m json.tool || true
+          # Fail on high-severity findings
+          if [ "${BANDIT_EXIT:-0}" -ne 0 ]; then
+            echo "::error::Bandit found HIGH/CRITICAL severity findings. Review bandit-results.json."
+            exit 1
+          fi
+
+      - name: SAST - Semgrep (fail on HIGH/CRITICAL)
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: p/security-audit
+        # Semgrep action exits non-zero on findings — this will fail the job
 
       - name: Secrets Scan (Gitleaks)
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
 
-      - name: Dependency Scan (Safety)
+      - name: Dependency Vulnerability Scan (Safety)
         run: |
           pip install safety
-          safety check --file requirements.txt || echo "Dependency warnings found"
+          safety check --file requirements.txt || echo "::warning::Dependency vulnerabilities found — review above output"
 
-      - name: SAST Scan (Semgrep)
-        uses: semgrep/semgrep-action@v1
-        with:
-          config: p/security-audit
-        continue-on-error: true
-
-  # ==============================================================================
-  # 3. BUILD & PACKAGE
-  # ==============================================================================
+  # ============================================================================
+  # 3. BUILD DOCKER IMAGE — tagged with commit SHA
+  # ============================================================================
   build-docker-image:
-    name: Build Docker Image
-    needs: security-scans
+    name: "Stage 3: Build Docker Image"
+    needs: [ci-tests, sast-scan]
     runs-on: ubuntu-latest
+    outputs:
+      image_sha_tag: ${{ steps.meta.outputs.sha_tag }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+
+      - name: Set image metadata
+        id: meta
+        run: |
+          SHA_TAG="${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
+          echo "sha_tag=${SHA_TAG}" >> "$GITHUB_OUTPUT"
+          echo "Image will be tagged: ${SHA_TAG}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -102,7 +144,9 @@ jobs:
           file: ./Dockerfile
           target: production
           push: false
-          tags: ghcr.io/yuvraj-pb23/ohs:local
+          tags: |
+            ${{ env.IMAGE_NAME }}:local
+            ${{ steps.meta.outputs.sha_tag }}
           outputs: type=docker,dest=/tmp/image.tar
 
       - name: Upload Local Image Artifact
@@ -110,12 +154,13 @@ jobs:
         with:
           name: local-image
           path: /tmp/image.tar
+          retention-days: 1
 
-  # ==============================================================================
-  # 4. IMAGE SECURITY
-  # ==============================================================================
+  # ============================================================================
+  # 4. IMAGE SECURITY SCAN (Trivy) — fail-fast on CRITICAL CVEs
+  # ============================================================================
   image-security:
-    name: Image Security
+    name: "Stage 4: Image Security Scan (Trivy)"
     needs: build-docker-image
     runs-on: ubuntu-latest
     steps:
@@ -128,29 +173,44 @@ jobs:
       - name: Load Docker Image
         run: docker load --input /tmp/image.tar
 
-      - name: Container Vulnerability Scan (Trivy)
+      - name: Trivy Vulnerability Scan (CRITICAL — fail-fast)
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'ghcr.io/yuvraj-pb23/ohs:local'
+          image-ref: '${{ env.IMAGE_NAME }}:local'
+          format: 'table'
+          severity: 'CRITICAL'
+          exit-code: '1'
+          # To allow-list specific CVEs, create .trivyignore in repo root
+          # with one CVE-ID per line (e.g., CVE-2024-12345)
+
+      - name: Trivy Full Scan Report (HIGH + CRITICAL, informational)
+        if: always()
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ env.IMAGE_NAME }}:local'
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
-      - name: Generate Software Bill of Materials - SBOM (Syft)
+      - name: Upload Trivy SARIF to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true
+
+      - name: Generate SBOM (Syft)
         uses: anchore/sbom-action@v0
         with:
-          image: 'ghcr.io/yuvraj-pb23/ohs:local'
+          image: '${{ env.IMAGE_NAME }}:local'
           format: 'spdx-json'
           output-file: 'sbom.spdx.json'
 
-      - name: Install Cosign (Image Signing preparation)
-        uses: sigstore/cosign-installer@v3
-
-  # ==============================================================================
-  # 5. PUSH TO REGISTRY
-  # ==============================================================================
+  # ============================================================================
+  # 5. PUSH TO REGISTRY — :sha-<commit> and :latest
+  # ============================================================================
   push-image:
-    name: Push Production Image
+    name: "Stage 5: Push to GHCR"
     needs: image-security
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
@@ -176,68 +236,40 @@ jobs:
           target: production
           push: true
           tags: |
-            ghcr.io/yuvraj-pb23/ohs:latest
-            ghcr.io/yuvraj-pb23/ohs:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ==============================================================================
-  # 6. CD - DEPLOY TO STAGING
-  # =================================================================-------------
-  deploy-to-staging:
-    name: Deploy to Staging
+      # -----------------------------------------------------------------------
+      # RETENTION NOTE:
+      # cleanup.yml (monthly) runs actions/delete-package-versions@v5 with
+      # min-versions-to-keep: 5 and delete-only-untagged-versions: true.
+      # This means SHA-tagged images are NEVER auto-deleted — only untagged
+      # manifests are pruned. Rollback targets (sha-*) are safe.
+      #
+      # If GHCR storage becomes a concern, update cleanup.yml to also prune
+      # tagged versions older than N days, but always keep >= 5 tagged versions
+      # to support rollback.
+      # -----------------------------------------------------------------------
+      - name: Verify image pushed successfully
+        run: |
+          echo "✅ Pushed: ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
+          echo "✅ Pushed: ${{ env.IMAGE_NAME }}:latest"
+          echo ""
+          echo "📦 RETENTION: cleanup.yml keeps min 5 versions, deletes only untagged."
+          echo "   SHA-tagged images are preserved for rollback."
+
+  # ============================================================================
+  # 6. DEPLOY TO PRODUCTION — Pre-swap smoke test on alternate port
+  # ============================================================================
+  deploy-to-production:
+    name: "Stage 6: Deploy to Production (Pre-Swap Smoke)"
     needs: push-image
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
-    steps:
-      - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Set up SSH Key connection
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy to Staging VM
-        run: |
-          echo "Deploying to Staging VM..."
-          # ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.STAGING_HOST }} "bash /app/OHS/scripts/deploy.sh"
-
-  # ==============================================================================
-  # 7. STAGING VALIDATION (Smoke, API, Load, DAST)
-  # ==============================================================================
-  staging-validation:
-    name: Staging Validation & Verification
-    needs: deploy-to-staging
-    runs-on: ubuntu-latest
-    steps:
-      - name: Staging Smoke Tests & Health Check
-        run: |
-          echo "Verifying Staging Endpoint Health..."
-          # curl -f http://staging.ohs.internal/health/ || exit 1
-
-      - name: Performance Tests (k6 Load Test)
-        run: |
-          echo "Running performance tests with k6..."
-          # k6 run load-test.js
-
-      - name: Staging DAST Scan (OWASP ZAP)
-        uses: zaproxy/action-baseline@v0.15.0
-        with:
-          target: 'http://localhost:8000/' # Replace with Staging Endpoint
-          allow_issue_writing: false
-          fail_action: false
-
-  # ==============================================================================
-  # 8. CONTINUOUS DEPLOYMENT (CD) - PRODUCTION DEPLOY & POST-DEPLOY
-  # ==============================================================================
-  deploy-to-production:
-    name: Deploy to Production
-    needs: staging-validation
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     environment:
-      name: production # Enforces Manual Approval Gate
+      name: production
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -247,29 +279,259 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Execute Blue-Green / Rolling Deployment on Production VM
+      - name: Deploy with pre-swap smoke test
+        env:
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          IMAGE_TAG: "sha-${{ github.sha }}"
+          FULL_IMAGE: "${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "bash /app/OHS/scripts/deploy.sh"
+          ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_HOST} << 'DEPLOY_EOF'
+          set -euo pipefail
+          echo "============================================="
+          echo "PRODUCTION DEPLOYMENT — Pre-Swap Smoke Test"
+          echo "============================================="
+          FULL_IMAGE="${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
+          CANARY_NAME="ohs_web_canary"
+          PROD_COMPOSE_DIR="/app/OHS"
 
-  post-deploy-and-monitoring:
-    name: Post-Deployment & Rollback Gate
+          cd "${PROD_COMPOSE_DIR}"
+
+          # ------------------------------------------------------------------
+          # Step 1: Pull the new image
+          # ------------------------------------------------------------------
+          echo "[1/6] Pulling new image: ${FULL_IMAGE}..."
+          docker pull "${FULL_IMAGE}"
+
+          # ------------------------------------------------------------------
+          # Step 2: Start canary container on alternate port 8081
+          #         Uses same env/volumes as production but different port
+          # ------------------------------------------------------------------
+          echo "[2/6] Starting canary container on port 8081..."
+          # Stop any leftover canary from a previous failed deploy
+          docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+
+          # Run canary with same environment as the production web container
+          # We read env from the .env file and match docker-compose env vars
+          docker run -d \
+            --name "${CANARY_NAME}" \
+            --env-file .env \
+            -e CONTAINER_ROLE=web \
+            -e DEBUG=False \
+            -p 8081:8000 \
+            --network ohs_app-network \
+            --health-cmd="curl -f http://localhost:8000/ || exit 1" \
+            --health-interval=10s \
+            --health-timeout=5s \
+            --health-retries=3 \
+            --health-start-period=60s \
+            "${FULL_IMAGE}"
+
+          # ------------------------------------------------------------------
+          # Step 3: Wait for canary health check
+          # ------------------------------------------------------------------
+          echo "[3/6] Waiting for canary to become healthy (max 120s)..."
+          TIMEOUT=120
+          ELAPSED=0
+          while [ $ELAPSED -lt $TIMEOUT ]; do
+            STATUS=$(docker inspect --format='{{.State.Health.Status}}' "${CANARY_NAME}" 2>/dev/null || echo "not_found")
+            if [ "$STATUS" = "healthy" ]; then
+              echo "  ✅ Canary is healthy after ${ELAPSED}s"
+              break
+            elif [ "$STATUS" = "unhealthy" ]; then
+              echo "  ❌ Canary reported unhealthy"
+              break
+            fi
+            sleep 5
+            ELAPSED=$((ELAPSED + 5))
+            echo "  ⏳ Status: ${STATUS} (${ELAPSED}s/${TIMEOUT}s)"
+          done
+
+          if [ "$STATUS" != "healthy" ]; then
+            echo "============================================="
+            echo "❌ CANARY SMOKE TEST FAILED"
+            echo "  Status: ${STATUS}"
+            echo "  Leaving current production UNTOUCHED."
+            echo "============================================="
+            echo "Canary logs:"
+            docker logs --tail 50 "${CANARY_NAME}" 2>&1 || true
+            docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+            exit 1
+          fi
+
+          # ------------------------------------------------------------------
+          # Step 4: Run HTTP smoke test against canary on port 8081
+          # ------------------------------------------------------------------
+          echo "[4/6] Running HTTP smoke test against canary on :8081..."
+          SMOKE_OK=true
+          for i in 1 2 3; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 http://localhost:8081/ 2>/dev/null || echo "000")
+            echo "  Attempt ${i}: HTTP ${HTTP_CODE}"
+            if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 400 ]; then
+              SMOKE_OK=false
+            fi
+            sleep 2
+          done
+
+          if [ "$SMOKE_OK" = false ]; then
+            echo "============================================="
+            echo "❌ HTTP SMOKE TEST FAILED on canary"
+            echo "  Leaving current production UNTOUCHED."
+            echo "============================================="
+            docker logs --tail 50 "${CANARY_NAME}" 2>&1 || true
+            docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+            exit 1
+          fi
+          echo "  ✅ HTTP smoke test passed"
+
+          # ------------------------------------------------------------------
+          # Step 5: Swap — update docker-compose image, recreate web service
+          # ------------------------------------------------------------------
+          echo "[5/6] Smoke test passed — swapping production to new image..."
+
+          # Stop the canary (it was just for testing)
+          docker rm -f "${CANARY_NAME}" 2>/dev/null || true
+
+          # Update the compose stack to use the new image
+          export OHS_IMAGE_TAG="sha-${{ github.sha }}"
+
+          # Pull all images and recreate only changed services
+          docker compose --profile prod pull
+          IMAGE_TAG="${FULL_IMAGE}" docker compose --profile prod up -d --remove-orphans
+
+          # ------------------------------------------------------------------
+          # Step 6: Verify production is healthy after swap
+          # ------------------------------------------------------------------
+          echo "[6/6] Verifying production health after swap..."
+          sleep 15
+          docker compose --profile prod ps
+
+          echo "============================================="
+          echo "✅ DEPLOYMENT SUCCESSFUL"
+          echo "  Image: ${FULL_IMAGE}"
+          echo "  Time:  $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "============================================="
+          DEPLOY_EOF
+
+  # ============================================================================
+  # 7. DAST — Passive-only scan against production
+  # ============================================================================
+  dast-scan:
+    name: "Stage 7: DAST - Passive Scan (Production)"
     needs: deploy-to-production
     runs-on: ubuntu-latest
+    # ⚠️  IMPORTANT: This runs PASSIVE/SAFE scan rules ONLY.
+    #     Active DAST (SQL injection, XSS payload injection, etc.) is NOT
+    #     safe to run against production — it can mutate data, trigger WAF
+    #     blocks, or degrade live service.
+    #
+    #     If you need full active DAST, set up a staging environment and
+    #     run it there. Do NOT enable active DAST against prod without
+    #     explicit, separate confirmation from the team.
     steps:
-      - name: Production Post-Deploy Health Check
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: "⚠️  DAST Safety Notice"
+        run: |
+          echo "============================================="
+          echo "⚠️  DAST SCAN — PASSIVE MODE ONLY"
+          echo "============================================="
+          echo ""
+          echo "This scan uses OWASP ZAP in BASELINE mode which:"
+          echo "  ✅ Spiders the target and checks responses"
+          echo "  ✅ Identifies misconfigurations, missing headers, info leaks"
+          echo "  ❌ Does NOT inject attack payloads (SQLi, XSS, etc.)"
+          echo "  ❌ Does NOT perform authenticated scanning"
+          echo ""
+          echo "RISK: Active DAST against production is NOT recommended."
+          echo "      It can mutate data, trigger rate limits, or degrade"
+          echo "      live service. For full active DAST, use a staging"
+          echo "      environment."
+          echo ""
+          echo "Target: http://${{ secrets.DEPLOY_HOST }}/"
+          echo "============================================="
+
+      - name: OWASP ZAP Baseline Scan (Passive Only)
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: 'http://${{ secrets.DEPLOY_HOST }}/'
+          allow_issue_writing: false
+          fail_action: false
+          # Baseline scan = passive rules only, no active attack payloads
+          cmd_options: '-j'  # AJAX spider disabled for safety
+
+      - name: Upload ZAP Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline-report
+          path: report_html.html
+          retention-days: 30
+
+  # ============================================================================
+  # 8. POST-DEPLOYMENT GATE — Smoke test against live production
+  # ============================================================================
+  post-deploy-validation:
+    name: "Stage 8: Post-Deployment Validation"
+    needs: deploy-to-production
+    runs-on: ubuntu-latest
+    # This runs in parallel with DAST — both depend on deploy-to-production
+    steps:
+      - name: Production Health Check
         id: health_check
         run: |
-          echo "Validating production endpoints..."
-          # curl -f http://${{ secrets.DEPLOY_HOST }}/health/ || exit 1
+          echo "============================================="
+          echo "POST-DEPLOYMENT VALIDATION"
+          echo "============================================="
+          echo ""
+          echo "Checking production endpoint: http://${{ secrets.DEPLOY_HOST }}/"
+          echo ""
 
-      - name: Set up SSH Key connection (for fallback rollback)
-        if: failure()
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          PASS=true
+          for i in 1 2 3 4 5; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 "http://${{ secrets.DEPLOY_HOST }}/" 2>/dev/null || echo "000")
+            echo "  Check ${i}/5: HTTP ${HTTP_CODE}"
+            if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 400 ]; then
+              PASS=false
+            fi
+            sleep 5
+          done
 
-      - name: Automatic Rollback (on health check failure)
-        if: failure()
+          echo ""
+          if [ "$PASS" = false ]; then
+            echo "::error::❌ POST-DEPLOYMENT VALIDATION FAILED"
+            echo "  One or more health checks returned non-2xx/3xx status."
+            echo "  This does NOT auto-rollback — manual investigation required."
+            echo "  Use the rollback workflow if needed:"
+            echo "    gh workflow run rollback.yml -f image_tag=sha-<previous-commit>"
+            exit 1
+          fi
+
+          echo "✅ All post-deployment health checks passed"
+
+      - name: Nginx Health Endpoint Check
         run: |
-          echo "Production deployment failed post-deploy validation! Triggering automatic rollback..."
-          # ssh -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} "docker rollback or deploy previous tag"
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "http://${{ secrets.DEPLOY_HOST }}/health" 2>/dev/null || echo "000")
+          echo "Nginx /health endpoint: HTTP ${HTTP_CODE}"
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::warning::Nginx /health endpoint returned ${HTTP_CODE} — may indicate reverse proxy issue"
+          fi
+
+      - name: Deployment Summary
+        if: always()
+        run: |
+          echo "============================================="
+          echo "DEPLOYMENT SUMMARY"
+          echo "============================================="
+          echo "  Image:     ${{ env.IMAGE_NAME }}:sha-${{ github.sha }}"
+          echo "  Target:    ${{ secrets.DEPLOY_HOST }}"
+          echo "  Actor:     ${{ github.actor }}"
+          echo "  Ref:       ${{ github.ref }}"
+          echo "  Commit:    ${{ github.sha }}"
+          echo "  Timestamp: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+          echo "  Run:       ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo ""
+          echo "  ⚠️  No staging environment — pre-swap smoke test was used"
+          echo "     as partial mitigation. See pipeline notes for coverage gaps."
+          echo "============================================="

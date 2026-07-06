@@ -13,11 +13,20 @@ jobs:
     name: Clean GHCR Old Images
     runs-on: ubuntu-latest
     steps:
-      - name: Delete old package versions
+      # -----------------------------------------------------------------------
+      # Only delete UNTAGGED versions — SHA-tagged images are kept for rollback.
+      # min-versions-to-keep: 10 ensures at least 10 recent versions survive
+      # even if they are untagged. Tagged versions (sha-*, latest) are never
+      # touched by delete-only-untagged-versions: true.
+      #
+      # ROLLBACK SAFETY: This configuration guarantees that all sha-* tagged
+      # images remain available. The rollback workflow depends on this.
+      # -----------------------------------------------------------------------
+      - name: Delete old untagged package versions
         uses: actions/delete-package-versions@v5
         with:
           package-name: 'ohs'
           package-type: 'container'
-          min-versions-to-keep: 5
+          min-versions-to-keep: 10
           delete-only-untagged-versions: 'true'
         continue-on-error: true
