@@ -257,7 +257,7 @@ def pocso_act_page_corp(request):
     modules = TrainingModule.objects.filter(module_type="POCSO").order_by("order")
 
     # Debug logging
-    print(f"DEBUG POCSO CORP: Total modules found: {modules.count()}")
+    logger.debug(f"DEBUG POCSO CORP: Total modules found: {modules.count()}")
 
     # 2. Fetch User Progress
     progress_map = {}
@@ -271,7 +271,7 @@ def pocso_act_page_corp(request):
         }
         if prog.is_completed:
             completed_count += 1
-        print(
+        logger.debug(
             f"DEBUG: Module {mod.id} '{mod.title}' - is_completed: {prog.is_completed}"
         )
 
@@ -298,7 +298,7 @@ def pocso_act_page_corp(request):
 
     # Process Videos Sequence - modules with video files
     video_modules = [m for m in modules if m.video_file]
-    print(f"DEBUG: Video modules count: {len(video_modules)}")
+    logger.debug(f"DEBUG: Video modules count: {len(video_modules)}")
     previous_completed = True
     for mod in video_modules:
         prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
@@ -322,14 +322,14 @@ def pocso_act_page_corp(request):
             "last_position": last_position,
         }
         video_list.append(item)
-        print(
+        logger.debug(
             f"DEBUG: Added video {mod.id} - is_completed: {is_completed}, is_locked: {is_locked}"
         )
         previous_completed = is_completed
 
     # Process PPTs Sequence
     ppt_modules = [m for m in modules if m.ppt_file and not m.video_file]
-    print(f"DEBUG: PPT modules count: {len(ppt_modules)}")
+    logger.debug(f"DEBUG: PPT modules count: {len(ppt_modules)}")
 
     # Reset previous_completed for PPT sequence
     previous_completed = True

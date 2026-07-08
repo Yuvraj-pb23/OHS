@@ -969,9 +969,12 @@
       <h3 class="logout-modal-title">Are you sure to exit?</h3>
       <p class="logout-modal-text">You are about to end your session. Make sure you have saved all your progress.</p>
       <div class="logout-actions">
-        <a href="{% block logout_url %}{% url 'training_logout' %}{% endblock %}" class="btn-logout-confirm">
-          Yes, Logout Now
-        </a>
+        <form method="post" action="{% block logout_url %}{% url 'training_logout' %}{% endblock %}" style="margin: 0; width: 100%;">
+          {% csrf_token %}
+          <button type="submit" class="btn-logout-confirm" style="border: none; width: 100%; cursor: pointer;">
+            Yes, Logout Now
+          </button>
+        </form>
         <button type="button" class="btn-logout-cancel" onclick="closeLogoutModal()">Stay on Dashboard</button>
       </div>
     </div>

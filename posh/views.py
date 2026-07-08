@@ -700,23 +700,41 @@ def posh_registration_view(request):
             messages.error(request, "CAPTCHA verification failed. Please try again.")
             return redirect("posh_registration")
 
+        # FIX #14: Server-side input validation
+        try:
+            employee_count = int(data.get("employee_count", 0))
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid employee count. Please enter a valid number.")
+            return redirect("posh_registration")
+        if employee_count < 1 or employee_count > 500000:
+            messages.error(request, "Employee count must be between 1 and 500,000.")
+            return redirect("posh_registration")
+
+        # Cap string fields to model max_length to avoid DB truncation / DoS
+        contact_person = (data.get("contact_person") or "")[:100]
+        designation = (data.get("designation") or "")[:100]
+        company_name = (data.get("company_name") or "")[:200]
+        phone = (data.get("phone") or "")[:20]
+        email = (data.get("email") or "")[:254]
+        website = (data.get("website") or "")[:200]
+
         # Determine IC training mode from hidden fields or radio
         ic_training_mode = data.get("requested_ic_training_mode")
         expert_led_type = data.get("requested_expert_led_type")
 
         # Join multiple office locations if present
         cities = request.POST.getlist("city")
-        city_str = ", ".join([c.strip() for c in cities if c.strip()])
+        city_str = ", ".join([c.strip() for c in cities if c.strip()])[:200]
 
         reg = POSHRegistration(
-            contact_person=data.get("contact_person"),
-            designation=data.get("designation"),
+            contact_person=contact_person,
+            designation=designation,
             city=city_str,
-            phone=data.get("phone"),
-            email=data.get("email"),
-            website=data.get("website"),
-            company_name=data.get("company_name"),
-            employee_count=int(data.get("employee_count", 0)),
+            phone=phone,
+            email=email,
+            website=website,
+            company_name=company_name,
+            employee_count=employee_count,
             trained_employee_count=0,  # Defaulting to 0 for now as it's required by model
             last_training_year=data.get("last_training_year"),
             has_posh_policy=data.get("has_posh_policy") == "yes",

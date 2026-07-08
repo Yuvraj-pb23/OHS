@@ -1,8 +1,39 @@
 import time
 from django.contrib.auth import logout
+from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.core.cache import cache
 import uuid
+
+# FIX #6: Protect sensitive media paths from unauthenticated access.
+# Payment screenshots, certificates, and uploaded training resources must
+# only be accessible to authenticated users.
+PROTECTED_MEDIA_PREFIXES = (
+    "posh_payments/",
+    "pocso_payments/",
+    "Certificate/",
+    "training_videos/",
+    "training_materials/",
+)
+
+class MediaAuthMiddleware:
+    """
+    FIX #6: Intercepts /media/ requests and enforces authentication for
+    sensitive directories (payment proofs, certificates, training content).
+    Static posters and logos remain publicly accessible.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.path.startswith("/media/"):
+            relative = request.path[len("/media/"):]
+            if any(relative.startswith(prefix) for prefix in PROTECTED_MEDIA_PREFIXES):
+                if not request.user.is_authenticated:
+                    return redirect(f"/login/?next={request.path}")
+        return self.get_response(request)
+
 
 class TabCloseSessionMiddleware:
     def __init__(self, get_response):
@@ -74,9 +105,11 @@ class SecurityHeadersMiddleware:
         # - img-src: allow data URIs (charts, captcha) and S3 (training video thumbnail)
         # - media-src: allow S3 for training videos
         # - frame-ancestors 'none': no embedding in iframes (same as X-Frame-Options DENY)
+        # FIX #11: Removed 'unsafe-eval' — eval(), setTimeout(string) etc. are now blocked.
+        # 'unsafe-inline' is retained until inline scripts are migrated to external files.
         csp = (
             "default-src 'self'; "
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+            "script-src 'self' 'unsafe-inline' "
             "https://cdnjs.cloudflare.com https://cdn.jsdelivr.net "
             "https://fonts.googleapis.com https://cdn.tailwindcss.com; "
             "style-src 'self' 'unsafe-inline' "

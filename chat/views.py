@@ -1,7 +1,9 @@
 import json
+import logging
 import os
 
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
@@ -9,12 +11,12 @@ from django.views.decorators.csrf import csrf_exempt
 from .llm_engine import LLMEngine
 from .rag_chatbot import RagChatbot
 
+logger = logging.getLogger(__name__)
+
 # -----------------------------
 # Configuration
 # -----------------------------
 RESET_KEYWORDS = ["bye", "clear", "clear all", "goodbye", "quit", "exit"]
-
-
 # -----------------------------
 # Mock Models
 # -----------------------------
@@ -277,11 +279,10 @@ def load_real_models():
         if os.path.exists(rag_index_path) and os.path.exists(rag_answers_path):
             rag_chatbot = RagChatbot(rag_index_path, rag_answers_path)
         else:
-            print(f"RAG Chatbot files not found at {rag_index_path} or {rag_answers_path}")
+            logger.warning(f"RAG Chatbot files not found at {rag_index_path} or {rag_answers_path}")
 
     except (ImportError, Exception) as e:
-        print(f"Model loading failed or dependencies missing: {e}")
-        print("Using MOCK chatbots.")
+        logger.warning(f"Model loading failed or dependencies missing: {e}")
         image_chatbot = None
         text_chatbot = None
 
@@ -350,13 +351,13 @@ def load_topic_data(topic_name):
             )
 
         if not os.path.exists(json_path):
-            print(f"DEBUG: JSON file not found for {topic_name} at {json_path}")
+            logger.debug(f"JSON file not found for {topic_name} at {json_path}")
             return {}
 
         with open(json_path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading JSON for {topic_name}: {e}")
+        logger.error(f"Error loading JSON for {topic_name}: {e}")
         return {}
 
 
@@ -379,7 +380,7 @@ SUPPORTED_TOPICS = ["posh", "posco", "ic", "mental_health"]
 
 
 def get_questions_for_subtopic(subtopic_title):
-    print(f"DEBUG: Searching for subtopic: '{subtopic_title}'")
+    logger.debug(f"Searching for subtopic: '{subtopic_title}'")
     target = normalize_text(subtopic_title)
 
     for topic in SUPPORTED_TOPICS:
@@ -391,15 +392,15 @@ def get_questions_for_subtopic(subtopic_title):
             current = normalize_text(st["title"])
             # Check for exact match or if one is contained in another (for partial matches)
             if target == current or target in current or current in target:
-                print(f"DEBUG: Match found in {topic}! '{st['title']}'")
+                logger.debug(f"Match found in {topic}: '{st['title']}'")
                 return [q["question"] for q in st["questions"]]
 
-    print("DEBUG: No matching subtopic found.")
+    logger.debug("No matching subtopic found.")
     return []
 
 
 def get_answer_for_question(question_text):
-    print(f"DEBUG: Searching for answer to: '{question_text}'")
+    logger.debug(f"Searching for answer to: '{question_text}'")
     target = normalize_text(question_text)
 
     for topic in SUPPORTED_TOPICS:
@@ -411,20 +412,38 @@ def get_answer_for_question(question_text):
             for q in st["questions"]:
                 current = normalize_text(q["question"])
                 if target == current:
-                    print(f"DEBUG: Answer found in {topic} for '{q['question']}'")
+                    logger.debug(f"Answer found in {topic} for '{q['question']}'")
                     return q["answer"]
 
-    print("DEBUG: No answer found in JSON.")
+    logger.debug("No answer found in JSON.")
     return None
 
+# FIX #3: Added @login_required to prevent unauthenticated LLM/chatbot access
+# FIX #3: Added per-session rate limiting (20 requests/min) and input length cap
+@login_required(login_url="login")
 def chatbot_response(request):
     load_real_models()
     if request.method != "POST":
         return JsonResponse({"error": "Invalid request method"}, status=405)
 
+    # FIX #3: Per-session rate limit — max 20 messages per minute
+    from django.core.cache import cache
+    import time
+    session_key = request.session.session_key or str(request.user.id)
+    rl_key = f"chat_rl_{session_key}"
+    rl_data = cache.get(rl_key, {"count": 0, "reset_at": time.time() + 60})
+    if time.time() > rl_data["reset_at"]:
+        rl_data = {"count": 1, "reset_at": time.time() + 60}
+    else:
+        rl_data["count"] += 1
+    cache.set(rl_key, rl_data, timeout=60)
+    if rl_data["count"] > 20:
+        return JsonResponse({"error": "Too many requests. Please wait a moment before continuing."}, status=429)
+
     try:
         data = json.loads(request.body)
-        user_question = data.get("message", "").strip()
+        # FIX #3: Cap input length to prevent DoS via oversized payloads
+        user_question = data.get("message", "").strip()[:500]
     except json.JSONDecodeError:
         return JsonResponse({"error": "Invalid JSON"}, status=400)
 
@@ -530,7 +549,7 @@ def chatbot_response(request):
 
     # 5. Integrate LLM (RAG)
     # If no direct match in JSON, ask the LLM
-    print(f"DEBUG: asking LLM for '{user_question}'")
+    logger.debug(f"Asking LLM for '{user_question}'")
     llm_engine = LLMEngine.get_instance()
     # Only query LLM if it's ready or we want to try initializing it
     llm_response = llm_engine.generate_answer(user_question)
@@ -541,9 +560,9 @@ def chatbot_response(request):
         and "model is not ready" not in llm_response.lower()
     ):
         return JsonResponse({"response": {"message": llm_response, "type": "answer"}})
-    # If LLM fails or is not ready, fall through to old logic (or maybe we want to show the error?)
+    # If LLM fails or is not ready, fall through to old logic
     if "Model is not ready" in llm_response:
-        print(f"DEBUG: LLM not ready: {llm_response}")
+        logger.debug(f"LLM not ready: {llm_response}")
 
     # ... (Rest of existing logic for images/fallback) ...
     if image_chatbot:

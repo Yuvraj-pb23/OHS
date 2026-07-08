@@ -56,11 +56,13 @@ def send_welcome_email(
 
     def _send_thread():
         from home.models import EmailTemplate
-        try:
-            template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_WELCOME").first()
-        except Exception as db_err:
-            logger.warning(f"DB access in thread failed: {db_err}")
-            template = None
+        template = None
+        if is_company_employee:
+            try:
+                template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_WELCOME").first()
+            except Exception as db_err:
+                logger.warning(f"DB access in thread failed: {db_err}")
+                template = None
 
         site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
 
@@ -201,7 +203,7 @@ Open Hand Solution Team
         )
         return True
     except Exception as e:
-        print(f"Error sending email: {e}")
+        logger.error(f"Error sending password change email: {e}")
         return False
 
 
@@ -341,6 +343,18 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
         plan_str = "POSH Act" if registration_type == "POSH" else "POCSO Act"
         setup_link = f"{site_base}/subscription/company/{plan_str}/?setup_token={token}"
 
+    # Format linebreaks first
+    body_content = format_email_body(body_content)
+
+    setup_link_html = setup_link
+    if setup_link:
+        setup_link_html = (
+            f'<a href="{setup_link}" class="btn-action" style="display: inline-block; '
+            f'padding: 12px 24px; background-color: #6366f1; color: #ffffff !important; '
+            f'text-decoration: none; border-radius: 8px; font-weight: bold; '
+            f'margin-top: 10px; margin-bottom: 10px;">Create Password & Access Portal</a>'
+        )
+
     # Placeholders replacement
     context = {
         "name": name,
@@ -349,7 +363,7 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
         "type": registration_type,
         "amount": amount_str,
         "invoice_url": invoice_url,
-        "setup_link": setup_link,
+        "setup_link": setup_link_html,
     }
 
     # Dynamic placeholder replacement in body and subject
@@ -357,8 +371,6 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
         placeholder = f"{{{key}}}"
         subject = subject.replace(placeholder, str(val))
         body_content = body_content.replace(placeholder, str(val))
-
-    body_content = format_email_body(body_content)
 
     # 3. Logo URL for Email
     logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
@@ -406,12 +418,12 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
                     "application/pdf",
                 )
             except Exception as pdf_err:
-                print(f"DEBUG: Error generating/attaching PDF: {pdf_err}")
+                logger.error(f"Error generating/attaching PDF: {pdf_err}", exc_info=True)
 
         msg.send()
         return True
     except Exception as e:
-        print(f"DEBUG: CRITICAL error sending tiered email: {e}")
+        logger.error(f"CRITICAL error sending tiered email: {e}", exc_info=True)
         return False
 
 
@@ -475,7 +487,7 @@ Open Hand Solutions"""
         msg.send()
         return True
     except Exception as e:
-        print(f"DEBUG: Error sending payment rejection email: {e}")
+        logger.error(f"Error sending payment rejection email: {e}", exc_info=True)
         return False
 
 
@@ -547,11 +559,21 @@ Warm regards,
 Open Hand Private Limited
 openhandpvtltd@gmail.com | openhandsolutions.com"""
 
-    # Format placeholders
+    # Format linebreaks first
+    body_content = format_email_body(body_content)
+
+    # Format placeholders after format_email_body to support HTML tags in placeholders
+    payment_button = (
+        f'<a href="{payment_link}" class="btn-action" style="display: inline-block; '
+        f'padding: 12px 24px; background-color: #6366f1; color: #ffffff !important; '
+        f'text-decoration: none; border-radius: 8px; font-weight: bold; '
+        f'margin-top: 10px; margin-bottom: 10px;">Pay Now & Confirm Booking</a>'
+    )
+
     context = {
         "name": recipient_name,
         "company_name": registration.company_name or registration.school_name or "Valued Customer",
-        "payment_link": payment_link,
+        "payment_link": payment_button,
         "type": registration_type,
     }
 
@@ -559,8 +581,6 @@ openhandpvtltd@gmail.com | openhandsolutions.com"""
         placeholder = f"{{{key}}}"
         subject = subject.replace(placeholder, str(val))
         body_content = body_content.replace(placeholder, str(val))
-
-    body_content = format_email_body(body_content)
 
     # 3. Construct HTML content
     html_content = render_to_string(
@@ -751,7 +771,7 @@ def send_payment_confirmed_email(registration, username, password, registration_
         msg.send()
         return True
     except Exception as e:
-        print(f"DEBUG: Error sending welcome credentials email: {e}")
+        logger.error(f"Error sending welcome credentials email: {e}", exc_info=True)
         return False
 
 

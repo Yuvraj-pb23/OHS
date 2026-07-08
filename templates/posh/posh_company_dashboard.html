@@ -4825,7 +4825,11 @@
             progress before logging out.</p>
 
           <div class="d-flex flex-column gap-3">
-            <a href="{% url 'hr_logout' %}" class="btn btn-logout-confirm" onclick="localStorage.removeItem('posh_activeSection');">Yes, Logout Now</a>
+            {# FIX #13: POST-based logout to prevent CSRF-based force-logout via GET #}
+            <form method="post" action="{% url 'hr_logout' %}" style="margin:0; padding:0;" onsubmit="localStorage.removeItem('posh_activeSection');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-logout-confirm w-100" style="border:none; cursor:pointer;">Yes, Logout Now</button>
+            </form>
             <button type="button" class="btn btn-logout-cancel" data-bs-dismiss="modal">Stay on Dashboard</button>
           </div>
         </div>

@@ -16,6 +16,7 @@ from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from PIL import Image
 
 
@@ -271,7 +272,8 @@ def get_poster_with_logo(request, poster_type):
                     font_bold = ImageFont.truetype(font_path, font_size)
                     font_reg = ImageFont.truetype(font_path, font_size_reg)
                 except Exception as font_err:
-                    print(f"Error loading font: {str(font_err)}")
+                    _logger = logging.getLogger(__name__)
+                    _logger.error(f"Error loading font: {str(font_err)}")
                     font_bold = ImageFont.load_default()
                     font_reg = ImageFont.load_default()
                 
@@ -375,7 +377,8 @@ def get_poster_with_logo(request, poster_type):
                     stroke_w_addr = max(1, int(font_size_reg * 0.04))
                     draw_text_with_shadow(draw, (pos_x_addr, pos_y), config.company_address, font=font_reg, fill=text_color_rgb, stroke_w=stroke_w_addr, spacing=spacing_val)
             else:
-                print(f"Font file not found at: {font_path}")
+                _logger = logging.getLogger(__name__)
+                _logger.warning(f"Font file not found at: {font_path}")
 
         # Save to buffer
         buffer = io.BytesIO()
@@ -395,7 +398,8 @@ def get_poster_with_logo(request, poster_type):
         )
 
     except Exception as e:
-        print(f"Error generating poster: {str(e)}")
+        _logger = logging.getLogger(__name__)
+        _logger.error(f"Error generating poster: {str(e)}")
         return HttpResponse(f"Error generating poster: {str(e)}", status=500)
 
 
@@ -440,7 +444,10 @@ def save_logo_config(request):
 
             return JsonResponse({"status": "success"})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            # FIX #9: Log internally, return generic message to client
+            _logger = logging.getLogger(__name__)
+            _logger.exception(f"save_logo_config error for user={request.user.id}: {e}")
+            return JsonResponse({"status": "error", "message": "An error occurred saving the configuration."}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
 
 
@@ -523,6 +530,22 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+
+# FIX #4: Generic per-user/IP rate limiter using Django's cache framework
+def check_rate_limit(key, limit=30, window=60):
+    """Returns True if rate limit exceeded. key should be a unique identifier (e.g. user id)."""
+    from django.core.cache import cache
+    import time
+    cache_key = f"rl_{key}"
+    data = cache.get(cache_key, {"count": 0, "reset_at": time.time() + window})
+    if time.time() > data["reset_at"]:
+        data = {"count": 1, "reset_at": time.time() + window}
+    else:
+        data["count"] += 1
+    cache.set(cache_key, data, timeout=window)
+    return data["count"] > limit
+
 
 def check_login_lockout(username, ip):
     from django.core.cache import cache
@@ -719,16 +742,18 @@ def force_password_change(request):
 # --- CUSTOM CAPTCHA VIEWS ---
 def generate_captcha_image(request):
     """Generate a random alphanumeric + symbols CAPTCHA image using Pillow."""
-    import random
+    import secrets
     import string
     import io
     from PIL import Image, ImageDraw, ImageFont
     from django.http import HttpResponse
 
+    sys_random = secrets.SystemRandom()
+
     # Generate a random 6-character code containing alphanumeric characters and select symbols
     symbols = "!@#$*?"
     chars = string.ascii_letters + string.digits + symbols
-    captcha_text = "".join(random.choice(chars) for _ in range(6))
+    captcha_text = "".join(sys_random.choice(chars) for _ in range(6))
     
     # Save the expected code in session
     request.session["captcha_text"] = captcha_text
@@ -758,26 +783,26 @@ def generate_captcha_image(request):
         
     # Draw noise lines
     for _ in range(8):
-        x1 = random.randint(0, width)
-        y1 = random.randint(0, height)
-        x2 = random.randint(0, width)
-        y2 = random.randint(0, height)
-        line_color = (random.randint(150, 220), random.randint(150, 220), random.randint(150, 220))
+        x1 = sys_random.randint(0, width)
+        y1 = sys_random.randint(0, height)
+        x2 = sys_random.randint(0, width)
+        y2 = sys_random.randint(0, height)
+        line_color = (sys_random.randint(150, 220), sys_random.randint(150, 220), sys_random.randint(150, 220))
         draw.line((x1, y1, x2, y2), fill=line_color, width=2)
         
     # Draw noise dots
     for _ in range(100):
-        x = random.randint(0, width)
-        y = random.randint(0, height)
-        dot_color = (random.randint(100, 200), random.randint(100, 200), random.randint(100, 200))
+        x = sys_random.randint(0, width)
+        y = sys_random.randint(0, height)
+        dot_color = (sys_random.randint(100, 200), sys_random.randint(100, 200), sys_random.randint(100, 200))
         draw.point((x, y), fill=dot_color)
         
     # Draw each character with random rotation/offset/color
     char_width = width / 7
     for i, char in enumerate(captcha_text):
-        char_color = (random.randint(15, 90), random.randint(15, 90), random.randint(15, 90))
-        x_pos = 10 + i * char_width + random.randint(-4, 4)
-        y_pos = 10 + random.randint(-5, 5)
+        char_color = (sys_random.randint(15, 90), sys_random.randint(15, 90), sys_random.randint(15, 90))
+        x_pos = 10 + i * char_width + sys_random.randint(-4, 4)
+        y_pos = 10 + sys_random.randint(-5, 5)
         draw.text((x_pos, y_pos), char, fill=char_color, font=font)
         
     # Return as PNG HttpResponse
@@ -797,10 +822,21 @@ def verify_captcha_view(request):
             code = data.get("captcha", "").strip()
         except Exception:
             code = request.POST.get("captcha", "").strip()
-            
+
         session_code = request.session.get("captcha_text", "")
-        if session_code and code.lower() == session_code.lower():
+        # FIX #12: Case-sensitive comparison (preserves the security of mixed-case CAPTCHA)
+        if session_code and code == session_code:
             return JsonResponse({"success": True})
+
+        # FIX #12: Regenerate CAPTCHA on every failed attempt to prevent reuse
+        import secrets, string
+        sys_random = secrets.SystemRandom()
+        symbols = "!@#$*?"
+        chars = string.ascii_letters + string.digits + symbols
+        new_captcha = "".join(sys_random.choice(chars) for _ in range(6))
+        request.session["captcha_text"] = new_captcha
+        request.session.modified = True
+
         return JsonResponse({"success": False, "error": "Incorrect CAPTCHA code. Please try again."})
     return JsonResponse({"success": False, "error": "Invalid request method."}, status=405)
 
@@ -1182,7 +1218,8 @@ def update_employee(request, member_id):
                 )
                 messages.success(request, f"Employee updated successfully. Login credentials sent to {emp_email}.")
             except Exception as email_err:
-                print(f"Error sending email: {email_err}")
+                _logger = logging.getLogger(__name__)
+                _logger.error(f"Error sending email: {email_err}")
                 messages.warning(request, f"Employee updated successfully, but failed to send notification email: {str(email_err)}")
         else:
             messages.success(request, "Employee updated successfully.")
@@ -1262,7 +1299,8 @@ def delete_employee(request, member_id):
 # --- 4. COMPANY DASHBOARD ---
 @login_required(login_url="login")
 def company_dashboard(request):
-    print("COMPANY DASHBOARD VIEW IS CALLED!!!")
+    _logger = logging.getLogger(__name__)
+    _logger.debug("COMPANY DASHBOARD VIEW IS CALLED")
     # Check if user logged out from HR portal
     if request.session.get("logged_out_of_hr"):
         request.session.pop("logged_out_of_hr", None)
@@ -1796,20 +1834,45 @@ def mod_complete(request, module_id):
 
 @login_required
 def save_video_progress(request):
+    _logger = logging.getLogger(__name__)
     if request.method == "POST":
         try:
             data = json.loads(request.body)
             module_id = data.get("module_id")
             position = float(data.get("position", 0.0))
             if module_id:
+                # FIX #5 (BOLA): Verify the module belongs to a course the user has access to
+                user = request.user
+                active_subs = Subscription.objects.filter(
+                    Q(user=user) | Q(organization__organizationmember__user=user),
+                    status="ACTIVE",
+                )
+                allowed_types = set()
+                for sub in active_subs:
+                    t = sub.plan.type
+                    if t == "BOTH":
+                        allowed_types |= {"POSH", "POCSO"}
+                    elif t in ("POSH", "POCSO"):
+                        allowed_types.add(t)
+
+                module = TrainingModule.objects.filter(
+                    id=module_id, module_type__in=allowed_types
+                ).first()
+                if not module:
+                    return JsonResponse(
+                        {"status": "error", "message": "Module not accessible."}, status=403
+                    )
+
                 progress, created = ModuleProgress.objects.get_or_create(
-                    user=request.user, module_id=module_id
+                    user=user, module=module
                 )
                 progress.last_position = position
                 progress.save()
                 return JsonResponse({"status": "success"})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+            # FIX #9: Log internally, return generic message to client
+            _logger.exception(f"save_video_progress error for user={request.user.id}: {e}")
+            return JsonResponse({"status": "error", "message": "An error occurred saving progress."}, status=500)
     return JsonResponse({"status": "error"}, status=400)
 
 
@@ -2637,24 +2700,29 @@ def tab_close_logout(request):
 
 
 def custom_logout(request):
+    # Accepts GET or POST (used by tab-close beacon and some direct links)
     logout(request)
-    # messages.success(request, "Successfully logged out.")
     return redirect("home")
 
 
+# FIX #13: Require POST for logout to prevent CSRF-based logout via GET links
+@require_POST
 def accounts_logout(request):
     """Fully log out the accounts user and clear the session."""
     logout(request)
-    # messages.success(request, "Successfully signed out from Accounts Portal.")
     return redirect("home")
 
 
+# FIX #13: Require POST for logout to prevent CSRF-based logout via GET links
+@require_POST
 def hr_logout(request):
     """Fully log out the user from all portals and clear authentication."""
     logout(request)
     return redirect("home")
 
 
+# FIX #13: Require POST for logout to prevent CSRF-based logout via GET links
+@require_POST
 def training_logout(request):
     """Fully log out the user from all portals and clear authentication."""
     logout(request)
@@ -3187,6 +3255,8 @@ def delete_poster_view(request):
     return redirect(f"{reverse('accounts_dashboard')}?active_tab=posters")
 
 
+# FIX #2: Added @login_required to prevent unauthenticated access
+@login_required(login_url="accounts_login")
 def add_poster_view(request):
     """Upload a new awareness poster image to the Posters library (Accounts portal only)"""
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
@@ -3239,6 +3309,10 @@ def trigger_tier_email_view(request):
     # Only ACCOUNTS users or superusers may trigger emails
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return JsonResponse({"status": "error", "message": "Unauthorized."}, status=403)
+
+    # FIX #4: Rate limit — max 20 emails per accounts user per hour
+    if check_rate_limit(f"email_trigger_{request.user.id}", limit=20, window=3600):
+        return JsonResponse({"status": "error", "message": "Too many emails sent. Please wait before sending more."}, status=429)
 
     if request.method == "POST":
         try:
@@ -3370,6 +3444,10 @@ def send_posh_reminders(request):
     """
     if request.method != "POST":
         return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
+
+    # FIX #4: Rate limit — max 10 reminder batches per admin per 10 minutes
+    if check_rate_limit(f"reminders_{request.user.id}", limit=10, window=600):
+        return JsonResponse({"status": "error", "message": "Too many requests. Please wait before sending more reminders."}, status=429)
 
     # 1. Authorize Admin
     membership = OrganizationMember.objects.filter(user=request.user, role="ADMIN").first()

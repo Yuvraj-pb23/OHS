@@ -58,6 +58,12 @@ SITE_URL = os.getenv("SITE_URL", "https://openhandsolutions.com")
 # Session expires when the browser is closed (no persistent cookie)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
+# FIX #8: SameSite=Strict prevents session cookie from being sent on cross-site requests
+# FIX #15: Explicitly mark session cookie as HttpOnly (JS cannot read it)
+SESSION_COOKIE_SAMESITE = "Strict"
+CSRF_COOKIE_SAMESITE = "Strict"
+SESSION_COOKIE_HTTPONLY = True
+
 # Production Security Settings
 csrf_trusted_origins_env = os.getenv("CSRF_TRUSTED_ORIGINS")
 if csrf_trusted_origins_env:
@@ -98,6 +104,8 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "home.middleware.TabCloseSessionMiddleware",
+    # FIX #6: Protect sensitive /media/ paths from unauthenticated access
+    "home.middleware.MediaAuthMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     # FIX #9: Content-Security-Policy and other hardening headers
