@@ -794,6 +794,11 @@
 
   // Active module index and video progress variables
   const player = document.getElementById('mainPlayer');
+  if (player) {
+    player.addEventListener('loadedmetadata', () => {
+      updateTotalStats();
+    });
+  }
   let currentIdx = 0;
   let currentPPTIdx = 0;
   let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
@@ -861,7 +866,8 @@
       src: "{{ m.src }}",
       url: "{{ m.url }}",
       isQuiz: {% if m.is_quiz %}true{% else %}false{% endif %},
-      lastPosition: {{ m.last_position|default:0.0 }}
+      lastPosition: {{ m.last_position|default:0.0 }},
+      duration: {{ m.duration|default:0 }}
     },
     {% endfor %}
   ];
@@ -1555,8 +1561,10 @@
         completeCount += 1.0;
       } else if (mod.status === 'pending') {
         // If it's the current video module, show fractional progress
-        if (idx === currentIdx && player && player.duration > 0 && mod.type !== 'slide') {
-          const progress = Math.min(0.95, player.currentTime / player.duration);
+        if (idx === currentIdx && mod.type !== 'slide') {
+          const duration = player && player.duration > 0 ? player.duration : (mod.duration || 0);
+          const currentTime = player && player.currentTime > 0 ? player.currentTime : (mod.lastPosition || 0);
+          const progress = duration > 0 ? Math.min(0.95, currentTime / duration) : 0;
           completeCount += progress;
           pendingCount += (1.0 - progress);
         } else {

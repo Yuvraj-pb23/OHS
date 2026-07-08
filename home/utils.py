@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+import html
 
 from django.conf import settings
 from django.template.loader import render_to_string
@@ -36,9 +37,9 @@ def generate_certificate(user, course_type="POSH", custom_logo_path=None):
     image_uri = image_path.as_uri()
 
     context = {
-        "candidate_name": name_str,
-        "course_type": course_type,
-        "completion_date": timezone.now().strftime("%d/%m/%Y"),  # e.g. 05/02/2026
+        "candidate_name": html.escape(name_str),
+        "course_type": html.escape(course_type),
+        "completion_date": html.escape(timezone.now().strftime("%d/%m/%Y")),  # e.g. 05/02/2026
         "image_path": image_uri,
     }
 
@@ -532,3 +533,46 @@ def generate_proforma_invoice_pdf(
 
     html_string = render_to_string("emails/invoice_pdf.html", context)
     return HTML(string=html_string, base_url=settings.STATIC_ROOT).write_pdf()
+
+
+import base64
+import hashlib
+
+# FIX #3: Replace insecure XOR cipher with Fernet authenticated symmetric encryption.
+# The 32-byte key is derived from SECRET_KEY using SHA-256 — no extra env vars needed.
+
+def _get_fernet():
+    """Returns a Fernet instance keyed from the Django SECRET_KEY."""
+    from cryptography.fernet import Fernet
+    key_bytes = hashlib.sha256(settings.SECRET_KEY.encode("utf-8")).digest()
+    fernet_key = base64.urlsafe_b64encode(key_bytes)
+    return Fernet(fernet_key)
+
+
+def encrypt_password(plain_text):
+    """Encrypt a plain-text password using Fernet (AES-128-CBC + HMAC-SHA256)."""
+    if not plain_text:
+        return None
+    try:
+        return _get_fernet().encrypt(plain_text.encode("utf-8")).decode("utf-8")
+    except Exception:
+        return None
+
+
+def decrypt_password(cipher_text):
+    """Decrypt a Fernet-encrypted password, with fallback for legacy XOR values."""
+    if not cipher_text:
+        return None
+    try:
+        return _get_fernet().decrypt(cipher_text.encode("utf-8")).decode("utf-8")
+    except Exception:
+        # Fallback: attempt old XOR decryption for values stored before this change.
+        # After a migration period you can remove this fallback.
+        try:
+            key = settings.SECRET_KEY.encode("utf-8")
+            decoded = base64.b64decode(cipher_text.encode("utf-8"))
+            decrypted = bytes([c ^ key[i % len(key)] for i, c in enumerate(decoded)])
+            return decrypted.decode("utf-8")
+        except Exception:
+            return cipher_text
+

@@ -5,6 +5,26 @@ from django.db import models
 from django.utils import timezone
 
 
+class EncryptedCharField(models.CharField):
+    def get_prep_value(self, value):
+        from .utils import encrypt_password
+        val = super().get_prep_value(value)
+        return encrypt_password(val)
+
+    def from_db_value(self, value, expression, connection):
+        from .utils import decrypt_password
+        if value is None:
+            return value
+        return decrypt_password(value)
+
+    def to_python(self, value):
+        return value
+
+    def deconstruct(self):
+        name, path, args, kwargs = super().deconstruct()
+        return name, path, args, kwargs
+
+
 # 1. Custom User Model
 class User(AbstractUser):
     # AbstractUser has username, email, password, first_name, date_joined
@@ -140,7 +160,7 @@ class Organization(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     # Default password for employees
-    default_password = models.CharField(max_length=50, blank=True, null=True)
+    default_password = EncryptedCharField(max_length=255, blank=True, null=True)
     logo = models.ImageField(upload_to="company_logos/", null=True, blank=True)
 
     # Logo customization (as percentages 0-100)
@@ -943,4 +963,12 @@ class POSHPolicy(models.Model):
 
     def __str__(self):
         return f"POSH Policy for {self.company_name}"
+
+
+class DeletedPoster(models.Model):
+    poster_path = models.CharField(max_length=255, unique=True)
+    deleted_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.poster_path
 

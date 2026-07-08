@@ -754,6 +754,12 @@
     var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
     var _navAway = false;
     function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+    function getCsrfToken() {
+      var input = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (input) return input.value;
+      var match = document.cookie.match(/csrftoken=([^;]+)/);
+      return match ? match[1] : '';
+    }
     document.addEventListener('click', function (e) {
       var a = e.target.closest('a[href]');
       if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
@@ -762,7 +768,9 @@
     window.addEventListener('pagehide', function (e) {
       if (e.persisted) return;
       if (_navAway) return;
-      navigator.sendBeacon(TAB_CLOSE_URL);
+      var payload = new FormData();
+      payload.append('csrfmiddlewaretoken', getCsrfToken());
+      navigator.sendBeacon(TAB_CLOSE_URL, payload);
     });
     sessionStorage.removeItem('_ohs_nav');
   })();

@@ -6,6 +6,7 @@ import warnings
 import numpy as np
 import torch
 from django.conf import settings
+from .utils import verify_file_signature
 
 warnings.filterwarnings("ignore")
 
@@ -131,6 +132,7 @@ class LLMEngine:
 
             # Load metadata safely (trusted file)
             print("[LLM Engine] Loading metadata...")
+            verify_file_signature(meta_path)
             with open(meta_path, "rb") as f:
                 self.metadata = pickle.load(f)  # nosec B301
 

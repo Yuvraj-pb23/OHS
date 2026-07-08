@@ -74,8 +74,19 @@ def pocso_act_page(request):
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
+    total_progress = 0.0
+    for mod in modules:
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        if prog_data["is_completed"]:
+            total_progress += 100.0
+        elif mod.video_file or (not mod.ppt_file):  # Only video modules (which don't have ppt_file or have video_file) have partial progress
+            if mod.duration_seconds > 0:
+                percent_watched = (prog_data.get("last_position", 0.0) / mod.duration_seconds) * 100.0
+                percent_watched = min(99.0, max(0.0, percent_watched))
+                total_progress += percent_watched
+
     percent_complete = (
-        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+        int(total_progress / total_modules) if total_modules > 0 else 0
     )
 
     # 4. Determine Locked Status & Split
@@ -173,6 +184,18 @@ def pocso_act_page(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
+    # Fallback based on actual video progress
+    video_progress_seconds = 0
+    for mod in modules:
+        if mod.video_file:
+            prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+            if prog_data["is_completed"]:
+                video_progress_seconds += mod.duration_seconds
+            else:
+                video_progress_seconds += int(prog_data.get("last_position", 0.0))
+
+    total_seconds_watched = max(total_seconds_watched, video_progress_seconds)
     formatted_total_time = (
         f"{total_seconds_watched // 3600:02}:"
         f"{(total_seconds_watched % 3600) // 60:02}:"
@@ -254,8 +277,19 @@ def pocso_act_page_corp(request):
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
+    total_progress = 0.0
+    for mod in modules:
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        if prog_data["is_completed"]:
+            total_progress += 100.0
+        elif mod.video_file or (not mod.ppt_file):  # Only video modules (which don't have ppt_file or have video_file) have partial progress
+            if mod.duration_seconds > 0:
+                percent_watched = (prog_data.get("last_position", 0.0) / mod.duration_seconds) * 100.0
+                percent_watched = min(99.0, max(0.0, percent_watched))
+                total_progress += percent_watched
+
     percent_complete = (
-        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+        int(total_progress / total_modules) if total_modules > 0 else 0
     )
 
     # 4. Determine Locked Status & Split
@@ -334,6 +368,18 @@ def pocso_act_page_corp(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
+    # Fallback based on actual video progress
+    video_progress_seconds = 0
+    for mod in modules:
+        if mod.video_file:
+            prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+            if prog_data["is_completed"]:
+                video_progress_seconds += mod.duration_seconds
+            else:
+                video_progress_seconds += int(prog_data.get("last_position", 0.0))
+
+    total_seconds_watched = max(total_seconds_watched, video_progress_seconds)
     formatted_total_time = (
         f"{total_seconds_watched // 3600:02}:"
         f"{(total_seconds_watched % 3600) // 60:02}:"

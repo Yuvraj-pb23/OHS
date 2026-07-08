@@ -1063,6 +1063,14 @@
 
     // ── CSRF helper ──
     function getCsrfToken() {
+      const inlineToken = '{{ csrf_token }}';
+      if (inlineToken && inlineToken !== '' && inlineToken !== 'None') {
+        return inlineToken;
+      }
+      const inputToken = document.querySelector('input[name="csrfmiddlewaretoken"]');
+      if (inputToken && inputToken.value) {
+        return inputToken.value;
+      }
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
         document.cookie.split(';').forEach(cookie => {

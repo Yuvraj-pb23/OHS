@@ -417,8 +417,6 @@ def get_answer_for_question(question_text):
     print("DEBUG: No answer found in JSON.")
     return None
 
-
-@csrf_exempt
 def chatbot_response(request):
     load_real_models()
     if request.method != "POST":

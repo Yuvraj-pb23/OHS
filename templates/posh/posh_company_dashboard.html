@@ -1211,7 +1211,7 @@
 
     /* GLASS TOOLBAR & CONSOLE */
     .glass-toolbar {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border: 1px solid rgba(226, 232, 240, 0.8);
@@ -1219,6 +1219,22 @@
       padding: var(--space-4) var(--space-6);
       box-shadow: 0 10px 30px -10px rgba(15, 23, 42, 0.04);
       margin-bottom: var(--space-6);
+      position: -webkit-sticky;
+      position: sticky;
+      top: 20px;
+      z-index: 999;
+    }
+
+    #sendReminderBtn:disabled {
+      cursor: not-allowed !important;
+      pointer-events: auto !important;
+    }
+
+    #sendReminderBtn:disabled:hover {
+      background: linear-gradient(135deg, var(--color-warning) 0%, var(--color-accent) 100%) !important;
+      opacity: 0.5 !important;
+      box-shadow: none !important;
+      transform: none !important;
     }
 
     .icon-box {
@@ -2270,6 +2286,9 @@
             <button class="btn btn-hero-secondary py-2 px-3" data-bs-toggle="modal" data-bs-target="#bulkImportModal" style="height: 38px; display: inline-flex; align-items: center; justify-content: center;">
               <i class="bi bi-file-earmark-spreadsheet-fill"></i> Bulk Import CSV
             </button>
+            <button id="sendReminderBtn" class="btn btn-hero-primary py-2 px-3 border-0" style="height: 38px; display: inline-flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--color-warning) 0%, var(--color-accent) 100%) !important; box-shadow: none !important; opacity: 0.5; cursor: not-allowed;" onclick="sendReminderEmails()" disabled>
+              <i class="bi bi-envelope-fill me-1"></i> Send Reminder Email
+            </button>
           </div>
 
           <div class="d-flex flex-wrap gap-2 align-items-center">
@@ -2291,6 +2310,9 @@
           <table class="table modern-table mb-0">
             <thead>
               <tr>
+                <th style="width: 40px; text-align: center; padding-left: 20px;">
+                  <input type="checkbox" id="selectAllPending" class="form-check-input" onclick="toggleSelectAllPending(this)" style="cursor: pointer;" />
+                </th>
                 <th>Name</th>
                 <th>Email ID</th>
                 <th>Department</th>
@@ -2302,6 +2324,13 @@
             <tbody id="membersTableBody">
               {% for member in members %}
               <tr data-status="{% if member.is_training_completed %}completed{% else %}pending{% endif %}">
+                <td style="text-align: center; vertical-align: middle; padding-left: 20px;">
+                  {% if member.training_status != 'completed' %}
+                  <input type="checkbox" class="form-check-input pending-member-checkbox" value="{{ member.id }}" onclick="updateReminderButtonState()" style="cursor: pointer;" />
+                  {% else %}
+                  <input type="checkbox" class="form-check-input" disabled style="opacity: 0.5;" />
+                  {% endif %}
+                </td>
                 <td>
                   <div class="d-flex align-items-center gap-3">
                     <div class="table-avatar">{{ member.user.first_name|first|upper }}</div>
@@ -4526,11 +4555,73 @@
               {% endif %}
             </div>
           </div>
+          
+          <!-- === ADMIN ACTIONS === -->
+          {% if request.user.account_type == "COMPANY_ADMIN" %}
+          <div class="border-top pt-3 mt-4 text-start">
+            <h6 class="text-muted small mb-3 fw-bold" style="letter-spacing: 0.5px;">ADMINISTRATIVE ACTIONS</h6>
+            {% if member.training_status == 'completed' %}
+            <div class="alert alert-info py-2 px-3 mb-0 small d-flex align-items-center gap-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; font-weight: 500;">
+              <i class="bi bi-lock-fill"></i>
+              <span>This seat is locked because training has been completed. Editing and deletion are disabled.</span>
+            </div>
+            {% else %}
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-warning" onclick="toggleEditForm('{{ member.id }}')" style="font-weight: 600; font-size: 0.8rem; border-radius: 6px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="bi bi-pencil-square"></i> Edit Employee
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteMember('{{ member.id }}', '{{ member.user.get_full_name|default:member.user.first_name|escapejs }}')" style="font-weight: 600; font-size: 0.8rem; border-radius: 6px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="bi bi-trash"></i> Delete Employee
+              </button>
+            </div>
+            
+            <!-- Hidden Edit Form -->
+            <form id="editForm-{{ member.id }}" method="POST" action="{% url 'update_employee' member.id %}" class="mt-3 p-3 rounded" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0;">
+              {% csrf_token %}
+              <div class="mb-2">
+                <label class="form-label small text-muted fw-semibold">Full Name</label>
+                <input type="text" class="form-control form-control-sm" name="emp_name" value="{{ member.user.get_full_name|default:member.user.first_name }}" required style="font-size: 0.85rem; padding: 6px 10px;">
+              </div>
+              <div class="mb-2">
+                <label class="form-label small text-muted fw-semibold">Email Address</label>
+                <input type="email" class="form-control form-control-sm" name="emp_email" value="{{ member.user.email }}" required style="font-size: 0.85rem; padding: 6px 10px;">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted fw-semibold">Department</label>
+                <input type="text" class="form-control form-control-sm" name="emp_department" value="{{ member.user.department|default:'' }}" style="font-size: 0.85rem; padding: 6px 10px;">
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-warning px-3" style="font-weight: 600; font-size: 0.8rem;">Save Changes</button>
+                <button type="button" class="btn btn-sm btn-secondary px-3" onclick="toggleEditForm('{{ member.id }}')" style="font-weight: 600; font-size: 0.8rem;">Cancel</button>
+              </div>
+            </form>
+            {% endif %}
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
   {% endfor %}
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true" style="z-index: 10600 !important;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content" style="border-radius: var(--radius-xl); border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1); background: #ffffff; color: var(--text-primary); font-family: 'Poppins', sans-serif;">
+        <div class="modal-body text-center p-4">
+          <div class="confirm-icon-wrapper mb-3" style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.08); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <h5 class="modal-title fw-bold mb-2 text-dark" id="customConfirmTitle" style="font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem;">Confirm Action</h5>
+          <p class="text-secondary small mb-4" id="customConfirmMessage" style="line-height: 1.6; font-size: 0.88rem; font-weight: 500; color: var(--text-secondary) !important;"></p>
+          <div class="d-flex gap-3 justify-content-center">
+            <button type="button" class="btn btn-action px-4" id="customConfirmCancelBtn" data-bs-dismiss="modal" style="border-radius: var(--radius-md); font-weight: 700; font-size: 0.82rem; padding: 10px 20px; text-transform: uppercase; letter-spacing: 0.5px;">Cancel</button>
+            <button type="button" class="btn btn-gradient-action px-4 border-0" id="customConfirmOkBtn" style="border-radius: var(--radius-md); font-weight: 700; font-size: 0.82rem; padding: 10px 20px; background: linear-gradient(135deg, #ef4444, #dc2626); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); text-transform: uppercase; letter-spacing: 0.5px;">Yes, Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Add Single Employee Modal -->
   <!-- ADD EMPLOYEE MODAL -->
@@ -5942,6 +6033,58 @@
         }
       }
     });
+
+    window.toggleEditForm = function(memberId) {
+      const form = document.getElementById(`editForm-${memberId}`);
+      if (form) {
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+      }
+    };
+
+    window.showCustomConfirm = function(title, message, onConfirm) {
+      const modalEl = document.getElementById("customConfirmModal");
+      if (!modalEl) {
+        if (confirm(message)) onConfirm();
+        return;
+      }
+      
+      document.getElementById("customConfirmTitle").textContent = title;
+      document.getElementById("customConfirmMessage").textContent = message;
+      
+      const okBtn = document.getElementById("customConfirmOkBtn");
+      const newOkBtn = okBtn.cloneNode(true);
+      okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+      
+      const modalInstance = new bootstrap.Modal(modalEl);
+      
+      newOkBtn.addEventListener("click", function() {
+        modalInstance.hide();
+        onConfirm();
+      });
+      
+      modalInstance.show();
+    };
+
+    window.confirmDeleteMember = function(memberId, name) {
+      showCustomConfirm(
+        "Delete Employee",
+        `Are you sure you want to delete ${name}? This will permanently remove their training progress and revoke their access to the portal.`,
+        function() {
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = `/dashboard/delete-employee/${memberId}/`;
+          
+          const csrfInput = document.createElement('input');
+          csrfInput.type = 'hidden';
+          csrfInput.name = 'csrfmiddlewaretoken';
+          csrfInput.value = '{{ csrf_token }}';
+          form.appendChild(csrfInput);
+          
+          document.body.appendChild(form);
+          form.submit();
+        }
+      );
+    };
   </script>
 
   <!-- === TAB-CLOSE AUTO LOGOUT === -->
@@ -5955,6 +6098,12 @@
       var _navAway = false;
 
       function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+      function getCsrfToken() {
+        var input = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (input) return input.value;
+        var match = document.cookie.match(/csrftoken=([^;]+)/);
+        return match ? match[1] : '';
+      }
 
       // Any anchor click pointing to the same origin = internal navigation
       document.addEventListener('click', function (e) {
@@ -5972,7 +6121,9 @@
         if (_navAway) return;          // user clicked an internal link / submitted a form
         // Remaining cases: tab close, browser close, hard refresh (F5).
         // For a security-first HR dashboard, logging out on all of these is the correct behaviour.
-        navigator.sendBeacon(TAB_CLOSE_URL);
+        var payload = new FormData();
+        payload.append('csrfmiddlewaretoken', getCsrfToken());
+        navigator.sendBeacon(TAB_CLOSE_URL, payload);
       });
 
       // On every new page load, clear the navigation flag.
@@ -6262,6 +6413,156 @@
               showGlobalLoader();
           }
       });
+  </script>
+  
+  <script>
+  function showToast(message, type = 'success') {
+    // Check if the toast container exists, if not create it
+    let container = document.getElementById('dashboard-messages');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'dashboard-messages';
+        container.style.cssText = "position: fixed; top: 20px; right: 20px; z-index: 9999; min-width: 320px; max-width: 480px;";
+        document.body.appendChild(container);
+    }
+    
+    // Inject animation styles if not already present
+    if (!document.getElementById('toast-animation-style')) {
+        const style = document.createElement('style');
+        style.id = 'toast-animation-style';
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `alert-toast alert-toast-${type}`;
+    
+    const isError = type === 'error';
+    const bg = isError ? 'linear-gradient(135deg, #450a0a, #7f1d1d)' : 'linear-gradient(135deg, #052e16, #14532d)';
+    const border = isError ? '#ef4444' : '#22c55e';
+    const icon = isError ? 'bi-exclamation-circle-fill' : 'bi-check-circle-fill';
+    const iconColor = isError ? '#f87171' : '#4ade80';
+    
+    toast.style.cssText = `
+        display: flex; align-items: flex-start; gap: 12px;
+        background: ${bg};
+        border: 1px solid ${border};
+        border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+        color: white; font-size: 0.9rem; font-weight: 500;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        animation: slideInRight 0.3s ease;
+    `;
+    
+    toast.innerHTML = `
+        <i class="bi ${icon}" style="font-size: 1.2rem; margin-top: 1px; color: ${iconColor}; flex-shrink: 0;"></i>
+        <span style="flex: 1;">${message}</span>
+        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: rgba(255,255,255,0.5); cursor: pointer; font-size: 1.1rem; padding: 0; line-height: 1;">&times;</button>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        toast.style.transition = 'opacity 0.5s';
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 500);
+    }, 5000);
+  }
+
+  function toggleSelectAllPending(masterCheckbox) {
+    const checkboxes = document.querySelectorAll('.pending-member-checkbox');
+    checkboxes.forEach(cb => {
+      const tr = cb.closest('tr');
+      if (tr && tr.style.display !== 'none') {
+        cb.checked = masterCheckbox.checked;
+      }
+    });
+    updateReminderButtonState();
+  }
+
+  function updateReminderButtonState() {
+    const checkedBoxes = document.querySelectorAll('.pending-member-checkbox:checked');
+    const sendBtn = document.getElementById('sendReminderBtn');
+    
+    let visibleCheckedCount = 0;
+    checkedBoxes.forEach(cb => {
+      const tr = cb.closest('tr');
+      if (tr && tr.style.display !== 'none') {
+        visibleCheckedCount++;
+      }
+    });
+
+    if (sendBtn) {
+      if (visibleCheckedCount > 0) {
+        sendBtn.disabled = false;
+        sendBtn.style.opacity = '1';
+        sendBtn.style.cursor = 'pointer';
+        sendBtn.style.setProperty('box-shadow', '0 4px 14px rgba(245, 158, 11, 0.25)', 'important');
+      } else {
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.5';
+        sendBtn.style.cursor = 'not-allowed';
+        sendBtn.style.setProperty('box-shadow', 'none', 'important');
+      }
+    }
+  }
+
+  function sendReminderEmails() {
+    const checkedBoxes = document.querySelectorAll('.pending-member-checkbox:checked');
+    const memberIds = [];
+    checkedBoxes.forEach(cb => {
+      const tr = cb.closest('tr');
+      if (tr && tr.style.display !== 'none') {
+        memberIds.push(parseInt(cb.value));
+      }
+    });
+
+    if (memberIds.length === 0) return;
+
+    const btn = document.getElementById('sendReminderBtn');
+    const originalContent = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Sending...';
+
+    fetch("{% url 'send_posh_reminders' %}", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": "{{ csrf_token }}"
+      },
+      body: JSON.stringify({ member_ids: memberIds })
+    })
+    .then(res => res.json())
+    .then(data => {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      if (data.status === 'success') {
+        showToast(data.message, 'success');
+        // Deselect all
+        document.querySelectorAll('.pending-member-checkbox').forEach(cb => cb.checked = false);
+        const master = document.getElementById('selectAllPending');
+        if (master) master.checked = false;
+        updateReminderButtonState();
+      } else {
+        showToast(data.message, 'error');
+      }
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = originalContent;
+      showToast("Request failed. Please check network connection.", 'error');
+    });
+  }
+
+  // Hook into the search function if present so hidden boxes are unchecked/button state is updated
+  document.getElementById('memberSearch')?.addEventListener('input', function() {
+    setTimeout(updateReminderButtonState, 100);
+  });
   </script>
 </body>
 

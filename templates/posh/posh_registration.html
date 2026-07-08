@@ -669,7 +669,7 @@
                             </div>
                             <div class="error-message" id="error_ic_specialized_training"></div>
 
-                            <div class="grid grid-cols-1 gap-3" id="ic-training-dropdowns">
+                            <div class="grid grid-cols-1 gap-3 {% if not registration.ic_specialized_training %}hidden{% endif %}" id="ic-training-dropdowns">
                                 <div>
                                     <label class="text-[0.6rem] font-bold text-slate-400 uppercase ml-1 block mb-1">Last Training Year</label>
                                     <div class="custom-select-wrapper {% if not registration.ic_specialized_training %}disabled-dropdown{% endif %}" id="ic-training-dropdown-wrapper">
@@ -1286,22 +1286,27 @@
         }
 
         function toggleSpecializedTrainingFields(show) {
+            const container = document.getElementById('ic-training-dropdowns');
+            if (!container) return;
+
             const wrapper = document.getElementById('ic-training-dropdown-wrapper');
-            if (!wrapper) return;
-            
             if (show) {
-                wrapper.classList.remove('disabled-dropdown');
+                container.classList.remove('hidden');
+                if (wrapper) wrapper.classList.remove('disabled-dropdown');
             } else {
-                wrapper.classList.add('disabled-dropdown');
-                const hiddenInput = wrapper.querySelector('input[type="hidden"]');
-                if (hiddenInput) {
-                    hiddenInput.value = '';
-                    const event = new Event('change');
-                    hiddenInput.dispatchEvent(event);
+                container.classList.add('hidden');
+                if (wrapper) {
+                    wrapper.classList.add('disabled-dropdown');
+                    const hiddenInput = wrapper.querySelector('input[type="hidden"]');
+                    if (hiddenInput) {
+                        hiddenInput.value = '';
+                        const event = new Event('change');
+                        hiddenInput.dispatchEvent(event);
+                    }
+                    const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
+                    if (triggerSpan) triggerSpan.textContent = 'Select Year';
+                    wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
                 }
-                const triggerSpan = wrapper.querySelector('.custom-select-trigger span');
-                if (triggerSpan) triggerSpan.textContent = 'Select Year';
-                wrapper.querySelectorAll('.custom-option').forEach(opt => opt.classList.remove('selected'));
             }
         }
 
@@ -1315,7 +1320,11 @@
 
             // Check Specialized Training
             const hasSpecialized = document.querySelector('input[name="ic_specialized_training"]:checked');
-            if (hasSpecialized) toggleSpecializedTrainingFields(hasSpecialized.value === 'yes');
+            if (hasSpecialized) {
+                toggleSpecializedTrainingFields(hasSpecialized.value === 'yes');
+            } else {
+                toggleSpecializedTrainingFields(false);
+            }
 
             // Check Require IC Training
             const requireTraining = document.querySelector('input[name="require_ic_training"]:checked');

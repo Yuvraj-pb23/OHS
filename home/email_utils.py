@@ -64,41 +64,81 @@ def send_welcome_email(
 
         site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
 
+        # Get organization name, support email and subscription details dynamically
+        org_name = organization_name or "Open Hand Private Limited"
+        support_email = getattr(settings, "SUPPORT_EMAIL", "openhandpvtltd@gmail.com")
+        training_module_name = "POSH Act Compliance Training Program"
+        training_duration = "1 year"
+
+        from home.models import OrganizationMember, Subscription
+        try:
+            membership = OrganizationMember.objects.filter(user=user).first()
+            if membership:
+                org = membership.organization
+                org_name = org.name
+                active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
+                if active_sub:
+                    plan_type = active_sub.plan.type
+                    if plan_type == "POCSO":
+                        training_module_name = "POCSO Act Compliance Training Program"
+                    elif plan_type == "BOTH":
+                        training_module_name = "POSH & POCSO Act Compliance Training Programs"
+                    
+                    duration_days = active_sub.plan.duration_days
+                    if duration_days:
+                        if duration_days >= 365:
+                            training_duration = f"{duration_days // 365} year(s)"
+                        else:
+                            training_duration = f"{duration_days} days"
+        except Exception as e:
+            logger.warning(f"Error resolving welcome email subscription details: {e}")
+
         if template and template.subject and template.body:
             subject = template.subject
             body = template.body.format(
-                name=user_data.first_name or user_data.email,
-                company_name=organization_name or "Open Hand Solution",
+                name=user_data.get_full_name() or user_data.first_name or user_data.email,
+                company_name=org_name,
                 password=password,
                 email=user_data.email,
                 login_url=site_base,
                 designation=designation or "Employee",
                 training_link=site_base,
+                training_module_name=training_module_name,
+                training_duration=training_duration,
+                support_email=support_email,
             )
         elif is_company_employee:
-            subject = "Welcome to Open Hand Solution – Your Training Account"
-            body = f"""Hello {user_data.first_name},
+            subject = "Enrolled in Compliance Training Program – Open Hand Private Limited"
+            body = f"""Dear {user_data.get_full_name() or user_data.first_name}
+Greetings from Open Hand Private Limited (OHPL)
 
-Welcome to Open Hand Solution!
+You have been successfully enrolled in the {training_module_name} on the OHPL Learning Portal.
 
-Your training account has been created by {organization_name}. Here are your login credentials:
+This interactive training module will help you understand:
+- The fundamentals of the Prevention of Sexual Harassment (POSH) Act and what constitutes sexual harassment at the workplace.
+- Different forms of sexual harassment, including physical, verbal, non-verbal, and digital conduct.
+- Appropriate workplace behaviour, professional boundaries, and respectful communication.
+- Practical workplace scenarios and case studies to reinforce your learning.
 
-Name:               {user_data.get_full_name() or user_data.first_name}
-Designation:        {designation or 'Employee'}
-Email / Username:   {user_data.email}
+Training Requirement
+Please complete the training within {training_duration}.
+At the end of the module, you will be required to complete a short assessment quiz.
+Upon successful meeting the assessment criteria, your Certificate of Completion will be available for download from the company dashboard.
+
+Login Credentials
+Portal Link: {site_base}
+Username: {user_data.email}
 Temporary Password: {password}
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔗 Access your POSH Training Portal here:
-{site_base}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Please log in using the above credentials and change your password upon your first login.
 
-IMPORTANT: You will be required to change your password upon first login.
+If you require any assistance, please contact us at {support_email}.
 
-If you have any questions, please contact your HR department.
+We look forward to your active participation in creating a safe, respectful, and inclusive workplace.
 
-Best regards,
-Open Hand Solution Team"""
+Warm regards,
+Learning & Compliance Team
+Open Hand Private Limited (OHPL)"""
         else:
             subject = "Welcome to Open Hand Solution – Your Account Details"
             body = f"""Hello {user_data.first_name},
@@ -178,7 +218,10 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
 
     # 1. Fetch Template
     template = EmailTemplate.objects.filter(tier_key=tier_key).first()
-    if tier_key == "PAYMENT_VERIFIED":
+    if template and template.subject and template.body:
+        subject = template.subject
+        body_content = template.body
+    elif tier_key == "PAYMENT_VERIFIED":
         subject = "Payment confirmed — Welcome to Open Hand! Your login details inside"
         body_content = """<p>Dear {name},</p>
 
@@ -249,13 +292,10 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
 
 <p>Open Hand Private Limited<br>
 <a href="mailto:openhandpvtltd@gmail.com" style="color: #6366f1; text-decoration: none;">openhandpvtltd@gmail.com</a> | <a href="https://openhandsolutions.com" style="color: #6366f1; text-decoration: none;">openhandsolutions.com</a> | <a href="https://in.linkedin.com/company/open-hand-solutions" style="color: #6366f1; text-decoration: none;">LinkedIn</a> | <a href="https://www.facebook.com/openhandsolutions/about/" style="color: #6366f1; text-decoration: none;">Facebook</a> | <a href="https://www.instagram.com/open_hand_solutions/" style="color: #6366f1; text-decoration: none;">Instagram</a></p>"""
-    elif not template:
+    else:
         # Fallback to basic subject if no template found
         subject = f"Registration Update - {registration_type} Compliance"
         body_content = f"Thank you for registering for {registration_type} compliance."
-    else:
-        subject = template.subject
-        body_content = template.body
 
     # 2. Context for Placeholders
     company_name = (
@@ -456,39 +496,69 @@ def send_interest_email(registration, registration_type="POSH", request=None):
         site_url = request.build_absolute_uri('/')[:-1]
     else:
         site_url = getattr(settings, "SITE_URL", "https://openhandsolutions.com")
-    payment_link = f"{site_url}/billing/submit-payment/{registration.id}/"
+
+    # FIX #2: Use a signed token instead of raw registration ID to prevent IDOR
+    from django.core import signing
+    payment_token = signing.dumps(
+        {"reg_id": registration.id, "reg_type": registration_type},
+        salt="submit-payment",
+    )
+    payment_link = f"{site_url}/billing/submit-payment/{payment_token}/"
     logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
 
     # 2. Prepare Email Body content
     recipient_name = registration.contact_person or registration.company_name or "Valued Customer"
 
-    subject = "Thank you for your interest in our services"
+    try:
+        from .models import EmailTemplate
+        template = EmailTemplate.objects.filter(tier_key="PAY_NOW").first()
+    except Exception as db_err:
+        logger.warning(f"Failed to access EmailTemplate for registration interest: {db_err}")
+        template = None
 
-    body_content = f"""<p>Dear {recipient_name},</p>
+    if template and template.subject and template.body:
+        subject = template.subject
+        body_content = template.body
+    else:
+        subject = "Thank you for your interest in our services"
+        body_content = """Dear {name},
 
-<p>Greetings from Open Hand Private Limited!</p>
+Greetings from Open Hand Private Limited!
 
-<p>We are truly pleased to have you here and thank you for taking the time to visit our website and register for POSH training. At Open Hand, we believe that every workplace deserves to be safe, respectful, and compliant — and we're honoured that you've chosen to partner with us on this important journey.</p>
+We are truly pleased to have you here and thank you for taking the time to visit our website and register for {type} training. At Open Hand, we believe that every workplace deserves to be safe, respectful, and compliant — and we're honoured that you've chosen to partner with us on this important journey.
 
-<p>To confirm your booking, please click the link below to make the payment:<br>
-➡ <a href="{payment_link}" style="display: inline-block; padding: 12px 24px; background-color: #6366f1; color: #ffffff !important; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 10px; margin-bottom: 10px;">Pay Now – Secure Payment Link</a></p>
+To confirm your booking, please click the link below to make the payment:
+➡ {payment_link}
 
-<p>Once the payment is received, our team will reach out to you within 24 hours to finalise the training schedule and share pre-training materials.</p>
+Once the payment is received, our team will reach out to you within 24 hours to finalise the training schedule and share pre-training materials.
 
-<p><strong>OR</strong></p>
+OR
 
-<p>📞 <strong>Prefer to discuss first? We're just a call away!</strong><br>
-If you'd like to discuss the training modules, understand the content in more detail, or explore customisation options, feel free to call us at:<br>
-<strong>+91- 99889 97555</strong></p>
+📞 Prefer to discuss first? We're just a call away!
+If you'd like to discuss the training modules, understand the content in more detail, or explore customisation options, feel free to call us at:
++91- 99889 97555
 
-<p>Once you complete the payment, you will be provided a user name and password to login to our Training module.</p>
+Once you complete the payment, you will be provided a user name and password to login to our Training module.
 
-<p>Once again, thank you for your trust and interest in us. We look forward to supporting your organisation in creating a safer, more empowered workplace.</p>
+Once again, thank you for your trust and interest in us. We look forward to supporting your organisation in creating a safer, more empowered workplace.
 
-<p>Warm regards,</p>
+Warm regards,
 
-<p>Open Hand Private Limited<br>
-<a href="mailto:openhandpvtltd@gmail.com" style="color: #6366f1; text-decoration: none;">openhandpvtltd@gmail.com</a> | <a href="https://openhandsolutions.com" style="color: #6366f1; text-decoration: none;">openhandsolutions.com</a> | <a href="https://in.linkedin.com/company/open-hand-solutions" style="color: #6366f1; text-decoration: none;">LinkedIn</a> | <a href="https://www.facebook.com/openhandsolutions/about/" style="color: #6366f1; text-decoration: none;">Facebook</a> | <a href="https://www.instagram.com/open_hand_solutions/" style="color: #6366f1; text-decoration: none;">Instagram</a></p>"""
+Open Hand Private Limited
+openhandpvtltd@gmail.com | openhandsolutions.com"""
+
+    # Format placeholders
+    context = {
+        "name": recipient_name,
+        "company_name": registration.company_name or registration.school_name or "Valued Customer",
+        "payment_link": payment_link,
+        "type": registration_type,
+    }
+
+    for key, val in context.items():
+        placeholder = f"{{{key}}}"
+        subject = subject.replace(placeholder, str(val))
+        body_content = body_content.replace(placeholder, str(val))
 
     body_content = format_email_body(body_content)
 
@@ -683,4 +753,82 @@ def send_payment_confirmed_email(registration, username, password, registration_
     except Exception as e:
         print(f"DEBUG: Error sending welcome credentials email: {e}")
         return False
+
+
+def send_posh_reminder_email(user, status, completion_percentage, due_date):
+    """
+    Send POSH training reminder email to the employee.
+    """
+    import threading
+    from django.core.mail import send_mail
+    from django.conf import settings
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        from home.models import EmailTemplate
+        template = EmailTemplate.objects.filter(tier_key="EMPLOYEE_REMINDER").first()
+    except Exception as db_err:
+        logger.warning(f"Failed to access EmailTemplate for reminder: {db_err}")
+        template = None
+
+    if template and template.subject and template.body:
+        subject = template.subject
+        try:
+            body = template.body.format(
+                name=user.first_name or user.username,
+                status=status,
+                completion_percentage=completion_percentage,
+                due_date=due_date,
+                support_email=getattr(settings, 'SUPPORT_EMAIL', 'openhandpvtltd@gmail.com'),
+            )
+        except Exception as fmt_err:
+            logger.warning(f"Error formatting reminder email template: {fmt_err}")
+            # Fallback replacing manually if formatting keys mismatch
+            body = template.body.replace("{name}", user.first_name or user.username)\
+                                .replace("{status}", str(status))\
+                                .replace("{completion_percentage}", str(completion_percentage))\
+                                .replace("{due_date}", str(due_date))\
+                                .replace("{support_email}", getattr(settings, 'SUPPORT_EMAIL', 'openhandpvtltd@gmail.com'))
+    else:
+        subject = "Mandatory POSH Training - Pending Completion"
+        body = f"""Dear {user.first_name},
+
+This is a friendly reminder that your mandatory POSH (Prevention of Sexual Harassment) training is still pending.
+
+As of today:
+Training Status: {status}
+Completion Percentage: {completion_percentage}%
+Due Date: {due_date}
+
+Please log in to the learning portal and complete your assigned training and assessment before the due date.
+
+Completing the training is mandatory and forms an important part of our organization's commitment to maintaining a safe, respectful, and legally compliant workplace.
+
+If you have already completed the training recently, please disregard this email.
+
+For any technical assistance, please contact {getattr(settings, 'SUPPORT_EMAIL', 'openhandpvtltd@gmail.com')} or +91- 99889 97555.
+
+Thank you for your prompt attention and cooperation.
+
+Warm regards,
+Learning & Compliance Team
+Open Hand Private Limited"""
+
+    def _send():
+        try:
+            send_mail(
+                subject,
+                body,
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
+        except Exception as e:
+            logger.error(f"Error sending POSH reminder email to {user.email}: {e}")
+
+    threading.Thread(target=_send).start()
+    return True
+
 

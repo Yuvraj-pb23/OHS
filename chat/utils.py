@@ -10,6 +10,37 @@ import torch
 from PIL import Image
 from sentence_transformers import SentenceTransformer, util
 from sklearn.metrics.pairwise import cosine_similarity
+import hmac
+import hashlib
+from django.conf import settings
+
+class SecurityError(Exception):
+    pass
+
+def verify_file_signature(file_path):
+    sig_path = file_path + ".sig"
+    if not os.path.exists(file_path):
+        return
+        
+    with open(file_path, "rb") as f:
+        data = f.read()
+        
+    # Use SECRET_KEY (or a fallback if not configured yet)
+    key = getattr(settings, "SECRET_KEY", "fallback-key").encode("utf-8")
+    computed_sig = hmac.new(key, data, hashlib.sha256).hexdigest()
+    
+    if os.path.exists(sig_path):
+        with open(sig_path, "r", encoding="utf-8") as f:
+            expected_sig = f.read().strip()
+        if not hmac.compare_digest(computed_sig, expected_sig):
+            raise SecurityError(f"Integrity check failed for {file_path}! Unauthorized modification detected.")
+    else:
+        # Generate signature on first load in trusted environment
+        try:
+            with open(sig_path, "w", encoding="utf-8") as f:
+                f.write(computed_sig)
+        except Exception:
+            pass
 
 # --- Image Chatbot Components (UPDATED) ---
 
@@ -41,6 +72,8 @@ class ImageChatbot:
 
             # Ensure file is local (prevent remote path injection)
             model_path = os.path.abspath(model_path)
+
+            verify_file_signature(model_path)
 
             print(f"[Image Chatbot] Loading model from: {model_path}")
 
@@ -355,6 +388,10 @@ class ImageChatbot:
 
 class TextChatbot:
     def __init__(self, model_path, label_encoder_path, semantic_data_path):
+        verify_file_signature(model_path)
+        verify_file_signature(label_encoder_path)
+        verify_file_signature(semantic_data_path)
+
         self.model = joblib.load(model_path)
         self.label_encoder = joblib.load(label_encoder_path)
 

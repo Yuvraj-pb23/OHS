@@ -37,6 +37,7 @@ urlpatterns = [
     path("ajax/save-video-progress/", views.save_video_progress, name="save_video_progress"),
     path("ajax/member-progress/<int:member_id>/", views.member_progress_api, name="member_progress_api"),
     path("ajax/upload-org-logo/", views.upload_org_logo, name="upload_org_logo"),
+    path("ajax/send-posh-reminders/", views.send_posh_reminders, name="send_posh_reminders"),
     # --- SUBSCRIPTION FLOWS ---
     path(
         "subscription/individual/<str:plan_type>/",
@@ -48,15 +49,7 @@ urlpatterns = [
         views.company_subscription,
         name="company_subscription",
     ),
-    # --- OTP ENDPOINTS FOR COMPANY REGISTRATION ---
-    path(
-        "ajax/send-reg-otp/", views.send_registration_otp, name="send_registration_otp"
-    ),
-    path(
-        "ajax/verify-reg-otp/",
-        views.verify_registration_otp,
-        name="verify_registration_otp",
-    ),
+    # --- CAPTCHA ENDPOINTS ---
     path(
         "generate-captcha/",
         views.generate_captcha_image,
@@ -76,6 +69,8 @@ urlpatterns = [
     path("company_dashboard/", views.company_dashboard),
     path("company_dashboard", views.company_dashboard),
     path("dashboard/add-employee/", views.add_employee, name="add_employee"),
+    path("dashboard/update-employee/<int:member_id>/", views.update_employee, name="update_employee"),
+    path("dashboard/delete-employee/<int:member_id>/", views.delete_employee, name="delete_employee"),
     path(
         "download-template/",
         views.download_employee_template,
@@ -128,8 +123,23 @@ urlpatterns = [
         name="trigger_tier_email",
     ),
     path(
-        "billing/submit-payment/<int:registration_id>/",
+        "billing/submit-payment/<str:token>/",
         views.submit_payment_view,
         name="submit_payment",
+    ),
+    path(
+        "accounts-portal/delete-poster/",
+        views.delete_poster_view,
+        name="delete_poster",
+    ),
+    path(
+        "accounts-portal/add-poster/",
+        views.add_poster_view,
+        name="add_poster",
+    ),
+    path(
+        "accounts-portal/delete-registrations/",
+        views.delete_registrations_view,
+        name="delete_registrations",
     ),
 ]

@@ -14,63 +14,104 @@
         rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #020617;
-            --card-dark: #0f172a;
-            --accent: #6366f1;
-            --accent-hover: #4f46e5;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --text-muted: #94a3b8;
+            --bg-light: #f5f7fa;
+            --card-light: #ffffff;
+            --accent: #0066cc; /* Website brand royal blue */
+            --accent-hover: #0055b3;
+            --border-color: rgba(15, 23, 42, 0.08);
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            
+            /* Fallbacks for variables used elsewhere in templates */
+            --bg-dark: #f5f7fa;
+            --card-dark: #ffffff;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: #f8fafc;
+            background-image: 
+              linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+            background-size: 40px 40px, 40px 40px, 100% 100% !important;
+            background-attachment: fixed;
+            color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
         }
 
         .heading-font {
             font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
         }
 
         .dashboard-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem 2rem 100px 2rem;
+            padding: 7rem 2rem 100px 2rem;
             min-height: calc(100vh - 80px);
             position: relative;
             box-sizing: border-box;
         }
 
         .card {
-            background: var(--card-dark);
+            background: var(--card-light);
             border: 1px solid var(--border-color);
             border-radius: 1.5rem;
             transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+            color: var(--text-main);
         }
 
         .glass-nav {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            max-width: 1445px;
+            width: 98%;
+            left: 50%;
+            transform: translateX(-50%);
+            position: fixed;
+            top: 5px;
+            border-radius: 50px;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            border: none !important;
+            box-shadow: none !important;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+            z-index: 1000;
+        }
+
+        .glass-nav-scrolled {
+            background: rgba(26, 34, 65, 0.85) !important;
+            backdrop-filter: blur(15px) saturate(180%) !important;
+            -webkit-backdrop-filter: blur(15px) saturate(180%) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2) !important;
         }
 
         /* Tabs */
         .tab-btn {
-            padding: 1rem 1.5rem;
-            font-weight: 600;
+            padding: 0.65rem 1.25rem;
+            font-weight: 700;
             color: var(--text-muted);
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .tab-btn:hover {
+            color: var(--accent);
+            background: rgba(0, 102, 204, 0.03);
         }
 
         .tab-btn.active {
-            color: var(--accent);
-            border-bottom-color: var(--accent);
-            background: rgba(99, 102, 241, 0.05);
+            color: #ffffff !important;
+            background: var(--accent) !important;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
         }
 
         .tag {
@@ -83,32 +124,32 @@
         }
 
         .tag-amber {
-            background: #78350f;
-            color: #fbbf24;
+            background: #fef3c7;
+            color: #d97706;
         }
 
         .tag-green {
-            background: #064e3b;
-            color: #34d399;
+            background: #d1fae5;
+            color: #059669;
         }
 
         .tag-blue {
-            background: #1e3a8a;
-            color: #60a5fa;
+            background: #dbeafe;
+            color: #2563eb;
         }
 
         .tag-red {
-            background: #450a0a;
-            color: #f87171;
+            background: #fee2e2;
+            color: #dc2626;
         }
 
         .price-input {
             width: 100%;
-            background: rgba(255, 255, 255, 0.03);
+            background: #f8fafc;
             border: 1px solid var(--border-color);
             border-radius: 0.75rem;
             padding: 0.75rem 1rem 0.75rem 2.25rem;
-            color: white;
+            color: var(--text-main);
             font-weight: 600;
             font-size: 0.9rem;
             transition: all 0.2s;
@@ -117,7 +158,8 @@
         .price-input:focus {
             outline: none;
             border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.05);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.05);
         }
 
         .rupee-prefix {
@@ -141,6 +183,7 @@
 
         .tier-table-compact td {
             padding: 0.75rem 0.5rem;
+            color: var(--text-main);
         }
 
         .btn-save {
@@ -155,7 +198,7 @@
         .btn-save:hover {
             background: var(--accent-hover);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(0, 102, 204, 0.3);
         }
 
         .preview-stat {
@@ -167,7 +210,7 @@
         }
 
         .registration-row:hover {
-            background: rgba(255, 255, 255, 0.02);
+            background: rgba(15, 23, 42, 0.015);
         }
 
         .scrollbar-hide::-webkit-scrollbar {
@@ -189,6 +232,273 @@
         input[type=number] {
             -moz-appearance: textfield;
             appearance: textfield;
+        }
+
+        /* LIGHT-THEME OVERRIDES FOR TAILWIND DARK CLASSES */
+        
+        .dashboard-container h1, 
+        .dashboard-container h2, 
+        .dashboard-container h3, 
+        .dashboard-container h4, 
+        .dashboard-container h5 {
+            color: var(--text-main);
+        }
+        
+        .text-text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .dashboard-container .card .text-white,
+        .dashboard-container table .text-white,
+        .dashboard-container .tab-content .text-white {
+            color: var(--text-main) !important;
+        }
+        
+        .dashboard-container .text-slate-400,
+        .dashboard-container .text-slate-300,
+        .dashboard-container .text-slate-200 {
+            color: var(--text-muted) !important;
+        }
+        
+        .dashboard-container .text-indigo-300,
+        .dashboard-container .text-indigo-400 {
+            color: #4f46e5 !important;
+        }
+        
+        .dashboard-container .text-rose-200,
+        .dashboard-container .text-rose-300,
+        .dashboard-container .text-rose-400 {
+            color: #e11d48 !important;
+        }
+        
+        .dashboard-container .text-amber-200,
+        .dashboard-container .text-amber-300,
+        .dashboard-container .text-amber-400 {
+            color: #d97706 !important;
+        }
+        
+        .dashboard-container .text-emerald-300,
+        .dashboard-container .text-emerald-400 {
+            color: #059669 !important;
+        }
+
+        .dashboard-container .text-rose-300\/60 {
+            color: #be123c !important;
+        }
+        
+        .dashboard-container .text-amber-200\/60 {
+            color: #b45309 !important;
+        }
+
+        .dashboard-container .text-rose-400\/80 {
+            color: #be123c !important;
+        }
+        
+        /* Ensure buttons, active tabs and badges preserve text colors */
+        .dashboard-container button .text-white,
+        .dashboard-container button.text-white,
+        .dashboard-container .btn-save,
+        .dashboard-container button[type="submit"],
+        .dashboard-container .tab-btn.active,
+        .dashboard-container .tag,
+        .dashboard-container .poster-gallery-card a {
+            color: inherit;
+        }
+        
+        .dashboard-container button[type="submit"] .text-white,
+        .dashboard-container button[type="submit"] {
+            color: #ffffff !important;
+        }
+
+        .dashboard-container .btn-save {
+            color: #ffffff !important;
+        }
+        
+        .dashboard-container .bg-white\/5 {
+            background-color: rgba(15, 23, 42, 0.03) !important;
+        }
+        
+        .dashboard-container .border-white\/5,
+        .dashboard-container .border-white\/10 {
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+        
+        .dashboard-container .divide-white\/5 > :not([hidden]) ~ :not([hidden]) {
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+        
+        .dashboard-container .bg-indigo-500\/5 {
+            background-color: rgba(79, 70, 229, 0.04) !important;
+        }
+        
+        .dashboard-container .border-indigo-500\/20 {
+            border-color: rgba(79, 70, 229, 0.12) !important;
+        }
+        
+        .dashboard-container .bg-rose-500\/5 {
+            background-color: rgba(225, 29, 72, 0.04) !important;
+        }
+        
+        .dashboard-container .border-rose-500\/10 {
+            border-color: rgba(225, 29, 72, 0.12) !important;
+        }
+        
+        .dashboard-container .bg-amber-500\/5 {
+            background-color: rgba(245, 158, 11, 0.04) !important;
+        }
+        
+        .dashboard-container .border-amber-500\/10 {
+            border-color: rgba(245, 158, 11, 0.12) !important;
+        }
+        
+        .dashboard-container .bg-emerald-500\/10 {
+            background-color: rgba(16, 185, 129, 0.08) !important;
+        }
+        
+        .dashboard-container .border-emerald-500\/20 {
+            border-color: rgba(16, 185, 129, 0.15) !important;
+        }
+        
+        .dashboard-container .border-b.border-white\/5 {
+            border-color: rgba(15, 23, 42, 0.08) !important;
+        }
+        
+        .dashboard-container .bg-indigo-500\/10 {
+            background-color: rgba(79, 70, 229, 0.08) !important;
+            border-color: rgba(79, 70, 229, 0.15) !important;
+        }
+        
+        .dashboard-container a.bg-indigo-500\/10:hover {
+            background-color: #4f46e5 !important;
+            color: #ffffff !important;
+            border-color: #4f46e5 !important;
+        }
+
+        .dashboard-container .bg-rose-500\/10 {
+            background-color: rgba(225, 29, 72, 0.08) !important;
+            border-color: rgba(225, 29, 72, 0.15) !important;
+        }
+        
+        .dashboard-container a.bg-rose-500\/10:hover {
+            background-color: #e11d48 !important;
+            color: #ffffff !important;
+            border-color: #e11d48 !important;
+        }
+        
+        .dashboard-container input[type="text"].bg-slate-900,
+        .dashboard-container textarea.bg-slate-900 {
+            background-color: #f8fafc !important;
+            color: var(--text-main) !important;
+            border-color: rgba(15, 23, 42, 0.1) !important;
+        }
+        
+        .dashboard-container input[type="text"].bg-slate-900:focus,
+        .dashboard-container textarea.bg-slate-900:focus {
+            background-color: #ffffff !important;
+            border-color: var(--accent) !important;
+        }
+
+        .dashboard-container .bg-slate-700 {
+            background-color: #cbd5e1 !important;
+        }
+
+        .dashboard-container .poster-gallery-title {
+            color: var(--text-main) !important;
+        }
+
+        .poster-btn-view {
+            background: rgba(79, 70, 229, 0.08) !important;
+            color: #4f46e5 !important;
+            border: 1px solid rgba(79, 70, 229, 0.15) !important;
+        }
+        .poster-btn-view:hover {
+            background: #4f46e5 !important;
+            color: #ffffff !important;
+        }
+
+        .poster-btn-download {
+            background: rgba(16, 185, 129, 0.08) !important;
+            color: #059669 !important;
+            border: 1px solid rgba(16, 185, 129, 0.15) !important;
+        }
+        .poster-btn-download:hover {
+            background: #059669 !important;
+            color: #ffffff !important;
+        }
+
+        /* Navbar elements styling overrides matching services page */
+        .glass-nav p {
+            color: #0f172a !important; /* Dark initially on light page bg */
+            transition: color 0.3s ease !important;
+        }
+
+        .glass-nav-scrolled p {
+            color: #ffffff !important; /* White when scrolled over navy portion of gradient */
+        }
+
+        .glass-nav .h-8.w-px {
+            background-color: rgba(15, 23, 42, 0.15) !important; /* Dark initially */
+            transition: background-color 0.3s ease !important;
+        }
+
+        .glass-nav-scrolled .h-8.w-px {
+            background-color: rgba(255, 255, 255, 0.15) !important; /* White when scrolled */
+        }
+
+        .glass-nav a {
+            color: #000a7d !important;
+            font-weight: 600 !important;
+            transition: color 0.3s ease !important;
+        }
+
+        .glass-nav a:hover {
+            color: #ff9800 !important;
+        }
+
+        .glass-nav-scrolled a {
+            color: #f1f5f9 !important;
+        }
+
+        .glass-nav-scrolled a:hover {
+            color: #38bdf8 !important;
+        }
+
+        /* Sign out button matching services page layout style */
+        .glass-nav button[type="submit"] {
+            background: rgba(211, 47, 47, 0.08) !important;
+            border: 1px solid rgba(211, 47, 47, 0.15) !important;
+            color: #d32f2f !important;
+            border-radius: 12px !important;
+            transition: all 0.2s ease !important;
+            padding: 8px 16px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-weight: 600 !important;
+        }
+
+        .glass-nav button[type="submit"]:hover {
+            background: #d32f2f !important;
+            color: #ffffff !important;
+            border-color: #d32f2f !important;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.2) !important;
+        }
+        
+        .glass-nav-scrolled button[type="submit"] {
+            background: rgba(239, 68, 68, 0.1) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            color: #f87171 !important;
+        }
+
+        .glass-nav-scrolled button[type="submit"]:hover {
+            background: #ef4444 !important;
+            color: #ffffff !important;
+            border-color: #ef4444 !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        }
+
+        .glass-nav button[type="submit"] i {
+            color: inherit !important;
         }
     </style>
 </head>
@@ -224,14 +534,13 @@
 
     <main class="dashboard-container">
 
-        <!-- Header with Tabs -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 border-b border-white/5">
-            <div class="pb-6">
-                <h1 class="heading-font text-3xl font-black mb-2">Operations Center</h1>
-                <p class="text-text-muted text-sm tracking-wide">Manage statutory pricing tiers and verify incoming
-                    statutory bill payments.</p>
+        <!-- Header with Tabs (Centered Layout) -->
+        <div class="flex flex-col items-center text-center gap-6 mb-10 border-b border-white/5 pb-8">
+            <div>
+                <h1 class="heading-font text-4xl font-black mb-3">Operations Center</h1>
+                <p class="text-text-muted text-sm tracking-wide max-w-2xl">Manage statutory pricing tiers and verify incoming statutory bill payments.</p>
             </div>
-            <div class="flex flex-wrap">
+            <div class="flex flex-wrap justify-center gap-2 p-1.5 bg-white/50 backdrop-blur-md rounded-2xl border border-black/5 shadow-sm max-w-[67rem] w-full">
                 <button onclick="switchTab('pricing')" id="tab-pricing" class="tab-btn active">
                     <i class="fas fa-sliders mr-2"></i> POSH Pricing
                 </button>
@@ -1034,15 +1343,22 @@
                 {% endif %}
             </form>
         </div>
-        <div id="content-registrations" class="tab-content hidden">
+
+        </div>
+
+                <div id="content-registrations" class="tab-content hidden">
             <div class="card overflow-hidden">
-                <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                <div class="p-8 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 class="heading-font text-xl font-bold">POSH Registration Queue</h3>
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
+                    <div class="flex items-center gap-3 self-stretch sm:self-auto">
+                        <button id="btnDeleteSelectedPosh" onclick="confirmBulkDelete('posh')" disabled
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold hover:bg-rose-600 hover:text-white transition-all disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap">
+                            <i class="fas fa-trash-alt"></i> Delete Selected (<span class="cb-count-posh">0</span>)
+                        </button>
+                        <div class="relative flex-1 sm:flex-initial">
                             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
                             <input type="text" id="poshSearchInput" placeholder="Search Registrations..."
-                                class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent">
+                                class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent w-full">
                         </div>
                     </div>
                 </div>
@@ -1050,6 +1366,9 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-white/5 text-[0.65rem] font-bold text-text-muted uppercase tracking-[0.15em]">
+                                <th class="px-8 py-5 w-12 text-center">
+                                    <input type="checkbox" id="selectAllPosh" class="rounded border-slate-200 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" onchange="toggleSelectAll('posh', this)">
+                                </th>
                                 <th class="px-8 py-5">Organization Details</th>
                                 <th class="px-8 py-5">Contact</th>
                                 <th class="px-8 py-5">Submitted Date</th>
@@ -1059,7 +1378,10 @@
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             {% for reg in registrations %}
-                            <tr class="registration-row group transition-all">
+                            <tr class="registration-row group transition-all" data-id="{{ reg.id }}">
+                                <td class="px-8 py-6 w-12 text-center">
+                                    <input type="checkbox" class="posh-row-cb rounded border-slate-200 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" value="{{ reg.id }}" onchange="updateCheckboxCounts('posh')">
+                                </td>
                                 <td class="px-8 py-6">
                                     <p class="font-bold heading-font text-white">{{ reg.company_name }}</p>
                                     <p class="text-xs text-text-muted italic">{{ reg.city }}</p>
@@ -1092,21 +1414,19 @@
                             </tr>
                             {% empty %}
                             <tr class="django-empty-state">
-                                <td colspan="5" class="py-20 text-center">
+                                <td colspan="6" class="py-20 text-center">
                                     <div class="flex flex-col items-center gap-4 opacity-20">
                                         <i class="fas fa-inbox text-5xl"></i>
-                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations
-                                            found</p>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations found</p>
                                     </div>
                                 </td>
                             </tr>
                             {% endfor %}
                             <tr id="poshEmptyState" style="display: none;">
-                                <td colspan="5" class="py-20 text-center">
+                                <td colspan="6" class="py-20 text-center">
                                     <div class="flex flex-col items-center gap-4 opacity-20">
                                         <i class="fas fa-search-minus text-5xl"></i>
-                                        <p class="font-bold heading-font uppercase tracking-widest">No matching
-                                            registrations found</p>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No matching registrations found</p>
                                     </div>
                                 </td>
                             </tr>
@@ -1119,13 +1439,17 @@
         <!-- POCSO REGISTRATIONS TAB -->
         <div id="content-pocso_registrations" class="tab-content hidden">
             <div class="card overflow-hidden">
-                <div class="p-8 border-b border-white/5 flex justify-between items-center">
+                <div class="p-8 border-b border-white/5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <h3 class="heading-font text-xl font-bold">POCSO Registration Queue</h3>
-                    <div class="flex items-center gap-4">
-                        <div class="relative">
+                    <div class="flex items-center gap-3 self-stretch sm:self-auto">
+                        <button id="btnDeleteSelectedPocso" onclick="confirmBulkDelete('pocso')" disabled
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-rose-500/10 text-rose-400 border border-rose-500/20 rounded-xl text-xs font-bold hover:bg-rose-600 hover:text-white transition-all disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap">
+                            <i class="fas fa-trash-alt"></i> Delete Selected (<span class="cb-count-pocso">0</span>)
+                        </button>
+                        <div class="relative flex-1 sm:flex-initial">
                             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-text-muted"></i>
                             <input type="text" id="pocsoSearchInput" placeholder="Search Schools..."
-                                class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent">
+                                class="bg-white/5 border border-white/10 rounded-xl py-2 pl-12 pr-4 text-sm focus:outline-none focus:border-accent w-full">
                         </div>
                     </div>
                 </div>
@@ -1133,6 +1457,9 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr class="bg-white/5 text-[0.65rem] font-bold text-text-muted uppercase tracking-[0.15em]">
+                                <th class="px-8 py-5 w-12 text-center">
+                                    <input type="checkbox" id="selectAllPocso" class="rounded border-slate-200 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" onchange="toggleSelectAll('pocso', this)">
+                                </th>
                                 <th class="px-8 py-5">School Details</th>
                                 <th class="px-8 py-5">Contact</th>
                                 <th class="px-8 py-5">Submitted Date</th>
@@ -1142,7 +1469,10 @@
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             {% for reg in pocso_registrations %}
-                            <tr class="registration-row group transition-all">
+                            <tr class="registration-row group transition-all" data-id="{{ reg.id }}">
+                                <td class="px-8 py-6 w-12 text-center">
+                                    <input type="checkbox" class="pocso-row-cb rounded border-slate-200 text-blue-600 focus:ring-blue-500 w-4 h-4 cursor-pointer" value="{{ reg.id }}" onchange="updateCheckboxCounts('pocso')">
+                                </td>
                                 <td class="px-8 py-6">
                                     <div class="flex items-start gap-3">
                                         <div>
@@ -1183,21 +1513,19 @@
                             </tr>
                             {% empty %}
                             <tr class="django-empty-state">
-                                <td colspan="5" class="py-20 text-center">
+                                <td colspan="6" class="py-20 text-center">
                                     <div class="flex flex-col items-center gap-4 opacity-20">
                                         <i class="fas fa-inbox text-5xl"></i>
-                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations
-                                            found</p>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No registrations found</p>
                                     </div>
                                 </td>
                             </tr>
                             {% endfor %}
                             <tr id="pocsoEmptyState" style="display: none;">
-                                <td colspan="5" class="py-20 text-center">
+                                <td colspan="6" class="py-20 text-center">
                                     <div class="flex flex-col items-center gap-4 opacity-20">
                                         <i class="fas fa-search-minus text-5xl"></i>
-                                        <p class="font-bold heading-font uppercase tracking-widest">No matching schools
-                                            found</p>
+                                        <p class="font-bold heading-font uppercase tracking-widest">No matching schools found</p>
                                     </div>
                                 </td>
                             </tr>
@@ -1218,7 +1546,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{% url 'accounts_save_email_templates' %}" class="space-y-12">
+                <form id="emailTemplatesForm" method="POST" action="{% url 'accounts_save_email_templates' %}" class="space-y-12">
                     {% csrf_token %}
 
                     <div class="grid grid-cols-1 gap-8">
@@ -1238,15 +1566,23 @@
                                         Trigger:
                                         {% if t_key == 'PAY_NOW' %}
                                         After client uploads payment screenshot
-                                        {% else %}
+                                        {% elif t_key == 'PAYMENT_VERIFIED' %}
                                         After accounts team clicks "Verify Payment"
+                                        {% elif t_key == 'EMPLOYEE_WELCOME' %}
+                                        When company admin registers or uploads employees
+                                        {% elif t_key == 'EMPLOYEE_REMINDER' %}
+                                        When company admin clicks "Send Reminder" in HR Dashboard
                                         {% endif %}
                                     </p>
                                 </div>
-                                <div class="ml-auto">
+                                <div class="ml-auto flex items-center gap-3">
+                                    <span id="autosave_status_{{ t_key }}" class="text-[0.6rem] font-bold text-emerald-400 hidden flex items-center gap-1">
+                                        <i class="fas fa-check-circle text-[0.75rem]"></i> Auto-saved
+                                    </span>
                                     <span
                                         class="text-[0.6rem] font-black px-3 py-1.5 rounded-lg uppercase tracking-widest
                                         {% if t_key == 'PAY_NOW' %}bg-emerald-500/10 text-emerald-300 border border-emerald-500/20
+                                        {% elif t_key == 'EMPLOYEE_REMINDER' %}bg-amber-500/10 text-amber-300 border border-amber-500/20
                                         {% else %}bg-indigo-500/10 text-indigo-300 border border-indigo-500/20{% endif %}">
                                         {{ t_key }}
                                     </span>
@@ -1271,38 +1607,45 @@
                                         class="w-full bg-slate-900 border border-white/10 rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-indigo-500 transition-all font-mono"
                                         placeholder="Dear {name}, ...">{{ email_templates|get_item_body:t_key }}</textarea>
                                     <div class="flex flex-wrap gap-2 mt-2">
-                                        <span class="text-[0.6rem] font-bold text-text-muted">Available
-                                            Placeholders:</span>
-                                        <code
-                                            class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer"
-                                            onclick="insertAtCursor('body_{{ t_key }}', '{name}')">{name}</code>
-                                        <code
-                                            class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer"
-                                            onclick="insertAtCursor('body_{{ t_key }}', '{company_name}')">{company_name}</code>
-                                        <code
-                                            class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer"
-                                            onclick="insertAtCursor('body_{{ t_key }}', '{amount}')">{amount}</code>
-                                        <code
-                                            class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer"
-                                            onclick="insertAtCursor('body_{{ t_key }}', '{invoice_url}')">{invoice_url}</code>
+                                        <span class="text-[0.6rem] font-bold text-text-muted">Available Placeholders:</span>
+                                        {% if t_key == 'EMPLOYEE_WELCOME' %}
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{name}')">{name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{company_name}')">{company_name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{password}')">{password}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{email}')">{email}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{login_url}')">{login_url}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{designation}')">{designation}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{training_module_name}')">{training_module_name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{training_duration}')">{training_duration}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{support_email}')">{support_email}</code>
+                                        {% else %}
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{name}')">{name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{company_name}')">{company_name}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{amount}')">{amount}</code>
+                                        <code class="text-[0.6rem] bg-indigo-500/10 text-indigo-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{invoice_url}')">{invoice_url}</code>
                                         {% if t_key == 'PAYMENT_VERIFIED' %}
-                                        <code
-                                            class="text-[0.6rem] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded cursor-pointer"
-                                            onclick="insertAtCursor('body_{{ t_key }}', '{setup_link}')">{setup_link}</code>
-                                        <span class="text-[0.55rem] text-text-muted italic ml-1">← secure admin setup
-                                            link</span>
+                                        <code class="text-[0.6rem] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded cursor-pointer" onclick="insertAtCursor('body_{{ t_key }}', '{setup_link}')">{setup_link}</code>
+                                        <span class="text-[0.55rem] text-text-muted italic ml-1">← secure admin setup link</span>
+                                        {% endif %}
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
+                            <div class="flex items-center gap-3 mt-6 pt-4 border-t border-white/5">
+                                <button type="button" onclick="focusBodyEditor('body_{{ t_key }}')"
+                                    class="text-xs font-bold text-indigo-400 bg-indigo-500/5 hover:bg-indigo-500/10 px-4 py-2 rounded-xl border border-indigo-500/10 hover:border-indigo-500/20 transition-all flex items-center gap-2">
+                                    <i class="fas fa-edit"></i> Edit Content
+                                </button>
+                                <button type="button" onclick="copyTemplateBody('body_{{ t_key }}', this)"
+                                    class="text-xs font-bold text-slate-300 bg-white/5 hover:bg-white/10 px-4 py-2 rounded-xl border border-white/5 hover:border-white/10 transition-all flex items-center gap-2">
+                                    <i class="fas fa-copy"></i> Copy Body
+                                </button>
+                                <span id="copy_msg_body_{{ t_key }}" class="hidden text-[0.7rem] text-emerald-400 font-bold flex items-center gap-1.5 transition-all">
+                                    <i class="fas fa-check-circle"></i> Copied!
+                                </span>
+                            </div>
                         </div>
                         {% endfor %}
-                    </div>
-
-                    <div class="flex justify-end pt-6">
-                        <button type="submit" class="btn-save px-12 flex items-center gap-3">
-                            <i class="fas fa-cloud-upload-alt"></i> Save All Templates
-                        </button>
                     </div>
                 </form>
             </div>
@@ -1321,12 +1664,102 @@
 
         <!-- AWARENESS POSTERS TAB -->
         <div id="content-posters" class="tab-content hidden">
-            <div class="mb-8">
-                <h3 class="heading-font text-2xl font-black">Awareness Poster Library</h3>
-                <p class="text-text-muted text-sm mt-1">View and download POSH awareness posters. These are available to all enrolled companies.</p>
+            <div class="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h3 class="heading-font text-2xl font-black">Awareness Poster Library</h3>
+                    <p class="text-text-muted text-sm mt-1">View and download POSH awareness posters. These are available to all enrolled companies.</p>
+                </div>
+                <button onclick="document.getElementById('addPosterModal').classList.remove('hidden')"
+                    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap"
+                    id="btn-add-poster">
+                    <i class="fas fa-plus"></i> Add Poster
+                </button>
             </div>
 
-            <style>
+            <!-- Add Poster Modal -->
+            <div id="addPosterModal" class="hidden fixed inset-0 z-50 flex items-center justify-center" style="background: rgba(15,23,42,0.55); backdrop-filter: blur(6px);">
+                <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-8 relative" style="border: 1px solid rgba(15,23,42,0.08);">
+                    <button onclick="closeAddPosterModal()"
+                        class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 transition-colors text-xl font-bold leading-none">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <h4 class="heading-font text-xl font-black mb-1" style="color: var(--text-main);">Upload New Poster</h4>
+                    <p class="text-sm mb-6" style="color: var(--text-muted);">Add a new awareness poster to the library. Supports JPG, PNG, WebP formats.</p>
+                    
+                    <!-- Validation Alert Box -->
+                    <div id="uploadValidationError" class="hidden p-3.5 mb-4 rounded-xl text-xs font-semibold bg-rose-50 border border-rose-200 text-rose-600 flex items-start gap-2">
+                        <i class="fas fa-exclamation-circle mt-0.5 text-rose-500"></i>
+                        <span id="validationErrorText"></span>
+                    </div>
+
+                    <form id="addPosterForm" method="POST" action="/accounts-portal/add-poster/" enctype="multipart/form-data" onsubmit="return validatePosterForm(event, this)">
+                        {% csrf_token %}
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-xs font-bold uppercase tracking-widest mb-2 block" style="color: var(--text-muted);">Poster Title</label>
+                                <input type="text" id="posterTitleInput" name="poster_title" required placeholder="e.g. Zero Tolerance Policy"
+                                    class="w-full rounded-xl px-4 py-2.5 text-sm font-medium border focus:outline-none focus:ring-2 transition-all"
+                                    style="background:#f8fafc; border-color: rgba(15,23,42,0.1); color: var(--text-main); focus-ring-color: var(--accent);">
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold uppercase tracking-widest mb-2 block" style="color: var(--text-muted);">Poster Image</label>
+                                <label for="posterFileInput" class="flex flex-col items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed cursor-pointer transition-all py-8 px-4 text-center hover:border-blue-400 hover:bg-blue-50"
+                                    style="border-color: rgba(0,102,204,0.25); background: rgba(0,102,204,0.03);">
+                                    <i class="fas fa-cloud-upload-alt text-2xl" style="color: var(--accent);"></i>
+                                    <span class="text-sm font-semibold" style="color: var(--text-main);" id="posterFileLabel">Click to select file</span>
+                                    <span class="text-xs" style="color: var(--text-muted);">JPG, PNG, WebP — max 10MB</span>
+                                    <input id="posterFileInput" type="file" name="poster_image" accept="image/png, image/jpeg, image/jpg, image/webp" required class="hidden"
+                                        onchange="handlePosterFileSelect(this)">
+                                </label>
+                            </div>
+
+                            <!-- Selected File Info Section -->
+                            <div id="posterPreviewContainer" class="hidden mt-4 p-3.5 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+                                <div class="flex items-center gap-2 overflow-hidden">
+                                    <i class="far fa-image text-lg text-indigo-500 flex-shrink-0"></i>
+                                    <span id="posterFileInfo" class="text-xs text-slate-700 font-semibold truncate"></span>
+                                </div>
+                                <button type="button" onclick="clearPosterFileInput()" class="text-slate-400 hover:text-rose-600 transition-colors p-1" title="Remove file">
+                                    <i class="fas fa-trash-alt text-sm"></i>
+                                </button>
+                            </div>
+
+
+                        </div>
+                        <div class="flex gap-3 mt-7">
+                            <button type="button" onclick="closeAddPosterModal()"
+                                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm border transition-all hover:bg-slate-50"
+                                style="border-color: rgba(15,23,42,0.12); color: var(--text-muted);">
+                                Cancel
+                            </button>
+                            <button type="submit" id="posterUploadSubmitBtn"
+                                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:-translate-y-0.5"
+                                style="background: var(--accent); box-shadow: 0 4px 14px rgba(0,102,204,0.25);">
+                                <i class="fas fa-upload mr-1.5"></i> Upload Poster
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+
+                    <style>
+                #btn-add-poster {
+                    background: transparent !important;
+                    color: var(--accent) !important;
+                    border: 1.5px solid var(--accent) !important;
+                    box-shadow: none !important;
+                    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+                    cursor: pointer;
+                }
+                #btn-add-poster:hover {
+                    background: var(--accent) !important;
+                    color: #ffffff !important;
+                    border-color: var(--accent) !important;
+                    box-shadow: 0 4px 14px rgba(0, 102, 204, 0.25) !important;
+                    transform: translateY(-1.5px);
+                }
                 .poster-gallery-grid {
                     display: grid;
                     grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
@@ -1412,11 +1845,84 @@
                     background: rgba(16, 185, 129, 0.2);
                     color: #6ee7b7;
                 }
+                button.poster-btn-delete,
+                .poster-gallery-card button.poster-btn-delete {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.4rem;
+                    padding: 0.5rem;
+                    border-radius: 0.6rem;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    background: transparent !important;
+                    color: #ef4444 !important;
+                    border: 1px solid rgba(239, 68, 68, 0.5) !important;
+                    transition: all 0.2s;
+                    cursor: pointer;
+                    text-shadow: none !important;
+                    box-shadow: none !important;
+                    width: 100%;
+                }
+                button.poster-btn-delete:hover,
+                .poster-gallery-card button.poster-btn-delete:hover {
+                    background: #ef4444 !important;
+                    color: #ffffff !important;
+                    border-color: #ef4444 !important;
+                    box-shadow: none !important;
+                }
+                button.poster-btn-restore,
+                .poster-gallery-card button.poster-btn-restore {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.4rem;
+                    padding: 0.5rem;
+                    border-radius: 0.6rem;
+                    font-size: 0.7rem;
+                    font-weight: 700;
+                    background: transparent !important;
+                    color: #ef4444 !important;
+                    border: 1px solid rgba(239, 68, 68, 0.5) !important;
+                    transition: all 0.2s;
+                    cursor: pointer;
+                    text-shadow: none !important;
+                    box-shadow: none !important;
+                    width: 100%;
+                }
+                button.poster-btn-restore:hover,
+                .poster-gallery-card button.poster-btn-restore:hover {
+                    background: #ef4444 !important;
+                    color: #ffffff !important;
+                    border-color: #ef4444 !important;
+                    box-shadow: none !important;
+                }
+                .poster-card-hidden {
+                    border-color: rgba(244, 63, 94, 0.3) !important;
+                }
+                /* Disable View & Download when poster is hidden */
+                .poster-card-hidden .poster-gallery-actions {
+                    pointer-events: none;
+                    opacity: 0.25;
+                    filter: grayscale(1);
+                }
+                .poster-card-hidden .poster-gallery-actions a {
+                    cursor: not-allowed !important;
+                }
+                /* Remove any white overlay/background from restore button */
+                button.poster-btn-restore,
+                .poster-gallery-card button.poster-btn-restore {
+                    background: transparent !important;
+                    -webkit-appearance: none;
+                    appearance: none;
+                }
             </style>
 
             <div class="poster-gallery-grid">
 
-                <!-- POSH Act Guidelines -->
+                {% if '/media/Posters/POSH Poster.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster.webp" alt="POSH Act Guidelines" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1425,10 +1931,15 @@
                             <a href="/media/Posters/POSH Poster.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Spot It – Stop It -->
+                {% if '/media/Posters/POSH Poster 2.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 2.webp" alt="Spot It – Stop It" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1437,10 +1948,15 @@
                             <a href="/media/Posters/POSH Poster 2.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 2.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 2.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Respectful Workplace -->
+                {% if '/media/Posters/POSH Poster 3.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 3.webp" alt="Respectful Workplace" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1449,10 +1965,15 @@
                             <a href="/media/Posters/POSH Poster 3.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 3.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 3.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Zero Tolerance Policy -->
+                {% if '/media/Posters/POSH Poster 4.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 4.webp" alt="Zero Tolerance Policy" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1461,10 +1982,15 @@
                             <a href="/media/Posters/POSH Poster 4.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 4.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 4.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Equality vs Equity -->
+                {% if '/media/Posters/POSH Poster 5.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 5.webp" alt="Equality vs Equity" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1473,10 +1999,15 @@
                             <a href="/media/Posters/POSH Poster 5.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 5.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 5.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Compliance & Care -->
+                {% if '/media/Posters/POSH Poster 6.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 6.webp" alt="Compliance &amp; Care" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1485,10 +2016,15 @@
                             <a href="/media/Posters/POSH Poster 6.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 6.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 6.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Types of Harassment (Hindi) -->
+                {% if '/media/Posters/POSH Poster 7.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 7.webp" alt="Types of Harassment (Hindi)" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1497,10 +2033,15 @@
                             <a href="/media/Posters/POSH Poster 7.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 7.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 7.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Respect is Non-Negotiable -->
+                {% if '/media/Posters/POSH Poster 8.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 8.webp" alt="Respect is Non-Negotiable" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1509,10 +2050,15 @@
                             <a href="/media/Posters/POSH Poster 8.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 8.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 8.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Culture & Safety -->
+                {% if '/media/Posters/POSH Poster 9.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/POSH Poster 9.webp" alt="Culture &amp; Safety" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1521,10 +2067,15 @@
                             <a href="/media/Posters/POSH Poster 9.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/POSH Poster 9.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POSH Poster 9.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- Combined POSH & POCSO -->
+                {% if '/media/Posters/posh-pocso.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/posh-pocso.webp" alt="Combined POSH &amp; POCSO" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1533,10 +2084,15 @@
                             <a href="/media/Posters/posh-pocso.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/posh-pocso.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/posh-pocso.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
 
-                <!-- POSH Corporate Guidelines -->
+                {% if '/media/Posters/posh-company.webp' not in deleted_posters %}
                 <div class="poster-gallery-card">
                     <img src="/media/Posters/posh-company.webp" alt="POSH Corporate Guidelines" class="poster-gallery-thumb">
                     <div class="poster-gallery-body">
@@ -1545,8 +2101,50 @@
                             <a href="/media/Posters/posh-company.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
                             <a href="/media/Posters/posh-company.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
                         </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/posh-company.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
                     </div>
                 </div>
+                {% endif %}
+
+                {% if '/media/Posters/POCSO Poster.webp' not in deleted_posters %}
+                <div class="poster-gallery-card">
+                    <img src="/media/Posters/POCSO Poster.webp" alt="POCSO Poster" class="poster-gallery-thumb">
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">POCSO Poster</p>
+                        <div class="poster-gallery-actions">
+                            <a href="/media/Posters/POCSO Poster.webp" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="/media/Posters/POCSO Poster.webp" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="/media/Posters/POCSO Poster.webp">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% for cp in custom_posters %}
+                <div class="poster-gallery-card">
+                    <div class="relative w-full">
+                        <img src="{{ cp.path }}" alt="{{ cp.title }}" class="poster-gallery-thumb">
+                        <span class="absolute top-3 left-3 text-[0.55rem] font-bold text-indigo-300 bg-indigo-500/10 border border-indigo-500/20 px-2 py-1 rounded-md backdrop-blur-md">Custom</span>
+                    </div>
+                    <div class="poster-gallery-body">
+                        <p class="poster-gallery-title">{{ cp.title }}</p>
+                        <div class="poster-gallery-actions">
+                            <a href="{{ cp.path }}" target="_blank" class="poster-btn-view"><i class="fas fa-eye"></i> View</a>
+                            <a href="{{ cp.path }}" download class="poster-btn-download"><i class="fas fa-download"></i> Download</a>
+                        </div>
+                        <form method="POST" action="/accounts-portal/delete-poster/" class="mt-2 w-full" onsubmit="return showCustomDeleteConfirm(event, this)">
+                            {% csrf_token %}<input type="hidden" name="poster_path" value="{{ cp.path }}">
+                            <button type="submit" class="poster-btn-delete w-full"><i class="fas fa-trash"></i> Delete</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
 
             </div>
         </div>
@@ -1568,7 +2166,94 @@
             el.value = el.value.substring(0, start) + text + el.value.substring(end);
             el.focus();
             el.selectionStart = el.selectionEnd = start + text.length;
+
+            const tierKey = name.substring(name.indexOf('_') + 1);
+            triggerAutosave(tierKey);
         }
+        function focusBodyEditor(id) {
+            const el = document.querySelector(`[name="${id}"]`);
+            if (el) {
+                el.focus();
+                el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+        function copyTemplateBody(id, btn) {
+            const el = document.querySelector(`[name="${id}"]`);
+            if (el) {
+                navigator.clipboard.writeText(el.value).then(() => {
+                    const msgEl = document.getElementById(`copy_msg_${id}`);
+                    if (msgEl) {
+                        msgEl.classList.remove('hidden');
+                        setTimeout(() => {
+                            msgEl.classList.add('hidden');
+                        }, 2000);
+                    }
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+            }
+        }
+
+        let autosaveTimeouts = {};
+        function triggerAutosave(tierKey) {
+            const statusEl = document.getElementById(`autosave_status_${tierKey}`);
+            if (statusEl) {
+                statusEl.innerHTML = '<i class="fas fa-spinner fa-spin text-[0.75rem] text-indigo-400"></i> Saving...';
+                statusEl.classList.remove('hidden', 'text-emerald-400', 'text-rose-400');
+                statusEl.classList.add('text-indigo-400');
+            }
+
+            clearTimeout(autosaveTimeouts[tierKey]);
+            autosaveTimeouts[tierKey] = setTimeout(() => {
+                const formData = new FormData(document.getElementById('emailTemplatesForm'));
+                
+                fetch("{% url 'accounts_save_email_templates' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    },
+                    body: formData
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (statusEl) {
+                            statusEl.innerHTML = '<i class="fas fa-check-circle text-[0.75rem] text-emerald-400"></i> Auto-saved';
+                            statusEl.classList.remove('text-indigo-400');
+                            statusEl.classList.add('text-emerald-400');
+                            setTimeout(() => {
+                                statusEl.classList.add('hidden');
+                            }, 3000);
+                        }
+                    } else {
+                        throw new Error('Save failed');
+                    }
+                })
+                .catch(err => {
+                    console.error('Autosave error:', err);
+                    if (statusEl) {
+                        statusEl.innerHTML = '<i class="fas fa-exclamation-circle text-[0.75rem] text-rose-400"></i> Save failed';
+                        statusEl.classList.remove('text-indigo-400');
+                        statusEl.classList.add('text-rose-400');
+                    }
+                });
+            }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const emailForm = document.getElementById('emailTemplatesForm');
+            if (emailForm) {
+                emailForm.querySelectorAll('input, textarea').forEach(input => {
+                    input.addEventListener('input', (e) => {
+                        const name = e.target.name;
+                        const tierKey = name.substring(name.indexOf('_') + 1);
+                        triggerAutosave(tierKey);
+                    });
+                });
+            }
+        });
         function switchTab(tab, updateUrl = true) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -1700,6 +2385,19 @@
                     }
                 });
             }
+            // Navbar Scroll Class Toggle
+            const handleNavScroll = () => {
+                const nav = document.querySelector('.glass-nav');
+                if (nav) {
+                    if (window.scrollY > 20) {
+                        nav.classList.add('glass-nav-scrolled');
+                    } else {
+                        nav.classList.remove('glass-nav-scrolled');
+                    }
+                }
+            };
+            window.addEventListener('scroll', handleNavScroll);
+            window.addEventListener('DOMContentLoaded', handleNavScroll);
         });
     </script>
 <!-- === TAB-CLOSE AUTO LOGOUT === -->
@@ -1709,6 +2407,12 @@
     var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
     var _navAway = false;
     function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+    function getCsrfToken() {
+      var input = document.querySelector('[name=csrfmiddlewaretoken]');
+      if (input) return input.value;
+      var match = document.cookie.match(/csrftoken=([^;]+)/);
+      return match ? match[1] : '';
+    }
     document.addEventListener('click', function (e) {
       var a = e.target.closest('a[href]');
       if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
@@ -1717,11 +2421,347 @@
     window.addEventListener('pagehide', function (e) {
       if (e.persisted) return;
       if (_navAway) return;
-      navigator.sendBeacon(TAB_CLOSE_URL);
+      var payload = new FormData();
+      payload.append('csrfmiddlewaretoken', getCsrfToken());
+      navigator.sendBeacon(TAB_CLOSE_URL, payload);
     });
     sessionStorage.removeItem('_ohs_nav');
-  })();
+</script>
+
+<!-- === CUSTOM BULK DELETE CONFIRMATION MODAL === -->
+<div id="bulkDeleteConfirmModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center transition-all duration-300" style="background: rgba(15,23,42,0.6); backdrop-filter: blur(8px);">
+    <div id="bulkDeleteConfirmBox" class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-8 relative transform transition-all duration-300 scale-95 opacity-0" style="border: 1px solid rgba(239,68,68,0.15);">
+        <!-- Icon -->
+        <div class="flex items-center justify-center w-14 h-14 rounded-full mx-auto mb-5" style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15);">
+            <i class="fas fa-exclamation-triangle text-xl" style="color: #ef4444;"></i>
+        </div>
+        <!-- Title -->
+        <h4 class="heading-font text-xl font-black text-center mb-2" style="color: var(--text-main);">Delete Selected?</h4>
+        <p class="text-sm text-center mb-7 leading-relaxed" style="color: var(--text-muted);">
+            You are about to permanently delete <strong id="bulkDeleteCount" class="text-rose-600">0</strong> <span id="bulkDeleteType">registrations</span>.<br>This will remove them from the database permanently. <strong>This cannot be undone.</strong>
+        </p>
+        <!-- Buttons -->
+        <div class="flex gap-3">
+            <button type="button" onclick="closeBulkDeleteModal()"
+                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm border transition-all hover:bg-slate-50"
+                style="border-color: rgba(15,23,42,0.12); color: var(--text-muted);">
+                <i class="fas fa-times mr-1.5"></i> Cancel
+            </button>
+            <button type="button" onclick="executeBulkDelete()"
+                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:-translate-y-0.5"
+                style="background: #ef4444; box-shadow: 0 4px 14px rgba(239,68,68,0.3);">
+                <i class="fas fa-trash-alt mr-1.5"></i> Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- === CUSTOM DELETE CONFIRMATION MODAL === -->
+<div id="customDeleteConfirmModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center transition-all duration-300" style="background: rgba(15,23,42,0.6); backdrop-filter: blur(8px);">
+    <div id="customDeleteConfirmBox" class="bg-white rounded-2xl shadow-2xl w-full max-w-sm mx-4 p-8 relative transform transition-all duration-300 scale-95 opacity-0" style="border: 1px solid rgba(239,68,68,0.15);">
+        <!-- Icon -->
+        <div class="flex items-center justify-center w-14 h-14 rounded-full mx-auto mb-5" style="background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15);">
+            <i class="fas fa-trash-alt text-xl" style="color: #ef4444;"></i>
+        </div>
+        <!-- Title -->
+        <h4 class="heading-font text-xl font-black text-center mb-2" style="color: var(--text-main);">Delete Poster?</h4>
+        <p class="text-sm text-center mb-7 leading-relaxed" style="color: var(--text-muted);">
+            This will <strong style="color:#ef4444;">permanently remove</strong> the poster from the library.<br>This action <strong>cannot be undone.</strong>
+        </p>
+        <!-- Buttons -->
+        <div class="flex gap-3">
+            <button type="button" onclick="closeCustomDeleteModal()"
+                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm border transition-all hover:bg-slate-50"
+                style="border-color: rgba(15,23,42,0.12); color: var(--text-muted);">
+                <i class="fas fa-times mr-1.5"></i> Cancel
+            </button>
+            <button type="button" onclick="confirmCustomDelete()"
+                class="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm text-white transition-all hover:-translate-y-0.5"
+                style="background: #ef4444; box-shadow: 0 4px 14px rgba(239,68,68,0.3);">
+                <i class="fas fa-trash mr-1.5"></i> Yes, Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- === POSTER UPLOAD VALIDATION & PREVIEW SCRIPTS === -->
+<script>
+    // Close & reset Upload Poster modal
+    function closeAddPosterModal() {
+        document.getElementById('addPosterModal').classList.add('hidden');
+        document.getElementById('addPosterForm').reset();
+        clearPosterFileInput();
+        hideUploadError();
+    }
+
+    // Show upload validation error
+    function showUploadError(message) {
+        const errorBox = document.getElementById('uploadValidationError');
+        const errorText = document.getElementById('validationErrorText');
+        if (errorBox && errorText) {
+            errorText.textContent = message;
+            errorBox.classList.remove('hidden');
+        }
+    }
+
+    // Hide upload validation error
+    function hideUploadError() {
+        const errorBox = document.getElementById('uploadValidationError');
+        if (errorBox) {
+            errorBox.classList.add('hidden');
+        }
+    }
+
+    // Handle poster file select and validations
+    function handlePosterFileSelect(input) {
+        hideUploadError();
+        const file = input.files[0];
+        if (!file) {
+            clearPosterFileInput();
+            return;
+        }
+
+        // Validate File Size (max 10MB)
+        const maxSize = 10 * 1024 * 1024;
+        if (file.size > maxSize) {
+            showUploadError('The selected file is too large. Maximum size allowed is 10MB.');
+            input.value = '';
+            clearPosterFileInput();
+            return;
+        }
+
+        // Validate File Extension/Type
+        const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+        const fileExtension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+        const allowedExtensions = ['.png', '.jpg', '.jpeg', '.webp'];
+
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+            showUploadError('Invalid file format. Only PNG, JPG, JPEG, and WebP images are supported.');
+            input.value = '';
+            clearPosterFileInput();
+            return;
+        }
+
+        // Update file input text label
+        const fileLabel = document.getElementById('posterFileLabel');
+        if (fileLabel) {
+            fileLabel.textContent = file.name;
+        }
+
+        // Render file info badge
+        const previewContainer = document.getElementById('posterPreviewContainer');
+        const fileInfoSpan = document.getElementById('posterFileInfo');
+        
+        if (previewContainer && fileInfoSpan) {
+            fileInfoSpan.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            previewContainer.classList.remove('hidden');
+        }
+    }
+
+    // Clear Selected Poster file input and preview
+    function clearPosterFileInput() {
+        const fileInput = document.getElementById('posterFileInput');
+        const fileLabel = document.getElementById('posterFileLabel');
+        const previewContainer = document.getElementById('posterPreviewContainer');
+
+        if (fileInput) fileInput.value = '';
+        if (fileLabel) fileLabel.textContent = 'Click to select file';
+        if (previewContainer) previewContainer.classList.add('hidden');
+        hideUploadError();
+    }
+
+    // Validate overall poster form submission
+    function validatePosterForm(event, form) {
+        hideUploadError();
+        const titleInput = document.getElementById('posterTitleInput');
+        const fileInput = document.getElementById('posterFileInput');
+
+        if (titleInput && titleInput.value.trim().length < 3) {
+            event.preventDefault();
+            showUploadError('Poster title must be at least 3 characters long.');
+            return false;
+        }
+
+        if (fileInput && !fileInput.files[0]) {
+            event.preventDefault();
+            showUploadError('Please select a valid poster image to upload.');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Custom Delete Confirmation Modal Logic
+    let _activeDeleteForm = null;
+
+    function showCustomDeleteConfirm(event, form) {
+        event.preventDefault();
+        _activeDeleteForm = form;
+
+        const modal = document.getElementById('customDeleteConfirmModal');
+        const box = document.getElementById('customDeleteConfirmBox');
+        
+        if (modal && box) {
+            modal.classList.remove('hidden');
+            // Allow animation to render
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                box.classList.add('scale-100', 'opacity-100');
+            }, 20);
+        }
+        return false;
+    }
+
+    function closeCustomDeleteModal() {
+        const modal = document.getElementById('customDeleteConfirmModal');
+        const box = document.getElementById('customDeleteConfirmBox');
+        
+        if (modal && box) {
+            box.classList.remove('scale-100', 'opacity-100');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                _activeDeleteForm = null;
+            }, 300);
+        }
+    }
+
+    function confirmCustomDelete() {
+        if (_activeDeleteForm) {
+            _activeDeleteForm.submit();
+        }
+        closeCustomDeleteModal();
+    }
+
+    // Close modal when clicking outside confirmation card
+    document.getElementById('customDeleteConfirmModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCustomDeleteModal();
+        }
+    });
+
+    // --- Bulk Delete Checkbox Controls ---
+    function toggleSelectAll(type, headerCheckbox) {
+        const checkboxes = document.querySelectorAll(`.${type}-row-cb`);
+        checkboxes.forEach(cb => {
+            cb.checked = headerCheckbox.checked;
+        });
+        updateCheckboxCounts(type);
+    }
+
+    function updateCheckboxCounts(type) {
+        const checkboxes = document.querySelectorAll(`.${type}-row-cb`);
+        const checked = document.querySelectorAll(`.${type}-row-cb:checked`);
+        const countSpan = document.querySelector(`.cb-count-${type}`);
+        const deleteBtn = document.getElementById(type === 'posh' ? 'btnDeleteSelectedPosh' : 'btnDeleteSelectedPocso');
+        const selectAllCheckbox = document.getElementById(type === 'posh' ? 'selectAllPosh' : 'selectAllPocso');
+
+        if (countSpan) {
+            countSpan.textContent = checked.length;
+        }
+
+        if (deleteBtn) {
+            if (checked.length > 0) {
+                deleteBtn.disabled = false;
+            } else {
+                deleteBtn.disabled = true;
+            }
+        }
+
+        if (selectAllCheckbox) {
+            if (checkboxes.length > 0 && checked.length === checkboxes.length) {
+                selectAllCheckbox.checked = true;
+            } else {
+                selectAllCheckbox.checked = false;
+            }
+        }
+    }
+
+    // --- Bulk Delete Confirmation Modal Logic ---
+    let _bulkDeleteType = null;
+    let _bulkDeleteIds = [];
+
+    function confirmBulkDelete(type) {
+        _bulkDeleteType = type;
+        const checked = document.querySelectorAll(`.${type}-row-cb:checked`);
+        _bulkDeleteIds = Array.from(checked).map(cb => parseInt(cb.value));
+
+        if (_bulkDeleteIds.length === 0) return;
+
+        const modal = document.getElementById('bulkDeleteConfirmModal');
+        const box = document.getElementById('bulkDeleteConfirmBox');
+        const countSpan = document.getElementById('bulkDeleteCount');
+        const typeSpan = document.getElementById('bulkDeleteType');
+
+        if (countSpan) countSpan.textContent = _bulkDeleteIds.length;
+        if (typeSpan) typeSpan.textContent = type === 'posh' ? 'POSH registration(s)' : 'POCSO registration(s)';
+
+        if (modal && box) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                box.classList.remove('scale-95', 'opacity-0');
+                box.classList.add('scale-100', 'opacity-100');
+            }, 20);
+        }
+    }
+
+    function closeBulkDeleteModal() {
+        const modal = document.getElementById('bulkDeleteConfirmModal');
+        const box = document.getElementById('bulkDeleteConfirmBox');
+        
+        if (modal && box) {
+            box.classList.remove('scale-100', 'opacity-100');
+            box.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                _bulkDeleteType = null;
+                _bulkDeleteIds = [];
+            }, 300);
+        }
+    }
+
+    function executeBulkDelete() {
+        if (!_bulkDeleteType || _bulkDeleteIds.length === 0) return;
+
+        // Get CSRF Token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+
+        fetch('/accounts-portal/delete-registrations/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+                ids: _bulkDeleteIds,
+                type: _bulkDeleteType
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                // Redirect back keeping the correct active tab parameter
+                const activeTab = _bulkDeleteType === 'posh' ? 'registrations' : 'pocso_registrations';
+                window.location.href = window.location.pathname + '?active_tab=' + activeTab;
+            } else {
+                alert('Error: ' + (data.message || 'Unknown error occurred.'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to delete registrations.');
+        });
+    }
+
+    // Close bulk modal when clicking backdrop
+    document.getElementById('bulkDeleteConfirmModal')?.addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeBulkDeleteModal();
+        }
+    });
 </script>
 </body>
 
 </html>
+

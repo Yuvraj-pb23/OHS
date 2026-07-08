@@ -62,7 +62,8 @@ def upload_company_logo(request):
         if logo:
             valid_exts = [".png", ".jpg", ".jpeg", ".webp"]
             ext = os.path.splitext(logo.name)[1].lower()
-            if ext not in valid_exts or logo.size > 2 * 1024 * 1024:
+            is_image_mime = logo.content_type and logo.content_type.startswith("image/")
+            if ext not in valid_exts or logo.size > 2 * 1024 * 1024 or not is_image_mime:
                 err_msg = "Invalid file. Logo must be a PNG, JPG, JPEG, or WEBP image under 2MB."
                 if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                     return JsonResponse({"status": "error", "message": err_msg}, status=400)
@@ -117,7 +118,8 @@ def upload_org_logo(request):
         # Validate file size and extension
         valid_exts = [".png", ".jpg", ".jpeg", ".webp"]
         ext = os.path.splitext(logo.name)[1].lower()
-        if ext not in valid_exts or logo.size > 2 * 1024 * 1024:
+        is_image_mime = logo.content_type and logo.content_type.startswith("image/")
+        if ext not in valid_exts or logo.size > 2 * 1024 * 1024 or not is_image_mime:
             return JsonResponse({
                 "status": "error", 
                 "message": "Invalid file. Logo must be a PNG, JPG, JPEG, or WEBP image under 2MB."
@@ -397,7 +399,6 @@ def get_poster_with_logo(request, poster_type):
         return HttpResponse(f"Error generating poster: {str(e)}", status=500)
 
 
-@csrf_exempt
 @login_required(login_url="login")
 def save_logo_config(request):
     """Save logo position and size from interactive editor"""
@@ -470,6 +471,93 @@ def reset_logo_config(request):
     return redirect("/dashboard/company/?section=posters")
 
 
+def validate_image_file(uploaded_file, max_size=5*1024*1024):
+    if uploaded_file.size > max_size:
+        return False, f"File size exceeds {max_size // (1024 * 1024)}MB limit."
+    
+    # Verify content type starts with image/
+    if not uploaded_file.content_type or not uploaded_file.content_type.startswith("image/"):
+        return False, "Invalid file type. Only images are allowed."
+        
+    try:
+        from PIL import Image
+        # Open and verify the image
+        img = Image.open(uploaded_file)
+        img.verify()
+        # Verify the format is valid
+        if img.format not in ["JPEG", "PNG", "GIF", "WEBP", "BMP"]:
+            return False, f"Unsupported image format: {img.format}"
+        uploaded_file.seek(0)
+    except Exception:
+        return False, "Invalid image file. The file is corrupted or not a valid image."
+        
+    return True, ""
+
+def validate_csv_file(uploaded_file, max_size=5*1024*1024):
+    if uploaded_file.size > max_size:
+        return False, f"File size exceeds {max_size // (1024 * 1024)}MB limit."
+    
+    # Check mime type (allow text/csv, text/plain, etc.)
+    allowed_mimes = ["text/csv", "text/plain", "application/csv", "application/vnd.ms-excel"]
+    if not uploaded_file.content_type or uploaded_file.content_type not in allowed_mimes:
+        return False, "Invalid file type. Only CSV files are allowed."
+        
+    # Read the beginning of the file to check if it's text and does not contain null bytes (binary)
+    try:
+        chunk = uploaded_file.read(1024)
+        uploaded_file.seek(0) # Reset stream
+        if b'\x00' in chunk:
+            return False, "Invalid file content. Binary files are not allowed."
+        # Try to decode it as text
+        chunk.decode("utf-8-sig")
+    except Exception:
+        return False, "Invalid file content. Only UTF-8 encoded text CSV files are allowed."
+        
+    return True, ""
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+def check_login_lockout(username, ip):
+    from django.core.cache import cache
+    import time
+    
+    lockout_key = f"login_lockout_{username}_{ip}"
+    lockout_expiry = cache.get(lockout_key)
+    if lockout_expiry:
+        remaining = int(lockout_expiry - time.time())
+        if remaining > 0:
+            return True, remaining
+    return False, 0
+
+def increment_login_attempts(username, ip):
+    from django.core.cache import cache
+    import time
+    
+    attempts_key = f"login_attempts_{username}_{ip}"
+    lockout_key = f"login_lockout_{username}_{ip}"
+    
+    attempts = cache.get(attempts_key, 0) + 1
+    cache.set(attempts_key, attempts, timeout=900) # 15 mins window
+    
+    if attempts >= 5:
+        cache.set(lockout_key, time.time() + 900, timeout=900) # Lock for 15 mins
+        cache.delete(attempts_key)
+
+def clear_login_attempts(username, ip):
+    from django.core.cache import cache
+    attempts_key = f"login_attempts_{username}_{ip}"
+    lockout_key = f"login_lockout_{username}_{ip}"
+    cache.delete(attempts_key)
+    cache.delete(lockout_key)
+
+
 # --- 0. CUSTOM LOGIN VIEW ---
 def custom_login_view(request):
     from django.contrib.auth import authenticate, get_user_model, login
@@ -478,18 +566,27 @@ def custom_login_view(request):
     from .models import Organization
 
     if request.method == "POST":
-        u = request.POST.get("username")
+        u = request.POST.get("username", "").strip()
         p = request.POST.get("password")
+        ip = get_client_ip(request)
+
+        is_locked, remaining = check_login_lockout(u, ip)
+        if is_locked:
+            minutes = (remaining + 59) // 60
+            error_msg = f"Too many failed login attempts. Locked for {minutes} minute(s)."
+            return render(request, "login.html", {"error_message": error_msg})
 
         # Try standard authentication first
         user = authenticate(username=u, password=p)
         if user is not None:
+            clear_login_attempts(u, ip)
             login(request, user)
             if "hr_as_employee" in request.session:
                 del request.session["hr_as_employee"]
             return redirect("custom_login_redirect")
 
         # Fallback error
+        increment_login_attempts(u, ip)
         class MockForm:
             errors = True
 
@@ -618,112 +715,8 @@ def force_password_change(request):
     return render(request, "force_password_change.html")
 
 
-# --- OTP VIEWS FOR COMPANY REGISTRATION EMAIL VERIFICATION ---
-@csrf_exempt
-def send_registration_otp(request):
-    """Generate and email a 6-digit OTP for registration email verification."""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "error": "Invalid method."}, status=405)
-    try:
-        data = json.loads(request.body)
-        email = data.get("email", "").strip()
-    except Exception:
-        email = request.POST.get("email", "").strip()
-
-    if not email or "@" not in email:
-        return JsonResponse(
-            {"success": False, "error": "Please enter a valid email address."}
-        )
-    if User.objects.filter(email=email).exists():
-        return JsonResponse(
-            {"success": False, "error": "This email is already registered."}
-        )
-
-    import time
-
-    otp = str(secrets.randbelow(900000) + 100000)
-    request.session["reg_otp"] = otp
-    request.session["reg_otp_email"] = email
-    request.session["reg_otp_verified"] = False
-    request.session["reg_otp_ts"] = time.time()  # store generation timestamp
-    request.session.modified = True
-
-    from django.core.mail import send_mail
-
-    try:
-        send_mail(
-            subject="Your OTP - Open Hand Solutions Registration",
-            message=(
-                f"Hello,\n\n"
-                f"Your one-time password (OTP) for Corporate Registration is:\n\n"
-                f"    {otp}\n\n"
-                f"This OTP is valid for 2 minutes only.\n"
-                f"Do not share it with anyone.\n\n"
-                f"Best regards,\nOpen Hand Solutions Team"
-            ),
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            recipient_list=[email],
-            fail_silently=False,
-        )
-        return JsonResponse({"success": True, "message": "OTP sent to your email."})
-    except Exception as e:
-        return JsonResponse(
-            {"success": False, "error": f"Failed to send email: {str(e)}"}
-        )
-
-
-@csrf_exempt
-def verify_registration_otp(request):
-    """Verify the submitted OTP against the session-stored OTP."""
-    if request.method != "POST":
-        return JsonResponse({"success": False, "error": "Invalid method."}, status=405)
-    try:
-        data = json.loads(request.body)
-        submitted = str(data.get("otp", "")).strip()
-        email = data.get("email", "").strip()
-    except Exception:
-        submitted = str(request.POST.get("otp", "")).strip()
-        email = request.POST.get("email", "").strip()
-
-    session_otp = request.session.get("reg_otp", "")
-    session_email = request.session.get("reg_otp_email", "")
-    otp_ts = request.session.get("reg_otp_ts", 0)
-
-    if not session_otp:
-        return JsonResponse(
-            {"success": False, "error": "No OTP found. Please request a new one."}
-        )
-    if email != session_email:
-        return JsonResponse(
-            {"success": False, "error": "Email mismatch. Please request a new OTP."}
-        )
-
-    import time
-
-    if time.time() - otp_ts > 120:  # 2-minute expiry
-        # Clear expired OTP
-        request.session.pop("reg_otp", None)
-        request.session.pop("reg_otp_ts", None)
-        request.session.modified = True
-        return JsonResponse(
-            {
-                "success": False,
-                "error": "OTP expired. Please request a new one.",
-                "expired": True,
-            }
-        )
-
-    if submitted == session_otp:
-        request.session["reg_otp_verified"] = True
-        request.session.modified = True
-        return JsonResponse(
-            {"success": True, "message": "Email verified successfully!"}
-        )
-    return JsonResponse({"success": False, "error": "Incorrect OTP. Please try again."})
-
 
 # --- CUSTOM CAPTCHA VIEWS ---
-@csrf_exempt
 def generate_captcha_image(request):
     """Generate a random alphanumeric + symbols CAPTCHA image using Pillow."""
     import random
@@ -795,7 +788,6 @@ def generate_captcha_image(request):
     return HttpResponse(buf.read(), content_type="image/png")
 
 
-@csrf_exempt
 def verify_captcha_view(request):
     """Verify the submitted CAPTCHA value against session dynamically."""
     if request.method == "POST":
@@ -823,81 +815,72 @@ def company_subscription(request, plan_type):
         seats = request.POST.get("seats", 10)
         fullname = request.POST.get("fullname", "").strip()
         password = request.POST.get("password", "").strip()
-
-        # If a setup_token is in the POST, decode the email from it (tamper-proof)
         setup_token = request.POST.get("setup_token", "").strip()
-        if setup_token:
-            try:
-                from django.core import signing
 
-                payload = signing.loads(
-                    setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
-                )  # 72h
-                email = payload["email"]
-                # Auto-populate company name from the POSH registration
-                logger = logging.getLogger(__name__)
-                if not comp_name:
+        if not setup_token:
+            messages.error(
+                request, "Access denied. A valid setup link is required to create a corporate account."
+            )
+            return redirect("registration_selection")
 
+        try:
+            from django.core import signing
+
+            payload = signing.loads(
+                setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
+            )  # 72h
+            email = payload["email"]
+            # Auto-populate company name from the POSH or POCSO registration
+            logger = logging.getLogger(__name__)
+            if not comp_name:
+                try:
+                    posh_reg = POSHRegistration.objects.get(id=payload["reg_id"])
+                    comp_name = posh_reg.company_name
+                    seats = posh_reg.employee_count or seats
+                except POSHRegistration.DoesNotExist:
                     try:
-
-                        posh_reg = POSHRegistration.objects.get(id=payload["reg_id"])
-                        comp_name = posh_reg.company_name
-                        seats = posh_reg.employee_count or seats
-
-                    except POSHRegistration.DoesNotExist:
+                        pocso_reg = POCSORegistration.objects.get(id=payload["reg_id"])
+                        comp_name = pocso_reg.company_name
+                        seats = pocso_reg.employee_count or seats
+                    except POCSORegistration.DoesNotExist:
                         logger.warning(
-                            f"POSHRegistration not found for reg_id={payload.get('reg_id')}"
+                            f"POSHRegistration or POCSORegistration not found for reg_id={payload.get('reg_id')}"
                         )
-
-                    except Exception as e:
-                        logger.exception(
-                            f"Unexpected error while fetching POSHRegistration: {e}"
-                        )
-
-            except Exception as e:
-                logger.exception(f"Invalid setup link payload: {e}")
-
-                messages.error(
-                    request, "Invalid or expired setup link. Please contact support."
-                )
-                return redirect(request.path)
-        else:
-            email = request.POST.get("email", "").strip()
+                except Exception as e:
+                    logger.exception(
+                        f"Unexpected error while fetching registration: {e}"
+                    )
+        except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.exception(f"Invalid setup link payload: {e}")
+            messages.error(
+                request, "Invalid or expired setup link. Please contact support."
+            )
+            return redirect(request.path)
 
         if not comp_name:
             comp_name = f"{fullname}'s Organization"
-
-        # Restriction: Email must be OTP-verified (skip if coming from verified setup link)
-        if not setup_token:
-            if (
-                not request.session.get("reg_otp_verified")
-                or request.session.get("reg_otp_email") != email
-            ):
-                messages.error(
-                    request, "Please verify your email with the OTP before submitting."
-                )
-                return redirect(request.path)
 
         # Restriction: Ensure all info is compulsory
         if not all([fullname, email, password]):
             messages.error(
                 request, "All fields are compulsory. Please fill out the entire form."
             )
-            return redirect(request.path)
+            return redirect(request.get_full_path())
 
         # Strict backend validation matching frontend regexes
         import re
         if not re.match(r"^[a-zA-Z\s]{3,50}$", fullname):
             messages.error(request, "Please enter a valid full name (letters and spaces only, 3-50 characters).")
-            return redirect(request.path)
+            return redirect(request.get_full_path())
 
         if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password):
             messages.error(request, "Password must be at least 8 characters long, containing at least one letter, one number, and one special character (@$!%*?&).")
-            return redirect(request.path)
+            return redirect(request.get_full_path())
 
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered.")
-            return redirect(request.path)
+            return redirect(request.get_full_path())
         try:
             with transaction.atomic():
                 user = User.objects.create_user(
@@ -936,11 +919,13 @@ def company_subscription(request, plan_type):
                 send_welcome_email(user, password, is_company_employee=False)
 
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-            return redirect("company_dashboard")
+            return redirect("/dashboard/company/?login=true")
 
         except Exception as e:
+            logger = logging.getLogger(__name__)
+            logger.exception(f"Error during company subscription setup: {e}")
             messages.error(request, f"Error: {str(e)}")
-            return redirect(request.path)
+            return redirect(request.get_full_path())
 
     # --- GET ---
     else:
@@ -948,22 +933,27 @@ def company_subscription(request, plan_type):
             logout(request)
         list(messages.get_messages(request))
 
-    # Decode setup_token on GET to pre-fill and lock the email field
-    locked_email = None
     setup_token = request.GET.get("setup_token", "").strip()
-    if setup_token:
-        try:
-            from django.core import signing
+    if not setup_token:
+        messages.error(
+            request, "Access denied. A valid setup link is required to create a corporate account."
+        )
+        return redirect("registration_selection")
 
-            payload = signing.loads(
-                setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
-            )
-            locked_email = payload["email"]
-        except Exception:
-            messages.error(
-                request,
-                "This setup link has expired or is invalid. Please contact support.",
-            )
+    locked_email = None
+    try:
+        from django.core import signing
+
+        payload = signing.loads(
+            setup_token, salt="posh-admin-setup", max_age=60 * 60 * 72
+        )
+        locked_email = payload["email"]
+    except Exception:
+        messages.error(
+            request,
+            "This setup link has expired or is invalid. Please contact support.",
+        )
+        return redirect("registration_selection")
 
     response = render(
         request,
@@ -1007,10 +997,10 @@ def add_employee(request):
         emp_password = request.POST.get("emp_password")
         emp_department = request.POST.get("emp_department", "").strip()
 
-        # Use employee_count from POSH registration as the seat limit if available
-
         posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
-        seat_limit = posh_reg.employee_count if posh_reg else org.max_users
+        pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
+        reg = posh_reg or pocso_reg
+        seat_limit = reg.employee_count if reg else org.max_users
 
         if current_count >= seat_limit:
             messages.error(
@@ -1074,13 +1064,198 @@ def add_employee(request):
             messages.success(request, f"✅ {emp_name} added successfully! Login credentials sent to {emp_email}.")
 
         except Exception as e:
-            print(f"Error adding employee: {str(e)}")
-            import traceback
-
-            traceback.print_exc()
-            messages.error(request, f"Failed to add employee: {str(e)}")
+            _logger = logging.getLogger(__name__)
+            _logger.exception(f"Error adding employee for org {org.id}: {e}")
+            messages.error(request, "Failed to add employee. Please try again or contact support.")
 
         return redirect("company_dashboard")
+    return redirect("company_dashboard")
+
+
+# --- 3.5. UPDATE AND DELETE EMPLOYEE ---
+@login_required(login_url="login")
+def update_employee(request, member_id):
+    if request.method != "POST":
+        return redirect("company_dashboard")
+
+    current_user = request.user
+    admin_membership = OrganizationMember.objects.filter(
+        user=current_user, role="ADMIN"
+    ).first()
+    if not admin_membership:
+        messages.error(request, "Unauthorized.")
+        return redirect("tutorial")
+
+    org = admin_membership.organization
+
+    # Fetch the target member
+    try:
+        member = OrganizationMember.objects.get(id=member_id, organization=org, role="MEMBER")
+    except OrganizationMember.DoesNotExist:
+        messages.error(request, "Employee not found in your organization.")
+        return redirect("company_dashboard")
+
+    user_obj = member.user
+
+    # Enforce seat lock rule: check if they have completed training
+    active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
+    training_type = "POSH"
+    if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
+        if active_sub.plan.type == "POCSO":
+            training_type = "POCSO"
+
+    # Fetch visible modules count
+    all_modules = TrainingModule.objects.filter(module_type=training_type)
+    visible_modules = [
+        m for m in all_modules 
+        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+    ]
+    visible_module_ids = [m.id for m in visible_modules]
+    total_modules_count = len(visible_modules)
+
+    is_completed = False
+    if total_modules_count > 0:
+        completed_modules = ModuleProgress.objects.filter(
+            user=user_obj, module_id__in=visible_module_ids, is_completed=True
+        ).count()
+        is_completed = (completed_modules == total_modules_count)
+
+    if is_completed:
+        messages.error(request, "This employee has already completed the training. Their seat is locked and cannot be edited.")
+        return redirect("company_dashboard")
+
+    # Process the edit request
+    emp_name = request.POST.get("emp_name", "").strip()
+    emp_email = request.POST.get("emp_email", "").strip().lower()
+    emp_department = request.POST.get("emp_department", "").strip()
+
+    if not emp_name or not emp_email:
+        messages.error(request, "Name and Email are required.")
+        return redirect("company_dashboard")
+
+    # Check if another user already has the new email
+    if User.objects.filter(email=emp_email).exclude(id=user_obj.id).exists():
+        messages.error(request, "A user with this email address already exists.")
+        return redirect("company_dashboard")
+
+    try:
+        with transaction.atomic():
+            email_changed = (user_obj.email.lower() != emp_email)
+            user_obj.first_name = emp_name
+            user_obj.department = emp_department or None
+
+            if email_changed:
+                user_obj.email = emp_email
+                user_obj.username = emp_email
+
+                # Reset password to company default password
+                if not org.default_password:
+                    org.default_password = org.generate_default_password()
+                    org.save()
+
+                user_obj.set_password(org.default_password)
+                user_obj.force_password_change = True
+
+            user_obj.save()
+
+        if email_changed:
+            # Send welcome email to the new email address with credentials
+            from home.email_utils import send_welcome_email
+            from django.conf import settings as django_settings
+
+            site_base = getattr(
+                django_settings, "SITE_URL", "https://openhandsolutions.com"
+            )
+            training_link = f"{site_base}/login/"
+
+            posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
+            pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
+            company_name = posh_reg.company_name if posh_reg else (pocso_reg.company_name if pocso_reg else org.name)
+
+            try:
+                send_welcome_email(
+                    user_obj,
+                    org.default_password,
+                    is_company_employee=True,
+                    organization_name=company_name,
+                    training_link=training_link,
+                )
+                messages.success(request, f"Employee updated successfully. Login credentials sent to {emp_email}.")
+            except Exception as email_err:
+                print(f"Error sending email: {email_err}")
+                messages.warning(request, f"Employee updated successfully, but failed to send notification email: {str(email_err)}")
+        else:
+            messages.success(request, "Employee updated successfully.")
+
+    except Exception as e:
+        _logger = logging.getLogger(__name__)
+        _logger.exception(f"Error updating employee member_id={member_id}: {e}")
+        messages.error(request, "Failed to update employee. Please try again or contact support.")
+
+    return redirect("company_dashboard")
+
+
+@login_required(login_url="login")
+def delete_employee(request, member_id):
+    if request.method != "POST":
+        return redirect("company_dashboard")
+
+    current_user = request.user
+    admin_membership = OrganizationMember.objects.filter(
+        user=current_user, role="ADMIN"
+    ).first()
+    if not admin_membership:
+        messages.error(request, "Unauthorized.")
+        return redirect("tutorial")
+
+    org = admin_membership.organization
+
+    # Fetch the target member
+    try:
+        member = OrganizationMember.objects.get(id=member_id, organization=org, role="MEMBER")
+    except OrganizationMember.DoesNotExist:
+        messages.error(request, "Employee not found in your organization.")
+        return redirect("company_dashboard")
+
+    user_obj = member.user
+
+    # Enforce seat lock rule: check if they have completed training
+    active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
+    training_type = "POSH"
+    if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
+        if active_sub.plan.type == "POCSO":
+            training_type = "POCSO"
+
+    # Fetch visible modules count
+    all_modules = TrainingModule.objects.filter(module_type=training_type)
+    visible_modules = [
+        m for m in all_modules 
+        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+    ]
+    visible_module_ids = [m.id for m in visible_modules]
+    total_modules_count = len(visible_modules)
+
+    is_completed = False
+    if total_modules_count > 0:
+        completed_modules = ModuleProgress.objects.filter(
+            user=user_obj, module_id__in=visible_module_ids, is_completed=True
+        ).count()
+        is_completed = (completed_modules == total_modules_count)
+
+    if is_completed:
+        messages.error(request, "This employee has already completed the training. Their seat is locked and cannot be deleted.")
+        return redirect("company_dashboard")
+
+    try:
+        emp_name = user_obj.get_full_name() or user_obj.first_name
+        # Delete the User model, cascading will delete the member, progress, etc.
+        user_obj.delete()
+        messages.success(request, f"Employee {emp_name} has been deleted successfully.")
+    except Exception as e:
+        _logger = logging.getLogger(__name__)
+        _logger.exception(f"Error deleting employee member_id={member_id}: {e}")
+        messages.error(request, "Failed to delete employee. Please try again or contact support.")
+
     return redirect("company_dashboard")
 
 
@@ -1140,8 +1315,24 @@ def company_dashboard(request):
             user=user_obj, module_id__in=visible_module_ids, is_completed=True
         ).count()
 
+        total_progress = 0.0
+        user_progress_map = set(
+            ModuleProgress.objects.filter(
+                user=user_obj, module__module_type=training_type, is_completed=True
+            ).values_list("module_id", flat=True)
+        )
+        for m in visible_modules:
+            if m.id in user_progress_map:
+                total_progress += 100.0
+            elif m.video_file:  # Only video modules have partial progress
+                prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                if prog and m.duration_seconds > 0:
+                    percent_watched = (prog.last_position / m.duration_seconds) * 100.0
+                    percent_watched = min(99.0, max(0.0, percent_watched))
+                    total_progress += percent_watched
+
         mem.percent_complete = (
-            int((completed_modules / total_modules_count) * 100)
+            int(total_progress / total_modules_count)
             if total_modules_count > 0
             else 0
         )
@@ -1247,6 +1438,19 @@ def company_dashboard(request):
 
         # Convert all to integer seconds
         grand_total_seconds = (total_mins_agg * 60) + total_secs_agg
+
+        # Fallback/addition based on actual video progress
+        video_progress_seconds = 0
+        for m in all_modules:
+            if m.video_file:  # Only count video modules for watch time
+                if m.id in user_progress_map:
+                    video_progress_seconds += m.duration_seconds
+                else:
+                    prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                    if prog:
+                        video_progress_seconds += int(prog.last_position)
+
+        grand_total_seconds = max(grand_total_seconds, video_progress_seconds)
         hours = grand_total_seconds // 3600
         minutes = (grand_total_seconds % 3600) // 60
         mem.total_active_time = f"{hours}h {minutes}m"
@@ -1318,16 +1522,16 @@ def company_dashboard(request):
         m for m in members if hasattr(m, "has_certificate") and m.has_certificate
     ]
 
-    # Look up the company name from POSH registration by the org owner's email
-
     posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
-    posh_company_name = posh_reg.company_name if posh_reg else org.name
+    pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
+    reg = posh_reg or pocso_reg
+    posh_company_name = reg.company_name if reg else org.name
 
     # If org name is still the auto-generated fallback, update it + regenerate password
-    if posh_reg and (
+    if reg and (
         org.name == f"{org.owner.first_name}'s Organization" or not org.name
     ):
-        org.name = posh_reg.company_name
+        org.name = reg.company_name
         org.default_password = org.generate_default_password()
         org.save()
 
@@ -1372,8 +1576,13 @@ def company_dashboard(request):
         ("posh_5", "/media/Posters/POSH Poster 5.webp", "Equality vs Equity"),
         ("posh_company", "/media/Posters/posh-company.webp", "POSH Corporate Guidelines"),
     ]
+    from home.models import DeletedPoster
+    deleted_paths = list(DeletedPoster.objects.values_list('poster_path', flat=True))
+
     posters_list = []
     for key, path, title in raw_posters:
+        if path in deleted_paths:
+            continue
         config = poster_configs.get(key)
         posters_list.append({
             "key": key,
@@ -1416,6 +1625,7 @@ def company_dashboard(request):
         "show_policy_form": show_policy_form,
         "has_organization": True,
         "org_logo_url": org.logo.url if org.logo else None,
+        "deleted_posters": deleted_paths,
     }
 
 
@@ -1493,7 +1703,6 @@ def individual_subscription(request, plan_type):
 # --- 6. SECURE TRAINING PAGES ---
 
 
-@csrf_exempt
 @login_required
 def update_watch_time(request):
     """
@@ -1537,44 +1746,54 @@ def update_watch_time(request):
     return JsonResponse({"status": "error"}, status=400)
 
 
-@csrf_exempt
 @login_required
 def mod_complete(request, module_id):
     """
     API called when a video ends. Marks module as complete.
+    Security: Verifies the module belongs to the user's active subscription type.
     """
-    print(
-        f"DEBUG mod_complete called: method={request.method}, module_id={module_id}, user={request.user}"
-    )
+    _logger = logging.getLogger(__name__)
+    _logger.debug(f"mod_complete called: method={request.method}, module_id={module_id}, user={request.user.id}")
     if request.method == "POST":
         try:
-            module = TrainingModule.objects.get(id=module_id)
-            print(f"DEBUG: Found module: {module.title}")
+            # --- FIX #4: Module ownership verification ---
+            # Determine the training type the user is subscribed to
+            active_sub = Subscription.objects.filter(
+                Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+                status="ACTIVE",
+            ).first()
+            allowed_types = []
+            if active_sub:
+                if active_sub.plan.type in ["POSH", "BOTH"]:
+                    allowed_types.append("POSH")
+                if active_sub.plan.type in ["POCSO", "BOTH"]:
+                    allowed_types.append("POCSO")
+            else:
+                # Fallback: allow any module if no active sub found (edge case)
+                allowed_types = ["POSH", "POCSO"]
+
+            try:
+                module = TrainingModule.objects.get(id=module_id, module_type__in=allowed_types)
+            except TrainingModule.DoesNotExist:
+                _logger.warning(f"mod_complete denied: module {module_id} not in allowed types {allowed_types} for user {request.user.id}")
+                return JsonResponse(
+                    {"status": "error", "message": "Module not found"}, status=404
+                )
+
+            _logger.debug(f"mod_complete: Found module: {module.title} (type={module.module_type})")
             prog, created = ModuleProgress.objects.get_or_create(
                 user=request.user, module=module
             )
-            print(
-                f"DEBUG: ModuleProgress {'created' if created else 'found'}, current is_completed={prog.is_completed}"
-            )
             prog.is_completed = True
             prog.save()
-            print(
-                f"DEBUG: Saved ModuleProgress, is_completed=True for user={request.user.id}, module={module_id}"
-            )
+            _logger.debug(f"mod_complete: Saved is_completed=True for user={request.user.id}, module={module_id}")
             return JsonResponse({"status": "success", "module_id": module_id})
-        except TrainingModule.DoesNotExist:
-            print(f"DEBUG ERROR: Module {module_id} not found")
-            return JsonResponse(
-                {"status": "error", "message": "Module not found"}, status=404
-            )
         except Exception as e:
-            print(f"DEBUG ERROR: Exception in mod_complete: {e}")
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
-    print(f"DEBUG: Invalid method {request.method}")
+            _logger.exception(f"mod_complete unexpected error for user={request.user.id}, module={module_id}: {e}")
+            return JsonResponse({"status": "error", "message": "An unexpected error occurred."}, status=500)
     return JsonResponse({"status": "error"}, status=400)
 
 
-@csrf_exempt
 @login_required
 def save_video_progress(request):
     if request.method == "POST":
@@ -1594,7 +1813,6 @@ def save_video_progress(request):
     return JsonResponse({"status": "error"}, status=400)
 
 
-@csrf_exempt
 @login_required
 def reset_progress(request):
     """
@@ -1615,7 +1833,6 @@ def reset_progress(request):
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
 
 
-@csrf_exempt
 @login_required
 def get_assessment_questions(request):
     """
@@ -1651,7 +1868,6 @@ def get_assessment_questions(request):
         return JsonResponse({"status": "error", "message": str(e)}, status=500)
 
 
-@csrf_exempt
 @login_required
 def submit_assessment(request):
     if request.method == "POST":
@@ -1659,6 +1875,9 @@ def submit_assessment(request):
             data = json.loads(request.body)
             assessment_type = data.get("type", "POSH").upper()  # POSH, POCSO, or POCSO_CORP
             submitted_answers = data.get("answers", [])
+            
+            if not isinstance(submitted_answers, list) or not submitted_answers:
+                return JsonResponse({"status": "error", "message": "No answers submitted"}, status=400)
             
             if assessment_type not in ["POSH", "POCSO", "POCSO_CORP"]:
                 return JsonResponse({"status": "error", "message": "Invalid assessment type"}, status=400)
@@ -1700,12 +1919,14 @@ def submit_assessment(request):
                         "correct_index": correct_idx
                     })
             
-            # Use total count from client or pool size
-            total_q = len(submitted_answers) if submitted_answers else len(questions_pool)
+            # Use the actual pool size from database/config pool as the total count
+            total_q = len(questions_pool)
+            if total_q == 0:
+                return JsonResponse({"status": "error", "message": "Quiz pool is empty"}, status=500)
             
             # The database field uses type 'POCSO' for corporate training too
             db_type = "POCSO" if assessment_type in ["POCSO", "POCSO_CORP"] else assessment_type
-
+ 
             percentage = round((score_raw / total_q) * 100) if total_q > 0 else 0
             
             is_employee = OrganizationMember.objects.filter(
@@ -1715,7 +1936,7 @@ def submit_assessment(request):
                 passed = percentage >= 80
             else:
                 passed = percentage == 100
-
+ 
             progress, created = AssessmentProgress.objects.get_or_create(
                 user=request.user, assessment_type=db_type
             )
@@ -1724,7 +1945,7 @@ def submit_assessment(request):
                 progress.score = percentage  # Store percentage as score for HR dashboard
                 progress.is_passed = passed
                 progress.save()
-
+ 
             return JsonResponse({
                 "status": "success", 
                 "message": "Result saved", 
@@ -1740,7 +1961,6 @@ def submit_assessment(request):
 
 
 
-@csrf_exempt
 @login_required
 def member_progress_api(request, member_id):
     try:
@@ -1798,6 +2018,19 @@ def member_progress_api(request, member_id):
         total_mins_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("minutes_watched"))["minutes_watched__sum"] or 0
         total_secs_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("seconds_watched"))["seconds_watched__sum"] or 0
         grand_total_seconds = (total_mins_agg * 60) + total_secs_agg
+
+        # Fallback/addition based on actual video progress
+        video_progress_seconds = 0
+        for m in all_modules:
+            if m.video_file:  # Only count video modules for watch time
+                if m.id in user_progress_map:
+                    video_progress_seconds += m.duration_seconds
+                else:
+                    prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                    if prog:
+                        video_progress_seconds += int(prog.last_position)
+
+        grand_total_seconds = max(grand_total_seconds, video_progress_seconds)
         hours = grand_total_seconds // 3600
         minutes = (grand_total_seconds % 3600) // 60
         total_active_time = f"{hours}h {minutes}m"
@@ -1974,7 +2207,6 @@ def tutorial_view(request):
 # --- 8. BULK IMPORT FEATURES ---
 
 
-@login_required
 @login_required(login_url="login")
 def download_employee_template(request):
     response = HttpResponse(content_type="text/csv")
@@ -2003,11 +2235,15 @@ def upload_employee_bulk(request):
 
         org = membership.organization
         posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
-        seat_limit = posh_reg.employee_count if posh_reg else org.max_users
+        pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
+        reg = posh_reg or pocso_reg
+        seat_limit = reg.employee_count if reg else org.max_users
         csv_file = request.FILES["employee_file"]
 
-        if not csv_file.name.endswith(".csv"):
-            messages.error(request, "Please upload a CSV file.")
+        # Validate CSV file size and actual content/mime type
+        is_valid, err_msg = validate_csv_file(csv_file)
+        if not is_valid:
+            messages.error(request, err_msg)
             return redirect("company_dashboard")
 
         try:
@@ -2370,7 +2606,6 @@ def superuser_dashboard(request):
     return render(request, "superuser_dashboard.html", context)
 
 
-@csrf_exempt
 def tab_close_logout(request):
     """
     Called via navigator.sendBeacon() when the user closes a dashboard tab.
@@ -2622,17 +2857,27 @@ def custom_402(request, exception=None):
 def accounts_login_view(request):
     """Custom login for accounts department"""
     if request.method == "POST":
-        u = request.POST.get("username")
+        u = request.POST.get("username", "").strip()
         p = request.POST.get("password")
+        ip = get_client_ip(request)
+
+        is_locked, remaining = check_login_lockout(u, ip)
+        if is_locked:
+            minutes = (remaining + 59) // 60
+            error_msg = f"Too many failed login attempts. Locked for {minutes} minute(s)."
+            return render(request, "accounts_login.html", {"error_message": error_msg})
+
         user = authenticate(username=u, password=p)
         if user is not None and (user.account_type == "ACCOUNTS" or user.is_superuser):
+            clear_login_attempts(u, ip)
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("accounts_dashboard")
         else:
+            increment_login_attempts(u, ip)
             return render(
                 request,
                 "accounts_login.html",
-                {"form": type("F", (), {"errors": True})()},
+                {"form": type("F", (), {"errors": True})(), "error_message": "Invalid credentials. Please try again."},
             )
 
     return render(request, "accounts_login.html", {})
@@ -2647,6 +2892,147 @@ def accounts_dashboard_view(request):
 
     if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
         return redirect("home")
+
+    # Initialize default templates if they don't exist in the database
+    from home.models import EmailTemplate
+    
+    defaults = {
+        "PAY_NOW": {
+            "subject": "Thank you for your interest in our services",
+            "body": """Dear {name},
+
+Greetings from Open Hand Private Limited!
+
+We are truly pleased to have you here and thank you for taking the time to visit our website and register for {type} training. At Open Hand, we believe that every workplace deserves to be safe, respectful, and compliant — and we're honoured that you've chosen to partner with us on this important journey.
+
+To confirm your booking, please click the link below to make the payment:
+➡ {payment_link}
+
+Once the payment is received, our team will reach out to you within 24 hours to finalise the training schedule and share pre-training materials.
+
+OR
+
+📞 Prefer to discuss first? We're just a call away!
+If you'd like to discuss the training modules, understand the content in more detail, or explore customisation options, feel free to call us at:
++91- 99889 97555
+
+Once you complete the payment, you will be provided a user name and password to login to our Training module.
+
+Once again, thank you for your trust and interest in us. We look forward to supporting your organisation in creating a safer, more empowered workplace.
+
+Warm regards,
+
+Open Hand Private Limited
+openhandpvtltd@gmail.com | openhandsolutions.com"""
+        },
+        "PAYMENT_VERIFIED": {
+            "subject": "Payment confirmed — Welcome to Open Hand! Your login details inside",
+            "body": """Dear {name},
+
+Greetings from Open Hand Private Limited!
+
+Thank you for your trust in us. We are delighted to confirm that your payment of {amount} has been successfully received. 🎉
+
+You now have full access to the Open Hand Resource Platform — your one-stop portal for all things {type} compliance, training, and workplace safety.
+
+📖 Login Instructions
+1. Click the link below to set up your password and access your dashboard:
+{setup_link}
+2. Once logged in, explore your dashboard and all available resources
+
+⚠️ For security reasons, please change your password immediately after first login. Do not share your credentials.
+
+📌 What You Get Access To
+Once logged in, your portal includes:
+- HR Dashboard: Track training progress, view compliance status, manage employee records
+- {type} Posters: Ready-to-print posters for your office premises — edit text, add logo, and download
+- Unlimited Resources: Training modules, presentations, handbooks, case studies, and more
+- Blogs & Newsletters: Stay updated on amendments, best practices, and industry insights
+- Forms & Documents: Complaint forms, IC meeting templates, inquiry report formats, annual report templates
+- Manage Employees: Add employees individually or upload an Excel sheet in bulk — assign trainings, track completion
+- IC Training Modules (as applicable): Access all materials for Internal Committee members — inquiry procedures, evidence handling, report writing
+- And much more!
+
+📞 Need Help? We're Here for You
+If you face any issues logging in, changing your password, or navigating the portal, please don't hesitate to reach out:
+📞 +91- 99889 97555  |  📧 openhandpvtltd@gmail.com
+
+You can also reply to this email, and our support team will get back to you within 4–6 hours.
+
+Once again, a heartfelt welcome to the Open Hand community. We are excited to be your partner in building a safer, compliant, and empowered workplace.
+
+Warm regards,
+
+Open Hand Private Limited
+openhandpvtltd@gmail.com | openhandsolutions.com"""
+        },
+        "EMPLOYEE_WELCOME": {
+            "subject": "Enrolled in Compliance Training Program – Open Hand Private Limited",
+            "body": """Dear {name},
+
+Greetings from Open Hand Private Limited (OHPL)
+
+You have been successfully enrolled in the {training_module_name} on the OHPL Learning Portal.
+
+This interactive training module will help you understand:
+- The fundamentals of the Prevention of Sexual Harassment (POSH) Act and what constitutes sexual harassment at the workplace.
+- Different forms of sexual harassment, including physical, verbal, non-verbal, and digital conduct.
+- Appropriate workplace behaviour, professional boundaries, and respectful communication.
+- Practical workplace scenarios and case studies to reinforce your learning.
+
+Training Requirement
+Please complete the training within {training_duration}.
+At the end of the module, you will be required to complete a short assessment quiz.
+Upon successful meeting the assessment criteria, your Certificate of Completion will be available for download from the company dashboard.
+
+Login Credentials
+Portal Link: {login_url}
+Username: {email}
+Temporary Password: {password}
+
+Please log in using the above credentials and change your password upon your first login.
+
+If you require any assistance, please contact us at {support_email}.
+
+We look forward to your active participation in creating a safe, respectful, and inclusive workplace.
+
+Warm regards,
+Learning & Compliance Team
+Open Hand Private Limited (OHPL)"""
+        },
+        "EMPLOYEE_REMINDER": {
+            "subject": "Mandatory POSH Training - Pending Completion",
+            "body": """Dear {name},
+
+This is a friendly reminder that your mandatory POSH (Prevention of Sexual Harassment) training is still pending.
+
+As of today:
+Training Status: {status}
+Completion Percentage: {completion_percentage}%
+Due Date: {due_date}
+
+Please log in to the learning portal and complete your assigned training and assessment before the due date.
+
+Completing the training is mandatory and forms an important part of our organization's commitment to maintaining a safe, respectful, and legally compliant workplace.
+
+If you have already completed the training recently, please disregard this email.
+
+For any technical assistance, please contact {support_email} or +91- 99889 97555.
+
+Thank you for your prompt attention and cooperation.
+
+Warm regards,
+Learning & Compliance Team
+Open Hand Private Limited"""
+        }
+    }
+    
+    for tier, content in defaults.items():
+        template, created = EmailTemplate.objects.get_or_create(tier_key=tier)
+        if created or not template.body or "<p>" in template.body or "<table>" in template.body:
+            template.subject = content["subject"]
+            template.body = content["body"]
+            template.save()
 
     config = (
         POSHPricingConfig.objects.filter(is_active=True).order_by("-updated_at").first()
@@ -2668,9 +3054,22 @@ def accounts_dashboard_view(request):
         ("PAY_NOW", "Payment Received Confirmation"),
         ("PAYMENT_VERIFIED", "Payment Verified – Onboarding Confirmed"),
         ("EMPLOYEE_WELCOME", "Employee Welcome – Account Credentials"),
+        ("EMPLOYEE_REMINDER", "Training Reminder – Pending Completion"),
     ]
 
+    from home.models import EmailTemplate, DeletedPoster
     email_templates = {et.tier_key: et for et in EmailTemplate.objects.all()}
+    deleted_posters = list(DeletedPoster.objects.values_list('poster_path', flat=True))
+
+    # Collect any custom posters uploaded via the Add Poster feature
+    posters_dir = os.path.join(settings.MEDIA_ROOT, "Posters")
+    custom_posters = []
+    if os.path.isdir(posters_dir):
+        for fname in sorted(os.listdir(posters_dir)):
+            if fname.startswith("Custom Poster"):
+                media_path = f"/media/Posters/{fname}"
+                name_no_ext = os.path.splitext(fname)[0]
+                custom_posters.append({"path": media_path, "title": name_no_ext})
 
     return render(
         request,
@@ -2685,6 +3084,8 @@ def accounts_dashboard_view(request):
             "email_saved": email_saved,
             "email_tiers": email_tiers,
             "email_templates": email_templates,
+            "deleted_posters": deleted_posters,
+            "custom_posters": custom_posters,
         },
     )
 
@@ -2696,7 +3097,7 @@ def accounts_save_email_templates_view(request):
         return redirect("home")
 
     if request.method == "POST":
-        tiers = ["PAY_NOW", "PAYMENT_VERIFIED", "EMPLOYEE_WELCOME"]
+        tiers = ["PAY_NOW", "PAYMENT_VERIFIED", "EMPLOYEE_WELCOME", "EMPLOYEE_REMINDER"]
         for tier in tiers:
             subject = request.POST.get(f"subject_{tier}")
             body = request.POST.get(f"body_{tier}")
@@ -2712,17 +3113,134 @@ def accounts_save_email_templates_view(request):
         request.session["email_templates_saved"] = True
         # messages.success(request, "Email templates updated successfully!")
 
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest' or 'application/json' in request.headers.get('Accept', ''):
+            from django.http import JsonResponse
+            return JsonResponse({'status': 'success'})
+
     from django.urls import reverse
 
     return redirect(f"{reverse('accounts_dashboard')}?active_tab=emails")
 
 
-@csrf_exempt
-def trigger_tier_email_view(request):
-    """AJAX view to trigger a tiered email based on user selection"""
+@login_required(login_url="accounts_login")
+def delete_registrations_view(request):
+    """Permanently delete selected registrations from the database"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        from django.http import JsonResponse
+        return JsonResponse({"status": "error", "message": "Unauthorized."}, status=403)
+
     if request.method == "POST":
         import json
+        from django.http import JsonResponse
+        try:
+            data = json.loads(request.body)
+            reg_ids = data.get("ids", [])
+            reg_type = data.get("type", "")
 
+            if not reg_ids:
+                return JsonResponse({"status": "error", "message": "No registrations selected."}, status=400)
+
+            if reg_type == "posh":
+                from home.models import POSHRegistration
+                POSHRegistration.objects.filter(id__in=reg_ids).delete()
+            elif reg_type == "pocso":
+                from home.models import POCSORegistration
+                POCSORegistration.objects.filter(id__in=reg_ids).delete()
+            else:
+                return JsonResponse({"status": "error", "message": "Invalid registration type."}, status=400)
+
+            return JsonResponse({"status": "success"})
+        except Exception as e:
+            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+    from django.shortcuts import redirect
+    return redirect("accounts_dashboard")
+
+
+@login_required(login_url="accounts_login")
+def delete_poster_view(request):
+    """Permanently delete an awareness poster from the system"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    if request.method == "POST":
+        from home.models import DeletedPoster
+        poster_path = request.POST.get("poster_path")
+
+        if poster_path:
+            # For custom uploaded posters — delete the actual file from disk
+            import urllib.parse
+            decoded_path = urllib.parse.unquote(poster_path)
+            # poster_path is like /media/Posters/Custom Poster abc123.webp
+            relative = decoded_path.lstrip("/")  # media/Posters/...
+            abs_path = os.path.join(settings.MEDIA_ROOT, *relative.split("/")[1:])  # strip "media/"
+            if os.path.isfile(abs_path):
+                try:
+                    os.remove(abs_path)
+                except OSError:
+                    pass
+
+            # Mark as permanently deleted in DB so static posters also disappear
+            DeletedPoster.objects.get_or_create(poster_path=poster_path)
+
+    from django.urls import reverse
+    return redirect(f"{reverse('accounts_dashboard')}?active_tab=posters")
+
+
+def add_poster_view(request):
+    """Upload a new awareness poster image to the Posters library (Accounts portal only)"""
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return redirect("home")
+
+    if request.method == "POST":
+        poster_image = request.FILES.get("poster_image")
+        if poster_image:
+            # Validate file type and size (max 10 MB)
+            valid_exts = [".png", ".jpg", ".jpeg", ".webp"]
+            ext = os.path.splitext(poster_image.name)[1].lower()
+            is_image_mime = poster_image.content_type and poster_image.content_type.startswith("image/")
+
+            if ext not in valid_exts or poster_image.size > 10 * 1024 * 1024 or not is_image_mime:
+                messages.error(request, "Invalid file. Poster must be a PNG, JPG, JPEG, or WebP image under 10MB.")
+                from django.urls import reverse
+                return redirect(f"{reverse('accounts_dashboard')}?active_tab=posters")
+
+            try:
+                from PIL import Image as PILImage
+                img = PILImage.open(poster_image)
+                img.verify()
+                poster_image.seek(0)
+            except Exception:
+                messages.error(request, "Invalid image file. The file is corrupted or not a valid image.")
+                from django.urls import reverse
+                return redirect(f"{reverse('accounts_dashboard')}?active_tab=posters")
+
+            # Save to /media/Posters/
+            posters_dir = os.path.join(settings.MEDIA_ROOT, "Posters")
+            os.makedirs(posters_dir, exist_ok=True)
+
+            # Use a safe filename based on the original name
+            import uuid
+            safe_name = f"Custom Poster {uuid.uuid4().hex[:8]}{ext}"
+            save_path = os.path.join(posters_dir, safe_name)
+
+            with open(save_path, "wb+") as destination:
+                for chunk in poster_image.chunks():
+                    destination.write(chunk)
+
+    from django.urls import reverse
+    return redirect(f"{reverse('accounts_dashboard')}?active_tab=posters")
+
+
+# FIX #1: Added @login_required and accounts-role check to prevent unauthenticated email sending
+@login_required(login_url="accounts_login")
+def trigger_tier_email_view(request):
+    """AJAX view to trigger a tiered email based on user selection (Accounts portal only)"""
+    # Only ACCOUNTS users or superusers may trigger emails
+    if request.user.account_type != "ACCOUNTS" and not request.user.is_superuser:
+        return JsonResponse({"status": "error", "message": "Unauthorized."}, status=403)
+
+    if request.method == "POST":
         try:
             data = json.loads(request.body)
             registration_id = data.get("registration_id")
@@ -2742,10 +3260,12 @@ def trigger_tier_email_view(request):
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(
-                    {"status": "error", "message": "Email failed to send"}, status=500
+                    {"status": "error", "message": "Email failed to send."}, status=500
                 )
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=400)
+            _logger = logging.getLogger(__name__)
+            _logger.exception(f"trigger_tier_email_view error: {e}")
+            return JsonResponse({"status": "error", "message": "An error occurred processing your request."}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
 
@@ -2785,14 +3305,34 @@ def registration_selection_view(request):
 
 
 
-def submit_payment_view(request, registration_id):
-    """Handle payment screenshot upload for POSH/POCSO"""
-    registration = POSHRegistration.objects.filter(id=registration_id).first()
-    reg_type = "POSH"
+def submit_payment_view(request, token):
+    """Handle payment screenshot upload for POSH/POCSO.
+    FIX #2 (IDOR): The registration_id is no longer exposed in the URL.
+    Instead, the email contains a cryptographically signed token that
+    embeds the registration ID. This prevents enumeration / unauthorized uploads.
+    """
+    from django.core import signing
 
-    if not registration:
+    # Verify signed token (max 7 days)
+    try:
+        payload = signing.loads(token, salt="submit-payment", max_age=60 * 60 * 24 * 7)
+        registration_id = payload["reg_id"]
+        reg_type = payload["reg_type"]
+    except signing.SignatureExpired:
+        return render(request, "error_page.html", {
+            "error_title": "Link Expired",
+            "error_message": "This payment link has expired. Please contact support to receive a new link."
+        }, status=410)
+    except Exception:
+        return render(request, "error_page.html", {
+            "error_title": "Invalid Link",
+            "error_message": "This payment link is invalid or has been tampered with. Please contact support."
+        }, status=400)
+
+    if reg_type == "POSH":
+        registration = get_object_or_404(POSHRegistration, id=registration_id)
+    else:
         registration = get_object_or_404(POCSORegistration, id=registration_id)
-        reg_type = "POCSO"
 
     from .utils import get_posh_billing_data, get_pocso_billing_data
     if reg_type == "POSH":
@@ -2803,12 +3343,16 @@ def submit_payment_view(request, registration_id):
     if request.method == "POST":
         screenshot = request.FILES.get("payment_screenshot")
         if screenshot:
+            is_valid, err_msg = validate_image_file(screenshot)
+            if not is_valid:
+                messages.error(request, err_msg)
+                return redirect("submit_payment", token=token)
             registration.payment_screenshot = screenshot
             registration.payment_status = "SUBMITTED"
             registration.save()
-            
+
             messages.success(request, "Payment proof uploaded successfully! Our accounts team will review and verify your payment.")
-            return redirect("submit_payment", registration_id=registration.id)
+            return redirect("submit_payment", token=token)
 
     context = {
         "registration": registration,
@@ -2817,6 +3361,118 @@ def submit_payment_view(request, registration_id):
         "total_amount": billing_data["total_amount"],
     }
     return render(request, "submit_payment.html", context)
+
+
+@login_required(login_url="login")
+def send_posh_reminders(request):
+    """
+    AJAX view called by the HR Admin to send training reminders to selected employees.
+    """
+    if request.method != "POST":
+        return JsonResponse({"status": "error", "message": "Method not allowed."}, status=405)
+
+    # 1. Authorize Admin
+    membership = OrganizationMember.objects.filter(user=request.user, role="ADMIN").first()
+    if not membership:
+        return JsonResponse({"status": "error", "message": "Unauthorized. Admin only."}, status=403)
+
+    org = membership.organization
+    active_sub = Subscription.objects.filter(organization=org, status="ACTIVE").first()
+
+    try:
+        data = json.loads(request.body)
+        member_ids = data.get("member_ids", [])
+    except Exception:
+        return JsonResponse({"status": "error", "message": "Invalid request body."}, status=400)
+
+    if not member_ids:
+        return JsonResponse({"status": "error", "message": "No employees selected."}, status=400)
+
+    # Get modules to calculate progress
+    training_type = "POSH"
+    if active_sub and active_sub.plan.type in ["POCSO", "BOTH"]:
+        if active_sub.plan.type == "POCSO":
+            training_type = "POCSO"
+
+    all_modules = TrainingModule.objects.filter(module_type=training_type).order_by("order")
+    visible_modules = [
+        m for m in all_modules
+        if m.video_file or (m.ppt_file and not m.video_file and "quiz" in m.title.lower())
+    ]
+    visible_module_ids = [m.id for m in visible_modules]
+    total_modules_count = len(visible_modules)
+
+    sent_count = 0
+    from home.email_utils import send_posh_reminder_email
+
+    for m_id in member_ids:
+        mem = OrganizationMember.objects.filter(id=m_id, organization=org, role="MEMBER").first()
+        if not mem:
+            continue
+
+        user_obj = mem.user
+
+        # Calculate progress
+        completed_modules = ModuleProgress.objects.filter(
+            user=user_obj, module_id__in=visible_module_ids, is_completed=True
+        ).count()
+
+        total_progress = 0.0
+        user_progress_map = set(
+            ModuleProgress.objects.filter(
+                user=user_obj, module__module_type=training_type, is_completed=True
+            ).values_list("module_id", flat=True)
+        )
+        for m in visible_modules:
+            if m.id in user_progress_map:
+                total_progress += 100.0
+            elif m.video_file:  # Only video modules have partial progress
+                prog = ModuleProgress.objects.filter(user=user_obj, module=m).first()
+                if prog and m.duration_seconds > 0:
+                    percent_watched = (prog.last_position / m.duration_seconds) * 100.0
+                    percent_watched = min(99.0, max(0.0, percent_watched))
+                    total_progress += percent_watched
+
+        percent_complete = (
+            int(total_progress / total_modules_count)
+            if total_modules_count > 0
+            else 0
+        )
+        is_completed = (completed_modules == total_modules_count) and (total_modules_count > 0)
+
+        # Do not send reminders to completed employees
+        if is_completed:
+            continue
+
+        # Check status
+        total_mins_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("minutes_watched"))["minutes_watched__sum"] or 0
+        total_secs_agg = DailyActivity.objects.filter(user=user_obj).aggregate(Sum("seconds_watched"))["seconds_watched__sum"] or 0
+        grand_total_seconds = (total_mins_agg * 60) + total_secs_agg
+
+        has_started = False
+        if grand_total_seconds > 0:
+            has_started = True
+        else:
+            has_started = ModuleProgress.objects.filter(
+                user=user_obj,
+                module_id__in=visible_module_ids
+            ).filter(
+                Q(is_completed=True) | Q(last_position__gt=0.0)
+            ).exists()
+
+        status_str = "In Progress" if has_started else "Not Started"
+
+        # Determine due date
+        if active_sub:
+            due_date_val = active_sub.end_date.strftime("%B %d, %Y")
+        else:
+            due_date_val = (mem.joined_at + timedelta(days=30)).strftime("%B %d, %Y")
+
+        send_posh_reminder_email(user_obj, status_str, percent_complete, due_date_val)
+        sent_count += 1
+
+    return JsonResponse({"status": "success", "message": f"Successfully sent reminders to {sent_count} employees."})
+
 
 
 

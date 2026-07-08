@@ -1,3 +1,4 @@
+{% load static %}
 <!-- START OF FILE -->
 <!DOCTYPE html>
 <html lang="en">
@@ -1995,11 +1996,73 @@
             </div>
             {% endfor %}
           </div>
+
+          <!-- === ADMIN ACTIONS === -->
+          {% if request.user.account_type == "COMPANY_ADMIN" %}
+          <div class="border-top pt-3 mt-4 text-start">
+            <h6 class="text-muted small mb-3 fw-bold" style="letter-spacing: 0.5px;">ADMINISTRATIVE ACTIONS</h6>
+            {% if member.training_status == 'completed' %}
+            <div class="alert alert-info py-2 px-3 mb-0 small d-flex align-items-center gap-2" style="background: rgba(16, 185, 129, 0.08); border: 1px solid rgba(16, 185, 129, 0.2); color: #10b981; font-weight: 500;">
+              <i class="bi bi-lock-fill"></i>
+              <span>This seat is locked because training has been completed. Editing and deletion are disabled.</span>
+            </div>
+            {% else %}
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-warning" onclick="toggleEditForm('{{ member.id }}')" style="font-weight: 600; font-size: 0.8rem; border-radius: 6px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="bi bi-pencil-square"></i> Edit Student
+              </button>
+              <button class="btn btn-sm btn-outline-danger" onclick="confirmDeleteMember('{{ member.id }}', '{{ member.user.get_full_name|default:member.user.first_name|escapejs }}')" style="font-weight: 600; font-size: 0.8rem; border-radius: 6px; padding: 6px 12px; display: inline-flex; align-items: center; gap: 4px;">
+                <i class="bi bi-trash"></i> Delete Student
+              </button>
+            </div>
+            
+            <!-- Hidden Edit Form -->
+            <form id="editForm-{{ member.id }}" method="POST" action="{% url 'update_employee' member.id %}" class="mt-3 p-3 rounded" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0;">
+              {% csrf_token %}
+              <div class="mb-2">
+                <label class="form-label small text-muted fw-semibold">Full Name</label>
+                <input type="text" class="form-control form-control-sm" name="emp_name" value="{{ member.user.get_full_name|default:member.user.first_name }}" required style="font-size: 0.85rem; padding: 6px 10px; background: white !important; color: black !important; border: 1px solid #ccc !important;">
+              </div>
+              <div class="mb-2">
+                <label class="form-label small text-muted fw-semibold">Email Address</label>
+                <input type="email" class="form-control form-control-sm" name="emp_email" value="{{ member.user.email }}" required style="font-size: 0.85rem; padding: 6px 10px; background: white !important; color: black !important; border: 1px solid #ccc !important;">
+              </div>
+              <div class="mb-3">
+                <label class="form-label small text-muted fw-semibold">Department</label>
+                <input type="text" class="form-control form-control-sm" name="emp_department" value="{{ member.user.department|default:'' }}" style="font-size: 0.85rem; padding: 6px 10px; background: white !important; color: black !important; border: 1px solid #ccc !important;">
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-warning px-3" style="font-weight: 600; font-size: 0.8rem; color: black !important;">Save Changes</button>
+                <button type="button" class="btn btn-sm btn-secondary px-3" onclick="toggleEditForm('{{ member.id }}')" style="font-weight: 600; font-size: 0.8rem; color: white !important;">Cancel</button>
+              </div>
+            </form>
+            {% endif %}
+          </div>
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
   {% endfor %}
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal fade" id="customConfirmModal" tabindex="-1" aria-labelledby="customConfirmModalLabel" aria-hidden="true" style="z-index: 10600 !important;">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+      <div class="modal-content" style="border-radius: 20px; border: 1px solid rgba(226, 232, 240, 0.8); box-shadow: 0 20px 40px rgba(15, 23, 42, 0.1); background: #ffffff; color: #2d3436; font-family: 'Poppins', sans-serif;">
+        <div class="modal-body text-center p-4">
+          <div class="confirm-icon-wrapper mb-3" style="width: 56px; height: 56px; border-radius: 50%; background: rgba(239, 68, 68, 0.08); color: #ef4444; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 1.6rem; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+          </div>
+          <h5 class="modal-title fw-bold mb-2 text-dark" id="customConfirmTitle" style="font-family: 'Poppins', sans-serif; font-weight: 700; font-size: 1.25rem;">Confirm Action</h5>
+          <p class="text-secondary small mb-4" id="customConfirmMessage" style="line-height: 1.6; font-size: 0.88rem; font-weight: 500; color: #64748b !important;"></p>
+          <div class="d-flex gap-3 justify-content-center">
+            <button type="button" class="btn btn-secondary px-4" id="customConfirmCancelBtn" data-bs-dismiss="modal" style="border-radius: 10px; font-weight: 600; font-size: 0.82rem; padding: 10px 20px; background: #f1f5f9; border: 1px solid #cbd5e1; color: #475569; text-transform: uppercase; letter-spacing: 0.5px;">Cancel</button>
+            <button type="button" class="btn btn-danger px-4 border-0" id="customConfirmOkBtn" style="border-radius: 10px; font-weight: 600; font-size: 0.82rem; padding: 10px 20px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2); text-transform: uppercase; letter-spacing: 0.5px;">Yes, Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODALS & SCRIPTS (REMAIN UNCHANGED) -->
   <!-- ADD STAFF MODAL -->
@@ -2609,6 +2672,12 @@
       var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
       var _navAway = false;
       function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+      function getCsrfToken() {
+        var input = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (input) return input.value;
+        var match = document.cookie.match(/csrftoken=([^;]+)/);
+        return match ? match[1] : '';
+      }
       document.addEventListener('click', function (e) {
         var a = e.target.closest('a[href]');
         if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
@@ -2617,7 +2686,9 @@
       window.addEventListener('pagehide', function (e) {
         if (e.persisted) return;
         if (_navAway) return;
-        navigator.sendBeacon(TAB_CLOSE_URL);
+        var payload = new FormData();
+        payload.append('csrfmiddlewaretoken', getCsrfToken());
+        navigator.sendBeacon(TAB_CLOSE_URL, payload);
       });
       sessionStorage.removeItem('_ohs_nav');
     })();
@@ -2842,6 +2913,57 @@
           spinner.style.display = 'none';
           btnText.innerText = 'Save & Apply Logo';
         });
+      };
+      window.toggleEditForm = function(memberId) {
+        const form = document.getElementById(`editForm-${memberId}`);
+        if (form) {
+          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        }
+      };
+
+      window.showCustomConfirm = function(title, message, onConfirm) {
+        const modalEl = document.getElementById("customConfirmModal");
+        if (!modalEl) {
+          if (confirm(message)) onConfirm();
+          return;
+        }
+        
+        document.getElementById("customConfirmTitle").textContent = title;
+        document.getElementById("customConfirmMessage").textContent = message;
+        
+        const okBtn = document.getElementById("customConfirmOkBtn");
+        const newOkBtn = okBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+        
+        const modalInstance = new bootstrap.Modal(modalEl);
+        
+        newOkBtn.addEventListener("click", function() {
+          modalInstance.hide();
+          onConfirm();
+        });
+        
+        modalInstance.show();
+      };
+
+      window.confirmDeleteMember = function(memberId, name) {
+        showCustomConfirm(
+          "Delete Student",
+          `Are you sure you want to delete ${name}? This will permanently remove their training progress and revoke their access to the portal.`,
+          function() {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/dashboard/delete-employee/${memberId}/`;
+            
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = '{{ csrf_token }}';
+            form.appendChild(csrfInput);
+            
+            document.body.appendChild(form);
+            form.submit();
+          }
+        );
       };
     })();
   </script>

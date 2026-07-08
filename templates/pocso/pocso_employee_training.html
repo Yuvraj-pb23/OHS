@@ -1487,7 +1487,8 @@
             backendSaved: {% if m.is_completed %}true{% else %}false{% endif %},
             thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}",
             src: "{{ m.src }}",
-            lastPosition: {{ m.last_position|default:0.0 }}
+            lastPosition: {{ m.last_position|default:0.0 }},
+            duration: {{ m.duration|default:0 }}
         },
         {% endfor %}
     ];
@@ -1536,6 +1537,14 @@
         let quizSeconds = 600;
         let quizTimerInterval;
         function getCsrfToken() {
+            const inlineToken = '{{ csrf_token }}';
+            if (inlineToken && inlineToken !== '' && inlineToken !== 'None') {
+                return inlineToken;
+            }
+            const inputToken = document.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (inputToken && inputToken.value) {
+                return inputToken.value;
+            }
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -1551,6 +1560,11 @@
         }
 
         const player = document.getElementById('mainPlayer');
+        if (player) {
+            player.addEventListener('loadedmetadata', () => {
+                updateTotalStats();
+            });
+        }
         let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
         let currentIdx = 0;
         let currentPPTIdx = 0;
@@ -2420,8 +2434,10 @@
                 if (mod.status === 'complete') {
                     completeCount += 1.0;
                 } else if (mod.status === 'pending') {
-                    if (idx === currentIdx && player && player.duration > 0) {
-                        const progress = Math.min(0.95, player.currentTime / player.duration);
+                    if (idx === currentIdx) {
+                        const duration = player && player.duration > 0 ? player.duration : (mod.duration || 0);
+                        const currentTime = player && player.currentTime > 0 ? player.currentTime : (mod.lastPosition || 0);
+                        const progress = duration > 0 ? Math.min(0.95, currentTime / duration) : 0;
                         completeCount += progress;
                         pendingCount += (1.0 - progress);
                     } else {
@@ -2543,6 +2559,12 @@
             var TAB_CLOSE_URL = '/session/tab-close/?page_load_id={{ request.page_load_id }}';
             var _navAway = false;
             function markNav() { _navAway = true; sessionStorage.setItem('_ohs_nav', '1'); }
+            function getCsrfToken() {
+                var input = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (input) return input.value;
+                var match = document.cookie.match(/csrftoken=([^;]+)/);
+                return match ? match[1] : '';
+            }
             document.addEventListener('click', function (e) {
                 var a = e.target.closest('a[href]');
                 if (a && a.href && !a.href.startsWith('javascript:') && !a.target) markNav();
@@ -2551,7 +2573,9 @@
             window.addEventListener('pagehide', function (e) {
                 if (e.persisted) return;
                 if (_navAway) return;
-                navigator.sendBeacon(TAB_CLOSE_URL);
+                var payload = new FormData();
+                payload.append('csrfmiddlewaretoken', getCsrfToken());
+                navigator.sendBeacon(TAB_CLOSE_URL, payload);
             });
             sessionStorage.removeItem('_ohs_nav');
         })();

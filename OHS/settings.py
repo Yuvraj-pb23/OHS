@@ -26,26 +26,31 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    raise ValueError("DJANGO_SECRET_KEY environment variable is not set!")
 
 POSH_TRAINING_VIDEO_URL = os.getenv(
     "POSH_TRAINING_VIDEO_URL",
     "https://website-data-593333832687-ap-south-1-an.s3.ap-south-1.amazonaws.com/Hanuai%20Website/POSH_Training_Video.mp4",
 )
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", "True").lower() in ("true", "1", "yes")
+# FIX #5: Default to False so production deployments without .env are safe
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
 allowed_hosts_env = os.getenv("ALLOWED_HOSTS")
 if allowed_hosts_env:
     ALLOWED_HOSTS = [host.strip() for host in allowed_hosts_env.split(",") if host.strip()]
 else:
-    ALLOWED_HOSTS = [
-        "*",
-        "127.0.0.1",
-        "localhost",
-        "openhandsolutions.com",
-        "www.openhandsolutions.com",
-    ]
+    if not DEBUG:
+        ALLOWED_HOSTS = [
+            "openhandsolutions.com",
+            "www.openhandsolutions.com",
+        ]
+    else:
+        ALLOWED_HOSTS = [
+            "127.0.0.1",
+            "localhost",
+        ]
 
 # Production site URL — used in emails sent to employees (login links, etc.)
 SITE_URL = os.getenv("SITE_URL", "https://openhandsolutions.com")
@@ -95,6 +100,8 @@ MIDDLEWARE = [
     "home.middleware.TabCloseSessionMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # FIX #9: Content-Security-Policy and other hardening headers
+    "home.middleware.SecurityHeadersMiddleware",
 ]
 
 # Security settings (production vs development safe)

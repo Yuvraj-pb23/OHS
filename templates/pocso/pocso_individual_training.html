@@ -1313,7 +1313,8 @@
             status: "{% if m.is_completed %}complete{% elif m.is_locked %}locked{% else %}pending{% endif %}",
             thumb: "{{ m.thumb|default:'https://images.unsplash.com/photo-1544027993-37dbfe43562a?auto=format&fit=crop&q=80&w=600' }}",
             src: "{{ m.src }}",
-            lastPosition: {{ m.last_position|default:0.0 }}
+            lastPosition: {{ m.last_position|default:0.0 }},
+            duration: {{ m.duration|default:0 }}
         },
         {% endfor %}
     ];
@@ -1363,6 +1364,14 @@
         let quizSeconds = 600;
         let quizTimerInterval;
         function getCsrfToken() {
+            const inlineToken = '{{ csrf_token }}';
+            if (inlineToken && inlineToken !== '' && inlineToken !== 'None') {
+                return inlineToken;
+            }
+            const inputToken = document.querySelector('input[name="csrfmiddlewaretoken"]');
+            if (inputToken && inputToken.value) {
+                return inputToken.value;
+            }
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
                 const cookies = document.cookie.split(';');
@@ -1378,6 +1387,11 @@
         }
 
         const player = document.getElementById('mainPlayer');
+        if (player) {
+            player.addEventListener('loadedmetadata', () => {
+                updateTotalStats();
+            });
+        }
         let totalActivitySeconds = {{ total_seconds_watched|default:0 }};
         let currentIdx = 0;
         let currentPPTIdx = 0;
@@ -2052,8 +2066,10 @@
                 if (mod.status === 'complete') {
                     completeCount += 1.0;
                 } else if (mod.status === 'pending') {
-                    if (idx === currentIdx && player && player.duration > 0) {
-                        const progress = Math.min(0.95, player.currentTime / player.duration);
+                    if (idx === currentIdx) {
+                        const duration = player && player.duration > 0 ? player.duration : (mod.duration || 0);
+                        const currentTime = player && player.currentTime > 0 ? player.currentTime : (mod.lastPosition || 0);
+                        const progress = duration > 0 ? Math.min(0.95, currentTime / duration) : 0;
                         completeCount += progress;
                         pendingCount += (1.0 - progress);
                     } else {

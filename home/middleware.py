@@ -52,3 +52,55 @@ class TabCloseSessionMiddleware:
 
         response = self.get_response(request)
         return response
+
+
+class SecurityHeadersMiddleware:
+    """
+    FIX #9: Adds Content-Security-Policy and other security headers to every HTTP response.
+    These headers harden the browser against XSS, clickjacking, MIME sniffing,
+    and information leakage attacks.
+    """
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        # Content-Security-Policy
+        # - default-src 'self': Only load resources from same origin by default
+        # - script-src / style-src: allow inline (existing templates use inline JS/CSS)
+        #   and trusted CDNs (Google Fonts, etc.)
+        # - img-src: allow data URIs (charts, captcha) and S3 (training video thumbnail)
+        # - media-src: allow S3 for training videos
+        # - frame-ancestors 'none': no embedding in iframes (same as X-Frame-Options DENY)
+        csp = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+            "https://cdnjs.cloudflare.com https://cdn.jsdelivr.net "
+            "https://fonts.googleapis.com https://cdn.tailwindcss.com; "
+            "style-src 'self' 'unsafe-inline' "
+            "https://fonts.googleapis.com https://cdnjs.cloudflare.com "
+            "https://cdn.jsdelivr.net https://cdn.tailwindcss.com; "
+            "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com "
+            "https://cdn.jsdelivr.net data:; "
+            "img-src 'self' data: blob: https: http:; "
+            "media-src 'self' https://website-data-593333832687-ap-south-1-an.s3.ap-south-1.amazonaws.com; "
+            "connect-src 'self'; "
+            "frame-ancestors 'none'; "
+            "object-src 'none';"
+        )
+        response["Content-Security-Policy"] = csp
+
+        # Prevent MIME-type sniffing
+        response["X-Content-Type-Options"] = "nosniff"
+
+        # Referrer-Policy: don't leak URL to third parties
+        response["Referrer-Policy"] = "strict-origin-when-cross-origin"
+
+        # Permissions-Policy: disable unused powerful browser features
+        response["Permissions-Policy"] = (
+            "geolocation=(), microphone=(), camera=(), payment=()"
+        )
+
+        return response

@@ -80,8 +80,19 @@ def posh_act_page(request):
 
     # 3. Calculate Overall Status
     total_modules = modules.count()
+    total_progress = 0.0
+    for mod in modules:
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        if prog_data["is_completed"]:
+            total_progress += 100.0
+        elif mod.video_file:
+            if mod.duration_seconds > 0:
+                percent_watched = (prog_data.get("last_position", 0.0) / mod.duration_seconds) * 100.0
+                percent_watched = min(99.0, max(0.0, percent_watched))
+                total_progress += percent_watched
+
     percent_complete = (
-        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+        int(total_progress / total_modules) if total_modules > 0 else 0
     )
 
     # 4. Determine Locked Status & Split
@@ -158,6 +169,18 @@ def posh_act_page(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
+    # Fallback based on actual video progress
+    video_progress_seconds = 0
+    for mod in modules:
+        if mod.video_file:
+            prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+            if prog_data["is_completed"]:
+                video_progress_seconds += mod.duration_seconds
+            else:
+                video_progress_seconds += int(prog_data.get("last_position", 0.0))
+
+    total_seconds_watched = max(total_seconds_watched, video_progress_seconds)
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
@@ -240,8 +263,19 @@ def posh_act_page_corp(request):
 
     # 3. Calculate Overall Status
     total_modules = len(visible_modules)
+    total_progress = 0.0
+    for mod in visible_modules:
+        prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+        if prog_data["is_completed"]:
+            total_progress += 100.0
+        elif mod.video_file:
+            if mod.duration_seconds > 0:
+                percent_watched = (prog_data.get("last_position", 0.0) / mod.duration_seconds) * 100.0
+                percent_watched = min(99.0, max(0.0, percent_watched))
+                total_progress += percent_watched
+
     percent_complete = (
-        int((completed_count / total_modules) * 100) if total_modules > 0 else 0
+        int(total_progress / total_modules) if total_modules > 0 else 0
     )
 
     # 4. Determine Locked Status & Split
@@ -321,6 +355,18 @@ def posh_act_page_corp(request):
         or 0
     )
     total_seconds_watched = (total_mins_agg * 60) + total_secs_agg
+
+    # Fallback based on actual video progress
+    video_progress_seconds = 0
+    for mod in modules:
+        if mod.video_file:
+            prog_data = progress_map.get(mod.id, {"is_completed": False, "last_position": 0.0})
+            if prog_data["is_completed"]:
+                video_progress_seconds += mod.duration_seconds
+            else:
+                video_progress_seconds += int(prog_data.get("last_position", 0.0))
+
+    total_seconds_watched = max(total_seconds_watched, video_progress_seconds)
 
     last_7_days = [(today - timedelta(days=i)) for i in range(6, -1, -1)]
     chart_labels = [d.strftime("%a") for d in last_7_days]
@@ -869,10 +915,19 @@ def generate_posh_policy(request):
         if company_logo:
             valid_exts = [".png", ".jpg", ".jpeg", ".webp"]
             ext = os.path.splitext(company_logo.name)[1].lower()
-            if ext not in valid_exts:
+            is_image_mime = company_logo.content_type and company_logo.content_type.startswith("image/")
+            if ext not in valid_exts or not is_image_mime:
                 errors.append("Company Logo must be a PNG, JPG, JPEG, or WEBP image.")
             if company_logo.size > 2 * 1024 * 1024:
                 errors.append("Company Logo size exceeds 2MB.")
+            # Verify actual image content using Pillow
+            try:
+                from PIL import Image
+                img = Image.open(company_logo)
+                img.verify()
+                company_logo.seek(0)
+            except Exception:
+                errors.append("Invalid image file. The uploaded file is corrupted or not a valid image.")
         else:
             # Check if there is already an existing policy with a logo
             existing_policy = POSHPolicy.objects.filter(organization=org).first()
