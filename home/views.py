@@ -3097,7 +3097,19 @@ Open Hand Private Limited"""
     
     for tier, content in defaults.items():
         template, created = EmailTemplate.objects.get_or_create(tier_key=tier)
-        if created or not template.body or "<p>" in template.body or "<table>" in template.body:
+        if tier == "PAY_NOW" and not created and template.body and "successfully registering and completing the payment" in template.body:
+            # Revert PAY_NOW to default and copy the custom text to PAYMENT_VERIFIED if PAYMENT_VERIFIED is default
+            pv_template, pv_created = EmailTemplate.objects.get_or_create(tier_key="PAYMENT_VERIFIED")
+            if pv_created or not pv_template.body or "📖 Login Instructions" in pv_template.body:
+                pv_template.body = template.body
+                pv_template.subject = template.subject
+                pv_template.save()
+            
+            # Reset PAY_NOW to its correct default
+            template.subject = content["subject"]
+            template.body = content["body"]
+            template.save()
+        elif created or not template.body or "<p>" in template.body or "<table>" in template.body:
             template.subject = content["subject"]
             template.body = content["body"]
             template.save()
@@ -3119,8 +3131,8 @@ Open Hand Private Limited"""
     email_saved = request.session.pop("email_templates_saved", False)
 
     email_tiers = [
-        ("PAY_NOW", "Payment Received Confirmation"),
-        ("PAYMENT_VERIFIED", "Payment Verified – Onboarding Confirmed"),
+        ("PAY_NOW", "Registration Interest & Payment Link"),
+        ("PAYMENT_VERIFIED", "Payment Verified & Onboarding Link"),
         ("EMPLOYEE_WELCOME", "Employee Welcome – Account Credentials"),
         ("EMPLOYEE_REMINDER", "Training Reminder – Pending Completion"),
     ]

@@ -865,8 +865,8 @@ class POCSOPricingConfig(models.Model):
 # 16. Email Templates for Registrations
 class EmailTemplate(models.Model):
     TIER_CHOICES = (
-        ("PAY_NOW", "Payment Received Confirmation"),
-        ("PAYMENT_VERIFIED", "Payment Verified – Onboarding Confirmed"),
+        ("PAY_NOW", "Registration Interest & Payment Link"),
+        ("PAYMENT_VERIFIED", "Payment Verified & Onboarding Link"),
         ("EMPLOYEE_WELCOME", "Employee Welcome – Account Credentials"),
     )
     tier_key = models.CharField(max_length=20, choices=TIER_CHOICES, unique=True)
