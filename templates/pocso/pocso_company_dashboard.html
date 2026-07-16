@@ -794,9 +794,12 @@
       <span>{{ organization.name }}</span>
     </a>
 
-    <a href="{% url 'logout' %}" class="sidebar-back-btn">
-      <i class="bi bi-box-arrow-right"></i><span>Logout</span>
-    </a>
+    <form action="{% url 'logout' %}" method="post" style="display: inline; margin: 0; padding: 0;">
+      {% csrf_token %}
+      <button type="submit" class="sidebar-back-btn" style="border: none; background: none; width: 100%; text-align: left;">
+        <i class="bi bi-box-arrow-right"></i><span>Logout</span>
+      </button>
+    </form>
 
     <ul class="nav flex-column px-3 mt-3">
       <li class="nav-item">

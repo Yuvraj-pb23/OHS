@@ -17,30 +17,41 @@ from django.conf import settings
 class SecurityError(Exception):
     pass
 
+# Hardcoded SHA-256 hashes of known safe models.
+# This prevents malicious files from being loaded, even if uploaded to trusted directories.
+TRUSTED_MODELS_SHA256 = {
+    "chatbot_model.pkl": "34920314ee6b923ad150676123ba1d6076087257e490f88673c2d07490110fd2",
+    "keyword_index.pkl": "41c92b90c738f3c6f97c03d419ef96381da990410a5f7b8e689f2a7c201ce264",
+    "label_encoder.pkl": "21edfd402534924fe8a5e8660cb36be33a8b7e99e7ce5ad9affd27d3b14c7443",
+    "semantic_data.pkl": "f8516c295dfedaca3d93a5090767d9318380915b64cd18a5637b4159b5764979",
+}
+
 def verify_file_signature(file_path):
-    sig_path = file_path + ".sig"
     if not os.path.exists(file_path):
         return
         
-    with open(file_path, "rb") as f:
-        data = f.read()
+    abs_path = os.path.abspath(file_path)
+    try:
+        base_dir = settings.BASE_DIR
+    except Exception:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         
-    # Use SECRET_KEY (or a fallback if not configured yet)
-    key = getattr(settings, "SECRET_KEY", "fallback-key").encode("utf-8")
-    computed_sig = hmac.new(key, data, hashlib.sha256).hexdigest()
+    trusted_dir = os.path.abspath(os.path.join(base_dir, "chat", "data"))
     
-    if os.path.exists(sig_path):
-        with open(sig_path, "r", encoding="utf-8") as f:
-            expected_sig = f.read().strip()
-        if not hmac.compare_digest(computed_sig, expected_sig):
-            raise SecurityError(f"Integrity check failed for {file_path}! Unauthorized modification detected.")
-    else:
-        # Generate signature on first load in trusted environment
-        try:
-            with open(sig_path, "w", encoding="utf-8") as f:
-                f.write(computed_sig)
-        except Exception:
-            pass
+    if not abs_path.startswith(trusted_dir):
+        raise SecurityError(f"Model file {file_path} is not in a trusted directory ({trusted_dir})!")
+        
+    filename = os.path.basename(file_path)
+    if filename not in TRUSTED_MODELS_SHA256:
+        raise SecurityError(f"Unknown model file {filename}! Missing from trusted hashes.")
+        
+    expected_hash = TRUSTED_MODELS_SHA256[filename]
+    
+    with open(file_path, "rb") as f:
+        computed_hash = hashlib.sha256(f.read()).hexdigest()
+        
+    if computed_hash != expected_hash:
+        raise SecurityError(f"Integrity check failed for {file_path}! Unauthorized modification detected.")
 
 # --- Image Chatbot Components (UPDATED) ---
 

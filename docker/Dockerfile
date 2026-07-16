@@ -16,4 +16,9 @@ RUN pip install --upgrade pip && \
 
 COPY . .
 
+RUN useradd -m appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
 CMD ["gunicorn","OHS.wsgi:application","--bind","0.0.0.0:8000","--certfile","/app/certs/localhost+1.pem","--keyfile","/app/certs/localhost+1-key.pem","--timeout","120"]

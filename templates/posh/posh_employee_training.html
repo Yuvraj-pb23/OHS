@@ -451,7 +451,7 @@
       <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 5px;">
         <button onclick="switchView('training')" class="quick-action-btn" style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: white; border: none; padding: 10px 16px; border-radius: var(--radius-md); font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
           <i class="bi bi-play-circle-fill"></i>
-          <span>Continue Training</span>
+          <span>{% if total_seconds_watched > 0 or percent_complete > 0 %}Resume Training{% else %}Start Training{% endif %}</span>
         </button>
         <button onclick="switchView('quizzes')" class="quick-action-btn" style="background: white; color: var(--color-primary); border: 1px solid var(--border-color); padding: 10px 16px; border-radius: var(--radius-md); font-weight: 700; display: flex; align-items: center; gap: 10px; cursor: pointer; text-align: left;">
           <i class="bi bi-question-circle-fill"></i>

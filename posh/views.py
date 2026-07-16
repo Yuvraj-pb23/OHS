@@ -17,7 +17,6 @@ from django.db.models import Q, Sum
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 
 
@@ -39,8 +38,17 @@ from home.models import (
 )
 
 
+@login_required(login_url="login")
 def posh_video_source(request):
     """Redirects to the POSH training video URL stored in settings."""
+    has_access = Subscription.objects.filter(
+        Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+        status="ACTIVE",
+        plan__type__in=["POSH", "BOTH"],
+    ).exists()
+    if not has_access:
+        messages.error(request, "Access Denied: Subscription Required.")
+        return redirect("tutorial")
     return redirect(settings.POSH_TRAINING_VIDEO_URL)
 
 @login_required(login_url="login")
@@ -518,10 +526,8 @@ def accounts_verify_payment_view(request, registration_id):
         send_tiered_email(registration, "PAYMENT_VERIFIED", "POSH")
 
     except Exception as e:
-        logger.warning(
-            f"Payment verified but email failed for {registration.company_name}: {e}"
-        )
-        messages.error(request, f"Error verifying payment: {str(e)}")
+        logger.exception(f"Payment verified but email failed for {registration.company_name}")
+        messages.error(request, "An unexpected error occurred. Please try again later.")
         return redirect("accounts_registration_detail", registration_id=registration_id)
 
     messages.success(request, f"Payment for {registration.company_name} has been verified!", extra_tags="payment_approved")
@@ -682,7 +688,8 @@ def accounts_save_pricing_view(request):
             request.session["pricing_saved"] = True
             # messages.success(request, "POSH Billing Engine updated successfully!")
         except Exception as e:
-            messages.error(request, f"Error updating pricing: {str(e)}")
+            logger.exception("Error updating pricing")
+            messages.error(request, "An unexpected error occurred. Please try again later.")
 
     from django.urls import reverse
 
@@ -710,13 +717,39 @@ def posh_registration_view(request):
             messages.error(request, "Employee count must be between 1 and 500,000.")
             return redirect("posh_registration")
 
-        # Cap string fields to model max_length to avoid DB truncation / DoS
-        contact_person = (data.get("contact_person") or "")[:100]
-        designation = (data.get("designation") or "")[:100]
-        company_name = (data.get("company_name") or "")[:200]
-        phone = (data.get("phone") or "")[:20]
-        email = (data.get("email") or "")[:254]
-        website = (data.get("website") or "")[:200]
+        from home.validators import is_valid_email, is_valid_phone, is_valid_name, validate_required_fields
+        
+        valid, missing_field = validate_required_fields(
+            {
+                "Contact Person": data.get("contact_person"),
+                "Company Name": data.get("company_name"),
+                "Phone": data.get("phone"),
+                "Email": data.get("email"),
+            },
+            ["Contact Person", "Company Name", "Phone", "Email"]
+        )
+        if not valid:
+            messages.error(request, f"{missing_field} is required.")
+            return redirect("posh_registration")
+
+        contact_person = data.get("contact_person", "").strip()
+        company_name = data.get("company_name", "").strip()
+        phone = data.get("phone", "").strip()
+        email = data.get("email", "").strip().lower()
+        designation = data.get("designation", "").strip()[:100]
+        website = data.get("website", "").strip()[:200]
+
+        if not is_valid_name(contact_person):
+            messages.error(request, "Invalid Contact Person name. Only letters, spaces, hyphens, and apostrophes are allowed (min 2 characters).")
+            return redirect("posh_registration")
+
+        if not is_valid_email(email):
+            messages.error(request, "Invalid email address format.")
+            return redirect("posh_registration")
+            
+        if not is_valid_phone(phone):
+            messages.error(request, "Invalid phone number format.")
+            return redirect("posh_registration")
 
         # Determine IC training mode from hidden fields or radio
         ic_training_mode = data.get("requested_ic_training_mode")

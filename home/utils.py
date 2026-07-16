@@ -538,7 +538,7 @@ def generate_proforma_invoice_pdf(
 import base64
 import hashlib
 
-# FIX #3: Replace insecure XOR cipher with Fernet authenticated symmetric encryption.
+# Use Fernet authenticated symmetric encryption.
 # The 32-byte key is derived from SECRET_KEY using SHA-256 — no extra env vars needed.
 
 def _get_fernet():
@@ -560,19 +560,11 @@ def encrypt_password(plain_text):
 
 
 def decrypt_password(cipher_text):
-    """Decrypt a Fernet-encrypted password, with fallback for legacy XOR values."""
+    """Decrypt a Fernet-encrypted password."""
     if not cipher_text:
         return None
     try:
         return _get_fernet().decrypt(cipher_text.encode("utf-8")).decode("utf-8")
     except Exception:
-        # Fallback: attempt old XOR decryption for values stored before this change.
-        # After a migration period you can remove this fallback.
-        try:
-            key = settings.SECRET_KEY.encode("utf-8")
-            decoded = base64.b64decode(cipher_text.encode("utf-8"))
-            decrypted = bytes([c ^ key[i % len(key)] for i, c in enumerate(decoded)])
-            return decrypted.decode("utf-8")
-        except Exception:
-            return cipher_text
+        return cipher_text
 

@@ -17,7 +17,6 @@ from django.db.models import Q, Sum
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from PIL import Image
 
 
@@ -547,16 +546,62 @@ def pocso_registration_view(request):
             messages.error(request, "CAPTCHA verification failed. Please try again.")
             return redirect("pocso_registration")
 
+        from home.validators import is_valid_email, is_valid_phone, is_valid_name, validate_required_fields, is_valid_numeric
+
+        valid, missing_field = validate_required_fields(
+            {
+                "School Name": data.get("school_name"),
+                "Contact Person": data.get("person_name"),
+                "Phone": data.get("phone"),
+                "Email": data.get("email"),
+            },
+            ["School Name", "Contact Person", "Phone", "Email"]
+        )
+        if not valid:
+            messages.error(request, f"{missing_field} is required.")
+            return redirect("pocso_registration")
+
+        school_name = data.get("school_name", "").strip()[:200]
+        person_name = data.get("person_name", "").strip()
+        email = data.get("email", "").strip().lower()
+        phone = data.get("phone", "").strip()
+        address = data.get("address", "").strip()
+        city = data.get("city", "").strip()
+
+        if not is_valid_name(person_name):
+            messages.error(request, "Invalid Contact Person name. Only letters, spaces, hyphens, and apostrophes are allowed (min 2 characters).")
+            return redirect("pocso_registration")
+
+        if not is_valid_email(email):
+            messages.error(request, "Invalid email address format.")
+            return redirect("pocso_registration")
+            
+        if not is_valid_phone(phone):
+            messages.error(request, "Invalid phone number format.")
+            return redirect("pocso_registration")
+
+        try:
+            students_count = int(data.get("students_count", 0))
+            teachers_count = int(data.get("teachers_count", 0))
+            non_teaching_staff_count = int(data.get("non_teaching_staff_count", 0))
+        except (ValueError, TypeError):
+            messages.error(request, "Counts must be valid numbers.")
+            return redirect("pocso_registration")
+
+        if students_count < 0 or teachers_count < 0 or non_teaching_staff_count < 0:
+            messages.error(request, "Counts cannot be negative.")
+            return redirect("pocso_registration")
+
         reg = POCSORegistration(
-            school_name=data.get("school_name"),
-            person_name=data.get("person_name"),
-            email=data.get("email"),
-            phone=data.get("phone"),
-            address=data.get("address"),
-            city=data.get("city"),
-            students_count=int(data.get("students_count", 0)),
-            teachers_count=int(data.get("teachers_count", 0)),
-            non_teaching_staff_count=int(data.get("non_teaching_staff_count", 0)),
+            school_name=school_name,
+            person_name=person_name,
+            email=email,
+            phone=phone,
+            address=address,
+            city=city,
+            students_count=students_count,
+            teachers_count=teachers_count,
+            non_teaching_staff_count=non_teaching_staff_count,
             has_policy=data.get("has_policy") == "yes",
             has_committee=data.get("has_committee") == "yes",
             teaching_staff_trained=data.get("teaching_staff_trained") == "yes",

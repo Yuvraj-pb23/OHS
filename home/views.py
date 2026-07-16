@@ -15,7 +15,6 @@ from django.db.models import Q, Sum
 from django.http import FileResponse, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from PIL import Image
 
@@ -43,6 +42,10 @@ from .models import (
     POSHPolicy,
 )
 from .utils import generate_certificate
+
+logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
+cert_logger = logging.getLogger("home.certificate")
 
 
 @login_required(login_url="login")
@@ -272,7 +275,7 @@ def get_poster_with_logo(request, poster_type):
                     font_bold = ImageFont.truetype(font_path, font_size)
                     font_reg = ImageFont.truetype(font_path, font_size_reg)
                 except Exception as font_err:
-                    _logger = logging.getLogger(__name__)
+
                     _logger.error(f"Error loading font: {str(font_err)}")
                     font_bold = ImageFont.load_default()
                     font_reg = ImageFont.load_default()
@@ -377,7 +380,7 @@ def get_poster_with_logo(request, poster_type):
                     stroke_w_addr = max(1, int(font_size_reg * 0.04))
                     draw_text_with_shadow(draw, (pos_x_addr, pos_y), config.company_address, font=font_reg, fill=text_color_rgb, stroke_w=stroke_w_addr, spacing=spacing_val)
             else:
-                _logger = logging.getLogger(__name__)
+
                 _logger.warning(f"Font file not found at: {font_path}")
 
         # Save to buffer
@@ -398,9 +401,9 @@ def get_poster_with_logo(request, poster_type):
         )
 
     except Exception as e:
-        _logger = logging.getLogger(__name__)
-        _logger.error(f"Error generating poster: {str(e)}")
-        return HttpResponse(f"Error generating poster: {str(e)}", status=500)
+
+        _logger.exception("Error generating poster")
+        return HttpResponse("An unexpected error occurred. Please try again later.", status=500)
 
 
 @login_required(login_url="login")
@@ -445,7 +448,7 @@ def save_logo_config(request):
             return JsonResponse({"status": "success"})
         except Exception as e:
             # FIX #9: Log internally, return generic message to client
-            _logger = logging.getLogger(__name__)
+
             _logger.exception(f"save_logo_config error for user={request.user.id}: {e}")
             return JsonResponse({"status": "error", "message": "An error occurred saving the configuration."}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=400)
@@ -717,6 +720,11 @@ def force_password_change(request):
             messages.error(request, "Password must be at least 8 characters long.")
             return render(request, "force_password_change.html")
 
+        import re
+        if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", new_password):
+            messages.error(request, "Password must contain at least one letter, one number, and one special character (@$!%*?&).")
+            return render(request, "force_password_change.html")
+
         # Update password
         user.set_password(new_password)
         user.force_password_change = False
@@ -736,6 +744,61 @@ def force_password_change(request):
         return redirect("custom_login_redirect")
 
     return render(request, "force_password_change.html")
+
+
+# --- 1.6 SETUP PASSWORD (Via Email Link) ---
+def setup_password_view(request, uidb64, token):
+    from django.contrib.auth import get_user_model, login
+    from django.contrib.auth.tokens import default_token_generator
+    from django.utils.http import urlsafe_base64_decode
+    from django.utils.encoding import force_str
+
+    User = get_user_model()
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            new_password = request.POST.get("new_password")
+            confirm_password = request.POST.get("confirm_password")
+
+            if not new_password or not confirm_password:
+                messages.error(request, "Both fields are required.")
+                return render(request, "setup_password.html")
+
+            if new_password != confirm_password:
+                messages.error(request, "Passwords do not match.")
+                return render(request, "setup_password.html")
+
+            if len(new_password) < 8:
+                messages.error(request, "Password must be at least 8 characters long.")
+                return render(request, "setup_password.html")
+
+            import re
+            if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", new_password):
+                messages.error(request, "Password must contain at least one letter, one number, and one special character (@$!%*?&).")
+                return render(request, "setup_password.html")
+
+            # Update password
+            user.set_password(new_password)
+            user.force_password_change = False
+            user.save()
+
+            # Send email notification
+            from home.email_utils import send_password_change_email
+            send_password_change_email(user)
+
+            # Log the user in
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            return redirect("custom_login_redirect")
+
+        return render(request, "setup_password.html")
+    else:
+        messages.error(request, "The password setup link is invalid or has expired.")
+        return redirect("login")
 
 
 
@@ -867,7 +930,7 @@ def company_subscription(request, plan_type):
             )  # 72h
             email = payload["email"]
             # Auto-populate company name from the POSH or POCSO registration
-            logger = logging.getLogger(__name__)
+
             if not comp_name:
                 try:
                     posh_reg = POSHRegistration.objects.get(id=payload["reg_id"])
@@ -887,7 +950,7 @@ def company_subscription(request, plan_type):
                         f"Unexpected error while fetching registration: {e}"
                     )
         except Exception as e:
-            logger = logging.getLogger(__name__)
+
             logger.exception(f"Invalid setup link payload: {e}")
             messages.error(
                 request, "Invalid or expired setup link. Please contact support."
@@ -958,9 +1021,9 @@ def company_subscription(request, plan_type):
             return redirect("/dashboard/company/?login=true")
 
         except Exception as e:
-            logger = logging.getLogger(__name__)
-            logger.exception(f"Error during company subscription setup: {e}")
-            messages.error(request, f"Error: {str(e)}")
+
+            logger.exception("Error during company subscription setup")
+            messages.error(request, "An unexpected error occurred. Please try again later.")
             return redirect(request.get_full_path())
 
     # --- GET ---
@@ -1033,6 +1096,27 @@ def add_employee(request):
         emp_password = request.POST.get("emp_password")
         emp_department = request.POST.get("emp_department", "").strip()
 
+        from home.validators import is_valid_email, is_valid_name, validate_required_fields
+        valid, missing_field = validate_required_fields(
+            {"Name": emp_name, "Email": emp_email}, ["Name", "Email"]
+        )
+        if not valid:
+            messages.error(request, f"{missing_field} is required.")
+            return redirect("company_dashboard")
+
+        emp_name = emp_name.strip()
+        emp_email = emp_email.strip().lower()
+        if emp_password:
+            emp_password = emp_password.strip()
+
+        if not is_valid_name(emp_name):
+            messages.error(request, "Invalid name format. Only letters, spaces, hyphens, and apostrophes are allowed (min 2 characters).")
+            return redirect("company_dashboard")
+
+        if not is_valid_email(emp_email):
+            messages.error(request, "Invalid email address format.")
+            return redirect("company_dashboard")
+
         posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
         pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
         reg = posh_reg or pocso_reg
@@ -1100,7 +1184,7 @@ def add_employee(request):
             messages.success(request, f"✅ {emp_name} added successfully! Login credentials sent to {emp_email}.")
 
         except Exception as e:
-            _logger = logging.getLogger(__name__)
+
             _logger.exception(f"Error adding employee for org {org.id}: {e}")
             messages.error(request, "Failed to add employee. Please try again or contact support.")
 
@@ -1165,8 +1249,20 @@ def update_employee(request, member_id):
     emp_email = request.POST.get("emp_email", "").strip().lower()
     emp_department = request.POST.get("emp_department", "").strip()
 
-    if not emp_name or not emp_email:
-        messages.error(request, "Name and Email are required.")
+    from home.validators import is_valid_email, is_valid_name, validate_required_fields
+    valid, missing_field = validate_required_fields(
+        {"Name": emp_name, "Email": emp_email}, ["Name", "Email"]
+    )
+    if not valid:
+        messages.error(request, f"{missing_field} is required.")
+        return redirect("company_dashboard")
+        
+    if not is_valid_name(emp_name):
+        messages.error(request, "Invalid name format. Only letters, spaces, hyphens, and apostrophes are allowed (min 2 characters).")
+        return redirect("company_dashboard")
+
+    if not is_valid_email(emp_email):
+        messages.error(request, "Invalid email address format.")
         return redirect("company_dashboard")
 
     # Check if another user already has the new email
@@ -1218,14 +1314,14 @@ def update_employee(request, member_id):
                 )
                 messages.success(request, f"Employee updated successfully. Login credentials sent to {emp_email}.")
             except Exception as email_err:
-                _logger = logging.getLogger(__name__)
+
                 _logger.error(f"Error sending email: {email_err}")
                 messages.warning(request, f"Employee updated successfully, but failed to send notification email: {str(email_err)}")
         else:
             messages.success(request, "Employee updated successfully.")
 
     except Exception as e:
-        _logger = logging.getLogger(__name__)
+
         _logger.exception(f"Error updating employee member_id={member_id}: {e}")
         messages.error(request, "Failed to update employee. Please try again or contact support.")
 
@@ -1289,7 +1385,7 @@ def delete_employee(request, member_id):
         user_obj.delete()
         messages.success(request, f"Employee {emp_name} has been deleted successfully.")
     except Exception as e:
-        _logger = logging.getLogger(__name__)
+
         _logger.exception(f"Error deleting employee member_id={member_id}: {e}")
         messages.error(request, "Failed to delete employee. Please try again or contact support.")
 
@@ -1299,7 +1395,7 @@ def delete_employee(request, member_id):
 # --- 4. COMPANY DASHBOARD ---
 @login_required(login_url="login")
 def company_dashboard(request):
-    _logger = logging.getLogger(__name__)
+
     _logger.debug("COMPANY DASHBOARD VIEW IS CALLED")
     # Check if user logged out from HR portal
     if request.session.get("logged_out_of_hr"):
@@ -1693,6 +1789,21 @@ def individual_subscription(request, plan_type):
             )
             return redirect(request.path)
 
+        import re
+        from home.validators import is_valid_email, is_valid_name
+        
+        if not is_valid_name(fullname):
+            messages.error(request, "Please enter a valid full name (letters and spaces only, min 2 characters).")
+            return redirect(request.path)
+            
+        if not is_valid_email(email):
+            messages.error(request, "Invalid email address format.")
+            return redirect(request.path)
+
+        if not re.match(r"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", password):
+            messages.error(request, "Password must be at least 8 characters long, containing at least one letter, one number, and one special character (@$!%*?&).")
+            return redirect(request.path)
+
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username taken.")
             return redirect(request.path)
@@ -1721,7 +1832,9 @@ def individual_subscription(request, plan_type):
             login(request, user, backend="django.contrib.auth.backends.ModelBackend")
             return redirect("posh_act_page")
         except Exception as e:
-            messages.error(request, str(e))
+
+            logger.exception("Error processing subscription details")
+            messages.error(request, "An unexpected error occurred. Please try again later.")
             return redirect(request.path)
 
     # FIX FOR CACHE PROBLEM: Clear messages on a fresh GET request
@@ -1780,7 +1893,9 @@ def update_watch_time(request):
             total_minutes = activity.minutes_watched
             return JsonResponse({"status": "success", "total_minutes": total_minutes})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+            logger.exception("Error in update_watch_time")
+            return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"status": "error"}, status=400)
 
 
@@ -1790,7 +1905,7 @@ def mod_complete(request, module_id):
     API called when a video ends. Marks module as complete.
     Security: Verifies the module belongs to the user's active subscription type.
     """
-    _logger = logging.getLogger(__name__)
+
     _logger.debug(f"mod_complete called: method={request.method}, module_id={module_id}, user={request.user.id}")
     if request.method == "POST":
         try:
@@ -1834,7 +1949,7 @@ def mod_complete(request, module_id):
 
 @login_required
 def save_video_progress(request):
-    _logger = logging.getLogger(__name__)
+
     if request.method == "POST":
         try:
             data = json.loads(request.body)
@@ -1886,13 +2001,31 @@ def reset_progress(request):
         try:
             data = json.loads(request.body)
             course_type = data.get("type", "POSH")
+            
+            active_subs = Subscription.objects.filter(
+                Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+                status="ACTIVE",
+            )
+            allowed_types = set()
+            for sub in active_subs:
+                t = sub.plan.type
+                if t == "BOTH":
+                    allowed_types |= {"POSH", "POCSO"}
+                elif t in ("POSH", "POCSO"):
+                    allowed_types.add(t)
+
+            if course_type not in allowed_types:
+                return JsonResponse({"status": "error", "message": "No active subscription found for this course."}, status=403)
+
             ModuleProgress.objects.filter(
                 user=request.user, 
                 module__module_type=course_type
             ).delete()
             return JsonResponse({"status": "success"})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+            logger.exception("Error resetting progress")
+            return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
 
 
@@ -1905,6 +2038,22 @@ def get_assessment_questions(request):
     assessment_type = request.GET.get("type", "POSH").upper()  # POSH, POCSO, or POCSO_CORP
     if assessment_type not in ["POSH", "POCSO", "POCSO_CORP"]:
         return JsonResponse({"status": "error", "message": "Invalid assessment type"}, status=400)
+    
+    active_subs = Subscription.objects.filter(
+        Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+        status="ACTIVE",
+    )
+    allowed_types = set()
+    for sub in active_subs:
+        t = sub.plan.type
+        if t == "BOTH":
+            allowed_types |= {"POSH", "POCSO"}
+        elif t in ("POSH", "POCSO"):
+            allowed_types.add(t)
+
+    base_type = "POCSO" if assessment_type.startswith("POCSO") else assessment_type
+    if base_type not in allowed_types:
+        return JsonResponse({"status": "error", "message": "No active subscription found for this assessment."}, status=403)
     
     try:
         json_path = os.path.join(settings.BASE_DIR, "home", "quiz_questions.json")
@@ -1928,7 +2077,9 @@ def get_assessment_questions(request):
             
         return JsonResponse({"status": "success", "questions": safe_questions})
     except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+        logger.exception("Error getting assessment questions")
+        return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
 
 
 @login_required
@@ -1945,6 +2096,23 @@ def submit_assessment(request):
             if assessment_type not in ["POSH", "POCSO", "POCSO_CORP"]:
                 return JsonResponse({"status": "error", "message": "Invalid assessment type"}, status=400)
             
+            # Check subscription
+            active_subs = Subscription.objects.filter(
+                Q(user=request.user) | Q(organization__organizationmember__user=request.user),
+                status="ACTIVE",
+            )
+            allowed_types = set()
+            for sub in active_subs:
+                t = sub.plan.type
+                if t == "BOTH":
+                    allowed_types |= {"POSH", "POCSO"}
+                elif t in ("POSH", "POCSO"):
+                    allowed_types.add(t)
+
+            base_type = "POCSO" if assessment_type.startswith("POCSO") else assessment_type
+            if base_type not in allowed_types:
+                return JsonResponse({"status": "error", "message": "No active subscription found for this assessment."}, status=403)
+
             # Load correct answers
             json_path = os.path.join(settings.BASE_DIR, "home", "quiz_questions.json")
             with open(json_path, "r", encoding="utf-8") as f:
@@ -2019,7 +2187,9 @@ def submit_assessment(request):
                 "results": results
             })
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+            logger.exception("Error submitting assessment")
+            return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
     return JsonResponse({"status": "error", "message": "Invalid method"}, status=400)
 
 
@@ -2144,7 +2314,9 @@ def member_progress_api(request, member_id):
             "training_type": training_type
         })
     except Exception as e:
-        return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+        logger.exception("Error getting member progress")
+        return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
 
 
 
@@ -2406,8 +2578,8 @@ def upload_employee_bulk(request):
                     current_count += 1
                 except Exception as e:
                     skipped_count += 1
-                    errors.append(f"{email}: {str(e)}")
-                    logger.warning(f"Skipping employee import row: {e}")
+                    errors.append(f"{email}: An unexpected error occurred.")
+                    logger.exception(f"Error importing employee row for {email}")
                     continue
 
             if added_count > 0:
@@ -2424,7 +2596,9 @@ def upload_employee_bulk(request):
                     )
 
         except Exception as e:
-            messages.error(request, f"Error processing file: {str(e)}")
+
+            logger.exception("Error processing employee import file")
+            messages.error(request, "An unexpected error occurred. Please try again later.")
 
     else:
         messages.error(request, "No file was uploaded. Please select a CSV file and try again.")
@@ -2669,6 +2843,7 @@ def superuser_dashboard(request):
     return render(request, "superuser_dashboard.html", context)
 
 
+@require_POST
 def tab_close_logout(request):
     """
     Called via navigator.sendBeacon() when the user closes a dashboard tab.
@@ -2699,8 +2874,10 @@ def tab_close_logout(request):
     return HttpResponse(status=204)  # No Content — beacon doesn't need a body
 
 
+# FIX #13: Require POST for logout to prevent CSRF-based logout via GET links
+@require_POST
 def custom_logout(request):
-    # Accepts GET or POST (used by tab-close beacon and some direct links)
+    # Accepts POST only for security against CSRF (tab-close beacon sends POST)
     logout(request)
     return redirect("home")
 
@@ -2731,7 +2908,7 @@ def training_logout(request):
 
 def download_certificate(request, course_type="POSH"):
     import logging
-    cert_logger = logging.getLogger("home.certificate")
+
 
     if not request.user.is_authenticated:
         return redirect("login")
@@ -3231,7 +3408,9 @@ def delete_registrations_view(request):
 
             return JsonResponse({"status": "success"})
         except Exception as e:
-            return JsonResponse({"status": "error", "message": str(e)}, status=500)
+
+            logger.exception("Error deleting registrations")
+            return JsonResponse({"status": "error", "message": "An unexpected error occurred. Please try again later."}, status=500)
 
     from django.shortcuts import redirect
     return redirect("accounts_dashboard")
@@ -3349,26 +3528,11 @@ def trigger_tier_email_view(request):
                     {"status": "error", "message": "Email failed to send."}, status=500
                 )
         except Exception as e:
-            _logger = logging.getLogger(__name__)
+
             _logger.exception(f"trigger_tier_email_view error: {e}")
             return JsonResponse({"status": "error", "message": "An error occurred processing your request."}, status=400)
 
     return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
-
-
-logger = logging.getLogger(__name__)
-
-
-
-
-
-
-
-
-
-
-logger = logging.getLogger(__name__)
-
 
 
 

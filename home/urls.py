@@ -28,6 +28,12 @@ urlpatterns = [
         views.force_password_change,
         name="force_password_change",
     ),
+    # --- SETUP PASSWORD (Via Email Link) ---
+    path(
+        "setup-password/<uidb64>/<token>/",
+        views.setup_password_view,
+        name="setup_password",
+    ),
     # --- AJAX API for Training ---
     path("ajax/update-watch-time/", views.update_watch_time, name="update_watch_time"),
     path("ajax/mod-complete/<int:module_id>/", views.mod_complete, name="mod_complete"),

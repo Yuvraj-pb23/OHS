@@ -1,12 +1,15 @@
 stages:
   - test
   - security
+  - dast
 
 variables:
   DJANGO_SETTINGS_MODULE: OHS.settings
+  DAST_TARGET_URL: "https://openhandsolutions.com"
 
 before_script:
   - python -V
+  - pip install --upgrade pip
   - pip install -r requirements.txt
 
 pytest:
@@ -24,7 +27,34 @@ lint:
   script:
     - flake8 .
 
-security:
+static_security:
   stage: security
   script:
     - bandit -r .
+
+dependency_scan:
+  stage: security
+  script:
+    - pip install pip-audit
+    - pip-audit -r requirements.txt -o pip-audit-report.txt
+  artifacts:
+    name: dependency-scan-report
+    paths:
+      - pip-audit-report.txt
+    when: always
+
+dast_scan:
+  stage: dast
+  image: owasp/zap2docker-stable:latest
+  before_script: []
+  script:
+    - zap-baseline.py -t $DAST_TARGET_URL -r zap_report.html || exit_code=$?
+    - echo "ZAP scan finished with exit code $exit_code"
+    - if [ -f /zap/wrk/zap_report.html ]; then cp /zap/wrk/zap_report.html .; fi
+    # Exit codes: 0 = success, 1 = warning, 2 = fail (critical vulnerabilities detected)
+    - if [ $exit_code -eq 2 ]; then exit 1; fi
+  artifacts:
+    name: dast-scan-report
+    paths:
+      - zap_report.html
+    when: always

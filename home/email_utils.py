@@ -56,6 +56,15 @@ def send_welcome_email(
 
     def _send_thread():
         from home.models import EmailTemplate
+        from django.contrib.auth.tokens import default_token_generator
+        from django.utils.http import urlsafe_base64_encode
+        from django.utils.encoding import force_bytes
+
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        site_base = getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')
+        setup_link = f"{site_base}/setup-password/{uidb64}/{token}/"
+
         template = None
         if is_company_employee:
             try:
@@ -63,8 +72,6 @@ def send_welcome_email(
             except Exception as db_err:
                 logger.warning(f"DB access in thread failed: {db_err}")
                 template = None
-
-        site_base = training_link or f"{getattr(settings, 'SITE_URL', 'https://openhandsolutions.com')}/login"
 
         # Get organization name, support email and subscription details dynamically
         org_name = organization_name or "Open Hand Private Limited"
@@ -90,18 +97,31 @@ def send_welcome_email(
 
         if template and template.subject and template.body:
             subject = template.subject
-            body = template.body.format(
+            
+            # Clean up the DB template to remove old credential lines
+            import re
+            body_template = template.body
+            body_template = re.sub(r'Username:\s*\{email\}\r?\n?', '', body_template)
+            body_template = re.sub(r'Temporary Password:\s*\{password\}\r?\n?', '', body_template)
+            body_template = re.sub(r'Please log in using the above credentials and change your password upon your first login\.\r?\n?', '', body_template)
+            body_template = re.sub(r'Portal Link:\s*\{login_url\}\r?\n?', 
+                'To securely set up your password and access your training portal, please click the link below:\n{login_url}\n\nPlease log in using your newly created password.\n', 
+                body_template)
+            
+            body = body_template.format(
                 name=user_data.get_full_name() or user_data.first_name or user_data.email,
                 company_name=org_name,
-                password=password,
+                password="[Please use the setup link below]",
                 email=user_data.email,
-                login_url=site_base,
+                login_url=setup_link,
                 designation=designation or "Employee",
-                training_link=site_base,
+                training_link=setup_link,
                 training_module_name=training_module_name,
                 training_duration=training_duration,
                 support_email=support_email,
             )
+            if "[Please use the setup link below]" in body:
+                body += f"\n\nTo securely set up your password and access your account, please click here: {setup_link}"
         elif is_company_employee:
             subject = "Enrolled in Compliance Training Program – Open Hand Private Limited"
             body = f"""Dear {user_data.get_full_name() or user_data.first_name}
@@ -120,12 +140,10 @@ Please complete the training within {training_duration}.
 At the end of the module, you will be required to complete a short assessment quiz.
 Upon successful meeting the assessment criteria, your Certificate of Completion will be available for download from the company dashboard.
 
-Login Credentials
-Portal Link: {site_base}
-Username: {user_data.email}
-Temporary Password: {password}
+To securely set up your password and access your training portal, please click the link below:
+{setup_link}
 
-Please log in using the above credentials and change your password upon your first login.
+Please log in using your newly created password.
 
 If you require any assistance, please contact us at {support_email}.
 
@@ -140,25 +158,50 @@ Open Hand Private Limited (OHPL)"""
 
 Welcome to Open Hand Solution!
 
-Your account has been successfully created. Here are your login credentials:
+Your account has been successfully created.
 
-Name:     {user_data.get_full_name() or user_data.first_name}
-Email:    {user_data.email}
-Password: {password}
+To securely set up your password and access your account, please click the link below:
+{setup_link}
 
-Please keep these credentials safe and secure.
+Please keep your credentials safe and secure.
 
 Best regards,
 Open Hand Solution Team"""
 
+        from django.core.mail import EmailMultiAlternatives
+        from django.template.loader import render_to_string
+
+        logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
+        
+        # 1. Convert text body to HTML and replace setup_link with button
+        html_body = format_email_body(body)
+        button_html = (
+            f'<div style="margin: 20px 0;">'
+            f'<a href="{setup_link}" style="display: inline-block; padding: 12px 24px; '
+            f'background-color: #6366f1; color: #ffffff !important; text-decoration: none; '
+            f'border-radius: 8px; font-weight: bold;">Create Password & Access Dashboard</a>'
+            f'</div>'
+        )
+        html_body = html_body.replace(setup_link, button_html)
+
+        # 2. Render welcome_email.html
+        html_content = render_to_string(
+            "emails/welcome_email.html",
+            {
+                "body_content": html_body,
+                "logo_url": logo_url,
+            }
+        )
+
         try:
-            send_mail(
+            msg = EmailMultiAlternatives(
                 subject,
                 body,
                 settings.DEFAULT_FROM_EMAIL,
                 [user_data.email],
-                fail_silently=False,
             )
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
         except Exception as e:
             logger.error(f"Error sending async welcome email: {e}")
 
@@ -641,6 +684,22 @@ def send_payment_confirmed_email(registration, username, password, registration_
     portal_url = f"{site_url}/login"
     logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
 
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    try:
+        user = User.objects.get(username=username)
+    except User.DoesNotExist:
+        user = None
+
+    setup_link = portal_url
+    if user:
+        from django.contrib.auth.tokens import default_token_generator
+        from django.utils.http import urlsafe_base64_encode
+        from django.utils.encoding import force_bytes
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        setup_link = f"{site_url}/setup-password/{uidb64}/{token}/"
+
     recipient_name = registration.contact_person or registration.company_name or "Valued Customer"
 
     subject = "Payment confirmed — Welcome to Open Hand! Your login details inside"
@@ -665,23 +724,17 @@ def send_payment_confirmed_email(registration, username, password, registration_
     <td style="font-size: 14px;"><a href="{portal_url}" style="color: #6366f1; text-decoration: underline; font-weight: bold;">{portal_url}</a></td>
   </tr>
   <tr>
-    <td style="font-size: 14px; font-weight: bold; color: #1e293b;">Username</td>
-    <td style="font-size: 14px; font-family: monospace; color: #1e293b;">{username}</td>
-  </tr>
-  <tr>
-    <td style="font-size: 14px; font-weight: bold; color: #1e293b;">Password</td>
-    <td style="font-size: 14px; font-family: monospace; color: #1e293b;">{password}</td>
+    <td style="font-size: 14px; font-weight: bold; color: #1e293b;">Action Required</td>
+    <td style="font-size: 14px; font-family: monospace; color: #1e293b;"><a href="{setup_link}" style="color: #6366f1; text-decoration: underline; font-weight: bold;">Set up your password</a></td>
   </tr>
 </table>
 
 <h3 style="color:#0f172a; margin-top: 25px; margin-bottom: 10px;">📖 Login Instructions</h3>
 <ol style="margin-bottom: 20px; font-size: 14px; color: #334155;">
-  <li style="margin-bottom: 5px;">Visit <a href="{portal_url}" style="color: #6366f1; font-weight: bold;">{portal_url}</a></li>
-  <li style="margin-bottom: 5px;">Enter your Username and Password (provided above)</li>
-  <li style="margin-bottom: 5px;">You will be prompted to change your password on first login — choose a strong, memorable password</li>
+  <li style="margin-bottom: 5px;">Click the <strong>Set up your password</strong> link above to create a strong, memorable password</li>
   <li style="margin-bottom: 5px;">Once logged in, explore your dashboard and all available resources</li>
 </ol>
-<p style="color: #ef4444; font-weight: bold; font-size: 13px; margin-bottom: 25px;">⚠️ For security reasons, please change your password immediately after first login. Do not share your credentials.</p>
+<p style="color: #ef4444; font-weight: bold; font-size: 13px; margin-bottom: 25px;">⚠️ For security reasons, do not share your credentials.</p>
 
 <h3 style="color:#0f172a; margin-top: 25px; margin-bottom: 10px;">📌 What You Get Access To</h3>
 <p style="font-size: 14px; color: #334155;">Once logged in, your portal includes:</p>
@@ -775,9 +828,7 @@ def send_posh_reminder_email(user, status, completion_percentage, due_date):
     import threading
     from django.core.mail import send_mail
     from django.conf import settings
-    import logging
 
-    logger = logging.getLogger(__name__)
 
     try:
         from home.models import EmailTemplate

@@ -9,14 +9,14 @@ logger = logging.getLogger(__name__)
 
 class EmailOrUsernameModelBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
-        logger.debug(f"--- Login Attempt for: {username} ---")
+        logger.debug("--- Login Attempt ---")
 
         try:
             # Check for username OR email
             user = UserModel.objects.get(
                 Q(username__iexact=username) | Q(email__iexact=username)
             )
-            logger.debug(f"Found User in DB: {user.username} (Email: {user.email})")
+            logger.debug("Found User in DB.")
         except UserModel.DoesNotExist:
             logger.debug("No user found with that username or email.")
             return None
@@ -27,7 +27,7 @@ class EmailOrUsernameModelBackend(ModelBackend):
             )
             for u in users:
                 if u.check_password(password) and self.user_can_authenticate(u):
-                    logger.debug(f"Found matching User among duplicates: {u.username}")
+                    logger.debug("Found matching User among duplicates.")
                     return u
             logger.debug("Multiple users found, but none matched the password.")
             return None

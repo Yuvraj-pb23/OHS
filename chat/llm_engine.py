@@ -1,12 +1,12 @@
 import json
+import logging
 import os
-import pickle  # nosec B403
 import warnings
 
 import numpy as np
 import torch
+logger = logging.getLogger(__name__)
 from django.conf import settings
-from .utils import verify_file_signature
 
 warnings.filterwarnings("ignore")
 
@@ -69,8 +69,8 @@ class LLMEngine:
             faiss.write_index(index, index_path)
 
             print(f"[LLM Engine] Saving metadata to {meta_path}...")
-            with open(meta_path, "wb") as f:
-                pickle.dump(documents, f)
+            with open(meta_path, "w", encoding="utf-8") as f:
+                json.dump(documents, f)
 
             print("[LLM Engine] Index build complete.")
             return True
@@ -101,7 +101,7 @@ class LLMEngine:
                 )
 
             index_path = os.path.join(oshllm_dir, "faiss.index")
-            meta_path = os.path.join(oshllm_dir, "meta.pkl")
+            meta_path = os.path.join(oshllm_dir, "meta.json")
             json_path = os.path.join(oshllm_dir, "doc.json")
             model_path = os.path.join(oshllm_dir, "qwen_instruct", "checkpoint-60")
 
@@ -130,11 +130,10 @@ class LLMEngine:
             print("[LLM Engine] Loading FAISS index...")
             self.index = faiss.read_index(index_path)
 
-            # Load metadata safely (trusted file)
+            # Load metadata safely
             print("[LLM Engine] Loading metadata...")
-            verify_file_signature(meta_path)
-            with open(meta_path, "rb") as f:
-                self.metadata = pickle.load(f)  # nosec B301
+            with open(meta_path, "r", encoding="utf-8") as f:
+                self.metadata = json.load(f)
 
             # Detect device
             device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -257,4 +256,5 @@ Answer:
             return decoded.strip()
 
         except Exception as e:
-            return f"Error generating answer: {e}"
+            logger.exception("Error generating answer")
+            return "An unexpected error occurred. Please try again later."
