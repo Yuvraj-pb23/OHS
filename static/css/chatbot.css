@@ -112,18 +112,21 @@
   bottom: 90px;
   right: 20px;
   width: 400px;
+  max-width: calc(100vw - 40px);
   height: 600px;
+  max-height: calc(100vh - 120px);
   border-radius: 20px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
   overflow: hidden;
   z-index: 9999;
   background: white;
   animation: slideUp 0.3s ease-out;
-  transition: width 0.4s ease, height 0.4s ease;
+  transition: width 0.4s ease, height 0.4s ease, max-width 0.4s ease, max-height 0.4s ease;
 }
 
 #chatbot.expanded {
   width: 900px;
+  max-width: calc(100vw - 40px);
   height: 80vh;
   max-height: 800px;
 }
@@ -978,15 +981,16 @@
   position: absolute;
   top: 15px;
   right: 25px;
-  color: #333;
+  color: #ffffff;
   font-size: 40px;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
+  z-index: 20100;
 }
 
 .image-modal-close:hover {
-  color: #888;
+  color: #cccccc;
 }
 
 /* --- UPDATED STYLES FOR BUTTONS AT TOP --- */
@@ -1105,19 +1109,19 @@
 
 /* --- START: MEDIA QUERIES --- */
 
-@media (max-width: 700px) {
-  #chatbot.expanded {
-    width: calc(100vw - 32px);
-  }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   #chatbot {
     width: calc(100vw - 32px);
     right: 16px;
     bottom: 80px;
     height: calc(100vh - 120px);
-    max-height: 500px;
+    max-height: 600px;
+  }
+
+  #chatbot.expanded {
+    width: calc(100vw - 32px);
+    height: calc(100vh - 120px);
+    max-height: 600px;
   }
 
   #chat-wrapper {

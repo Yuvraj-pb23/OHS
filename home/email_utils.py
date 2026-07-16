@@ -70,7 +70,7 @@ def send_welcome_email(
         org_name = organization_name or "Open Hand Private Limited"
         support_email = getattr(settings, "SUPPORT_EMAIL", "openhandpvtltd@gmail.com")
         training_module_name = "POSH Act Compliance Training Program"
-        training_duration = "1 year"
+        training_duration = "1 month"
 
         from home.models import OrganizationMember, Subscription
         try:
@@ -85,13 +85,6 @@ def send_welcome_email(
                         training_module_name = "POCSO Act Compliance Training Program"
                     elif plan_type == "BOTH":
                         training_module_name = "POSH & POCSO Act Compliance Training Programs"
-                    
-                    duration_days = active_sub.plan.duration_days
-                    if duration_days:
-                        if duration_days >= 365:
-                            training_duration = f"{duration_days // 365} year(s)"
-                        else:
-                            training_duration = f"{duration_days} days"
         except Exception as e:
             logger.warning(f"Error resolving welcome email subscription details: {e}")
 

@@ -1,13 +1,7 @@
 {%extends 'base.html'%}
-{%block body %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>POSH Awareness & Team Building</title>
-    
+{% block title %}POSH Awareness & Team Building{% endblock %}
+{% block extra_head %}
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
@@ -38,10 +32,55 @@
 
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background-color: var(--bg);
+            background-image: 
+              linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+            background-size: 40px 40px, 40px 40px, 100% 100% !important;
             color: var(--text);
             line-height: 1.75;
             overflow-x: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ambient Glow Blobs */
+        .ambient-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 8s ease-in-out infinite alternate;
+        }
+
+        .glow-blue {
+            top: 15%;
+            left: 5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #0d6efd 0%, transparent 70%);
+        }
+
+        .glow-gold {
+            bottom: 15%;
+            right: 5%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #ffb400 0%, transparent 70%);
+            animation-delay: -4s;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                transform: scale(1) translate(0, 0);
+                opacity: 0.25;
+            }
+            100% {
+                transform: scale(1.15) translate(20px, -20px);
+                opacity: 0.4;
+            }
         }
 
         /* --- 2. PROGRESS BAR --- */
@@ -59,34 +98,15 @@
         /* --- 3. HERO SECTION --- */
         .hero {
             position: relative;
-            padding: 120px 20px 80px;
-            min-height: 70vh;
+            padding: 20px 20px 40px;
+            min-height: 30vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
-            background: var(--gradient-hero);
-            border-bottom: 1px solid var(--border);
+            background: transparent;
             overflow: hidden;
-        }
-
-        /* Background shapes */
-        .hero::before, .hero::after {
-            content: '';
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(14, 165, 233, 0.15);
-            z-index: 0;
-            animation: float 20s infinite linear;
-        }
-        .hero::before { width: 300px; height: 300px; top: -50px; left: -50px; }
-        .hero::after { width: 400px; height: 400px; bottom: -100px; right: -50px; animation-duration: 25s; }
-
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            50% { transform: translate(50px, 50px) rotate(180deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
         }
 
         .hero-content {
@@ -95,23 +115,40 @@
             max-width: 800px;
         }
 
-        .hero h1 {
-            font-family: 'Poppins', sans-serif;
-            font-size: clamp(32px, 5vw, 56px);
-            font-weight: 800;
-            color: var(--heading);
-            margin-bottom: 20px;
-            line-height: 1.2;
-            background: -webkit-linear-gradient(45deg, var(--accent-dark), #6366f1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .about-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(37, 99, 235, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            color: #1d4ed8;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.03);
         }
 
-        .hero .tagline {
-            font-size: 1.25rem;
-            color: var(--muted);
-            margin-bottom: 32px;
-            font-weight: 500;
+        .hero-title-gradient {
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 850;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #1d4ed8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-desc {
+            font-size: clamp(1.1rem, 2vw, 1.25rem);
+            max-width: 700px;
+            margin: 0 auto;
+            color: #475569;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         /* --- 4. TABLE OF CONTENTS (Sticky Nav) --- */
@@ -340,24 +377,29 @@
 
         /* --- 9. RESPONSIVE --- */
         @media (max-width: 768px) {
-            .hero { padding-top: 100px; min-height: 60vh; }
+            .hero { padding-top: 100px; min-height: 50vh; }
             .card { padding: 24px; }
             .toc strong { display: none; }
             .hero h1 { font-size: 2.25rem; }
         }
     </style>
-</head>
+{% endblock %}
 
-<body>
+{%block body %}
     
+  <!-- Ambient Glow Blobs -->
+  <div class="ambient-glow glow-blue"></div>
+  <div class="ambient-glow glow-gold"></div>
+
   <!-- Progress Bar -->
   <div id="progress"></div>
 
   <!-- Hero Section -->
   <header class="hero">
     <div class="hero-content" data-aos="zoom-in" data-aos-duration="1000">
-      <h1>POSH Awareness &<br>Workplace Training</h1>
-      <p class="tagline">
+      <span class="about-badge" data-aos="fade-down" data-aos-delay="100">TRAINING PROGRAM</span>
+      <h1 class="hero-title-gradient">POSH Awareness &<br>Workplace Training</h1>
+      <p class="hero-desc" data-aos="fade-up" data-aos-delay="200">
         Building respectful, compliant, and collaborative workplaces through expert sensitization.
       </p>
       <!-- Optional: Action button or Search if needed -->
@@ -585,7 +627,7 @@
     /* --- SCROLL PROGRESS & TOC HIGHLIGHT --- */
     const progress = document.getElementById('progress');
     const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.toc a');
+    const tocLinks = document.querySelectorAll('.toc a');
 
     window.addEventListener('scroll', () => {
       // Progress Bar
@@ -610,7 +652,7 @@
           }
       });
 
-      navLinks.forEach(link => {
+      tocLinks.forEach(link => {
           link.classList.remove('active');
           if (link.getAttribute('href').includes(current)) {
               link.classList.add('active');
@@ -637,6 +679,4 @@
       });
     });
   </script>
-</body>
-</html>
 {%endblock body %}

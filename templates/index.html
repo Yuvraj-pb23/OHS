@@ -1096,7 +1096,7 @@
     background: transparent !important;
     position: relative;
     overflow: visible;
-    padding: 140px 0 0px;
+    padding: 140px 0 35px;
     z-index: 2;
   }
 
@@ -1326,6 +1326,66 @@
     }
   }
 
+  /* =========================================================
+     MODERN MARQUEE STYLES (LIGHT THEME)
+     ========================================================= */
+  .modern-marquee-container {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid rgba(13, 110, 253, 0.2);
+    border-bottom: 1px solid rgba(13, 110, 253, 0.2);
+    padding: 12px 0;
+    box-shadow: 0 8px 30px rgba(13, 110, 253, 0.05);
+    position: relative;
+    overflow: hidden;
+    z-index: 10;
+  }
+  
+  .modern-marquee-track {
+    display: flex; 
+    width: max-content; 
+    animation: clientScroll 35s linear infinite;
+  }
+  
+  .modern-marquee-container:hover .modern-marquee-track {
+    animation-play-state: paused;
+  }
+
+  .marquee-link-modern {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    font-size: 1.05rem !important;
+    text-decoration: none !important;
+    margin-right: 60px;
+    display: inline-flex;
+    align-items: center;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 6px 18px;
+    border-radius: 50px;
+    background: rgba(13, 110, 253, 0.03);
+    border: 1px solid rgba(13, 110, 253, 0.08);
+  }
+  
+  .marquee-link-modern i {
+    color: #ef4444 !important;
+    transition: all 0.3s ease;
+  }
+
+  .marquee-link-modern:hover {
+    color: #0d6efd !important;
+    background: rgba(13, 110, 253, 0.1);
+    border-color: rgba(13, 110, 253, 0.3);
+    transform: translateY(-2px);
+  }
+  
+  .marquee-link-modern:hover i {
+    color: #0d6efd !important;
+    transform: scale(1.15);
+  }
+
 </style>
 </head>
 
@@ -1377,6 +1437,63 @@
         </div>
       </div>
     </section>
+
+    <!-- Resources Marquee (Glassmorphism) -->
+    <div class="modern-marquee-container">
+      <div class="modern-marquee-track">
+        <!-- Half 1 -->
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        
+        <!-- Half 2 (Duplicated to make seamless loop) -->
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+        <a href="/media/resources/NCW%20Advisory.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Explore the Official NCW Advisory on POSH
+        </a>
+        <a href="/media/resources/cbse%20cirucular_%20mental%20health.pdf" target="_blank" class="marquee-link-modern">
+          <i class="fas fa-file-pdf me-2"></i> Read the CBSE Mandate on Mental Wellness
+        </a>
+      </div>
+    </div>
 
     <!-- About Section -->
     <section id="about" class="about-section">

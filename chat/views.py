@@ -47,202 +47,7 @@ class MockImageChatbot:
         ]
 
 
-class MockTextChatbot:
-    def __init__(self, *args, **kwargs):
-        pass
 
-    def get_questions_by_type(self, type_name):
-        if type_name == "posh":
-            return [
-                "Definitions & Scope",
-                "The Internal Committee (IC)",
-                "Filing a Complaint",
-                "Inquiry & Procedure",
-                "Conciliation & Settlement",
-                "Recommendations & Action",
-                "Employer Obligations",
-                'Scenario-Based "Grey Areas"',
-            ]
-        elif type_name == "posco":
-            return [
-                "Legal Core & Definitions",
-                "Mandatory Reporting (Sec 19)",
-                "Aggravated Offences",
-                "Child Pornography & Digital",
-                "Investigation Procedures",
-                "Medical Examination",
-                "Special Courts & Trial",
-                "Institutional Safeguards",
-            ]
-        elif type_name == "ic":
-            return [
-                "Composition & Legal Status",
-                "The External Member",
-                "Pre-Inquiry Procedures",
-                "Principles of Natural Justice",
-                "Evidence & Documentation",
-                "The Inquiry Report",
-                "Punishments & Remedies",
-                "Post-Inquiry & Compliance",
-            ]
-        elif type_name == "mental_health":
-            return [
-                "Mental Health Literacy",
-                "Legal Rights & Compliance",
-                "Psychological Safety",
-                "Managerial Responsibilities",
-                "Work-Life Integration",
-                "Stigma & Language",
-                "Crisis Intervention",
-                "Scenario-Based Challenges",
-            ]
-        return ["What is the standard width for lanes?", "How to install signs?"]
-
-    def predict_answer(self, query):
-        # Dummy answers for POSH, POSCO, IC, Mental Health subtopics
-        all_answers = {
-            # --- POSH ---
-            "definitions & scope": (
-                "POSH Act covers sexual harassment at workplace. "
-                "It defines 'aggrieved woman', 'workplace', and 'sexual harassment'."
-            ),
-            "the internal committee (ic)": (
-                "Every employer of a workplace must constitute an Internal Committee (IC) "
-                "if there are 10 or more employees."
-            ),
-            "filing a complaint": (
-                "An aggrieved woman can file a complaint in writing to the IC "
-                "within 3 months from the date of the incident."
-            ),
-            "inquiry & procedure": (
-                "The IC must complete the inquiry within 90 days. "
-                "Both parties must be given a fair opportunity to be heard."
-            ),
-            "conciliation & settlement": (
-                "Before initiating inquiry, the IC may, at the request of the aggrieved woman, "
-                "take steps to settle the matter through conciliation."
-            ),
-            "recommendations & action": (
-                "On completion of inquiry, the IC provides a report. "
-                "If allegations are proved, it recommends action against the respondent."
-            ),
-            "employer obligations": (
-                "Employers must provide a safe working environment, "
-                "display penal consequences of sexual harassment, and organize workshops."
-            ),
-            'scenario-based "grey areas"': (
-                "Grey areas include consensual relationships turned sour, "
-                "harassment outside office hours but impactful on work, etc."
-            ),
-            # --- POSCO ---
-            "legal core & definitions": (
-                "POSCO Act 2012 provides protection to children from offenses of "
-                "sexual assault, sexual harassment and pornography."
-            ),
-            "mandatory reporting (sec 19)": (
-                "Section 19 mandates reporting of sexual offenses against children "
-                "to the Special Juvenile Police Unit or local police."
-            ),
-            "aggravated offences": (
-                "Aggravated penetrative sexual assault includes offenses by persons in authority "
-                "(police, armed forces, public servants) and carries stricter punishment."
-            ),
-            "child pornography & digital": (
-                "Using children for pornographic purposes or storing such material "
-                "is a serious offense under POSCO."
-            ),
-            "investigation procedures": (
-                "Investigation must be conducted by a child-friendly officer, not in uniform, "
-                "and the child should not be detained at the police station."
-            ),
-            "medical examination": (
-                "Medical examination of the child must be conducted in the presence of "
-                "parents/guardians and by a female doctor if possible."
-            ),
-            "special courts & trial": (
-                "Special Courts are designated for speedy trial of POSCO cases. "
-                "The trial should be completed within one year."
-            ),
-            "institutional safeguards": (
-                "Requires child care institutions, schools, and hostels to have "
-                "guidelines and mechanisms to prevent abuse."
-            ),
-            # --- IC ---
-            "composition & legal status": (
-                "IC must have a Presiding Officer (senior woman), 2 employee members "
-                "committed to women's cause/legal knowledge, and 1 external member."
-            ),
-            "the external member": (
-                "External Member must be from an NGO or association committed to the cause of "
-                "women or a person familiar with issues relating to sexual harassment."
-            ),
-            "pre-inquiry procedures": (
-                "IC meets to review the complaint, ensures copies are given to the respondent "
-                "within 7 days, and checks limitation period."
-            ),
-            "principles of natural justice": (
-                "Both parties have right to be heard. No bias. Cross-examination is allowed "
-                "dependent on IC discretion."
-            ),
-            "evidence & documentation": (
-                "IC follows civil court powers for summoning witnesses, discovering documents. "
-                "Confidentiality is key."
-            ),
-            "the inquiry report": (
-                "Report must include findings and recommendations. Must be submitted to "
-                "employer within 10 days of completion."
-            ),
-            "punishments & remedies": (
-                "Punishments range from written apology, withholding promotion/increment, "
-                "to termination. Compensation can be deducted from salary."
-            ),
-            "post-inquiry & compliance": (
-                "Employer must act on recommendations within 60 days. "
-                "Annual Report inclusion is mandatory."
-            ),
-            # --- Mental Health ---
-            "mental health literacy": (
-                "Understanding signs of stress, burnout, anxiety, and depression "
-                "in the workplace context."
-            ),
-            "legal rights & compliance": (
-                "Mental Healthcare Act 2017 ensures right to equality and non-discrimination "
-                "for persons with mental illness."
-            ),
-            "psychological safety": (
-                "Creating an environment where employees feel safe to express ideas, "
-                "questions, and concerns without fear of punishment."
-            ),
-            "managerial responsibilities": (
-                "Managers should be trained to identify distress, offer support, "
-                "and not stigmatize mental health issues."
-            ),
-            "work-life integration": (
-                "Policies supporting flexible hours, leave for mental health, "
-                "and respecting boundaries after work hours."
-            ),
-            "stigma & language": (
-                "Avoid pejorative terms. Use person-first language. "
-                "Promote open conversations about mental health."
-            ),
-            "crisis intervention": (
-                "Protocols for handling acute mental health episodes (panic attacks, "
-                "suicidal ideation) at the workplace."
-            ),
-            "scenario-based challenges": (
-                "Handling an employee's return to work after mental health leave; "
-                "Managing performance issues linked to mental health."
-            ),
-        }
-
-        q_lower = query.lower()
-        if q_lower in all_answers:
-            return all_answers[q_lower]
-
-        return (
-            f"I received your question: '{query}'. However, the AI models are not loaded "
-            "in this environment, so this is a placeholder response."
-        )
 
 
 # -----------------------------
@@ -288,8 +93,7 @@ def load_real_models():
 
     if image_chatbot is None:
         image_chatbot = MockImageChatbot()
-    if text_chatbot is None:
-        text_chatbot = MockTextChatbot()
+
         
     _models_loaded = True
 
@@ -418,9 +222,7 @@ def get_answer_for_question(question_text):
     logger.debug("No answer found in JSON.")
     return None
 
-# FIX #3: Added @login_required to prevent unauthenticated LLM/chatbot access
 # FIX #3: Added per-session rate limiting (20 requests/min) and input length cap
-@login_required(login_url="login")
 def chatbot_response(request):
     load_real_models()
     if request.method != "POST":
@@ -429,7 +231,13 @@ def chatbot_response(request):
     # FIX #3: Per-session rate limit — max 20 messages per minute
     from django.core.cache import cache
     import time
-    session_key = request.session.session_key or str(request.user.id)
+    session_key = request.session.session_key
+    if not session_key:
+        try:
+            request.session.create()
+            session_key = request.session.session_key
+        except Exception:
+            session_key = str(request.user.id) if request.user.is_authenticated else "anonymous"
     rl_key = f"chat_rl_{session_key}"
     rl_data = cache.get(rl_key, {"count": 0, "reset_at": time.time() + 60})
     if time.time() > rl_data["reset_at"]:
@@ -482,9 +290,6 @@ def chatbot_response(request):
         # to use JSON data if available
         if irc_type in SUPPORTED_TOPICS:
             subtopics = get_subtopics_by_type(irc_type)
-            # Fallback to TextChatbot defaults if JSON is empty or missing
-            if not subtopics and text_chatbot:
-                subtopics = text_chatbot.get_questions_by_type(irc_type)
 
             if subtopics:
                 return JsonResponse(
@@ -539,6 +344,17 @@ def chatbot_response(request):
     if direct_answer:
         return JsonResponse(
             {"response": {"message": direct_answer, "type": "answer"}}  # Explicit Type
+        )
+
+    # Check authentication for custom questions (RAG/LLM)
+    if not request.user.is_authenticated:
+        return JsonResponse(
+            {
+                "response": {
+                    "message": "Please log in to your account to ask custom compliance questions.",
+                    "type": "answer",
+                }
+            }
         )
 
     # 4. Check RAG Chatbot (New Faiss Integration)

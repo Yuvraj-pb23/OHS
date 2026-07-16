@@ -30,6 +30,9 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://unpkg.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Link to the custom static base CSS file -->
     <link rel="stylesheet" href="{% static 'css/base.css' %}" />
@@ -838,6 +841,16 @@
             box-shadow: none;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             padding: 6px 24px;
+            font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', sans-serif !important;
+        }
+
+        #mainNavbar,
+        #mainNavbar .nav-link,
+        #mainNavbar .btn-accounts,
+        #mainNavbar .user-greeting,
+        #mainNavbar .btn-auth-login,
+        #mainNavbar .dropdown-item {
+            font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', sans-serif !important;
         }
 
         #mainNavbar.navbar.navbar-scrolled {
@@ -878,6 +891,7 @@
             border-bottom: none !important;
             text-shadow: none;
             background: transparent;
+            font-family: 'Plus Jakarta Sans', 'Outfit', 'Inter', sans-serif !important;
         }
 
         #mainNavbar .nav-link::after {
@@ -1380,6 +1394,7 @@
             }
         });
     </script>
+    {% block modals %}{% endblock %}
 </body>
 
 </html>

@@ -3553,10 +3553,7 @@ def send_posh_reminders(request):
         status_str = "In Progress" if has_started else "Not Started"
 
         # Determine due date
-        if active_sub:
-            due_date_val = active_sub.end_date.strftime("%B %d, %Y")
-        else:
-            due_date_val = (mem.joined_at + timedelta(days=30)).strftime("%B %d, %Y")
+        due_date_val = (mem.joined_at + timedelta(days=30)).strftime("%B %d, %Y")
 
         send_posh_reminder_email(user_obj, status_str, percent_complete, due_date_val)
         sent_count += 1
