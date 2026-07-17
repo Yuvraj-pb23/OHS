@@ -308,167 +308,284 @@
         /* =========================================
            SECTION 4: DETAILED TRAINING
            ========================================= */
+        /* =========================================
+           ACADEMY SECTIONS & COURSE CARDS
+           ========================================= */
         .training-section {
-            padding: 75px 0;
+            padding: 60px 0 100px;
             background: transparent;
         }
 
-        .training-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2.5rem;
-            margin-top: 3.5rem;
-            align-items: start;
+        .academy-section {
+            padding: 40px 0;
+            position: relative;
         }
 
-        .training-card {
-            border-radius: 20px;
-            padding: 2.5rem;
-            background: white;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            border-top: 5px solid #cbd5e1;
+        .academy-header {
+            text-align: center;
+            margin-bottom: 45px;
         }
 
-        .training-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Training Tints */
-        .training-card.posh {
-            border-top-color: #f43f5e;
-            background: linear-gradient(145deg, #fff1f2, #ffffff);
-        }
-
-        .training-card.pocso {
-            border-top-color: #f97316;
-            background: linear-gradient(145deg, #fff7ed, #ffffff);
-        }
-
-        .training-card.mental-health {
-            border-top-color: #0ea5e9;
-            background: linear-gradient(145deg, #e0f2fe, #ffffff);
-        }
-
-        .training-card.ethics {
-            border-top-color: #22c55e;
-            background: linear-gradient(145deg, #f0fdf4, #ffffff);
-        }
-
-        .training-card.compliance {
-            border-top-color: #3b82f6;
-            background: linear-gradient(145deg, #eff6ff, #ffffff);
-        }
-
-        .training-card.communication {
-            border-top-color: #8b5cf6;
-            background: linear-gradient(145deg, #f5f3ff, #ffffff);
-        }
-
-        .training-card h3 {
-            font-size: 1.5rem;
+        .academy-header h2 {
+            font-size: 2.2rem;
             font-weight: 800;
             color: var(--primary-dark);
-            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            position: relative;
+            display: inline-block;
         }
 
-        .training-overview {
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 12px;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+        .academy-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 20%;
+            width: 60%;
+            height: 4px;
+            border-radius: 2px;
         }
 
-        /* Modules / Accordion Styles */
-        .module {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            margin-top: 0.8rem;
-            overflow: hidden;
-            transition: all 0.3s ease;
+        .posh-section .academy-header h2::after {
+            background: linear-gradient(90deg, #8b5cf6, #3b82f6);
         }
 
-        .module-header {
-            padding: 1rem 1.2rem;
-            cursor: pointer;
+        .pocso-section .academy-header h2::after {
+            background: linear-gradient(90deg, #f97316, #f59e0b);
+        }
+
+        .mental-health-section .academy-header h2::after {
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+        }
+
+        .academy-header p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 750px;
+            margin: 0 auto;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .course-card {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            padding: 35px 30px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #334155;
-        }
-
-        .module.active .module-header {
-            background: #f1f5f9;
-            color: var(--primary);
-        }
-
-        .module-toggle {
-            transition: transform 0.3s;
-        }
-
-        .module.active .module-toggle {
-            transform: rotate(180deg);
-        }
-
-        .module-content {
-            max-height: 0;
+            flex-direction: column;
+            height: 100%;
+            position: relative;
             overflow: hidden;
-            transition: max-height 0.4s ease-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            z-index: 1;
         }
 
-        .module-body {
-            padding: 1.2rem;
-            border-top: 1px solid #e2e8f0;
+        /* Top Color Strips */
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            z-index: 2;
         }
 
-        .key-points {
+        .posh-card::before {
+            background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 100%);
+        }
+
+        .pocso-card::before {
+            background: linear-gradient(90deg, #f97316 0%, #f59e0b 100%);
+        }
+
+        .mental-health-card::before {
+            background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03);
+            border-color: rgba(226, 232, 240, 0.3);
+        }
+
+        /* Subtle radial ambient bg on hover */
+        .course-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .posh-card:hover::after {
+            background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.03), transparent 70%);
+            opacity: 1;
+        }
+
+        .pocso-card:hover::after {
+            background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.03), transparent 70%);
+            opacity: 1;
+        }
+
+        .mental-health-card:hover::after {
+            background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.03), transparent 70%);
+            opacity: 1;
+        }
+
+        /* Badges */
+        .badge-container {
+            margin-bottom: 15px;
+        }
+
+        .programme-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-radius: 30px;
+        }
+
+        .posh-card .programme-badge {
+            background-color: #f5f3ff;
+            color: #6d28d9;
+            border: 1px solid #ddd6fe;
+        }
+
+        .pocso-card .programme-badge {
+            background-color: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        .mental-health-card .programme-badge {
+            background-color: #f0fdf4;
+            color: #047857;
+            border: 1px solid #dcfce7;
+        }
+
+        .course-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .audience-section {
+            margin-bottom: 18px;
+            font-size: 0.88rem;
+            color: #475569;
+            font-weight: 550;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .audience-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .posh-card .audience-label { color: #8b5cf6; }
+        .pocso-card .audience-label { color: #f97316; }
+        .mental-health-card .audience-label { color: #10b981; }
+
+        .course-desc {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #475569;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .topics-section {
+            margin-top: auto;
+            border-top: 1px dashed rgba(226, 232, 240, 0.9);
+            padding-top: 18px;
+        }
+
+        .topics-header {
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .topics-list {
             list-style: none;
             padding: 0;
             margin: 0;
         }
 
-        .key-points li {
+        .topics-list li {
+            font-size: 0.88rem;
+            color: #334155;
             position: relative;
-            padding-left: 25px;
+            padding-left: 22px;
             margin-bottom: 8px;
-            color: var(--text-muted);
-            font-size: 0.9rem;
+            line-height: 1.45;
         }
 
-        .key-points li::before {
+        .topics-list li::before {
             content: '\f00c';
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             position: absolute;
             left: 0;
-            color: #10b981;
+            font-size: 0.78rem;
+        }
+
+        .posh-card .topics-list li::before { color: #8b5cf6; }
+        .pocso-card .topics-list li::before { color: #f97316; }
+        .mental-health-card .topics-list li::before { color: #10b981; }
+
+
+
+        /* =========================================
+           RESPONSIVENESS
+           ========================================= */
+        @media (max-width: 992px) {
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
         }
 
         @media (max-width: 768px) {
-            .training-grid {
+            .course-grid {
                 grid-template-columns: 1fr;
             }
 
             .glass-module {
                 width: 100%;
             }
-        }
-
-        /* Additional Training Tints */
-        .training-card.dei {
-            border-top-color: #ec4899;
-            background: linear-gradient(145deg, #fdf2f8, #ffffff);
-        }
-
-        .training-card.leadership {
-            border-top-color: #f59e0b;
-            background: linear-gradient(145deg, #fffbeb, #ffffff);
+            
+            .academy-header h2 {
+                font-size: 1.8rem;
+            }
         }
 
         /* Coming Soon Overlay - Iteration 4 (Ultra-Premium Minimalist) */
@@ -651,368 +768,386 @@
         </div>
     </section>
 
-    <!-- 4. DETAILED TRAINING PROGRAMS (Expanded Dropdowns) -->
+    <!-- 4. DETAILED TRAINING PROGRAMS (Learning Academy Redesign) -->
     <section id="training" class="training-section">
         <div class="container">
-            <div class="text-center section-title" data-aos="fade-up">
-                <h2 class="fw-bold">Our In-Depth Training Programs</h2>
-                <p class="text-muted">Interactive courses designed to enhance capabilities and organizational growth.
-                </p>
+            
+            {% if show_posh %}
+            <!-- POSH SECTION -->
+            <div class="academy-section posh-section" data-aos="fade-up">
+                <div class="academy-header">
+                    <h2>POSH Training Programmes</h2>
+                    <p>Empowering organizations to build safe, respectful and legally compliant workplaces.</p>
+                </div>
+                <div class="course-grid">
+                    <!-- POSH Essentials -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="50">
+                        <div class="badge-container">
+                            <span class="programme-badge">Workplace Orientation Programme</span>
+                        </div>
+                        <h4 class="course-title">POSH Essentials</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>All Employees
+                        </div>
+                        <p class="course-desc">A foundational programme designed to build awareness about the POSH Act, workplace behaviour, employee rights, responsibilities and reporting mechanisms while promoting a culture of dignity and respect.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Understanding Sexual Harassment</li>
+                                <li>Scope of the POSH Act</li>
+                                <li>Employee Rights & Responsibilities</li>
+                                <li>Dos and Don'ts at Workplace</li>
+                                <li>Reporting Mechanism</li>
+                                <li>Creating Respectful Workplaces</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- POSH Pro -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="badge-container">
+                            <span class="programme-badge">Advanced Course for Managers</span>
+                        </div>
+                        <h4 class="course-title">POSH Pro</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>HR, Managers & Leaders
+                        </div>
+                        <p class="course-desc">An advanced leadership programme that equips managers with the knowledge and practical skills to prevent workplace harassment, respond appropriately to complaints and create inclusive teams.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Employer Responsibilities</li>
+                                <li>Manager as First Responder</li>
+                                <li>Power Dynamics & Bias</li>
+                                <li>Confidentiality</li>
+                                <li>Documentation</li>
+                                <li>Respectful Leadership</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- IC Launch Pad -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="150">
+                        <div class="badge-container">
+                            <span class="programme-badge">Foundation Certification</span>
+                        </div>
+                        <h4 class="course-title">IC Launch Pad</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Newly Constituted IC Members
+                        </div>
+                        <p class="course-desc">Provides Internal Committee members with the legal knowledge and inquiry skills required to conduct fair, confidential and compliant investigations.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>POSH Act Overview</li>
+                                <li>Constitution of IC</li>
+                                <li>Receiving Complaints</li>
+                                <li>Principles of Natural Justice</li>
+                                <li>Conducting Inquiry</li>
+                                <li>Drafting Reports</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- IC Excellence -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="badge-container">
+                            <span class="programme-badge">Advanced IC Certification</span>
+                        </div>
+                        <h4 class="course-title">IC Excellence</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Experienced IC Members
+                        </div>
+                        <p class="course-desc">Designed for experienced Internal Committee members handling complex workplace harassment investigations.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Complex Cases</li>
+                                <li>Digital Evidence</li>
+                                <li>Trauma-informed Inquiry</li>
+                                <li>Witness Interviews</li>
+                                <li>Inquiry Reports</li>
+                                <li>Judicial Case Laws</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- High Impact POSH Leadership Programme -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="250">
+                        <div class="badge-container">
+                            <span class="programme-badge">Executive Leadership Programme</span>
+                        </div>
+                        <h4 class="course-title">High Impact POSH</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>CXOs, Directors & Leaders
+                        </div>
+                        <p class="course-desc">Enables senior leaders to fulfil governance responsibilities under the POSH Act while building an ethical and respectful organizational culture.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Leadership Accountability</li>
+                                <li>Employer Liability</li>
+                                <li>Governance</li>
+                                <li>Organizational Culture</li>
+                                <li>Board Compliance</li>
+                                <li>Risk Management</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- POSH Master Trainer -->
+                    <div class="course-card posh-card" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="badge-container">
+                            <span class="programme-badge">Trainer Certification</span>
+                        </div>
+                        <h4 class="course-title">POSH Master Trainer</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>HR, L&D & Internal Trainers
+                        </div>
+                        <p class="course-desc">Certification programme for professionals who wish to design and deliver impactful POSH training programmes.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>POSH Act</li>
+                                <li>Adult Learning</li>
+                                <li>Training Design</li>
+                                <li>Facilitation Skills</li>
+                                <li>Difficult Conversations</li>
+                                <li>Trainer Certification</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if show_pocso %}
+            <!-- POCSO SECTION -->
+            <div class="academy-section pocso-section" data-aos="fade-up" style="margin-top: 50px;">
+                <div class="academy-header">
+                    <h2>Child Safety & POCSO Programmes</h2>
+                    <p>Comprehensive child protection programmes aligned with the POCSO Act, 2012.</p>
+                </div>
+                <div class="course-grid">
+                    <!-- ChildSAFE Essentials -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="50">
+                        <div class="badge-container">
+                            <span class="programme-badge">Foundation Course in Child Protection</span>
+                        </div>
+                        <h4 class="course-title">ChildSAFE Essentials</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Anyone
+                        </div>
+                        <p class="course-desc">An introductory programme covering child protection laws, child rights, abuse prevention and mandatory reporting responsibilities.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Child Rights</li>
+                                <li>POCSO Act</li>
+                                <li>Child Abuse Indicators</li>
+                                <li>Mandatory Reporting</li>
+                                <li>Stakeholder Roles</li>
+                                <li>Case Studies</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Building Safe Classrooms -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="badge-container">
+                            <span class="programme-badge">Teacher Certification</span>
+                        </div>
+                        <h4 class="course-title">Building Safe Classrooms</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Teaching Staff
+                        </div>
+                        <p class="course-desc">Equips teachers to identify child protection concerns, respond appropriately and create safe learning environments.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Legal Responsibilities</li>
+                                <li>Responding to Disclosures</li>
+                                <li>Digital Safety</li>
+                                <li>Classroom Safety</li>
+                                <li>Mandatory Reporting</li>
+                                <li>Parent Collaboration</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Protect Your Child -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="150">
+                        <div class="badge-container">
+                            <span class="programme-badge">Parent Safety & Digital Parenting</span>
+                        </div>
+                        <h4 class="course-title">Protect Your Child</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Parents
+                        </div>
+                        <p class="course-desc">Helps parents understand child safety risks, online threats and practical ways to protect children both offline and online.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Safe Touch</li>
+                                <li>Online Safety</li>
+                                <li>Cyberbullying</li>
+                                <li>Emotional Well-being</li>
+                                <li>Behavioural Changes</li>
+                                <li>Practical Safety Tips</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Child Protection Professionals -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="badge-container">
+                            <span class="programme-badge">Advanced Government Programme</span>
+                        </div>
+                        <h4 class="course-title">Child Protection Professionals</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Officers, Welfare & NGOs
+                        </div>
+                        <p class="course-desc">Advanced programme for professionals involved in child protection, rehabilitation and multidisciplinary case management.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>JJ Act & POCSO</li>
+                                <li>Crisis Intervention</li>
+                                <li>Child Interviewing</li>
+                                <li>Documentation</li>
+                                <li>Rehabilitation</li>
+                                <li>Court Procedures</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Safe School Safe Child -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="250">
+                        <div class="badge-container">
+                            <span class="programme-badge">School Compliance Certification</span>
+                        </div>
+                        <h4 class="course-title">Safe School Safe Child</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>School Leadership
+                        </div>
+                        <p class="course-desc">Provides schools with a comprehensive child protection compliance framework covering policies, committees, reporting and audits.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Child Protection Policy</li>
+                                <li>Compliance Framework</li>
+                                <li>Risk Assessment</li>
+                                <li>Safe Recruitment</li>
+                                <li>Incident Response</li>
+                                <li>Safety Audits</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Child Protection Master Trainer -->
+                    <div class="course-card pocso-card" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="badge-container">
+                            <span class="programme-badge">Trainer Certification</span>
+                        </div>
+                        <h4 class="course-title">Child Protection Master Trainer</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>School Trainers, NGOs & Child Protection Trainers
+                        </div>
+                        <p class="course-desc">Certification programme for professionals delivering child protection and POCSO awareness training.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Training Methodology</li>
+                                <li>Adult Learning</li>
+                                <li>Workshop Facilitation</li>
+                                <li>Communication Skills</li>
+                                <li>Programme Design</li>
+                                <li>Trainer Certification</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- MENTAL HEALTH SECTION -->
+            <div class="academy-section mental-health-section" data-aos="fade-up" style="margin-top: 50px;">
+                <div class="academy-header">
+                    <h2>Mental Health & Well-being</h2>
+                    <p>Building emotionally resilient workplaces through awareness and psychological well-being.</p>
+                </div>
+                <div class="course-grid">
+                    <!-- Stress & Resilience -->
+                    <div class="course-card mental-health-card" data-aos="zoom-in" data-aos-delay="50">
+                        <div class="badge-container">
+                            <span class="programme-badge">Workplace Well-being Course</span>
+                        </div>
+                        <h4 class="course-title">Stress & Resilience</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>All Employees & Teams
+                        </div>
+                        <p class="course-desc">Equips employees with practical tools to identify burnout signs, manage workplace stress, and develop mental resilience through mindfulness and self-care.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Burnout identification</li>
+                                <li>Stress management tools</li>
+                                <li>Mindfulness at work</li>
+                                <li>Developing Coping Skills</li>
+                                <li>Work-Life Integration</li>
+                                <li>Building Personal Resilience</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Psychological Safety -->
+                    <div class="course-card mental-health-card" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="badge-container">
+                            <span class="programme-badge">Inclusive Culture Programme</span>
+                        </div>
+                        <h4 class="course-title">Psychological Safety</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Leaders, HR & Team Members
+                        </div>
+                        <p class="course-desc">Focuses on fostering open, safe dialogue spaces, removing mental health stigma, and building supportive team bonds.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Safe dialogue spaces</li>
+                                <li>Removing stigma</li>
+                                <li>Team supportive bonds</li>
+                                <li>Active Listening & Empathy</li>
+                                <li>Encouraging Vulnerability</li>
+                                <li>Creating a Safe Work Culture</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Managerial Support -->
+                    <div class="course-card mental-health-card" data-aos="zoom-in" data-aos-delay="150">
+                        <div class="badge-container">
+                            <span class="programme-badge">Empathetic Leadership Certification</span>
+                        </div>
+                        <h4 class="course-title">Managerial Support</h4>
+                        <div class="audience-section">
+                            <span class="audience-label"><i class="fas fa-users"></i> For:</span>Managers & Supervisors
+                        </div>
+                        <p class="course-desc">Trains managers in empathetic leadership, identifying distressed staff members, and promoting organizational balance.</p>
+                        <div class="topics-section">
+                            <div class="topics-header">Key Learning Topics</div>
+                            <ul class="topics-list">
+                                <li>Empathetic leadership</li>
+                                <li>Supporting distressed staff</li>
+                                <li>Promoting balance</li>
+                                <li>Effective Intervention Strategies</li>
+                                <li>Supporting Team Well-being</li>
+                                <li>Referrals & Professional Help</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="training-grid">
-
-                <!-- POSH Card -->
-                {% if show_posh %}
-                <div class="training-card posh" data-aos="fade-up">
-                    <h3>POSH Training</h3>
-                    <div class="training-overview">Prevention of Sexual Harassment and legal compliance.</div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>POSH Essentials</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Workplace Orientation Programme</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding Sexual Harassment</li>
-                                    <li>Scope of the POSH Act</li>
-                                    <li>Employee Rights & Responsibilities</li>
-                                    <li>Dos and Don’ts of behaviour</li>
-                                    <li>Reporting Mechanism</li>
-                                    <li>Creating Respectful Workplaces</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>POSH Pro</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Advanced Course for Managers</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding the Employer's Responsibilities under the POSH Act</li>
-                                    <li>Role of Managers as First Responders</li>
-                                    <li>Identifying Sexual Harassment and Workplace Misconduct</li>
-                                    <li>Power Dynamics, Bias and Professional Boundaries</li>
-                                    <li>Receiving and Responding to Employee Disclosures</li>
-                                    <li>Maintaining Confidentiality and Preventing Retaliation</li>
-                                    <li>Escalation and Reporting Mechanisms</li>
-                                    <li>Documentation and Record Keeping</li>
-                                    <li>Creating Respectful and Inclusive Teams</li>
-                                    <li>Manager's Role in Prevention, Intervention and Culture Building</li>
-                                    <li>Case Studies and Practical Scenarios</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>IC Launch Pad</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Foundation Certification for Internal Committee Members</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Overview of the POSH Act, 2013</li>
-                                    <li>Constitution, Powers and Responsibilities of the Internal Committee</li>
-                                    <li>Roles of the Presiding Officer, Internal and External Members</li>
-                                    <li>In Receiving and Assessing Complaints</li>
-                                    <li>Conciliation and Interim Relief</li>
-                                    <li>Principles of Natural Justice</li>
-                                    <li>Conducting a Fair and Impartial Inquiry</li>
-                                    <li>Collection and Appreciation of Evidence</li>
-                                    <li>Witness Examination</li>
-                                    <li>Documentation and Record Management</li>
-                                    <li>Drafting Inquiry Reports and Recommendations</li>
-                                    <li>Timelines, Confidentiality and Statutory Compliance</li>
-                                    <li>Practical Exercises and Case Discussion</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>IC Excellence</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Advanced Internal Committee Certification Programme</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Challenges of being an IC member</li>
-                                    <li>Managing Complex and Sensitive Complaints</li>
-                                    <li>Appreciating Oral, Documentary and Digital Evidence</li>
-                                    <li>Trauma-informed Inquiry Techniques</li>
-                                    <li>Assessing Credibility and Inconsistencies</li>
-                                    <li>Handling Multiple Respondents and Witnesses</li>
-                                    <li>Cross-questioning and Interview Techniques</li>
-                                    <li>Drafting Well-Reasoned Inquiry Reports</li>
-                                    <li>Recent Judicial Pronouncements and Case Law</li>
-                                    <li>Managing High-Risk and Senior Leadership Complaints</li>
-                                    <li>Maintaining Procedural Fairness</li>
-                                    <li>Mock Inquiry Proceedings and Practical Simulations</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>High Impact POSH Leadership Programme</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>For CXOs, Directors & Senior Leadership</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Leadership Accountability under the POSH Act</li>
-                                    <li>Employer Liability and Legal Responsibilities</li>
-                                    <li>Building a Culture of Respect, Inclusion and Psychological Safety</li>
-                                    <li>Tone at the Top: The Role of Leadership in Prevention</li>
-                                    <li>Oversight of Internal Committee Effectiveness</li>
-                                    <li>Managing Organisational Risk and Reputational Impact</li>
-                                    <li>Responding to High-Profile and Sensitive Complaints</li>
-                                    <li>Ethical Decision-Making and Conflict Management</li>
-                                    <li>Recent Judicial Trends and Lessons for Employers</li>
-                                    <li>Board-Level Compliance, Reporting and Monitoring</li>
-                                    <li>Driving Sustainable Behavioural and Cultural Change</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>POSH Master Trainer</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Certified POSH Trainer Programme</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding the POSH Act</li>
-                                    <li>Understanding Sexual Harassment</li>
-                                    <li>Designing a POSH Training Programme</li>
-                                    <li>Becoming an Effective POSH Trainer</li>
-                                    <li>Delivering High-Impact POSH Sessions</li>
-                                    <li>Handling Difficult Conversations</li>
-                                    <li>Case Study Facilitation</li>
-                                    <li>Customising Training for Different Audiences</li>
-                                    <li>Assessment & Trainer Certification</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- POCSO Card -->
-                {% if show_pocso %}
-                <div class="training-card pocso" data-aos="fade-up" data-aos-delay="100">
-                    <h3>POCSO Compliance</h3>
-                    <div class="training-overview">Protection of Children in institutional environments.</div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>ChildSAFE Essentials</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Foundation Course in Child Protection & POCSO</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding Child Rights and Child Protection Framework in India</li>
-                                    <li>Introduction to the POCSO Act, 2012</li>
-                                    <li>Forms and Indicators of Child Abuse</li>
-                                    <li>Mandatory Reporting under the POCSO Act</li>
-                                    <li>Role of different stakeholders under POCSO Act</li>
-                                    <li>Agencies mandated to work for child protection</li>
-                                    <li>How to report safely</li>
-                                    <li>Case Studies and Practical Scenarios</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>Building Safe Classrooms</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Child Safety Certification for Teachers</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Moral duty vs Legal duty</li>
-                                    <li>Teachers' Legal Responsibilities under the POCSO Act</li>
-                                    <li>Recognising Physical, Emotional and Behavioural Indicators of Abuse</li>
-                                    <li>Maintaining Professional Boundaries in Digital age</li>
-                                    <li>Responding to Child Disclosures</li>
-                                    <li>Classroom Safety and Behaviour Management</li>
-                                    <li>Preventing Bullying and Peer Abuse</li>
-                                    <li>Digital Safety within the School Environment</li>
-                                    <li>Documentation and Mandatory Reporting</li>
-                                    <li>Working with Parents and School Leadership</li>
-                                    <li>Practical Case Studies and Classroom Scenarios</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>Protect Your Child</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Parent Safety & Digital Parenting Programme</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding Child Safety Risks</li>
-                                    <li>Safe Touch, Unsafe Touch and Body Safety</li>
-                                    <li>Online Safety and Responsible Digital Behaviour</li>
-                                    <li>Cyberbullying, Online Grooming and Sextortion</li>
-                                    <li>Recognising Behavioural Changes in Children</li>
-                                    <li>Building Trust and Open Communication</li>
-                                    <li>Supporting Children's Emotional Well-being</li>
-                                    <li>Role of different stakeholders in POCSO Act 2012: What to expect</li>
-                                    <li>Practical Safety Strategies for Parents</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>Advanced Child Safety</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>For Child Protection Professionals</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Overview of different legislations JJ Act, POCSO Act etc and how they are aligned</li>
-                                    <li>Multi-disciplinary Coordination and Case Management</li>
-                                    <li>Handling Child Abuse Cases and Crisis Intervention</li>
-                                    <li>Trauma-informed Child Interviewing</li>
-                                    <li>Documentation, Evidence and Record Management</li>
-                                    <li>Rehabilitation, Counselling and Child-Centred Support</li>
-                                    <li>Court Procedures and Expert Testimony</li>
-                                    <li>Practical Case Discussions and Best Practices</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>Safe School Safe Child</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>Certification And Compliance Program</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Overview of child Protection Legal Framework</li>
-                                    <li>School Child Protection Policy</li>
-                                    <li>School Compliance Framework including committees and reporting hierarchies</li>
-                                    <li>Constitution and Functioning of the Child Protection Committee</li>
-                                    <li>Risk Assessment and Safety Audits</li>
-                                    <li>Safe Recruitment and Employee Screening</li>
-                                    <li>Transport, Hostel and Campus Safety</li>
-                                    <li>Mandatory Reporting and Documentation</li>
-                                    <li>Incident Response and Crisis Management</li>
-                                    <li>Compliance Audit and Best Practices</li>
-                                    <li>Creating a Sustainable Child Protection Culture</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)">
-                            <span>Child Protection Master Training</span>
-                            <i class="fas fa-chevron-down module-toggle"></i>
-                        </div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <strong>For School Trainers and NGOs</strong>
-                                <ul class="key-points mt-2">
-                                    <li>Understanding Child Protection and the POCSO Act</li>
-                                    <li>Principles of Adult Learning and Training Methodologies</li>
-                                    <li>Designing Child Protection Training Programmes</li>
-                                    <li>Facilitating Workshops for Teachers, Parents and School Leaders</li>
-                                    <li>Conducting Age-Appropriate Sessions for Children</li>
-                                    <li>Managing Sensitive Discussions and Participant Queries</li>
-                                    <li>Case Study Facilitation and Scenario-Based Learning</li>
-                                    <li>Communication and Presentation Skills</li>
-                                    <li>Assessing Learning Outcomes and Programme Effectiveness</li>
-                                    <li>Trainer Demonstration, Feedback and Certification</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                <!-- Mental Health Card -->
-                <div class="training-card mental-health" data-aos="fade-up" data-aos-delay="200">
-                    <h3>Mental Health</h3>
-                    <div class="training-overview">Nurturing psychological safety and emotional well-being.</div>
-
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Stress & Resilience</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Burnout identification</li>
-                                    <li>Stress management tools</li>
-                                    <li>Mindfulness at work</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Psychological Safety</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Safe dialogue spaces</li>
-                                    <li>Removing stigma</li>
-                                    <li>Team supportive bonds</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="module">
-                        <div class="module-header" onclick="toggleModule(this)"><span>Managerial Support</span><i
-                                class="fas fa-chevron-down module-toggle"></i></div>
-                        <div class="module-content">
-                            <div class="module-body">
-                                <ul class="key-points">
-                                    <li>Empathetic leadership</li>
-                                    <li>Supporting distressed staff</li>
-                                    <li>Promoting balance</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
         </div>
     </section>
 
@@ -1020,28 +1155,6 @@
     <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
     <script>
         AOS.init({ duration: 800, once: true, offset: 100 });
-
-        function toggleModule(element) {
-            const module = element.closest('.module');
-            const content = module.querySelector('.module-content');
-            const parentCard = element.closest('.training-card');
-
-            // Close other modules in the SAME card
-            parentCard.querySelectorAll('.module').forEach(m => {
-                if (m !== module && m.classList.contains('active')) {
-                    m.classList.remove('active');
-                    m.querySelector('.module-content').style.maxHeight = null;
-                }
-            });
-
-            // Toggle current module
-            module.classList.toggle('active');
-            if (module.classList.contains('active')) {
-                content.style.maxHeight = content.scrollHeight + "px";
-            } else {
-                content.style.maxHeight = null;
-            }
-        }
     </script>
 </body>
 

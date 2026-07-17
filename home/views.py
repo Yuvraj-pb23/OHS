@@ -3725,5 +3725,25 @@ def send_posh_reminders(request):
     return JsonResponse({"status": "success", "message": f"Successfully sent reminders to {sent_count} employees."})
 
 
+def custom_csrf_failure(request, reason=""):
+    """
+    Custom CSRF failure handler to gracefully redirect users on logout requests
+    instead of showing a raw 403 Forbidden page.
+    """
+    path = request.path
+    if any(p in path for p in ["/logout/", "/hr/logout/", "/training/logout/", "/accounts-portal/logout/"]):
+        from django.contrib.auth import logout
+        try:
+            logout(request)
+        except Exception:
+            pass
+        return redirect("home")
+
+    # Fallback to Django's standard CSRF failure view
+    from django.views.csrf import csrf_failure
+    return csrf_failure(request, reason)
+
+
+
 
 

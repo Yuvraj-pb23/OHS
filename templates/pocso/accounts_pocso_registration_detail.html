@@ -8,18 +8,20 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;700;900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         :root {
-            --bg: #0d0a0b;
-            --surface: #1a1517;
-            --card: #241c1e;
-            --border: rgba(255, 255, 255, 0.06);
-            --accent: #f43f5e;
-            --muted: #4b5563;
-            --text-muted: #94a3b8;
+            --bg: #f5f7fa;
+            --surface: #ffffff;
+            --card: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
+            --accent: #e11d48; /* Rose accent */
+            --accent-hover: #be123c;
+            --muted: #64748b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
         * {
@@ -29,20 +31,30 @@
         }
 
         body {
-            background: var(--bg);
-            color: #f1f5f9;
-            font-family: 'Inter', sans-serif;
+            background-image: 
+              linear-gradient(to right, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(15, 23, 42, 0.018) 1px, transparent 1px),
+              radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+            background-size: 40px 40px, 40px 40px, 100% 100% !important;
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
         .heading-font {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-main);
         }
 
         .card {
             background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 1.25rem;
+            border-radius: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+            color: var(--text-main);
         }
 
         .section-label {
@@ -61,7 +73,7 @@
             justify-content: space-between;
             align-items: flex-start;
             padding: 0.75rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
             gap: 1rem;
         }
 
@@ -80,16 +92,16 @@
         .detail-val {
             font-size: 0.85rem;
             font-weight: 600;
-            color: #f1f5f9;
+            color: var(--text-main);
             text-align: right;
             flex: 1;
             word-break: break-all;
         }
 
         .badge-yes {
-            background: rgba(34, 197, 94, 0.12);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.2);
+            background: #d1fae5;
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.15);
             padding: 0.2rem 0.65rem;
             border-radius: 6px;
             font-size: 0.65rem;
@@ -98,9 +110,9 @@
         }
 
         .badge-no {
-            background: rgba(244, 63, 94, 0.12);
-            color: #fb7185;
-            border: 1px solid rgba(244, 63, 94, 0.2);
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.15);
             padding: 0.2rem 0.65rem;
             border-radius: 6px;
             font-size: 0.65rem;
@@ -109,21 +121,21 @@
         }
 
         .status-verified {
-            background: rgba(34, 197, 94, 0.1);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.2);
+            background: #d1fae5;
+            color: #059669;
+            border: 1px solid rgba(5, 150, 105, 0.15);
         }
 
         .status-submitted {
-            background: rgba(244, 63, 94, 0.1);
-            color: #fb7185;
-            border: 1px solid rgba(244, 63, 94, 0.2);
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.15);
         }
 
         .status-rejected {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid rgba(220, 38, 38, 0.15);
         }
 
         .btn-approve {
@@ -132,18 +144,22 @@
             gap: 0.5rem;
             padding: 0.75rem 2rem;
             border-radius: 0.75rem;
-            background: rgba(34, 197, 94, 0.1);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.25);
+            background: #10b981;
+            color: #fff;
+            border: 1px solid #10b981;
             font-size: 0.85rem;
             font-weight: 700;
             transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            text-decoration: none;
         }
 
         .btn-approve:hover {
-            background: #16a34a;
+            background: #059669;
             color: #fff;
-            border-color: #16a34a;
+            border-color: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
         }
 
         .btn-reject {
@@ -152,41 +168,52 @@
             gap: 0.5rem;
             padding: 0.75rem 2rem;
             border-radius: 0.75rem;
-            background: rgba(244, 63, 94, 0.08);
-            color: #fb7185;
-            border: 1px solid rgba(244, 63, 94, 0.2);
+            background: rgba(225, 29, 72, 0.08);
+            color: #e11d48;
+            border: 1px solid rgba(225, 29, 72, 0.2);
             font-size: 0.85rem;
             font-weight: 700;
             transition: all 0.2s;
+            text-decoration: none;
         }
 
         .btn-reject:hover {
             background: #e11d48;
             color: #fff;
             border-color: #e11d48;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(225, 29, 72, 0.2);
         }
 
         .billing-row {
             display: flex;
             justify-content: space-between;
             padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            border-bottom: 1px solid rgba(15, 23, 42, 0.04);
             font-size: 0.85rem;
+        }
+
+        .billing-row:last-child {
+            border-bottom: none;
+        }
+
+        .text-text-muted {
+            color: var(--text-muted) !important;
         }
     </style>
 </head>
 
 <body>
 
-    <header class="border-b border-white/5 bg-[#1a1517]/80 backdrop-blur-xl sticky top-0 z-50">
+    <header class="border-b border-black/5 bg-[#f5f7fa]/80 backdrop-blur-xl sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <a href="{% url 'accounts_dashboard' %}?active_tab=pocso_registrations"
-                    class="px-4 py-2 rounded-xl bg-white/5 text-xs font-bold text-text-muted hover:text-white transition-all border border-white/5">
+                    class="px-4 py-2 rounded-xl bg-slate-900/5 text-xs font-bold text-text-muted hover:text-slate-800 transition-all border border-black/5">
                     <i class="fas fa-arrow-left mr-2"></i> Dashboard
                 </a>
-                <span class="text-white/10">|</span>
-                <span class="heading-font font-bold text-white text-sm">POCSO Compliance Review</span>
+                <span class="text-black/10">|</span>
+                <span class="heading-font font-bold text-slate-800 text-sm">POCSO Compliance Review</span>
             </div>
             <div class="flex items-center gap-3">
                 <span class="
@@ -204,14 +231,14 @@
         <div class="card p-8 border-l-4 border-l-rose-500">
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <p class="text-[0.6rem] font-black text-rose-400 uppercase tracking-widest mb-1">Educational
+                    <p class="text-[0.6rem] font-black text-rose-600 uppercase tracking-widest mb-1">Educational
                         Institution</p>
-                    <h1 class="heading-font text-3xl font-black text-white">{{ reg.school_name }}</h1>
+                    <h1 class="heading-font text-3xl font-black text-slate-900">{{ reg.school_name }}</h1>
                     <p class="text-text-muted mt-1">{{ reg.address }}, {{ reg.city }}, {{ reg.state }} — {{ reg.pin_code }}</p>
                 </div>
                 <div class="text-left md:text-right">
                     <p class="text-xs text-text-muted">Submitted Date</p>
-                    <p class="text-white font-bold">{{ reg.created_at|date:"d M Y" }}</p>
+                    <p class="text-slate-900 font-bold">{{ reg.created_at|date:"d M Y" }}</p>
                 </div>
             </div>
         </div>
@@ -229,13 +256,13 @@
                         <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">{{ reg.contact_no }}</span></div>
                         <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">{{ reg.email }}</span></div>
                     </div>
-                    <div class="mt-6 pt-6 border-t border-white/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                    <div class="mt-6 pt-6 border-t border-black/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
                         <div class="detail-row"><span class="detail-key">Student Count</span><span
-                                class="detail-val font-black text-rose-400">{{ reg.students_count }}</span></div>
+                                class="detail-val font-black text-rose-600">{{ reg.students_count }}</span></div>
                         <div class="detail-row"><span class="detail-key">Teaching Staff</span><span
-                                class="detail-val font-black text-rose-400">{{ reg.teachers_count }}</span></div>
+                                class="detail-val font-black text-rose-600">{{ reg.teachers_count }}</span></div>
                         <div class="detail-row"><span class="detail-key">Non-Teaching Staff</span><span
-                                class="detail-val font-black text-rose-400">{{ reg.non_teaching_staff_count }}</span>
+                                class="detail-val font-black text-rose-600">{{ reg.non_teaching_staff_count }}</span>
                         </div>
                     </div>
                 </div>
@@ -292,17 +319,17 @@
             <div class="space-y-6">
                 <!-- Billing Card -->
                 <div class="card p-7 bg-rose-500/5 border-rose-500/10">
-                    <p class="section-label" style="color:#fb7185;">Billing Breakdown</p>
+                    <p class="section-label" style="color:#e11d48; border-bottom-color: rgba(225, 29, 72, 0.12);">Billing Breakdown</p>
                     <div class="space-y-2 mb-6">
                         {% for fee in addon_fees %}
                         <div class="billing-row">
                             <span class="text-xs text-text-muted">{{ fee.label }}</span>
-                            <span class="font-bold">₹{{ fee.amount|floatformat:2 }}</span>
+                            <span class="font-bold text-slate-900">₹{{ fee.amount|floatformat:2 }}</span>
                         </div>
                         {% endfor %}
                     </div>
 
-                    <div class="border-t border-white/5 pt-4 space-y-2">
+                    <div class="border-t border-black/5 pt-4 space-y-2">
                         <div class="flex justify-between text-xs text-text-muted">
                             <span>Subtotal</span>
                             <span>₹{{ subtotal|floatformat:2 }}</span>
@@ -312,8 +339,8 @@
                             <span>₹{{ tax|floatformat:2 }}</span>
                         </div>
                         <div class="flex justify-between items-center bg-rose-500/10 p-3 rounded-xl mt-4">
-                            <span class="heading-font font-black text-rose-200">Total Due</span>
-                            <span class="heading-font text-white font-black text-2xl">₹{{ total|floatformat:2 }}</span>
+                            <span class="heading-font font-black text-rose-600">Total Due</span>
+                            <span class="heading-font text-slate-900 font-black text-2xl">₹{{ total|floatformat:2 }}</span>
                         </div>
                     </div>
 
@@ -324,9 +351,9 @@
                 <div class="card p-7">
                     <p class="section-label">Payment Evidence</p>
                     {% if reg.payment_screenshot %}
-                    <img src="{{ reg.payment_screenshot.url }}" class="w-full h-auto rounded-lg border border-white/5">
+                    <img src="{{ reg.payment_screenshot.url }}" class="w-full h-auto rounded-lg border border-black/5">
                     <a href="{{ reg.payment_screenshot.url }}" target="_blank"
-                        class="mt-4 inline-block text-[0.6rem] font-bold text-rose-400 uppercase tracking-widest hover:underline">Open
+                        class="mt-4 inline-block text-[0.6rem] font-bold text-rose-600 uppercase tracking-widest hover:underline">Open
                         Full Image <i class="fas fa-external-link-alt ml-1"></i></a>
                     {% else %}
                     <div class="py-10 text-center opacity-20"><i class="fas fa-image text-3xl"></i>
@@ -344,7 +371,7 @@
                     <a href="{% url 'accounts_reject_pocso_payment' reg.id %}" class="btn-reject justify-center"
                         onclick="return confirm('Reject this POCSO payment?')">Reject Payment</a>
                     {% elif reg.payment_status == 'REJECTED' %}
-                    <div class="text-center py-3 text-rose-400 text-sm">
+                    <div class="text-center py-3 text-rose-600 text-sm">
                         <i class="fas fa-times-circle mr-2"></i> Payment Rejected. Awaiting re-submission from client.
                     </div>
                     {% else %}
@@ -354,9 +381,9 @@
                     {% endif %}
                 </div>
                 {% else %}
-                <div class="card p-6 bg-emerald-500/10 border-emerald-500/20 flex items-center gap-3">
-                    <i class="fas fa-check-double text-emerald-400"></i>
-                    <p class="text-xs font-bold text-emerald-400">This registration is officially verified.</p>
+                <div class="card p-6 bg-emerald-500/5 border-emerald-500/15 flex items-center gap-3">
+                    <i class="fas fa-check-double text-emerald-600"></i>
+                    <p class="text-xs font-bold text-emerald-600">This registration is officially verified.</p>
                 </div>
                 {% endif %}
             </div>
