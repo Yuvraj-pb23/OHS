@@ -1386,6 +1386,74 @@
     transform: scale(1.15);
   }
 
+  /* =========================================
+     OUR COMPLIANCE SOLUTIONS CARDS
+     ========================================= */
+  .compliance-card {
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+  }
+  .compliance-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  }
+  
+  .posh-card {
+    border-top: 5px solid #0d6efd;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(13, 110, 253, 0.03) 100%);
+  }
+  .posh-card:hover {
+    box-shadow: 0 20px 40px rgba(13, 110, 253, 0.12);
+  }
+  .pocso-card {
+    border-top: 5px solid #dc3545;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(220, 53, 69, 0.03) 100%);
+  }
+  .pocso-card:hover {
+    box-shadow: 0 20px 40px rgba(220, 53, 69, 0.12);
+  }
+
+  .card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  }
+  .posh-icon {
+    background: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    border: 1px solid rgba(13, 110, 253, 0.2);
+  }
+  .pocso-icon {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.2);
+  }
+  .posh-text {
+    color: #0d6efd;
+  }
+  .pocso-text {
+    color: #dc3545;
+  }
+  .feature-highlights li {
+    font-size: 1.05rem;
+    color: #475569;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+  }
+
 </style>
 </head>
 
@@ -1495,33 +1563,52 @@
       </div>
     </div>
 
-    <!-- About Section -->
-    <section id="about" class="about-section">
+    <!-- Our Compliance Solutions Section -->
+    <section id="compliance-solutions" class="about-section">
       <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-6" data-aos="fade-right">
-            <div class="about-image-wrapper">
-              <!-- Glowing aura behind the image -->
-              <div class="about-image-glow"></div>
-              <img src="{% static 'img/font4.webp' %}" class="img-fluid about-img-3d" alt="Group Collaboration"
-                width="600" height="400" />
+        <!-- Section Header -->
+        <div class="text-center mb-5" data-aos="fade-up">
+          <h2 class="fw-bold mb-3" style="font-size: 2.8rem; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
+            Our Compliance Solutions
+          </h2>
+          <p style="font-size: 1.15rem; line-height: 1.8; color: #475569; max-width: 800px; margin: 0 auto;">
+            Empowering organizations and institutions through specialized compliance, training, and consulting solutions that create safer workplaces and safer learning environments.
+          </p>
+        </div>
+
+        <!-- Cards Layout -->
+        <div class="row align-items-stretch gy-4">
+          <!-- POSH Card -->
+          <div class="col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+            <div class="compliance-card posh-card w-100 p-4 p-md-5 d-flex flex-column h-100">
+              <div class="card-icon posh-icon mb-4">
+                <i class="fas fa-building"></i>
+              </div>
+              <h3 class="fw-bold mb-2" style="font-size: 1.8rem; color: #0f172a;">Building Safer Workplaces</h3>
+              <h5 class="fw-semibold mb-3" style="color: #0d6efd;">End-to-End POSH Compliance Solutions</h5>
+              <p style="font-size: 1.05rem; color: #334155; line-height: 1.7; margin-bottom: 25px; flex-grow: 1;">
+                Ensure legal compliance while fostering a culture of dignity, respect, and inclusion through our comprehensive POSH consulting, employee training, Internal Committee support, policy development, and end-to-end compliance management services.
+              </p>
+              <div class="mt-auto w-100 d-flex justify-content-center pt-3">
+                <img src="{% static 'img/posh_compliance_illustration.png' %}" alt="POSH Compliance" class="img-fluid rounded-4 shadow-sm" style="max-height: 220px; object-fit: cover; width: 100%;">
+              </div>
             </div>
           </div>
-          <div class="col-md-6 ps-md-5 mt-4 mt-md-0" data-aos="fade-left">
-            <h6 class="text-uppercase fw-semibold mb-2" style="color: #6366f1; letter-spacing: 1.5px; font-size: 0.95rem;">About Us</h6>
-            <h2 class="fw-bold mb-3" style="font-size: 2.8rem; color: #0f172a; line-height: 1.2; letter-spacing: -0.5px;">
-              Safe Workplaces, <br> Stronger Workforces
-            </h2>
-            <h4 class="mb-4" style="font-size: 1.2rem; color: #475569; font-weight: 500;">
-              Prevention of Sexual Harassment & Child Safety
-            </h4>
-            <div class="about-desc-card">
-              <p style="font-size: 1.15rem; line-height: 1.8; color: #334155; margin-bottom: 0;">
-                We help organizations achieve complete <span class="fw-bold" style="color: #6366f1;">POSH Act compliance</span>
-                while fostering a culture of safety, dignity, and respect.
-                Our expertise covers every aspect of compliance, including employee sensitisation, setting up Internal
-                Committees, and formulating clear policies.
+
+          <!-- POCSO Card -->
+          <div class="col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+            <div class="compliance-card pocso-card w-100 p-4 p-md-5 d-flex flex-column h-100">
+              <div class="card-icon pocso-icon mb-4">
+                <i class="fas fa-child"></i>
+              </div>
+              <h3 class="fw-bold mb-2" style="font-size: 1.8rem; color: #0f172a;">Protecting Every Child</h3>
+              <h5 class="fw-semibold mb-3" style="color: #dc3545;">Comprehensive POCSO & Child Protection Solutions</h5>
+              <p style="font-size: 1.05rem; color: #334155; line-height: 1.7; margin-bottom: 25px; flex-grow: 1;">
+                Strengthen child safety through robust protection policies, POCSO compliance, capacity-building programs, safety audits, staff training, and child safeguarding frameworks designed for schools and educational institutions.
               </p>
+              <div class="mt-auto w-100 d-flex justify-content-center pt-3">
+                <img src="{% static 'img/child_protection_illustration.png' %}" alt="Child Protection Solutions" class="img-fluid rounded-4 shadow-sm" style="max-height: 220px; object-fit: cover; width: 100%;">
+              </div>
             </div>
           </div>
         </div>
