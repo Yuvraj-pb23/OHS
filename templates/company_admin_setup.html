@@ -1,15 +1,37 @@
 {% extends 'base.html' %}
 {% block title %}Company Registration{% endblock %}
 
+{% block extra_head %}
+<style>
+    body {
+        background-image: 
+          linear-gradient(to right, rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(15, 23, 42, 0.025) 1px, transparent 1px),
+          radial-gradient(circle at 10% 20%, #f0f9ff 0%, #eef2ff 40%, #e0f2fe 70%, #fffbeb 100%) !important;
+        background-size: 40px 40px, 40px 40px, 100% 100% !important;
+        background-attachment: fixed !important;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
 <style>
+    .page-wrapper {
+        background: transparent;
+        min-height: calc(100vh - 80px);
+        padding: 40px 20px;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+    }
     .sub-container {
+        width: 100%;
         max-width: 600px;
-        margin: 50px auto;
         padding: 40px;
         background: white;
         border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border-top: 5px solid #6200ea;
     }
     .back-link {
         display: inline-flex; align-items: center;
@@ -18,10 +40,10 @@
         margin-bottom: 20px; transition: all 0.3s ease;
     }
     .back-link i { margin-right: 8px; font-size: 0.8rem; }
-    .back-link:hover { color: #26a69a; transform: translateX(-3px); }
+    .back-link:hover { color: #6200ea; transform: translateX(-3px); }
 
     .form-header { text-align: center; margin-bottom: 30px; }
-    .form-header h2 { color: #26a69a; font-weight: 800; }
+    .form-header h2 { color: #0d47a1; font-weight: 800; }
     .form-header p  { color: #666; font-size: 1.1rem; }
 
     .form-group { margin-bottom: 20px; position: relative; }
@@ -30,12 +52,17 @@
     .form-control {
         width: 100%; padding: 12px;
         border: 1px solid #ddd; border-radius: 8px;
-        box-sizing: border-box; transition: border-color 0.3s ease;
+        box-sizing: border-box; transition: all 0.3s ease;
         font-size: 1rem;
     }
+    .form-control:focus {
+        border-color: #6200ea;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(98, 0, 234, 0.1);
+    }
     .form-control.valid {
-        border-color: #26a69a;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2326a69a' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
+        border-color: #28a745;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2328a745' width='18px' height='18px'%3E%3Cpath d='M0 0h24v24H0z' fill='none'/%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
         background-repeat: no-repeat; background-position: right 10px center;
     }
     .form-control.invalid { border-color: #c62828; }
@@ -43,20 +70,20 @@
 
     .btn-company {
         width: 100%; padding: 15px;
-        background: linear-gradient(135deg, #26a69a, #00897b);
+        background: linear-gradient(135deg, #6200ea, #4a00b0);
         color: white; border: none; border-radius: 8px;
         font-weight: bold; font-size: 1.1rem; cursor: pointer;
-        transition: opacity 0.3s, transform 0.2s;
+        transition: all 0.3s ease;
     }
     .btn-company:disabled { background: #b0bec5; cursor: not-allowed; opacity: 0.7; }
     .btn-company:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(38,166,154,0.4);
+        box-shadow: 0 5px 15px rgba(98, 0, 234, 0.4);
     }
     .section-title {
-        margin-bottom: 15px; color: #555;
-        border-left: 4px solid #26a69a; padding-left: 10px;
-        font-size: 1.1rem;
+        margin-bottom: 15px; color: #040e3f;
+        border-left: 4px solid #ffb400; padding-left: 10px;
+        font-size: 1.1rem; font-weight: 700;
     }
 
     /* OTP UI */
@@ -64,13 +91,13 @@
     .email-row .form-control { flex: 1; margin: 0; }
     .btn-otp {
         flex-shrink: 0; padding: 12px 14px;
-        background: #26a69a; color: white;
+        background: #6200ea; color: white;
         border: none; border-radius: 8px;
         font-weight: 600; font-size: 0.85rem;
         cursor: pointer; white-space: nowrap;
         transition: background 0.3s;
     }
-    .btn-otp:hover:not(:disabled) { background: #00897b; }
+    .btn-otp:hover:not(:disabled) { background: #4a00b0; }
     .btn-otp:disabled { background: #b0bec5; cursor: not-allowed; }
 
     .otp-box { margin-top: 10px; display: none; }
@@ -82,13 +109,13 @@
     }
     .btn-verify {
         flex-shrink: 0; padding: 12px 14px;
-        background: #5c6bc0; color: white;
+        background: #6366f1; color: white;
         border: none; border-radius: 8px;
         font-weight: 600; font-size: 0.85rem;
         cursor: pointer; white-space: nowrap;
         transition: background 0.3s;
     }
-    .btn-verify:hover:not(:disabled) { background: #3949ab; }
+    .btn-verify:hover:not(:disabled) { background: #4f46e5; }
     .btn-verify:disabled { background: #b0bec5; cursor: not-allowed; }
 
     .otp-msg { margin-top: 8px; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; display: none; }
@@ -132,10 +159,11 @@
         pointer-events: none !important;
     }
     .password-toggle-icon:hover svg {
-        stroke: #26a69a !important;
+        stroke: #6200ea !important;
     }
 </style>
 
+<div class="page-wrapper">
 <div class="sub-container">
     <a href="javascript:history.back()" class="back-link">
         <i class="fa-solid fa-chevron-left"></i> Back to Plan Details
@@ -215,6 +243,7 @@
         <button type="submit" class="btn-company" id="submitBtn" disabled>Create Organization Account</button>
     </form>
 </div>
+</div>
 
 <script>
 (function () {
@@ -286,7 +315,7 @@
     }
 
     function clearError(input, errEl) {
-        input.style.borderColor = '#26a69a';
+        input.style.borderColor = '#28a745';
         input.classList.remove('invalid');
         input.classList.add('valid');
         errEl.style.display = 'none';

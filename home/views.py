@@ -1790,12 +1790,16 @@ def individual_subscription(request, plan_type):
             return redirect(request.path)
 
         import re
-        from home.validators import is_valid_email, is_valid_name
+        from home.validators import is_valid_email, is_valid_name, is_valid_username
         
         if not is_valid_name(fullname):
             messages.error(request, "Please enter a valid full name (letters and spaces only, min 2 characters).")
             return redirect(request.path)
             
+        if not is_valid_username(username):
+            messages.error(request, "Invalid username format. Only letters, numbers, dots, and underscores are allowed (min 3 characters).")
+            return redirect(request.path)
+
         if not is_valid_email(email):
             messages.error(request, "Invalid email address format.")
             return redirect(request.path)
@@ -1807,6 +1811,11 @@ def individual_subscription(request, plan_type):
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username taken.")
             return redirect(request.path)
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered.")
+            return redirect(request.path)
+            
         try:
             with transaction.atomic():
                 user = User.objects.create_user(
@@ -3743,7 +3752,11 @@ def custom_csrf_failure(request, reason=""):
     from django.views.csrf import csrf_failure
     return csrf_failure(request, reason)
 
+def custom_404(request, exception=None):
+    return render(request, 'error.html', status=404)
 
+def custom_403(request, exception=None):
+    return render(request, 'error.html', status=403)
 
-
-
+def custom_500(request):
+    return render(request, 'error.html', status=500)

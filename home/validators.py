@@ -23,6 +23,12 @@ def is_valid_name(name_str, min_len=2, max_len=100):
     # Allow letters, spaces, hyphens, apostrophes, and dots
     return bool(re.match(r"^[A-Za-z\s\-'\.]+$", name_str))
 
+def is_valid_username(username_str, min_len=3, max_len=150):
+    if not username_str or len(username_str) < min_len or len(username_str) > max_len:
+        return False
+    # Allow alphanumeric characters, underscores, and dots (standard usernames)
+    return bool(re.match(r"^[A-Za-z0-9_\.]+$", username_str))
+
 def is_valid_numeric(val, min_val=0, max_val=None):
     try:
         num = int(val)

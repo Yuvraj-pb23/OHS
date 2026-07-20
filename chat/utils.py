@@ -23,7 +23,7 @@ TRUSTED_MODELS_SHA256 = {
     "chatbot_model.pkl": "34920314ee6b923ad150676123ba1d6076087257e490f88673c2d07490110fd2",
     "keyword_index.pkl": "41c92b90c738f3c6f97c03d419ef96381da990410a5f7b8e689f2a7c201ce264",
     "label_encoder.pkl": "21edfd402534924fe8a5e8660cb36be33a8b7e99e7ce5ad9affd27d3b14c7443",
-    "semantic_data.pkl": "f8516c295dfedaca3d93a5090767d9318380915b64cd18a5637b4159b5764979",
+    "semantic_data.pkl": "45c5135d5f0fcb57674de9c3110761245110eeb5132a4e57687eae9925156230",
 }
 
 def verify_file_signature(file_path):
