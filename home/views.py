@@ -603,7 +603,7 @@ def custom_login_view(request):
             return render(request, "login.html", {"error_message": error_msg})
 
         # Try standard authentication first
-        user = authenticate(username=u, password=p)
+        user = authenticate(request, username=u, password=p)
         if user is not None:
             clear_login_attempts(u, ip)
             login(request, user)
@@ -3342,6 +3342,7 @@ Open Hand Private Limited"""
         "accounts_dashboard.html",
         {
             "config": config,
+            "book_training_regs": __import__("home.models", fromlist=["BookTrainingRegistration"]).BookTrainingRegistration.objects.all().order_by("-created_at"),
             "pocso_config": pocso_config,
             "registrations": registrations,
             "pocso_registrations": pocso_registrations,
@@ -3760,3 +3761,26 @@ def custom_403(request, exception=None):
 
 def custom_500(request):
     return render(request, 'error.html', status=500)
+@require_POST
+def book_training_view(request):
+    name = request.POST.get('name')
+    email = request.POST.get('email')
+    phone = request.POST.get('phone')
+    company_name = request.POST.get('company_name', '')
+    address = request.POST.get('address', '')
+    course_name = request.POST.get('course_name')
+
+    if name and email and phone and course_name:
+        from .models import BookTrainingRegistration
+        BookTrainingRegistration.objects.create(
+            name=name, email=email, phone=phone,
+            company_name=company_name, course_name=course_name, address=address
+        )
+        from django.core.mail import send_mail
+        from django.conf import settings
+        subject = 'Thank you for your interest in ' + course_name
+        message = f'Hi {name},\n\nThank you for booking training for {course_name}. Our team will reach out to you shortly.\n\nBest Regards,\nOpen Hand Private Limited'
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [email], fail_silently=True)
+        return JsonResponse({'status': 'success', 'message': 'Successfully registered! Our team will reach out to you.'})
+    return JsonResponse({'status': 'error', 'message': 'Missing required fields.'}, status=400)
+

@@ -22,6 +22,7 @@ urlpatterns = [
     ),
     # --- MAIN TUTORIAL / TRAINING LANDING ---
     path("tutorial/", views.tutorial_view, name="tutorial"),
+    path("book-training/", views.book_training_view, name="book_training"),
     # --- FORCE PASSWORD CHANGE (First-time login) ---
     path(
         "force-password-change/",

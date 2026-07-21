@@ -237,7 +237,8 @@
         }
         .selection-card:hover { border-color: #cbd5e1; }
         
-        input[type="radio"]:checked + .selection-card {
+        input[type="radio"]:checked + .selection-card,
+        input[type="checkbox"]:checked + .selection-card {
             background: var(--accent);
             border-color: var(--accent);
             color: white;
@@ -343,9 +344,16 @@
                                 </div>
                                 <div class="custom-select-options">
                                     <div class="custom-option {% if registration.designation == 'Principal' %}selected{% endif %}" data-value="Principal">Principal</div>
-                                    <div class="custom-option {% if registration.designation == 'Counselor' %}selected{% endif %}" data-value="Counselor">Counselor</div>
+                                    <div class="custom-option {% if registration.designation == 'Vice Principal' %}selected{% endif %}" data-value="Vice Principal">Vice Principal</div>
+                                    <div class="custom-option {% if registration.designation == 'School Director' %}selected{% endif %}" data-value="School Director">School Director</div>
+                                    <div class="custom-option {% if registration.designation == 'Chairman' %}selected{% endif %}" data-value="Chairman">Chairman</div>
+                                    <div class="custom-option {% if registration.designation == 'School Administrator' %}selected{% endif %}" data-value="School Administrator">School Administrator</div>
+                                    <div class="custom-option {% if registration.designation == 'Management Representative' %}selected{% endif %}" data-value="Management Representative">Management Representative</div>
+                                    <div class="custom-option {% if registration.designation == 'Counsellor' %}selected{% endif %}" data-value="Counsellor">Counsellor</div>
+                                    <div class="custom-option {% if registration.designation == 'Other' %}selected{% endif %}" data-value="Other">Other</div>
                                 </div>
                             </div>
+                            <input type="text" name="designation_other" id="designation_other_input" class="floating-input mt-2 hidden" placeholder="Enter Designation">
                         </div>
                         <div>
                             <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 mb-1 block">Work Email</label>
@@ -376,6 +384,87 @@
                     <div class="flex items-center gap-2 mb-6 border-b border-rose-50 pb-4">
                         <span class="section-tag">Section 2</span>
                         <h2 class="font-black text-xl text-rose-950 heading-font">Institutional Profile</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">School Board</label>
+                            <div class="custom-select-wrapper" id="school-board-dropdown">
+                                <input type="hidden" name="school_board" value="{{ registration.school_board|default:'' }}" required>
+                                <div class="custom-select-trigger floating-input">
+                                    <span>{% if registration.school_board %}{{ registration.school_board }}{% else %}Select Board{% endif %}</span>
+                                    <i class="fas fa-chevron-down text-accent text-xs"></i>
+                                </div>
+                                <div class="custom-select-options">
+                                    <div class="custom-option {% if registration.school_board == 'CBSE' %}selected{% endif %}" data-value="CBSE">CBSE</div>
+                                    <div class="custom-option {% if registration.school_board == 'ICSE' %}selected{% endif %}" data-value="ICSE">ICSE</div>
+                                    <div class="custom-option {% if registration.school_board == 'State Board' %}selected{% endif %}" data-value="State Board">State Board</div>
+                                    <div class="custom-option {% if registration.school_board == 'IB' %}selected{% endif %}" data-value="IB">IB</div>
+                                    <div class="custom-option {% if registration.school_board == 'Cambridge' %}selected{% endif %}" data-value="Cambridge">Cambridge</div>
+                                    <div class="custom-option {% if registration.school_board == 'Other' %}selected{% endif %}" data-value="Other">Other</div>
+                                </div>
+                            </div>
+                            <input type="text" name="school_board_other" id="school_board_other_input" class="floating-input mt-2 hidden" placeholder="Enter Board Name">
+                        </div>
+                        <div>
+                            <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-1">School Category</label>
+                            <div class="custom-select-wrapper" id="school-category-dropdown">
+                                <input type="hidden" name="school_category" value="{{ registration.school_category|default:'' }}" required>
+                                <div class="custom-select-trigger floating-input">
+                                    <span>{% if registration.school_category %}{{ registration.school_category }}{% else %}Select Category{% endif %}</span>
+                                    <i class="fas fa-chevron-down text-accent text-xs"></i>
+                                </div>
+                                <div class="custom-select-options">
+                                    <div class="custom-option {% if registration.school_category == 'Government' %}selected{% endif %}" data-value="Government">Government</div>
+                                    <div class="custom-option {% if registration.school_category == 'Private' %}selected{% endif %}" data-value="Private">Private</div>
+                                    <div class="custom-option {% if registration.school_category == 'Aided' %}selected{% endif %}" data-value="Aided">Aided</div>
+                                    <div class="custom-option {% if registration.school_category == 'Trust' %}selected{% endif %}" data-value="Trust">Trust</div>
+                                    <div class="custom-option {% if registration.school_category == 'NGO' %}selected{% endif %}" data-value="NGO">NGO</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="text-[0.7rem] font-bold text-slate-500 uppercase ml-1 block mb-2">School Level (Select all that apply)</label>
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-2 checkbox-group">
+                            <label class="w-full h-full">
+                                <input type="checkbox" name="school_level" value="Pre Primary" class="peer hidden" {% if 'Pre Primary' in registration.school_level %}checked{% endif %}>
+                                <div class="selection-card flex-col !h-full !py-3">
+                                    <span class="text-center">Pre Primary</span>
+                                    <span class="text-[0.55rem] font-normal opacity-80 mt-1 uppercase tracking-wider block leading-tight text-center">(Nursery to UKG)</span>
+                                </div>
+                            </label>
+                            <label class="w-full h-full">
+                                <input type="checkbox" name="school_level" value="Primary" class="peer hidden" {% if 'Primary' in registration.school_level %}checked{% endif %}>
+                                <div class="selection-card flex-col !h-full !py-3">
+                                    <span class="text-center">Primary</span>
+                                    <span class="text-[0.55rem] font-normal opacity-80 mt-1 uppercase tracking-wider block leading-tight text-center">(Class 1 to 5)</span>
+                                </div>
+                            </label>
+                            <label class="w-full h-full">
+                                <input type="checkbox" name="school_level" value="Middle" class="peer hidden" {% if 'Middle' in registration.school_level %}checked{% endif %}>
+                                <div class="selection-card flex-col !h-full !py-3">
+                                    <span class="text-center">Middle</span>
+                                    <span class="text-[0.55rem] font-normal opacity-80 mt-1 uppercase tracking-wider block leading-tight text-center">(Class 6 to 8)</span>
+                                </div>
+                            </label>
+                            <label class="w-full h-full">
+                                <input type="checkbox" name="school_level" value="Secondary" class="peer hidden" {% if 'Secondary' in registration.school_level %}checked{% endif %}>
+                                <div class="selection-card flex-col !h-full !py-3">
+                                    <span class="text-center">Secondary</span>
+                                    <span class="text-[0.55rem] font-normal opacity-80 mt-1 uppercase tracking-wider block leading-tight text-center">(Class 9 to 10)</span>
+                                </div>
+                            </label>
+                            <label class="w-full h-full">
+                                <input type="checkbox" name="school_level" value="Senior Secondary" class="peer hidden" {% if 'Senior Secondary' in registration.school_level %}checked{% endif %}>
+                                <div class="selection-card flex-col !h-full !py-3">
+                                    <span class="text-center">Senior<br>Secondary</span>
+                                    <span class="text-[0.55rem] font-normal opacity-80 mt-1 uppercase tracking-wider block leading-tight text-center">(Class 11 to 12)</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="error-message" id="error_school_level"><i class="fas fa-exclamation-circle"></i> Please select at least one level.</div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -625,6 +714,23 @@
             return valid;
         }
 
+        // Add custom validation for checkboxes
+        document.getElementById("pocsoForm").addEventListener("submit", function(e) {
+            if (captchaVerified) return;
+            const checkboxes = document.querySelectorAll('input[name="school_level"]:checked');
+            const errorMsg = document.getElementById("error_school_level");
+            if (checkboxes.length === 0) {
+                e.preventDefault();
+                errorMsg.classList.add("show");
+                document.querySelector('.checkbox-group').classList.add("border-rose-300", "ring-1", "ring-rose-50", "rounded-xl", "p-1");
+                const target = document.getElementById("section-2");
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                errorMsg.classList.remove("show");
+                document.querySelector('.checkbox-group').classList.remove("border-rose-300", "ring-1", "ring-rose-50", "rounded-xl", "p-1");
+            }
+        });
+
         function toggleTField(show) { 
             const box = document.getElementById('t-mode-box');
             box.classList.toggle('hidden', !show);
@@ -682,6 +788,32 @@
 
                     options.classList.remove('show');
                     trigger.classList.remove('active');
+
+                    // Check for "Other" in designation
+                    if (hiddenInput.name === 'designation') {
+                        const otherInput = document.getElementById('designation_other_input');
+                        if (value === 'Other') {
+                            otherInput.classList.remove('hidden');
+                            otherInput.setAttribute('required', 'required');
+                        } else {
+                            otherInput.classList.add('hidden');
+                            otherInput.removeAttribute('required');
+                            otherInput.value = '';
+                        }
+                    }
+                    
+                    // Check for "Other" in school board
+                    if (hiddenInput.name === 'school_board') {
+                        const otherInput = document.getElementById('school_board_other_input');
+                        if (value === 'Other') {
+                            otherInput.classList.remove('hidden');
+                            otherInput.setAttribute('required', 'required');
+                        } else {
+                            otherInput.classList.add('hidden');
+                            otherInput.removeAttribute('required');
+                            otherInput.value = '';
+                        }
+                    }
                 });
             });
         });

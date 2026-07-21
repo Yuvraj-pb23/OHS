@@ -592,13 +592,35 @@ def pocso_registration_view(request):
             messages.error(request, "Counts cannot be negative.")
             return redirect("pocso_registration")
 
+        state = data.get("state", "").strip()
+        pin_code = data.get("pin_code", "").strip()
+        contact_person = data.get("contact_person", "").strip()
+        
+        designation = data.get("designation", "").strip()
+        if designation == "Other":
+            designation = data.get("designation_other", "").strip()
+            
+        school_board = data.get("school_board", "").strip()
+        if school_board == "Other":
+            school_board = data.get("school_board_other", "").strip()
+            
+        school_category = data.get("school_category", "").strip()
+        school_level = data.getlist("school_level")
+
         reg = POCSORegistration(
             school_name=school_name,
             person_name=person_name,
+            designation=designation,
+            school_board=school_board,
+            school_category=school_category,
+            school_level=school_level,
             email=email,
             phone=phone,
             address=address,
             city=city,
+            state=state,
+            pin_code=pin_code,
+            contact_person=contact_person,
             students_count=students_count,
             teachers_count=teachers_count,
             non_teaching_staff_count=non_teaching_staff_count,

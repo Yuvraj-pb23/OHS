@@ -4,7 +4,6 @@ from . import views
 urlpatterns = [
     path("pocso-registration/", views.pocso_registration_view, name="pocso_registration"),
     path("pocso-billing/", views.pocso_billing_view, name="pocso_billing"),
-    path("pocso-individual-info/", views.pocso_i, name="pocso_i_page"),
     path("pocso-company-info/", views.pocso_c, name="pocso_c_page"),
     path("pocso_assessment/", views.pocso_assessment, name="pocso_assessment"),
     path("tutorial/pocso-act/", views.pocso_act_page, name="pocso_act_page"),

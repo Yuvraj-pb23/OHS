@@ -717,6 +717,9 @@ class POCSORegistration(models.Model):
     person_name = models.CharField(max_length=255)
     designation = models.CharField(max_length=100)
     school_name = models.CharField(max_length=255)
+    school_board = models.CharField(max_length=100, blank=True, null=True)
+    school_category = models.CharField(max_length=100, blank=True, null=True)
+    school_level = models.JSONField(default=list, blank=True, null=True)
 
     # Counts
     students_count = models.IntegerField(default=0)
@@ -972,3 +975,15 @@ class DeletedPoster(models.Model):
     def __str__(self):
         return self.poster_path
 
+
+class BookTrainingRegistration(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+    course_name = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.name} - {self.course_name}'

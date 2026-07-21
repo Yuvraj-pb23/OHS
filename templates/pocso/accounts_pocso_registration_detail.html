@@ -257,6 +257,11 @@
                         <div class="detail-row"><span class="detail-key">Email</span><span class="detail-val">{{ reg.email }}</span></div>
                     </div>
                     <div class="mt-6 pt-6 border-t border-black/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
+                        <div class="detail-row"><span class="detail-key">School Board</span><span class="detail-val">{{ reg.school_board|default:"-" }}</span></div>
+                        <div class="detail-row"><span class="detail-key">School Category</span><span class="detail-val">{{ reg.school_category|default:"-" }}</span></div>
+                        <div class="detail-row" style="grid-column: span 2;"><span class="detail-key">School Level</span><span class="detail-val">{{ reg.school_level|join:", "|default:"-" }}</span></div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-black/5 grid grid-cols-1 md:grid-cols-2 gap-x-12">
                         <div class="detail-row"><span class="detail-key">Student Count</span><span
                                 class="detail-val font-black text-rose-600">{{ reg.students_count }}</span></div>
                         <div class="detail-row"><span class="detail-key">Teaching Staff</span><span

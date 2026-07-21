@@ -559,6 +559,9 @@
                 <button onclick="switchTab('posters')" id="tab-posters" class="tab-btn">
                     <i class="fas fa-images mr-2"></i> Awareness Posters
                 </button>
+                <button onclick="switchTab('book_training')" id="tab-book_training" class="tab-btn">
+                    <i class="fas fa-book-reader mr-2"></i> Book Training
+                </button>
             </div>
         </div>
 
@@ -2156,6 +2159,47 @@
             <span style="font-family: 'Outfit', 'Poppins', 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text-muted, var(--text-secondary, #94a3b8)); letter-spacing: -0.01em;">Open Hand Solutions</span>
           </div>
         </footer>
+        <!-- BOOK TRAINING TAB -->
+        <div id="content-book_training" class="tab-content" style="display:none;">
+            <div class="card p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="heading-font text-xl font-bold">Book Training Registrations</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full tier-table-compact">
+                        <thead>
+                            <tr class="border-b border-white/5">
+                                <th class="py-4 text-left">Date</th>
+                                <th class="py-4 text-left">Name</th>
+                                <th class="py-4 text-left">Email</th>
+                                <th class="py-4 text-left">Phone</th>
+                                <th class="py-4 text-left">Organization / School</th>
+                                <th class="py-4 text-left">Address</th>
+                                <th class="py-4 text-left">Course</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for reg in book_training_regs %}
+                            <tr class="registration-row">
+                                <td class="py-4 font-bold">{{ reg.created_at|date:"M d, Y" }}</td>
+                                <td class="py-4 font-bold text-accent">{{ reg.name }}</td>
+                                <td class="py-4">{{ reg.email }}</td>
+                                <td class="py-4">{{ reg.phone }}</td>
+                                <td class="py-4">{{ reg.company_name }}</td>
+                                <td class="py-4">{{ reg.address }}</td>
+                                <td class="py-4"><span class="tag tag-blue">{{ reg.course_name }}</span></td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-text-muted">No training registrations yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script>

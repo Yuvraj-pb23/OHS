@@ -312,7 +312,6 @@
            ACADEMY SECTIONS & COURSE CARDS
            ========================================= */
         .training-section {
-            padding: 60px 0 100px;
             background: transparent;
         }
 
@@ -657,6 +656,31 @@
             50% { opacity: 1; filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.9)); }
         }
     </style>
+
+    <style>
+        .book-training-btn {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .book-training-btn:hover {
+            color: white;
+            transform: translateY(-2px);
+        }
+        .posh-card .book-training-btn { background-color: var(--primary); }
+        .posh-card .book-training-btn:hover { background-color: var(--primary-dark); }
+        .pocso-card .book-training-btn { background-color: #ea580c; }
+        .pocso-card .book-training-btn:hover { background-color: #c2410c; }
+        .mental-health-card .book-training-btn { background-color: #16a34a; }
+        .mental-health-card .book-training-btn:hover { background-color: #15803d; }
+    </style>
+
 </head>
 
 <body>
@@ -709,14 +733,15 @@
 
                 {% if show_pocso %}
                 <div class="glass-module module-pocso" data-aos="zoom-in" data-aos-delay="200">
-                    <!-- Always locked -->
+                    {% if is_accounts_user %}
                     <div class="coming-soon-overlay">
                         <div class="coming-soon-content">
                             <i class="fas fa-lock lock-icon-glow"></i>
-                            <h3 class="coming-soon-title" style="font-size: 1.1rem; letter-spacing: 0.18em;">Coming Soon</h3>
-                            <p class="coming-soon-sub" style="font-size: 0.62rem; letter-spacing: 0.3em; margin-top: 8px;">Currently Unavailable</p>
+                            <h3 class="coming-soon-title" style="font-size: 1.1rem; letter-spacing: 0.18em;">Restricted Access</h3>
+                            <p class="coming-soon-sub" style="font-size: 0.62rem; letter-spacing: 0.3em; margin-top: 8px;">Insufficient Portal Privileges</p>
                         </div>
                     </div>
+                    {% endif %}
                     <div class="module-icon">🧒</div>
                     <h2>POCSO Act</h2>
                     <p>Understand child protection laws designed for a secure institutional environment.</p>
@@ -724,7 +749,7 @@
                         {% if user.is_authenticated %}
                         <a href="{% url 'pocso_act_page' %}" class="sub-btn btn-pocso-ind">Go to Training</a>
                         {% else %}
-                        <a href="{% url 'pocso_i_page' %}" class="sub-btn btn-pocso-ind">Parents Access</a>
+                        <a href="#" onclick="return false;" class="sub-btn btn-pocso-ind" style="opacity: 0.5; cursor: not-allowed;">Parents Access</a>
                         <a href="{% url 'pocso_registration' %}" class="sub-btn btn-pocso-comp">School License</a>
                         {% endif %}
                     </div>
@@ -768,6 +793,7 @@
                                 <li>Reporting Mechanism</li>
                                 <li>Creating Respectful Workplaces</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -791,6 +817,7 @@
                                 <li>Documentation</li>
                                 <li>Respectful Leadership</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -814,6 +841,7 @@
                                 <li>Conducting Inquiry</li>
                                 <li>Drafting Reports</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -837,6 +865,7 @@
                                 <li>Inquiry Reports</li>
                                 <li>Judicial Case Laws</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -860,6 +889,7 @@
                                 <li>Board Compliance</li>
                                 <li>Risk Management</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -883,6 +913,7 @@
                                 <li>Difficult Conversations</li>
                                 <li>Trainer Certification</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
                 </div>
@@ -917,6 +948,7 @@
                                 <li>Stakeholder Roles</li>
                                 <li>Case Studies</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -940,6 +972,7 @@
                                 <li>Mandatory Reporting</li>
                                 <li>Parent Collaboration</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -963,6 +996,7 @@
                                 <li>Behavioural Changes</li>
                                 <li>Practical Safety Tips</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -986,6 +1020,7 @@
                                 <li>Rehabilitation</li>
                                 <li>Court Procedures</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -1009,6 +1044,7 @@
                                 <li>Incident Response</li>
                                 <li>Safety Audits</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -1032,6 +1068,7 @@
                                 <li>Programme Design</li>
                                 <li>Trainer Certification</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
                 </div>
@@ -1065,6 +1102,7 @@
                                 <li>Work-Life Integration</li>
                                 <li>Building Personal Resilience</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -1088,6 +1126,7 @@
                                 <li>Encouraging Vulnerability</li>
                                 <li>Creating a Safe Work Culture</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
 
@@ -1111,6 +1150,7 @@
                                 <li>Supporting Team Well-being</li>
                                 <li>Referrals & Professional Help</li>
                             </ul>
+                            <a href="#" class="book-training-btn" onclick="event.preventDefault(); openBookTrainingModal(this);">Book Training</a>
                         </div>
                     </div>
                 </div>
@@ -1124,6 +1164,152 @@
     <script>
         AOS.init({ duration: 800, once: true, offset: 100 });
     </script>
+
+<!-- Book Training Modal -->
+<div class="modal fade" id="bookTrainingModal" tabindex="-1" aria-labelledby="bookTrainingModalLabel" aria-hidden="true" style="z-index: 9999;">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 12px; overflow: hidden;">
+      <div class="modal-header border-0" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; padding: 1.25rem 1.5rem;">
+        <h5 class="modal-title fw-bold" id="bookTrainingModalLabel" style="font-size: 1.25rem;">
+            <i class="fas fa-book-reader me-2"></i> Book Training
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4 bg-white">
+        <form id="bookTrainingForm">
+            {% csrf_token %}
+            <input type="hidden" name="course_name" id="bookCourseName">
+            
+            <div class="row g-3">
+                <div class="col-12">
+                    <label class="form-label text-muted small fw-bold mb-1">Full Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="fas fa-user"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-light" id="bookName" name="name" placeholder="John Doe" style="border-radius: 0 8px 8px 0; border-color: #dee2e6;" required>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-muted small fw-bold mb-1">Email Address <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="fas fa-envelope"></i></span>
+                        <input type="email" class="form-control border-start-0 bg-light" id="bookEmail" name="email" placeholder="john@example.com" style="border-radius: 0 8px 8px 0; border-color: #dee2e6;" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold mb-1">Phone <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="fas fa-phone"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-light" id="bookPhone" name="phone" placeholder="+91..." style="border-radius: 0 8px 8px 0; border-color: #dee2e6;" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label text-muted small fw-bold mb-1" id="bookCompanyLabel">Organization</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="fas fa-building"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-light" id="bookCompany" name="company_name" placeholder="Name" style="border-radius: 0 8px 8px 0; border-color: #dee2e6;">
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label class="form-label text-muted small fw-bold mb-1" id="bookAddressLabel">Address</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0 text-muted" style="border-radius: 8px 0 0 8px;"><i class="fas fa-map-marker-alt"></i></span>
+                        <input type="text" class="form-control border-start-0 bg-light" id="bookAddress" name="address" placeholder="Location details" style="border-radius: 0 8px 8px 0; border-color: #dee2e6;">
+                    </div>
+                </div>
+            </div>
+
+            <div id="bookTrainingAlert" class="alert d-none mt-3" style="border-radius: 8px; font-size: 0.9rem; padding: 10px;"></div>
+            
+            <div class="text-center mt-4 pt-2">
+                <button type="submit" class="btn btn-primary py-2 w-100 fw-bold shadow-sm" style="background-color: var(--primary); border: none; border-radius: 8px; font-size: 1rem; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
+                    Submit Registration
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+function openBookTrainingModal(btn) {
+    var card = btn.closest('.course-card');
+    var courseTitle = card.querySelector('.course-title').innerText;
+    document.getElementById('bookCourseName').value = courseTitle;
+    document.getElementById('bookTrainingModalLabel').innerHTML = "<i class='fas fa-book-reader me-2'></i> " + courseTitle;
+    
+    var companyLabel = document.getElementById('bookCompanyLabel');
+    var addressLabel = document.getElementById('bookAddressLabel');
+    var companyInput = document.getElementById('bookCompany');
+    var addressInput = document.getElementById('bookAddress');
+    var modalHeader = document.querySelector('#bookTrainingModal .modal-header');
+    var submitBtn = document.querySelector('#bookTrainingForm button[type="submit"]');
+
+    if (card.classList.contains('pocso-card')) {
+        companyLabel.innerText = "School Name";
+        companyInput.placeholder = "School Name";
+        addressLabel.innerText = "School Address";
+        addressInput.placeholder = "School Address";
+        modalHeader.style.background = 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)';
+        submitBtn.style.backgroundColor = '#ea580c';
+    } else if (card.classList.contains('posh-card')) {
+        companyLabel.innerText = "Company Name";
+        companyInput.placeholder = "Company Name";
+        addressLabel.innerText = "Company Address";
+        addressInput.placeholder = "Company Address";
+        modalHeader.style.background = 'linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%)';
+        submitBtn.style.backgroundColor = 'var(--primary)';
+    } else {
+        companyLabel.innerText = "Organization Name";
+        companyInput.placeholder = "Organization Name";
+        addressLabel.innerText = "Organization Address";
+        addressInput.placeholder = "Organization Address";
+        modalHeader.style.background = 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)';
+        submitBtn.style.backgroundColor = '#16a34a';
+    }
+
+    var bookTrainingModal = new bootstrap.Modal(document.getElementById('bookTrainingModal'));
+    bookTrainingModal.show();
+}
+
+document.getElementById('bookTrainingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    var formData = new FormData(this);
+    var alertBox = document.getElementById('bookTrainingAlert');
+    alertBox.className = 'alert alert-info mt-3 shadow-sm';
+    alertBox.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Submitting...';
+    
+    fetch("{% url 'book_training' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.status === 'success') {
+            alertBox.className = 'alert alert-success mt-3 shadow-sm';
+            alertBox.innerHTML = '<i class="fas fa-check-circle me-2"></i> ' + data.message;
+            this.reset();
+            setTimeout(function() {
+                var modal = bootstrap.Modal.getInstance(document.getElementById('bookTrainingModal'));
+                modal.hide();
+                alertBox.className = 'alert d-none mt-3';
+            }, 3000);
+        } else {
+            alertBox.className = 'alert alert-danger mt-3 shadow-sm';
+            alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> ' + (data.message || 'An error occurred.');
+        }
+    })
+    .catch(error => {
+        alertBox.className = 'alert alert-danger mt-3 shadow-sm';
+        alertBox.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> An error occurred. Please try again.';
+    });
+});
+</script>
+
 </body>
 
 </html>
