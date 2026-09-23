@@ -551,10 +551,16 @@ def check_rate_limit(key, limit=30, window=60):
 
 
 def check_login_lockout(username, ip):
+    """
+    Lockout is IP-based only (not username+IP) so that failed attempts from
+    one machine do not lock out other users who share the same username but
+    connect from a different IP — including office colleagues behind the same
+    public NAT IP on a different device.
+    """
     from django.core.cache import cache
     import time
-    
-    lockout_key = f"login_lockout_{username}_{ip}"
+
+    lockout_key = f"login_lockout_{ip}"
     lockout_expiry = cache.get(lockout_key)
     if lockout_expiry:
         remaining = int(lockout_expiry - time.time())
@@ -565,21 +571,21 @@ def check_login_lockout(username, ip):
 def increment_login_attempts(username, ip):
     from django.core.cache import cache
     import time
-    
-    attempts_key = f"login_attempts_{username}_{ip}"
-    lockout_key = f"login_lockout_{username}_{ip}"
-    
+
+    attempts_key = f"login_attempts_{ip}"
+    lockout_key = f"login_lockout_{ip}"
+
     attempts = cache.get(attempts_key, 0) + 1
-    cache.set(attempts_key, attempts, timeout=900) # 15 mins window
-    
-    if attempts >= 5:
-        cache.set(lockout_key, time.time() + 900, timeout=900) # Lock for 15 mins
+    cache.set(attempts_key, attempts, timeout=900)  # 15-min rolling window
+
+    if attempts >= 15:
+        cache.set(lockout_key, time.time() + 900, timeout=900)  # Lock IP for 15 mins
         cache.delete(attempts_key)
 
 def clear_login_attempts(username, ip):
     from django.core.cache import cache
-    attempts_key = f"login_attempts_{username}_{ip}"
-    lockout_key = f"login_lockout_{username}_{ip}"
+    attempts_key = f"login_attempts_{ip}"
+    lockout_key = f"login_lockout_{ip}"
     cache.delete(attempts_key)
     cache.delete(lockout_key)
 
@@ -939,8 +945,8 @@ def company_subscription(request, plan_type):
                 except POSHRegistration.DoesNotExist:
                     try:
                         pocso_reg = POCSORegistration.objects.get(id=payload["reg_id"])
-                        comp_name = pocso_reg.company_name
-                        seats = pocso_reg.employee_count or seats
+                        comp_name = pocso_reg.school_name
+                        seats = (pocso_reg.teachers_count + pocso_reg.non_teaching_staff_count) or seats
                     except POCSORegistration.DoesNotExist:
                         logger.warning(
                             f"POSHRegistration or POCSORegistration not found for reg_id={payload.get('reg_id')}"
@@ -1171,7 +1177,9 @@ def add_employee(request):
                 django_settings, "SITE_URL", "https://openhandsolutions.com"
             )
             training_link = f"{site_base}/login/"
-            company_name = posh_reg.company_name if posh_reg else org.name
+            posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
+            pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
+            company_name = posh_reg.company_name if posh_reg else (pocso_reg.school_name if pocso_reg else org.name)
 
             send_welcome_email(
                 new_user,
@@ -1302,7 +1310,7 @@ def update_employee(request, member_id):
 
             posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
             pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
-            company_name = posh_reg.company_name if posh_reg else (pocso_reg.company_name if pocso_reg else org.name)
+            company_name = posh_reg.company_name if posh_reg else (pocso_reg.school_name if pocso_reg else org.name)
 
             try:
                 send_welcome_email(
@@ -1659,13 +1667,16 @@ def company_dashboard(request):
     posh_reg = POSHRegistration.objects.filter(email=org.owner.email).first()
     pocso_reg = POCSORegistration.objects.filter(email=org.owner.email).first()
     reg = posh_reg or pocso_reg
-    posh_company_name = reg.company_name if reg else org.name
+    reg_company_name = (
+        posh_reg.company_name if posh_reg else (pocso_reg.school_name if pocso_reg else org.name)
+    )
+    posh_company_name = reg_company_name
 
     # If org name is still the auto-generated fallback, update it + regenerate password
     if reg and (
         org.name == f"{org.owner.first_name}'s Organization" or not org.name
     ):
-        org.name = reg.company_name
+        org.name = reg_company_name
         org.default_password = org.generate_default_password()
         org.save()
 
@@ -1683,7 +1694,12 @@ def company_dashboard(request):
         org.default_password = org.generate_default_password()
         org.save()
 
-    seat_limit = posh_reg.employee_count if posh_reg else org.max_users
+    if posh_reg:
+        seat_limit = posh_reg.employee_count
+    elif pocso_reg:
+        seat_limit = pocso_reg.teachers_count + pocso_reg.non_teaching_staff_count
+    else:
+        seat_limit = org.max_users
 
     poster_configs = {
         "posh_1": PosterLogoConfig.objects.filter(organization=org, poster_path="/media/Posters/POSH Poster.webp").first(),

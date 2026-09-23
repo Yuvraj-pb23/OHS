@@ -5,6 +5,55 @@ from django.core.mail import send_mail
 logger = logging.getLogger(__name__)
 
 
+def send_mime_email(subject, from_email, recipients, text_content, html_content, pdf_bytes=None, pdf_filename=None):
+    """
+    Build and send a MIME email that supports HTML + optional PDF attachment.
+    Uses Python stdlib email.mime directly to avoid Django 6.0's broken
+    mixed_subtype limitation when combining attach_alternative() and attach().
+    """
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
+    from email.mime.base import MIMEBase
+    from email import encoders
+    from django.conf import settings as _settings
+
+    if pdf_bytes:
+        # multipart/mixed wraps the alternative part + pdf attachment
+        outer = MIMEMultipart('mixed')
+        alt = MIMEMultipart('alternative')
+        alt.attach(MIMEText(text_content, 'plain', 'utf-8'))
+        alt.attach(MIMEText(html_content, 'html', 'utf-8'))
+        outer.attach(alt)
+        part = MIMEBase('application', 'pdf')
+        part.set_payload(pdf_bytes)
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename="{pdf_filename or "Invoice.pdf"}"')
+        outer.attach(part)
+    else:
+        outer = MIMEMultipart('alternative')
+        outer.attach(MIMEText(text_content, 'plain', 'utf-8'))
+        outer.attach(MIMEText(html_content, 'html', 'utf-8'))
+
+    outer['Subject'] = subject
+    outer['From'] = from_email
+    outer['To'] = ', '.join(recipients)
+
+    host = getattr(_settings, 'EMAIL_HOST', 'smtp.gmail.com')
+    port = int(getattr(_settings, 'EMAIL_PORT', 587))
+    use_tls = getattr(_settings, 'EMAIL_USE_TLS', True)
+    user = getattr(_settings, 'EMAIL_HOST_USER', '')
+    password = getattr(_settings, 'EMAIL_HOST_PASSWORD', '')
+
+    with smtplib.SMTP(host, port) as smtp:
+        if use_tls:
+            smtp.starttls()
+        if user and password:
+            smtp.login(user, password)
+        smtp.sendmail(from_email, recipients, outer.as_string())
+    return True
+
+
 def attach_logo_inline(msg):
     from email.mime.image import MIMEImage
     import os
@@ -435,28 +484,27 @@ def send_tiered_email(registration, tier_key, registration_type="POSH"):
     ]
 
     try:
-        msg = EmailMultiAlternatives(
-            subject, text_content, settings.DEFAULT_FROM_EMAIL, recipients
-        )
-        msg.attach_alternative(html_content, "text/html")
-
-        # 6. Attach Proforma Invoice PDF
+        pdf_bytes = None
+        pdf_filename = None
         if tier_key != "PAYMENT_VERIFIED":
             from .utils import generate_proforma_invoice_pdf
-
             try:
-                pdf_invoice = generate_proforma_invoice_pdf(
+                pdf_bytes = generate_proforma_invoice_pdf(
                     registration, registration_type, tier_key
                 )
-                msg.attach(
-                    f"Proforma_Invoice_{registration.id}.pdf",
-                    pdf_invoice,
-                    "application/pdf",
-                )
+                pdf_filename = f"Proforma_Invoice_{registration.id}.pdf"
             except Exception as pdf_err:
-                logger.error(f"Error generating/attaching PDF: {pdf_err}", exc_info=True)
+                logger.error(f"Error generating PDF: {pdf_err}", exc_info=True)
 
-        msg.send()
+        send_mime_email(
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipients=recipients,
+            text_content=text_content,
+            html_content=html_content,
+            pdf_bytes=pdf_bytes,
+            pdf_filename=pdf_filename,
+        )
         return True
     except Exception as e:
         logger.error(f"CRITICAL error sending tiered email: {e}", exc_info=True)
@@ -516,11 +564,13 @@ Open Hand Solutions"""
     ]
 
     try:
-        msg = EmailMultiAlternatives(
-            subject, text_content, settings.DEFAULT_FROM_EMAIL, recipients
+        send_mime_email(
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipients=recipients,
+            text_content=text_content,
+            html_content=html_content,
         )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
         return True
     except Exception as e:
         logger.error(f"Error sending payment rejection email: {e}", exc_info=True)
@@ -555,7 +605,14 @@ def send_interest_email(registration, registration_type="POSH", request=None):
     logo_url = "https://openhandsolutions.com/static/img/logo_new.png"
 
     # 2. Prepare Email Body content
-    recipient_name = registration.contact_person or registration.company_name or "Valued Customer"
+    # Support both POSH (contact_person, company_name) and POCSO (person_name, school_name) models
+    recipient_name = (
+        getattr(registration, "contact_person", None)
+        or getattr(registration, "person_name", None)
+        or getattr(registration, "company_name", None)
+        or getattr(registration, "school_name", None)
+        or "Valued Customer"
+    )
 
     try:
         from .models import EmailTemplate
@@ -608,7 +665,11 @@ openhandpvtltd@gmail.com | openhandsolutions.com"""
 
     context = {
         "name": recipient_name,
-        "company_name": registration.company_name or registration.school_name or "Valued Customer",
+        "company_name": (
+            getattr(registration, "company_name", None)
+            or getattr(registration, "school_name", None)
+            or "Valued Customer"
+        ),
         "payment_link": payment_button,
         "type": registration_type,
     }
@@ -637,26 +698,26 @@ openhandpvtltd@gmail.com | openhandsolutions.com"""
     ]
 
     try:
-        msg = EmailMultiAlternatives(
-            subject, text_content, settings.DEFAULT_FROM_EMAIL, recipients
-        )
-        msg.attach_alternative(html_content, "text/html")
-
-        # Attach Proforma Invoice PDF
+        pdf_bytes = None
+        pdf_filename = None
         from .utils import generate_proforma_invoice_pdf
         try:
-            pdf_invoice = generate_proforma_invoice_pdf(
+            pdf_bytes = generate_proforma_invoice_pdf(
                 registration, registration_type, "PAY_NOW"
             )
-            msg.attach(
-                f"Proforma_Invoice_{registration.id}.pdf",
-                pdf_invoice,
-                "application/pdf",
-            )
+            pdf_filename = f"Proforma_Invoice_{registration.id}.pdf"
         except Exception as pdf_err:
-            logger.error(f"Error generating/attaching PDF: {pdf_err}", exc_info=True)
+            logger.error(f"Error generating PDF: {pdf_err}", exc_info=True)
 
-        msg.send()
+        send_mime_email(
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipients=recipients,
+            text_content=text_content,
+            html_content=html_content,
+            pdf_bytes=pdf_bytes,
+            pdf_filename=pdf_filename,
+        )
         return True
     except Exception as e:
         logger.error(f"Error sending interest email: {e}", exc_info=True)
@@ -700,7 +761,13 @@ def send_payment_confirmed_email(registration, username, password, registration_
         token = default_token_generator.make_token(user)
         setup_link = f"{site_url}/setup-password/{uidb64}/{token}/"
 
-    recipient_name = registration.contact_person or registration.company_name or "Valued Customer"
+    recipient_name = (
+        getattr(registration, "contact_person", None)
+        or getattr(registration, "person_name", None)
+        or getattr(registration, "company_name", None)
+        or getattr(registration, "school_name", None)
+        or "Valued Customer"
+    )
 
     subject = "Payment confirmed — Welcome to Open Hand! Your login details inside"
 
@@ -810,11 +877,13 @@ def send_payment_confirmed_email(registration, username, password, registration_
     ]
 
     try:
-        msg = EmailMultiAlternatives(
-            subject, text_content, settings.DEFAULT_FROM_EMAIL, recipients
+        send_mime_email(
+            subject=subject,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipients=recipients,
+            text_content=text_content,
+            html_content=html_content,
         )
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
         return True
     except Exception as e:
         logger.error(f"Error sending welcome credentials email: {e}", exc_info=True)

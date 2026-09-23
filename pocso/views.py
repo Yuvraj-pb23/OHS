@@ -637,6 +637,15 @@ def pocso_registration_view(request):
         )
         reg.save()
         request.session["last_pocso_registration_id"] = reg.id
+
+        # Send interest email immediately upon registration form submission (same as POSH)
+        try:
+            from home.email_utils import send_interest_email
+            send_interest_email(reg, "POCSO", request=request)
+        except Exception as e:
+            logger.warning(f"Failed to send interest email for POCSO registration {reg.id}: {e}")
+
+        request.session["registration_submitted"] = True
         return redirect("pocso_billing")
 
     registration = None
